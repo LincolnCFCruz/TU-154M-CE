@@ -1,0 +1,305 @@
+# Felis Tu-154M
+# Checklist by Evan Purcell
+# August 2 2017
+# Version 1.3
+
+sw_checklist:PRE-FLIGHT
+sw_rcolsize:110
+sw_item:Ground Menu|SET:(tu-154/anim/sensors_caps:0)&&(tu-154/anim/engine_caps:0)
+sw_item:Load Menu|SET
+sw_item:STAB Setting|SET
+sw_item:Batteries N1 & N2|ON:(sim/cockpit/electrical/battery_array_on[0]:1)&&(sim/cockpit/electrical/battery_array_on[1]:1)
+sw_item:Batteries N3 & N4|ON:(sim/cockpit/electrical/battery_array_on[2]:1)&&(sim/cockpit/electrical/battery_array_on[3]:1)
+sw_item:Fire System Agent Arm|ON:tu-154/switchers/eng/fire_main_switch:1
+sw_item:APU Start Switch|ON:tu-154/switchers/eng/apu_main_switch:1
+sw_item:APU Start Mode|START:tu-154/switchers/eng/apu_start_mode:1
+sw_item:APU Start Button|PRESS:tu-154/buttons/eng/apu_start:1
+sw_item:APU Normal Speed|ON:sim/cockpit2/electrical/APU_N1_percent:>91
+sw_item:APU Power Selector|ON:tu-154/switchers/eng/apu_gen_on:1
+sw_item:Rectifier N2|ON:(tu-154/switchers/eng/bus27_vu1:0)&&(tu-154/gauges/eng/bus27_volt:>100)
+sw_item:Rectifier N1|ON:tu-154/switchers/eng/bus27_vu1:1
+sw_item:PTS-250 Inverter|ON:tu-154/switchers/eng/pts250_on:1
+sw_item:Nav Lights|ON:sim/cockpit/electrical/nav_lights_on:1
+
+sw_checklist:PRE-FLIGHT cont.
+sw_item:Electric Hyd. Pump 2 & 3|ON:(tu-154/switchers/hydro/pump_2:1)&&(tu-154/switchers/hydro/pump_3:1)
+sw_item:Hyd. Crossfeed|ON:tu-154/switchers/hydro/connect2to1:1
+sw_item:Accumulator Charge|PRESS:tu-154/gauges/hydro/pressure_ind_emerg:>200
+sw_item:Hyd. Crossfeed|OFF:tu-154/switchers/hydro/connect2to1:0
+sw_item:Electric Hyd. Pump 2 & 3|OFF:(tu-154/switchers/hydro/pump_2:0)&&(tu-154/switchers/hydro/pump_3:0)
+sw_item:Parking Brake|SET:tu-154/controll/parking_brake:1
+sw_item:APU Bleed|HOLD UP:tu-154/lights/apu/start_ready:0
+sw_item:Left Line Air Mass Sup|UP & COVERED:(tu-154/switchers/airbleed/psvp_left_on:1)&&(tu-154/switchers/airbleed/psvp_left_on_cap:0)
+sw_item:Right Line Air Mass Sup|UP & COVERED:(tu-154/switchers/airbleed/psvp_right_on:1)&&(tu-154/switchers/airbleed/psvp_right_on_cap:0)
+sw_item:Pressure Valves|BOTH UP:(tu-154/gauges/airbleed/air_flow_1:>-115)&&(tu-154/gauges/airbleed/air_flow_2:>-115)
+sw_item:Cabin Temp. Selectors|ALL AUTO:(tu-154/switchers/airbleed/cockpit_mode_set:1)&&(tu-154/switchers/airbleed/cabin1_mode_set:1)&&(tu-154/switchers/airbleed/cabin2_mode_set:1)&&(tu-154/switchers/airbleed/left_sys_mode_set:1)&&(tu-154/switchers/airbleed/right_sys_mode_set:1)
+sw_item:Ground Air Condition|ON:tu-154/switchers/airbleed/ground_cond_on:1
+sw_item:Servo Hydr Power|ALL ON:(tu-154/switchers/eng/hydro_ra56_rud_1:1)&&(tu-154/switchers/eng/hydro_ra56_rud_2:1)&&(tu-154/switchers/eng/hydro_ra56_rud_3:1)&&(tu-154/switchers/eng/hydro_ra56_ail_1:1)&&(tu-154/switchers/eng/hydro_ra56_ail_2:1)&&(tu-154/switchers/eng/hydro_ra56_ail_3:1)&&(tu-154/switchers/eng/hydro_ra56_elev_1:1)&&(tu-154/switchers/eng/hydro_ra56_elev_2:1)&&(tu-154/switchers/eng/hydro_ra56_elev_3:1)
+
+sw_checklist:PRE-START
+sw_item:VSI Left|ON:tu-154/switchers/ovhd/var_left:1
+sw_item:AoA Indicator|ON:tu-154/switchers/ovhd/auasp_on:1
+sw_item:UVID|ON:tu-154/switchers/ovhd/uvid_on:1
+sw_item:Turn Indicator|ON:tu-154/switchers/ovhd/eup_on:1
+sw_item:AHZ Aux|ON:tu-154/switchers/ovhd/agr_on:1
+sw_item:ATT Power|ON:tu-154/switchers/ovhd/bkk_on:1
+sw_item:AP FD|ON:tu-154/switchers/ovhd/sau_stu_on:1
+sw_item:FDI Left|ON:tu-154/switchers/ovhd/pkp_left_on:1
+sw_item:FDI Right|ON:tu-154/switchers/ovhd/pkp_right_on:1
+sw_item:VG Ref|ON:tu-154/switchers/ovhd/mgv_contr:1
+sw_item:Compas Power N1 & N2|ON:(tu-154/switchers/ovhd/tks_on_1:1)&&(tu-154/switchers/ovhd/tks_on_2:1)
+sw_item:Gyro Heat (on if OAT<5°)|AS NEEDED
+sw_item:Magnetic Correction N1 & N2|ON:(tu-154/switchers/ovhd/tks_corr_1:1)&&(tu-154/switchers/ovhd/tks_corr_2:1)
+sw_item:VOR/ILS HDI Left & Right|MAG:(tu-154/switchers/ovhd/curs_pnp_mode_1:0)&&(tu-154/switchers/ovhd/curs_pnp_mode_2:0)
+sw_item:IAS System Power|ON:tu-154/switchers/ovhd/svs_on:1
+sw_item:IAS System Heat (on if OAT<5°)|AS NEEDED
+sw_item:KLN-90|ON:tu-154/switchers/ovhd/kln_on:1
+sw_item:VSI Right|ON:tu-154/switchers/ovhd/var_right:1
+
+sw_checklist:PRE-START cont.
+sw_item:TCAS|ON:tu-154/switchers/ovhd/tcas_on:1
+sw_item:VBE N1|ON:tu-154/switchers/ovhd/vbe_1_on:1
+sw_item:Course MP N1 & N2|ON:(tu-154/switchers/ovhd/curs_np_on_1:1)&&(tu-154/switchers/ovhd/curs_np_on_2:1)
+sw_item:TRA 76A|ON:tu-154/switchers/ovhd/tra_67_on:1
+sw_item:RSCN Power (NVU Nav Only)|AS NEEDED
+sw_item:RSCN Recon (NVU Nav Only)|AS NEEDED
+sw_item:Radio-Alt N1 & N2|ON:(tu-154/switchers/ovhd/rv5_1_on:1)&&(tu-154/switchers/ovhd/rv5_2_on:1)
+sw_item:VHF N1 & N2|ON:(tu-154/switchers/ovhd/vhf_1_on:1)&&(tu-154/switchers/ovhd/vhf_2_on:1)
+sw_item:Gyro Roll Stab Main & Ref|ON:(tu-154/switchers/ovhd/stabil_ga_main:1)&&(tu-154/switchers/ovhd/stabil_ga_reserv:1)
+sw_item:HF Radio N1 & N2|ON:(tu-154/switchers/ovhd/micron_1_on:1)&&(tu-154/switchers/ovhd/micron_2_on:1)
+sw_item:INT|ON:tu-154/switchers/ovhd/spu_on:1
+sw_item:Audio|ON:tu-154/switchers/ovhd/sgs_on:1
+sw_item:DME N1 & N2|ON:(tu-154/switchers/ovhd/sd75_1_on:1)&&(tu-154/switchers/ovhd/sd75_2_on:1)
+sw_item:Voice Recorder|ON:tu-154/switchers/ovhd/mars_on:1
+sw_item:VBE N2|ON:tu-154/switchers/ovhd/vbe_2_on:1
+
+sw_checklist:PRE-START cont.
+sw_item:Doppler Power|ON:tu-154/switchers/ovhd/diss_on:1
+sw_item:Doppler Mode|GROUND:tu-154/switchers/ovhd/diss_mode:1
+sw_item:NAV|NVU BY DOPP:tu-154/switchers/ovhd/nvu_calc_set:1
+sw_item:Seatbelt Sign|ON:tu-154/switchers/ovhd/sign_belts:1
+sw_item:Smoking Sign|ON:tu-154/switchers/ovhd/sign_nosmoke:1
+sw_item:Exit Lights|ON:tu-154/switchers/ovhd/sign_exit:1
+sw_item:Radios|SET
+sw_item:KLN-90|SET
+sw_item:Transponder|SET & STBY:tu-154/switchers/tcas/tcas_mode:0
+sw_item:ABSU Prepare NAV|ON:tu-154/switchers/console/absu_nav_on:1
+sw_item:ABSU Needles on AHZ|ON:tu-154/switchers/console/absu_needles_on:1
+sw_item:ABSU Roll Channel|ON:tu-154/switchers/console/absu_roll_ch_on:1
+sw_item:ABSU Pitch Channel|ON:tu-154/switchers/console/absu_pitch_ch_on:1
+sw_item:NVU Power|ON:tu-154/switchers/console/nvu_power_on:1
+
+sw_checklist:ALIGN COMPASS & GYROS
+sw_item:Latitude|SET
+sw_item:Compass Mode|MAG:tu-154/switchers/ovhd/tks_mode:0
+sw_item:Compass Users|MAIN:tu-154/switchers/ovhd/tks_mode_left:1
+sw_item:Compass Correction|MAIN:tu-154/switchers/ovhd/tks_mode_right:1
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Correction|REF:tu-154/switchers/ovhd/tks_mode_right:0
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Mode|DG:tu-154/switchers/ovhd/tks_mode:1
+sw_item:Compass Correction|MAIN:tu-154/switchers/ovhd/tks_mode_right:1
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Correction|REF:tu-154/switchers/ovhd/tks_mode_right:0
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Mode|MAG:tu-154/switchers/ovhd/tks_mode:0
+sw_item:Compass Correction|MAIN:tu-154/switchers/ovhd/tks_mode_right:1
+
+
+sw_checklist:BEFORE START
+sw_item:Pushback Tug|CALLED:bp/started:1
+sw_item:ATT Test|UP then DOWN
+sw_item:AP FD|OFF then ON
+sw_item:Flight Instruments|SET
+sw_item:Ice Detect|ON:tu-154/switchers/eng/soi21_on:1
+sw_item:Electrical Load|<80 AMP:(tu-154/switchers/eng/bus115_amp_sel:4)&&(tu-154/gauges/eng/bus115_amp:<-20)
+sw_item:PTS-250 Inverter|OFF:tu-154/switchers/eng/pts250_on:0
+sw_item:Fuel Qty Indicator|ON:tu-154/switchers/fuel/fuel_meter_on:1
+sw_item:Fuel Flowmeter|ON:tu-154/switchers/fuel/fuel_meter_mech_on:1
+sw_item:Flowmeter Gauge|SET
+sw_item:Tank 2 L & R|ON:(tu-154/switchers/fuel/pump_tank2_left:1)&&(tu-154/switchers/fuel/pump_tank2_right:1)
+sw_item:Tank 3 L & R|ON:(tu-154/switchers/fuel/pump_tank3_left:1)&&(tu-154/switchers/fuel/pump_tank3_right:1)
+sw_item:Tank 4|ON:tu-154/switchers/fuel/pump_tank4:1
+sw_item:Service Tank 1|ALL ON:(tu-154/switchers/fuel/pump_tank1_1:1)&&(tu-154/switchers/fuel/pump_tank1_2:1)&&(tu-154/switchers/fuel/pump_tank1_3:1)&&(tu-154/switchers/fuel/pump_tank1_4:1)
+sw_item:Equalizer|ON:tu-154/switchers/fuel/fuel_level:1
+sw_item:Fuel Auto|ON:tu-154/switchers/fuel/fuel_flow_mode:1
+sw_item:Fuel Management|ON:(tu-154/switchers/fuel/fuel_flow_on:1)&&(tu-154/switchers/fuel/fuel_flow_on_cap:1)
+sw_item:MSRP Flight Recorder|ON:tu-154/switchers/eng/msrp_main_switch:1
+sw_item:Recorder Main|ON:tu-154/switchers/eng/msrp_mlp_1:1
+sw_item:Recorder Aux|ON:tu-154/switchers/eng/msrp_mlp_2:1
+sw_item:Beacon Light|ON:sim/cockpit2/switches/beacon_on:1
+sw_item:Pushback Tug|CONNECTED:bp/anim/lift:1
+sw_item:Gear Blocks|REMOVED:tu-154/anim/gear_blocks:0
+sw_item:Parking Brake|RELEASED:tu-154/controll/parking_brake:0
+
+sw_checklist:START ENGINE 1
+sw_item:Ground Air Condition|OFF:(tu-154/switchers/airbleed/ground_cond_on:0)&&(tu-154/switchers/airbleed/ground_cond_on_cap:0)
+sw_item:Engine Firewall Valves|ON:(tu-154/switchers/fuel/fire_valve_1:1)&&(tu-154/switchers/fuel/fire_valve_2:1)&&(tu-154/switchers/fuel/fire_valve_3:1)&&(tu-154/switchers/fuel/fire_valve_1_cap:0)&&(tu-154/switchers/fuel/fire_valve_2_cap:0)&&(tu-154/switchers/fuel/fire_valve_3_cap:0)
+sw_item:Pressure Valves|BOTH DOWN:(tu-154/gauges/airbleed/air_flow_1:<-159)&&(tu-154/gauges/airbleed/air_flow_2:<-154)
+sw_item:Engine Inst. Switches|ALL ON:(tu-154/switchers/eng/gauges_on_1:1)&&(tu-154/switchers/eng/gauges_on_2:1)&&(tu-154/switchers/eng/gauges_on_3:1)
+sw_item:Engine Start Panel|OPEN:tu-154/switchers/eng/starter_cap:1
+sw_item:Fuel Cutoff Handles|ON:(tu-154/controlls/fuel_cutoff_1:1)&&(tu-154/controlls/fuel_cutoff_2:1)&&(tu-154/controlls/fuel_cutoff_1:1)
+sw_item:Starter Main Switch|ON:tu-154/switchers/eng/starter_switch:1
+sw_item:Start Mode|START:tu-154/switchers/eng/starter_mode:1
+sw_item:Air Pressure|>35 kg/cm2:tu-154/gauges/eng/starter_press:>3.5
+sw_item:Engine Select|1:tu-154/switchers/eng/starter_eng_select:1
+sw_item:Engine Start|PRESS:tu-154/buttons/eng/starter_start:1
+sw_item:Engine 1 Generator|CHECK:(tu-154/switchers/eng/gen_1_on:-1)&&(tu-154/switchers/eng/bus115_volt_sel:0)
+sw_item:Engine 1 Generator|ON:tu-154/switchers/eng/gen_1_on:1
+sw_item:Engine 1 Bleed Air|ON:tu-154/switchers/airbleed/eng_valve_1:1
+
+sw_checklist:START ENGINE 2 & 3
+sw_item:Engine Select|2:tu-154/switchers/eng/starter_eng_select:2
+sw_item:Engine Start|PRESS:tu-154/buttons/eng/starter_start:1
+sw_item:Engine 2 Generator|CHECK:(tu-154/switchers/eng/gen_2_on:-1)&&(tu-154/switchers/eng/bus115_volt_sel:1)
+sw_item:Engine 2 Generator|ON:tu-154/switchers/eng/gen_2_on:1
+sw_item:Engine Select|3:tu-154/switchers/eng/starter_eng_select:3
+sw_item:Engine Start|PRESS:tu-154/buttons/eng/starter_start:1
+sw_item:Engine 3 Generator|CHECK:(tu-154/switchers/eng/gen_3_on:-1)&&(tu-154/switchers/eng/bus115_volt_sel:2)
+sw_item:Engine 3 Generator|ON:tu-154/switchers/eng/gen_3_on:1
+sw_item:Engine 3 Bleed Air|ON:tu-154/switchers/airbleed/eng_valve_3:1
+sw_item:Engineer Stopwatch|RED BUTTON
+sw_item:Engine Select|OFF:tu-154/switchers/eng/starter_eng_select:0
+sw_item:Start Mode|CRANK:tu-154/switchers/eng/starter_mode:0
+sw_item:Starter Main Switch|OFF:tu-154/switchers/eng/starter_switch:0
+sw_item:Engine Start Panel|CLOSED:tu-154/switchers/eng/starter_cap:0
+
+sw_checklist:AFTER START
+sw_item:APU Power Selector|OFF:tu-154/switchers/eng/apu_gen_on:0
+sw_item:APU Bleed|HOLD DOWN:tu-154/lights/apu/start_ready:1
+sw_item:APU Shutdown|PRESS:tu-154/buttons/eng/apu_stop:1
+sw_item:APU Start Mode|CRANK:tu-154/switchers/eng/apu_start_mode:0
+sw_item:APU Start Switch|OFF:tu-154/switchers/eng/apu_main_switch:0
+sw_item:Engine 2 Bleed Air|ON:tu-154/switchers/airbleed/eng_valve_2:1
+sw_item:Cabin Pressure|650 mmHg
+sw_item:Cabin Pressure Diff|SET 0.6
+sw_item:Pressure Valves|BOTH UP:(tu-154/gauges/airbleed/air_flow_1:>-140)&&(tu-154/gauges/airbleed/air_flow_2:>-140)
+sw_item:Cabin Temp|SET
+sw_item:Flight Control Boosters|ALL ON:(tu-154/switchers/console/buster_on_1:1)&&(tu-154/switchers/console/buster_on_2:1)&&(tu-154/switchers/console/buster_on_3:1)&&(tu-154/switchers/console/busters_cap:0)
+sw_item:Windshield Heat|LOW:(tu-154/switchers/ovhd/window_heat_1:-1)&&(tu-154/switchers/ovhd/window_heat_2:-1)&&(tu-154/switchers/ovhd/window_heat_3:-1)
+
+sw_checklist:BEFORE TAXI
+sw_item:Engineer Stopwatch|>6 MIN
+sw_item:Nosewheel Steering|63 DEGREES:tu-154/switchers/nosewheel_turn_sel:1
+sw_item:Flaps|SET:tu-154/controll/flaps_lever:>0
+sw_item:Taxi & Landing Lights|EXTEND:(tu-154/lights/landing_ext_set_L:1)&&(tu-154/lights/landing_ext_set_R:1)
+sw_item:Light Power|TAXI:(tu-154/lights/landing_mode_set_L:-1)&&(tu-154/lights/landing_mode_set_R:-1)
+sw_item:RLS System|ON:tu-154/switchers/console/rls_on:1
+sw_item:AutoThrottle Prepare|ON:tu-154/switchers/console/absu_speed_prepare:1
+
+sw_checklist:BEFORE TAKEOFF
+sw_item:Emergency Brake Pressure|>2000 kg/cm2:tu-154/gauges/hydro/pressure_ind_emerg:>200
+sw_item:Light Power|LANDING:(tu-154/lights/landing_mode_set_L:1)&&(tu-154/lights/landing_mode_set_R:1)
+sw_item:Signal Lights|ON:tu-154/lights/light_signal_set:1
+sw_item:Pitot Heat|ON:(tu-154/switchers/ovhd/pitot_heat_1:1)&&(tu-154/switchers/ovhd/pitot_heat_2:1)&&(tu-154/switchers/ovhd/pitot_heat_3:1)
+sw_item:RLS System|METEO:tu-154/switchers/console/rls_mode:1
+sw_item:Transponder|TA/RA:tu-154/switchers/tcas/tcas_mode:4
+sw_item:Flight Stopwatch|RED
+sw_itemvoid:-------------------
+sw_itemvoid:AFTER RUNWAY LINEUP
+sw_itemvoid:-------------------
+sw_item:Nosewheel Steering|10 DEGREES:(tu-154/switchers/nosewheel_turn_sel:0)&&(tu-154/switchers/nosewheel_turn_cap:0)
+sw_item:Check Takeoff Not Ready Light|NOT LIT
+
+sw_checklist:TAKEOFF & CLIMB
+sw_item:Power|FULL (595° MAX):(tu-154/controlls/throttle_1:1)&&(tu-154/controlls/throttle_2:1)&&(tu-154/controlls/throttle_3:1)
+sw_item:Gear|UP & OFF:(sim/aircraft/parts/acf_gear_deploy[0]:0)&&(tu-154/controll/gear_lever:0)
+sw_item:Flaps|UP:tu-154/controll/flaps_lever:0
+sw_item:Landing Light (>350 km/h)|UP & OFF:(tu-154/lights/landing_ext_set_L:0)&&(tu-154/lights/landing_ext_set_R:0)&&(tu-154/lights/landing_mode_set_L:0)&&(tu-154/lights/landing_mode_set_R:0)
+sw_item:Cabin Pressure|760 mmHg
+sw_item:Power|CLIMB (585° MAX)
+sw_item:Climb >3000m (>10,000')|460 km/h (250 kts):sim/flightmodel/position/indicated_airspeed:240|250
+sw_item:Climb <3000m (<10,000')|550 km/h (295 kts):sim/flightmodel/position/indicated_airspeed:275|285
+sw_item:Signal Lights|OFF:tu-154/lights/light_signal_set:0
+sw_item:High Altitude Climb|.78 Mach:sim/flightmodel/misc/machno:.77|.79
+sw_item:Cruise Speed|.80 Mach:sim/flightmodel/misc/machno:.79|.81
+
+sw_checklist:ALIGN COMPASS & GYROS
+sw_itemvoid:Align before Top of Descent
+sw_item:Latitude|SET
+sw_item:Compass Mode|MAG:tu-154/switchers/ovhd/tks_mode:0
+sw_item:Compass Users|MAIN:tu-154/switchers/ovhd/tks_mode_left:1
+sw_item:Compass Correction|MAIN:tu-154/switchers/ovhd/tks_mode_right:1
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Correction|REF:tu-154/switchers/ovhd/tks_mode_right:0
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Mode|DG:tu-154/switchers/ovhd/tks_mode:1
+sw_item:Compass Correction|MAIN:tu-154/switchers/ovhd/tks_mode_right:1
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Correction|REF:tu-154/switchers/ovhd/tks_mode_right:0
+sw_item:Adjustment Button|PRESS & HOLD:tu-154/buttons/ovhd/tks_corrr_button:1
+sw_item:Compass Mode|MAG:tu-154/switchers/ovhd/tks_mode:0
+sw_item:Compass Correction|MAIN:tu-154/switchers/ovhd/tks_mode_right:1
+
+sw_checklist:DESCENT
+sw_item:Initial Descent Speed|.80 Mach:sim/flightmodel/misc/machno:.79|.81
+sw_item:Descend Above 3000m (<10,000')|500 km/h (270 kts):sim/flightmodel/position/indicated_airspeed:265|275
+sw_item:Descend Below 3000m (>10,000')|460 km/h (250 kts):sim/flightmodel/position/indicated_airspeed:240|250
+sw_item:Signal Lights|ON:tu-154/lights/light_signal_set:1
+sw_itemvoid:500 ft/min = 2.54 m/s
+sw_itemvoid:1000 ft/min = 5.08 m/s
+sw_itemvoid:1500 ft/mion = 7.62 m/s
+sw_itemvoid:2000 ft/min = 10.16 m/s
+sw_itemvoid:2500 ft/min = 12.7 m/s
+
+
+sw_checklist:APPROACH
+sw_item:Landing Instruments|SET
+sw_item:STAB Setting|SET
+sw_item:ABSU Prepare LANDING|ON:tu-154/switchers/console/absu_landing_on:1
+sw_itemvoid:--------------------
+sw_itemvoid:Before LOC Intercept
+sw_itemvoid:--------------------
+sw_item:Landing Gear|DOWN & OFF (>400 km/h):(sim/aircraft/parts/acf_gear_deploy[0]:1)&&(tu-154/controll/gear_lever:0)
+sw_item:Flaps|SET 15:tu-154/controll/flaps_lever:15
+sw_itemvoid:-------------------
+sw_itemvoid:After LOC Intercept
+sw_itemvoid:-------------------
+sw_item:Flaps|SET 28:tu-154/controll/flaps_lever:28
+sw_item:Flaps|SET 36:tu-154/controll/flaps_lever:36
+sw_item:Taxi & Landing Lights|EXTEND:(tu-154/lights/landing_ext_set_L:1)&&(tu-154/lights/landing_ext_set_R:1)
+sw_item:Light Power|LANDING:(tu-154/lights/landing_mode_set_L:1)&&(tu-154/lights/landing_mode_set_R:1)
+sw_itemvoid:---------------------
+sw_itemvoid:After GS Auto-Capture
+sw_itemvoid:---------------------
+sw_item:Flaps|SET 45:tu-154/controll/flaps_lever:45
+sw_itemvoid:Use popup card for speeds.
+
+sw_checklist:AFTER LANDING
+sw_item:Nosewheel Steering|63 DEGREES:tu-154/switchers/nosewheel_turn_sel:1
+sw_item:Flaps|UP:tu-154/controll/flaps_lever:0
+sw_item:Spoilers|RETRACTED:tu-154/controlls/spoilers_lever:0
+sw_item:Light Power|TAXI:(tu-154/lights/landing_mode_set_L:-1)&&(tu-154/lights/landing_mode_set_R:-1)
+sw_item:APU Start Switch|ON:tu-154/switchers/eng/apu_main_switch:1
+sw_item:APU Start Mode|START:tu-154/switchers/eng/apu_start_mode:1
+sw_item:APU Start Button|PRESS:tu-154/buttons/eng/apu_start:1
+sw_item:L & R Side Windows|OPEN:(sim/cockpit2/switches/custom_slider_on[0]:1)&&(sim/cockpit2/switches/custom_slider_on[1]:1)
+sw_item:Signal Lights|OFF:tu-154/lights/light_signal_set:0
+sw_item:AP Mode|RESET:tu-154/buttons/console/absu_reset:1
+sw_item:ABSU Prepare NAV|OFF:tu-154/switchers/console/absu_nav_on:0
+sw_item:ABSU Prepare LANDING|OFF:tu-154/switchers/console/absu_landing_on:0
+sw_item:ABSU Needles on AHZ|OFF:tu-154/switchers/console/absu_needles_on:0
+sw_item:ABSU Roll Channel|OFF:tu-154/switchers/console/absu_roll_ch_on:0
+sw_item:ABSU Pitch Channel|OFF:tu-154/switchers/console/absu_pitch_ch_on:0
+sw_item:AutoThrottle Prepare|OFF:tu-154/switchers/console/absu_speed_prepare:0
+sw_item:NVU Power|OFF:tu-154/switchers/console/nvu_power_on:0
+sw_item:AP FD|OFF:tu-154/switchers/ovhd/sau_stu_on:0
+sw_item:Radio-Alt N1 & N2|OFF:(tu-154/switchers/ovhd/rv5_1_on:0)&&(tu-154/switchers/ovhd/rv5_2_on:0)
+sw_item:AoA Indicator|OFF:tu-154/switchers/ovhd/auasp_on:0
+sw_item:RLS System|OFF:tu-154/switchers/console/rls_on:0
+sw_item:Windshield Heat|OFF:(tu-154/switchers/ovhd/window_heat_1:0)&&(tu-154/switchers/ovhd/window_heat_2:0)&&(tu-154/switchers/ovhd/window_heat_3:0)
+sw_item:Pitot Heat|OFF:(tu-154/switchers/ovhd/pitot_heat_1:0)&&(tu-154/switchers/ovhd/pitot_heat_2:0)&&(tu-154/switchers/ovhd/pitot_heat_3:0)
+sw_item:Engine 2 Bleed|OFF:tu-154/switchers/airbleed/eng_valve_2:0
+sw_item:APU Bleed|HOLD UP:tu-154/lights/apu/start_ready:0
+
+sw_checklist:PARKING AT THE GATE
+sw_item:Parking Brake|SET:tu-154/controll/parking_brake:1
+sw_item:Gear Blocks|INSTALLED:tu-154/anim/gear_blocks:1
+sw_item:Engine 1 & 3 Bleed|OFF:(tu-154/switchers/airbleed/eng_valve_1:0)&&(tu-154/switchers/airbleed/eng_valve_2:0)&&(tu-154/switchers/airbleed/eng_valve_3:0)
+sw_item:APU Power Selector|ON:tu-154/switchers/eng/apu_gen_on:1
+sw_item:Engine 1-3 Generator|OFF:(tu-154/switchers/eng/gen_1_on:0)&&(tu-154/switchers/eng/gen_2_on:0)&&(tu-154/switchers/eng/gen_3_on:0)
+sw_item:Engine 1-3 Fuel Cutoff|OFF:(tu-154/controlls/fuel_cutoff_1:0)&&(tu-154/controlls/fuel_cutoff_2:0)&&(tu-154/controlls/fuel_cutoff_1:0)
+sw_item:Doors|OPEN
+sw_item:Overhead Switches|ALL OFF
+sw_item:Fuel System|ALL OFF
+sw_item:Hyd. Boosters|ALL OFF

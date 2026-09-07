@@ -1,0 +1,561 @@
+-- this is TCAS panel
+size = {2048, 2048}
+
+defineProperty("tcas_on", globalPropertyi("tu-154/switchers/ovhd/tcas_on"))  -- TCAS switch
+
+defineProperty("bus115_1_volt", globalPropertyf("tu-154/elec/bus115_1_volt"))
+defineProperty("bus115_2_volt", globalPropertyf("tu-154/elec/bus115_2_volt"))
+defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
+
+
+defineProperty("tcas_mode", globalPropertyi("tu-154/switchers/tcas/tcas_mode"))  --	TCAS mode. -1 = test, 0 - stby, 1 = alt off, 2 = alt on, 3 = TA, 4 = TARA
+defineProperty("tcas_rot_big", globalPropertyi("tu-154/switchers/tcas/tcas_rot_big"))  -- large knob
+defineProperty("tcas_rot_small", globalPropertyi("tu-154/switchers/tcas/tcas_rot_small"))  -- small knob
+defineProperty("mode_set", globalPropertyi("tu-154/tcas/mode_set"))  -- TCAS mode. -1 = test, 0 - stby, 1 = alt off, 2 = alt on, 3 = TA, 4 = TARA	4
+
+defineProperty("tcas_ident_btn", globalPropertyi("tu-154/buttons/tcas/tcas_ident_btn"))  -- IDENT button
+defineProperty("tcas_fcn_btn", globalPropertyi("tu-154/buttons/tcas/tcas_fcn_btn"))  -- FCN button
+defineProperty("tcas_left_btn", globalPropertyi("tu-154/buttons/tcas/tcas_left_btn"))  -- < button
+defineProperty("tcas_right_btn", globalPropertyi("tu-154/buttons/tcas/tcas_right_btn"))  -- > button
+defineProperty("tcas_ent_btn", globalPropertyi("tu-154/buttons/tcas/tcas_ent_btn"))  -- ENT button
+defineProperty("tcas_atc_btn", globalPropertyi("tu-154/buttons/tcas/tcas_atc_btn"))  -- ATC button
+defineProperty("tcas_alt_btn", globalPropertyi("tu-154/buttons/tcas/tcas_alt_btn"))  -- ALT button
+defineProperty("tcas_rng_dn_btn", globalPropertyi("tu-154/buttons/tcas/tcas_rng_dn_btn"))  -- RNG DN button
+defineProperty("tcas_rng_up_btn", globalPropertyi("tu-154/buttons/tcas/tcas_rng_up_btn"))  -- RNG UP button
+
+defineProperty("screen_mode", globalPropertyi("tu-154/tcas/screen_mode"))  -- display mode on the screen.  -1 = error, 0 = transponder code, 1 = above mode, 2 = FL mode, 3 = FLT ID, 4 = PLN BIT, 5 = test, 6 = range set, 11-14 = code set
+defineProperty("tcas_range_set", globalPropertyi("tu-154/tcas/range_set"))  -- display range. 0 = 3, 1 = 5, 2 = 10, 3 = 15 nm
+
+defineProperty("level_mode", globalPropertyi("tu-154/tcas/level_mode"))  -- 1 = above, 0 = normal, -1 = below
+defineProperty("fl_mode", globalPropertyi("tu-154/tcas/fl_mode"))  -- 0 = absolute, 1 = relative
+defineProperty("flt_id", globalPropertyi("tu-154/tcas/flt_id"))  -- 0 = cover, 1 = show / change code
+
+
+
+defineProperty("xpdr_code", globalPropertyf("sim/cockpit/radios/transponder_code"))
+defineProperty("xpdr_mode", globalPropertyf("sim/cockpit/radios/transponder_mode")) 
+defineProperty("xpdr_led", globalPropertyf("sim/cockpit/radios/transponder_light"))
+ident_cmd = findCommand("sim/transponder/transponder_ident")  -- comand of transponder ident
+defineProperty("xpdr_fail", globalPropertyi("sim/operation/failures/rel_xpndr"))
+
+-- time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+
+-- TCAS
+defineProperty("ra_scale_set", globalPropertyi("tu-154/tcas/ra_scale_set"))  -- RA mode scale set. 0 = none.
+defineProperty("traffic_det", globalPropertyi("tu-154/tcas/traffic_det"))  -- yellow or red targets appear
+defineProperty("vvi", globalPropertyf("sim/flightmodel/position/vh_ind"))  -- vertical velocity of our acf
+
+
+-- engines
+defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) -- engine 1 rpm
+defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) -- engine 2 rpm
+defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
+
+
+-- Smart Copilot
+defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
+defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
+
+
+
+
+local notLoaded = true
+local start_timer = 0
+
+local function sw_reset()
+
+	if get(eng1_N1) < 5 and get(eng2_N1) < 5 and get(eng3_N1) < 5 then
+		set(tcas_mode, 0)
+	end
+	
+	notLoaded = false
+
+end
+
+
+
+
+
+
+
+
+
+
+
+local function getDigits(squawk)
+    local d1 = math.floor(squawk / 1000)
+    squawk = squawk - d1 * 1000
+    local d2 = math.floor(squawk / 100)
+    squawk = squawk - d2 * 100
+    local d3 = math.floor(squawk / 10)
+    local d4 = squawk - d3 * 10
+    return d1, d2, d3, d4
+end
+
+
+
+
+-- sounds
+local ajust_v_speed = loadSample('sounds/tcas/ajust_v_speed.wav')
+local clear_conflict = loadSample('sounds/tcas/clear_conflict.wav')
+local climb = loadSample('sounds/tcas/climb.wav')
+local climb_now = loadSample('sounds/tcas/climb_now.wav')
+local descend = loadSample('sounds/tcas/descend.wav')
+local descend_now = loadSample('sounds/tcas/descend_now.wav')
+local increase_climb = loadSample('sounds/tcas/increase_climb.wav')
+local increase_descend = loadSample('sounds/tcas/increase_descend.wav')
+local maintain_v_speed = loadSample('sounds/tcas/maintain_v_speed.wav')
+local monitor_v_speed = loadSample('sounds/tcas/monitor_v_speed.wav')
+local tcas_test_passed = loadSample('sounds/tcas/tcas_test_passed.wav')
+local traffic_snd = loadSample('sounds/tcas/traffic.wav')
+
+
+
+
+local rot_sound = loadSample('sounds/rot_click.wav')
+local button_sound = loadSample('sounds/plastic_btn.wav')
+
+local tcas_rot_big_last = get(tcas_rot_big)
+local tcas_rot_small_last = get(tcas_rot_small)
+local tcas_mode_last = get(tcas_mode)
+
+local passed = get(frame_time)
+
+mode_timer = 0
+
+
+local tcas_ident_btn_last = get(tcas_ident_btn)
+local tcas_fcn_btn_last = get(tcas_fcn_btn)
+local tcas_left_btn_last = get(tcas_left_btn)
+local tcas_right_btn_last = get(tcas_right_btn)
+local tcas_ent_btn_last = get(tcas_ent_btn)
+local tcas_atc_btn_last = get(tcas_atc_btn)
+local tcas_alt_btn_last = get(tcas_alt_btn)
+local tcas_rng_dn_btn_last = get(tcas_rng_dn_btn)
+local tcas_rng_up_btn_last = get(tcas_rng_up_btn)
+
+local text_to_screen = ""
+local cursor_timer = 0
+local cursor_show = true
+
+local scr_code = get(xpdr_code)
+
+local text_last = get(screen_mode)
+
+local scale_last = 0
+local traffic_last = false
+
+function update()
+	passed = get(frame_time)
+	local power = (get(bus115_1_volt) > 110 or get(bus115_3_volt) > 110) and get(tcas_on) == 1
+	local mode = get(mode_set)
+	
+	start_timer = start_timer + passed
+	
+	if notLoaded and start_timer > 0.3 then
+		sw_reset()
+	end
+
+
+
+	
+	-- ident button
+	if get(tcas_ident_btn) == 1 and power then commandOnce(ident_cmd) end
+
+	-- check big knob rotation
+	local tcas_rot_big_now = get(tcas_rot_big)
+
+	while tcas_rot_big_now > 11 do
+		tcas_rot_big_now = tcas_rot_big_now - 10
+	end
+	while tcas_rot_big_now < -1 do
+		tcas_rot_big_now = tcas_rot_big_now + 10
+	end
+	
+	set(tcas_rot_big, tcas_rot_big_now)
+	
+	
+	-- check small knob rotation
+	local tcas_rot_small_now = get(tcas_rot_small)
+
+	while tcas_rot_small_now > 11 do
+		tcas_rot_small_now = tcas_rot_small_now - 10
+	end
+	while tcas_rot_small_now < -1 do
+		tcas_rot_small_now = tcas_rot_small_now + 10
+	end
+	
+	set(tcas_rot_small, tcas_rot_small_now)
+	
+	-- mode selector
+	local tcas_mode_now = get(tcas_mode)
+	
+	if tcas_mode_now == -1 then
+		mode_timer = mode_timer + passed
+		if mode_timer > 5 then
+			set(tcas_mode, 0)
+		end
+	else
+		mode_timer = 0
+	end
+	
+	
+	
+	-- sounds	
+	if tcas_rot_big_now - tcas_rot_big_last + tcas_rot_small_now - tcas_rot_small_last + tcas_mode_now - tcas_mode_last ~= 0 then
+		playSample(rot_sound, false)
+	end
+	
+	
+	
+
+
+
+	local tcas_ident_btn_sw = get(tcas_ident_btn)
+	local tcas_fcn_btn_sw = get(tcas_fcn_btn)
+	local tcas_left_btn_sw = get(tcas_left_btn)
+	local tcas_right_btn_sw = get(tcas_right_btn)
+	local tcas_ent_btn_sw = get(tcas_ent_btn)
+	local tcas_atc_btn_sw = get(tcas_atc_btn)
+	local tcas_alt_btn_sw = get(tcas_alt_btn)
+	local tcas_rng_dn_btn_sw = get(tcas_rng_dn_btn)
+	local tcas_rng_up_btn_sw = get(tcas_rng_up_btn)
+	
+	
+	local changes = tcas_ident_btn_sw + tcas_fcn_btn_sw + tcas_left_btn_sw + tcas_right_btn_sw + tcas_ent_btn_sw
+	changes = changes + tcas_atc_btn_sw + tcas_rng_dn_btn_sw + tcas_alt_btn_sw + tcas_rng_up_btn_sw
+	
+	changes = changes - tcas_ident_btn_last - tcas_fcn_btn_last - tcas_left_btn_last - tcas_right_btn_last - tcas_ent_btn_last
+	changes = changes - tcas_atc_btn_last - tcas_rng_dn_btn_last - tcas_alt_btn_last - tcas_rng_up_btn_last
+	
+	if changes ~= 0 then playSample(button_sound, false) end
+	
+	
+	
+
+
+	
+
+
+
+	
+	local text = get(screen_mode)
+	cursor_timer = cursor_timer + passed
+	
+	-- make cursor blink
+	if cursor_timer > 1 then
+		cursor_timer = 0.5
+		cursor_show = not cursor_show
+	end
+	
+	-- make cursor blank when changing digit number
+	if tcas_rot_big_last ~= tcas_rot_big_now or tcas_left_btn_sw ~= tcas_left_btn_last or tcas_right_btn_last ~= tcas_right_btn_sw then
+		cursor_timer = 0
+		cursor_show = true
+	end
+	
+	-- make cursor full when changing digit itself
+	if tcas_rot_small_last ~= tcas_rot_small_now then
+		cursor_timer = 0
+		cursor_show = false
+	end
+	
+	-- take xpdr code when enter to code change mode
+	if text ~= text_last and text >= 11 and text <= 14 and text_last < 10 then
+		scr_code = get(xpdr_code)
+	end
+	
+	local d1, d2, d3, d4 = getDigits(scr_code)
+	
+	if tcas_rot_small_last ~= tcas_rot_small_now then
+		local knob_diff = tcas_rot_small_now - tcas_rot_small_last
+		if text == 11 then -- changing digit 1
+			if math.abs(knob_diff) < 5 then d1 = d1 + knob_diff end
+			if d1 > 7 then d1 = 0
+			elseif d1 < 0 then d1 = 7 end
+		elseif text == 12 then -- changing digit 2
+			if math.abs(knob_diff) < 5 then d2 = d2 + knob_diff end
+			if d2 > 7 then d2 = 0
+			elseif d2 < 0 then d2 = 7 end
+		elseif text == 13 then -- changing digit 3
+			if math.abs(knob_diff) < 5 then d3 = d3 + knob_diff end
+			if d3 > 7 then d3 = 0
+			elseif d3 < 0 then d3 = 7 end
+		elseif text == 14 then -- changing digit 4
+			if math.abs(knob_diff) < 5 then d4 = d4 + knob_diff end
+			if d4 > 7 then d4 = 0
+			elseif d4 < 0 then d4 = 7 end
+		end
+		scr_code = d1 * 1000 + d2 * 100 + d3 * 10 + d4
+	end
+	
+	-- save screen code to XPDR
+	if text >= 11 and text <= 14 and tcas_ent_btn_sw == 1 then
+		--print("save")
+		if get(ismaster) ~= 1 then set(xpdr_code, scr_code) end
+	end
+	
+	
+	--text = 2
+	
+	if text == 100 then -- no power
+		text_to_screen = ""
+	elseif text == -1 then
+		text_to_screen = "ERROR"
+	elseif text == 0 then -- squawk mode
+		local code = get(xpdr_code)
+		if code < 10 then code = "000"..string.format("%s", code)
+		elseif code < 100 then code = "00"..string.format("%s", code)
+		elseif code < 1000 then code = "0"..string.format("%s", code)
+		else code = string.format("%s", code)
+		end
+		text_to_screen = code
+	elseif text == 1 then -- level mode
+		local above = get(level_mode)
+		if above == 0 then text_to_screen = "NORMAL"
+		elseif above == -1 then text_to_screen = "BELOW"
+		else text_to_screen = "ABOVE" end
+	elseif text == 2 then -- flight level
+		if get(fl_mode) == 0 then
+			text_to_screen = "FL - ABS"
+		else text_to_screen = "FL - REL"
+		end
+	elseif text == 3 then -- flight ID
+		text_to_screen = "FLT ID"
+	
+	elseif text == 4 then -- flight ID
+		text_to_screen = "PLN BIT"
+		
+	elseif text == 5 then -- test mode
+		text_to_screen = "~~~~~~~~"
+	elseif text == 6 then -- range changed
+		local range = get(tcas_range_set)
+		if range == 0 then 
+			text_to_screen = "rng 3"
+		elseif range == 1 then
+			text_to_screen = "rng 5"
+		elseif range == 2 then
+			text_to_screen = "rng 10"
+		elseif range == 3 then
+			text_to_screen = "rng 15"	
+		end			
+	elseif text == -10 then -- ident button
+		text_to_screen = "ident"
+	elseif text == 11 then -- changing digit 1
+		local code = string.format("%s%s%s%s%s", "sq ", d1, d2, d3, d4)
+		if cursor_show then code = string.format("%s%s%s%s%s", "sq ", " ", d2, d3, d4) end
+		text_to_screen = code
+	elseif text == 12 then -- changing digit 2
+		local code = string.format("%s%s%s%s%s", "sq ", d1, d2, d3, d4)
+		if cursor_show then code = string.format("%s%s%s%s%s", "sq ", d1, " ", d3, d4) end
+		text_to_screen = code	
+	elseif text == 13 then -- changing digit 3
+		local code = string.format("%s%s%s%s%s", "sq ", d1, d2, d3, d4)
+		if cursor_show then code = string.format("%s%s%s%s%s", "sq ", d1, d2, " ", d4) end
+		text_to_screen = code
+	elseif text == 14 then -- changing digit 3
+		local code = string.format("%s%s%s%s%s", "sq ", d1, d2, d3, d4)
+		if cursor_show then code = string.format("%s%s%s%s%s", "sq ", d1, d2, d3, " ") end
+		text_to_screen = code
+	
+	
+	else
+		text_to_screen = ""
+	end
+	
+	-------------------------
+	-- play TA and RA sounds
+	-------------------------
+	
+	local scale = get(ra_scale_set)
+	local traffic = get(traffic_det) == 1
+	local our_vvi = get(vvi)
+	
+	-- traffic sound
+	if mode >= 3 and scale == 0 and traffic and traffic ~= traffic_last then
+		playSample(traffic_snd, false)
+	end
+	
+	-- clear of conflict
+	if mode == 4 and scale == 0 and scale ~= scale_last then
+		playSample(clear_conflict, false)
+		
+		stopSample(traffic_snd)
+		stopSample(ajust_v_speed)
+		stopSample(climb)
+		stopSample(climb_now)
+		stopSample(descend)
+		stopSample(descend_now)
+		stopSample(increase_climb)
+		stopSample(increase_descend)
+		stopSample(maintain_v_speed)
+		stopSample(monitor_v_speed)
+	end
+	
+	-- climb
+	if mode == 4 and scale == 1 and scale_last == 0 and scale ~= scale_last then
+		playSample(climb, false)
+	end
+	
+	-- climb now
+	if mode == 4 and scale == 1 and scale_last == 3 and scale ~= scale_last then
+		playSample(climb_now, false)
+	end
+	
+	-- descend
+	if mode == 4 and scale == 3 and scale_last == 0 and scale ~= scale_last then
+		playSample(descend, false)
+	end	
+	
+	-- descend now
+	if mode == 4 and scale == 3 and scale_last == 1 and scale ~= scale_last then
+		playSample(descend_now, false)
+	end
+	
+	-- increase climb
+	if mode == 4 and scale == 2 and our_vvi < 12 and scale ~= scale_last then
+		playSample(increase_climb, false)
+	end	
+	
+	-- increase descend
+	if mode == 4 and scale == 4 and our_vvi > -12 and scale ~= scale_last then
+		playSample(increase_descend, false)
+	end		
+	
+	-- adjust VS
+	if mode == 4 and ((scale == 1 and our_vvi > 12) or (scale == 3 and our_vvi < -12) or (scale == 7 and our_vvi > 0) or (scale == 9 and our_vvi < 0) or (scale == 6 and our_vvi > 10) or (scale == 8 and our_vvi < -10)) and scale ~= scale_last then
+		playSample(ajust_v_speed, false)
+	end		
+	
+	-- maintain VS
+	if mode == 4 and ((scale == 2 and our_vvi > 12) or (scale == 4 and our_vvi < -12)) and scale ~= scale_last then
+		playSample(maintain_v_speed, false)
+	end	
+	
+	-- test OK
+	if mode == 0 and text == 0 and text_last == 5 and text_last ~= text then
+		playSample(tcas_test_passed, false)
+	end	
+	
+	
+	
+	
+	
+	
+	
+	
+	text_last = text
+	scale_last = scale
+	traffic_last = traffic
+	
+	
+	tcas_rot_big_last = tcas_rot_big_now
+	tcas_rot_small_last = tcas_rot_small_now
+	tcas_mode_last = tcas_mode_now
+	
+	tcas_ident_btn_last = tcas_ident_btn_sw
+	tcas_fcn_btn_last = tcas_fcn_btn_sw
+	tcas_left_btn_last = tcas_left_btn_sw
+	tcas_right_btn_last = tcas_right_btn_sw
+	tcas_ent_btn_last = tcas_ent_btn_sw
+	tcas_atc_btn_last = tcas_atc_btn_sw
+	tcas_alt_btn_last = tcas_alt_btn_sw
+	tcas_rng_dn_btn_last = tcas_rng_dn_btn_sw
+	tcas_rng_up_btn_last = tcas_rng_up_btn_sw	
+	
+end
+
+
+
+
+
+
+
+
+
+
+components = {
+
+	tcas_text{
+		position = {230, 1238, 267, 67},
+		text = function()
+			return text_to_screen
+		end, -- BE SURE TO SEND ONLY 8 SYMBOLS
+	},
+	
+	text_draw {
+		position = {47, 977, 110, 110},
+		--font = text_font,
+		color = {1, 0.8, 0.3, 1},
+		visible = function()
+			return get(screen_mode) == 5
+		end,
+		text = function()
+			return "ATC FAIL"
+		end,
+	},
+	
+	text_draw { -- "1  1 "
+		position = {70, 1255, 110, 110},
+		--font = text_font,
+		color = {0.8, 0.8, 0.8, 1},
+		visible = function()
+			return get(screen_mode) ~= 100
+		end,
+		text = function()
+			return "1    1"
+		end,
+	},
+
+	text_draw { -- "1  1 "
+		position = {70, 1255, 110, 110},
+		--font = text_font,
+		color = {0.8, 0.8, 0.8, 1},
+		visible = function()
+			return get(screen_mode) == 5
+		end,
+		text = function()
+			return "  2    2"
+		end,
+	},
+	
+	rectangle {
+		position = {2, 1240, 50, 50},
+		color = {0.3, 0.8, 0.3, 1},
+		visible = function()
+			return get(screen_mode) ~= 100 and get(xpdr_led) > 0.1 and get(tcas_mode) > 0
+		end
+	
+	},
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+}
+
+
+
+
+
+
+
+--[[
+local font = loadBitmapFont('segmental.fnt')
+
+function draw()
+
+	drawBitmapText(font, 235, 1245, "@@@@@@@@", TEXT_ALIGN_LEFT, {1, 0.7, 0.5})
+
+end
+
+--]]

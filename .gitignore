@@ -1,0 +1,22 @@
+.DS_Store
+.zed/**
+.claude/**
+.vscode/**
+
+# Rewritten by X-Plane / the aircraft on every flight
+tu154_prefs.txt
+KLNconfig.txt
+
+# SASL3 runtime output
+plugins/tu-154/data/output/SASLLog.txt
+plugins/tu-154/data/output/*.ini
+plugins/tu-154/data/output/saved_state.ini
+plugins/tu-154/data/modules/state.txt
+plugins/kln90b/data/output/SASLLog.txt
+plugins/kln90b/data/modules/state.txt
+plugins/kln90b/data/modules/popupsPositions.txt
+plugins/kln90b/data/modules/configuration/wprefs.ini
+
+# Flight data recorder output
+plugins/tu-154/data/output/black_box/*
+!plugins/tu-154/data/output/black_box/readme.txt

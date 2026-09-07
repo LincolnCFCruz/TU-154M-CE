@@ -1,0 +1,31 @@
+# EditorConfig — https://editorconfig.org
+#
+# Purpose: lock in the file conventions this codebase depends on, so editors
+# stop silently corrupting files. Per CLAUDE.md hard rule 3 the sources are
+# UTF-8 *without* BOM and contain non-ASCII (Cyrillic comments throughout, and
+# a handful of LuaJIT-only non-ASCII identifiers in the KLN90 module); tools
+# that re-encode them double-encode every such character.
+#
+# Two encoding problems were fixed during the SASL3 port and must not come
+# back: two modules were CP1251 instead of UTF-8, and three carried a UTF-8
+# BOM (harmless under LuaJIT, but they break every other Lua toolchain).
+#
+# Indentation is intentionally NOT normalised across the tree. The original
+# instrument/system modules are tab-indented (their authors' style); the core/
+# infrastructure and port-era code uses 4 spaces. This file does NOT reformat
+# existing files — the [*.lua] block is only the going-forward default for NEW
+# code. Reindenting a legacy module would destroy its history.
+root = true
+
+# Applies everywhere (incl. .md/.txt/.obj): the anti-corruption essentials only.
+[*]
+charset = utf-8
+end_of_line = lf
+
+# Lua sources: default style for new code + whitespace hygiene. Scoped to *.lua
+# so it never touches X-Plane config/obj/text files.
+[*.lua]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true

@@ -1,0 +1,20 @@
+-- this is text drawing component
+
+-- Logical drawing extent. SASL2 defaulted every component to 100x100; SASL3
+-- derives size from the position rect instead, and since drawBitmapText emits
+-- glyphs at their native pixel size, that default IS the font scale. Keep the
+-- SASL2 extent so the call sites' 50x50 / 60x60 rects still scale the text.
+size = {100, 100}
+
+
+defineProperty("text")
+defineProperty("color", { 0, 0, 0, 1 })
+defineProperty("font", loadBitmapFont('basic_font.fnt'))
+
+function draw()
+	
+	local c = get(color)
+	
+	drawBitmapText(get(font), 0, 0, get(text), TEXT_ALIGN_LEFT, {c[1], c[2], c[3], c[4]})
+
+end
