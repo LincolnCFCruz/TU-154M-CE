@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_antiice.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Ice tab's diagram (DIAGRAMS.antiice).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Anti-ice one-line diagram (the Ice tab)
 --
@@ -50,12 +36,12 @@
 local AI = {
     C3   = 340,  -- three-column node
     C4   = 275,  -- four-column node
-    TOP  = 8,    -- detector, conditions, electrical load    (LN_H6 -> 103)
+    TOP  = 8,    -- detector, conditions, electrical load    (LN_H6 -> 107)
     AIRB = 143,  -- hot-air collector bar
-    AIR  = 183,  -- wing + stabiliser, three engine inlets   (LN_H6 -> 278)
+    AIR  = 183,  -- wing + stabiliser, three engine inlets   (LN_H6 -> 282)
     ELB  = 318,  -- 115 V / 27 V supply bar
-    ELEC = 358,  -- slats, three heated windows              (LN_H6 -> 453)
-    OUT  = 493,  -- probes, ice accreted, what the sim gets  (LN_H6 -> 588)
+    ELEC = 358,  -- slats, three heated windows              (LN_H6 -> 457)
+    OUT  = 493,  -- probes, ice accreted, what the sim gets  (LN_H6 -> 592)
 }
 -- The two supply gaps are 80 px because they carry a bar, its junctions and a
 -- symbol on every drop; the gap above the result band is 40 because it carries

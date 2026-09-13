@@ -1,23 +1,8 @@
---[[
-
-  File: inspector_schema.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the tabs: what each one is
-  called and, for a list tab, the datarefs it shows.
-
-  Pure data: strings and tables. The geometry in inspector_vocab.lua sizes
-  the tab bar from the number of entries, so this file is loaded first.
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
--- Schema: one entry per tab. `short` is the tab-bar label, `name` the header.
+-- The tabs, as pure data. Loaded first: inspector_vocab.lua sizes the tab bar
+-- from the number of entries.
+--
+-- One entry per tab. `short` is the tab-bar label, `name` the header.
 -- Field kinds: gauge | bar | value | lamp | fail | enum
 --   gauge/bar : min, max, unit, [warn_lo], [warn_hi], [dp]
 --   value     : unit, [dp]

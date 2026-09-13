@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_hydro.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Hydr tab's diagram (DIAGRAMS.hydro).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Hydraulic one-line diagram (the Hydr tab)
 --
@@ -39,8 +25,8 @@ local HG = {
     COL  = 370,  -- column pitch; nodes are CW wide and the rest is return channel
     CW   = 340,  -- full-width node
     PW   = 164,  -- half-width node, for the paired pumps
-    TANK = 12,   -- reservoirs
-    PJ   = 100,   -- tank -> pump junction
+    TANK = 8,    -- reservoirs
+    PJ   = 100,  -- tank -> pump junction
     PUMP = 134,  -- engine and electric pumps
     SJ   = 235,  -- pump -> system junction
     SYS  = 263,  -- accumulator and pressure

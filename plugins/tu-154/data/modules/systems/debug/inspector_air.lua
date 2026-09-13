@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_air.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Air tab's diagram (DIAGRAMS.air).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Bleed air / conditioning / pressurisation one-line diagram (the Air tab)
 --
@@ -33,38 +19,30 @@
 --   * The turbo-cooler mixing ratios (cold_tube_reg_L/R, cockpit_reg, the two
 --     cabin_regs) are locals too, so the zones show duct temperature, cabin
 --     temperature and the setting rather than a regulator position.
---
--- Nothing here re-implements systems logic: every value is a dataref read
--- through readv(), exactly as on the card tabs.
 -- ---------------------------------------------------------------------------
 
--- Air diagram geometry, same convention as EG above.
 local AG = {
-    SRC    = 10,   -- engine and APU bleed sources
-    TEE    = 104,   -- the ENG 1 / ENG 3 elbow into the side trunks
+    SRC    = 8,    -- engine and APU bleed sources
+    TEE    = 104,  -- the ENG 1 / ENG 3 elbow into the side trunks
     CTR    = 112,  -- centre section (ENG 2 + APU)
-    MAN    = 178,  -- left / right manifolds
-    HELB   = 272,  -- manifold -> hot header elbow
-    CND    = 284,  -- turbo-coolers
-    HDR    = 290,  -- hot header (shorter, so centred in the same row)
-    HOT    = 368,  -- hot air manifold
-    COLD   = 388,  -- cold air manifold
-    ZONE   = 408,  -- door heat / cockpit / cabin 1 / cabin 2
-    CBAR   = 502,  -- cabin collector
-    PRS    = 527,  -- outflow valve, cabin, panel, duct gauge
+    MAN    = 168,  -- left / right manifolds
+    HELB   = 262,  -- manifold -> hot header elbow
+    CND    = 274,  -- turbo-coolers
+    HDR    = 280,  -- hot header (shorter, so centred in the same row)
+    HOT    = 358,  -- hot air manifold
+    COLD   = 378,  -- cold air manifold
+    ZONE   = 398,  -- door heat / cockpit / cabin 1 / cabin 2
+    CBAR   = 492,  -- cabin collector
+    PRS    = 517,  -- outflow valve, cabin, panel, duct gauge
     ZW     = 275,  -- zone / pressurisation column width
     SW     = 267,  -- source column width
 }
 -- Every source drop and both trunk drops are long enough to carry the valve
--- that is actually in them: this system is mostly valves, and drawing them
--- as plain line was the biggest thing the first version left unsaid.
+-- that is in them: this system is mostly valves.
 
 -- The x side, derived as the electrical diagram's is: columns from colX /
 -- colC, node positions from their widths, and every offset a wire takes from
--- a node named here. ENG 3 is the one value that does not derive -- it has
--- always been drawn a pixel left of its column centre -- and it stays named
--- (AIR_ENG) rather than recentred, because the refactor that introduced all
--- this was required to leave every primitive where it was.
+-- a node named here.
 AG.C = {}
 for i = 1, 4 do
     AG.C[i] = colC(i, 4, AG.SW)
@@ -96,7 +74,7 @@ local AIR_TUE  = { [0] = "DOOR HEAT", [1] = "COCKPIT", [2] = "CABIN 1", [3] = "C
 local AIR_ENG = {
     { n = 1, col = 1, cx = AG.C[1] },
     { n = 2, col = 2, cx = AG.C[2] },
-    { n = 3, col = 4, cx = AG.C[4] - 1 }, -- one px left of centre, as always drawn
+    { n = 3, col = 4, cx = AG.C[4] },
 }
 
 local AIR_ZONES = {

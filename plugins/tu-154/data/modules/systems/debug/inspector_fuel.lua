@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_fuel.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Fuel tab's diagram (DIAGRAMS.fuel).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Fuel one-line diagram (the Fuel tab)
 --
@@ -34,12 +20,8 @@
 --     valve position nobody publishes.
 --   * The balancer stops the pumps on the heavier side, and
 --     auto_tank_level_2/3 say which side, so that tank gets a HELD chip.
---
--- Nothing here re-implements systems logic: every value is a dataref read
--- through readv(), exactly as on the card tabs.
 -- ---------------------------------------------------------------------------
 
--- Fuel diagram geometry, same convention as EG above.
 local FG = {
     TANK   = 8,    -- the five supply tanks
     COLL   = 130,  -- transfer manifold
@@ -56,18 +38,15 @@ local FG = {
 -- The rest stay tight, so the extra height goes where there is something to
 -- put in it rather than being spread as even air.
 
--- The x side, derived as the electrical diagram's is. Three positions do not
--- derive -- APU FEED sits a pixel left of its column, and engines 2 and 3 one
--- and two px left of their centres (FUEL_ENG) -- and stay named rather than
--- recentred, because the refactor that introduced all this was required to
--- leave every primitive where it was.
+-- The x side, derived as the electrical diagram's is.
 FG.XC = {}
 for i = 1, 4 do
     FG.XC[i] = colC(i, 4, FG.XW)
 end
 FG.T1X = colX(2, 4, FG.XW)                  -- tank 1 and its pumps...
 FG.T1W = colX(3, 4, FG.XW) + FG.XW - FG.T1X -- ...span transfer columns 2 and 3
-FG.APUX = 898                               -- APU FEED, LOAD AND METERS
+FG.APUX = colX(4, 4, FG.XW)                 -- APU FEED, LOAD AND METERS
+FG.EW = colW(3, 30)                         -- engine node width
 FG.DROP = 194                               -- tank 1 -> pumps -> ring main, in from tank 1's left
 FG.RARL, FG.RARR = 340, 790                 -- the ring main's two flow heads
 
@@ -106,13 +85,11 @@ for _, k in ipairs(FUEL_TANKS) do
     k.cx = colC(k.col, 5, FG.TW) -- each tank's pump drop into the manifold
 end
 
--- where the ring main drops into each engine: engine 1 at its column centre,
--- engines 2 and 3 one and two px left of theirs, as they have always been drawn
-local FUEL_ENG = {
-    { col = 1, cx = 193, n = 1 },
-    { col = 2, cx = 589, n = 2 },
-    { col = 3, cx = 985, n = 3 },
-}
+-- the ring main drops into each engine at its column centre
+local FUEL_ENG = {}
+for i = 1, 3 do
+    FUEL_ENG[i] = { col = i, cx = colC(i, 3, FG.EW), n = i }
+end
 
 local FUEL_LEGEND = {
     { S_LIVE,  "fuel moving" },
@@ -338,7 +315,7 @@ local function drawFuelDiagram()
     sasl.gl.drawText(font, W - PAD, Y(FG.RING + 4), "RING MAIN", 11, false, false,
         TEXT_ALIGN_RIGHT, COL_DIM)
 
-    local ew = colW(3, 30)
+    local ew = FG.EW
     for i = 1, #FUEL_ENG do
         local e = FUEL_ENG[i]
         local vlv = readv("tu-154/fuel/fire_vlv_open_" .. e.n)

@@ -1,25 +1,8 @@
---[[
-
-  File: inspector_absu.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the RA-56 tab's diagram (DIAGRAMS.absu).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- RA-56 servo one-line diagram (the RA-56 tab)
 --
--- This one is a NEW tab rather than a conversion, and that is deliberate. The
--- ABSU card tab carries 81 readings, most of them scalars and lamps that a grid
--- shows perfectly well; the servo layer adds about thirty more. Together they do
--- not fit one diagram without turning back into a grid, so the grid keeps the
--- scalars and this tab takes the part that has structure worth drawing.
+-- The ABSU list tab keeps the 81 scalars and lamps a grid shows well; this tab
+-- takes the servo layer, the part with structure worth drawing.
 --
 -- The structure is a 3 x 3 matrix and the diagram is laid out as one: columns
 -- are axes (pitch, roll, yaw), rows are the three RA-56 channels. Channel N is
@@ -42,8 +25,7 @@
 -- ---------------------------------------------------------------------------
 
 local AB = {
-    COL  = 370,  -- column pitch
-    CW   = 340,  -- full-width node
+    CW   = 340,  -- column and full-width node
     SW   = 236,  -- servo node, inset to leave a bus channel each side
     SX   = 52,   -- servo node inset from the column edge
     PWR  = 8,    -- power, health, autothrottle
@@ -53,10 +35,9 @@ local AB = {
     S3   = 394,  -- channel 3
     OUT  = 512,  -- voted output and director
 }
--- The servo node is inset 40 rather than 30 and is 20 px narrower than the
--- column, which buys 25 px of bare wire on each side of it -- enough for a
--- head, so the command going IN and the rod position coming OUT are told
--- apart by more than which side of the box they are on.
+-- The servo node's inset leaves 37 px of bare wire between it and each bus --
+-- enough for a head, so the command going IN and the rod position coming OUT
+-- are told apart by more than which side of the box they are on.
 
 local ABSU_AX = {
     { col = 1, t = "PITCH", ax = "p", sfx = "pitch", hyd = "elev", drives = "elevator",
@@ -94,7 +75,7 @@ local function drawAbsuDiagram()
     local failsig = readv("tu-154/absu/absu_fail_signal") > 0.5
 
     -- ---- power, health, autothrottle -------------------------------------
-    listNode(colX(1, 3, AB.COL), AB.PWR, AB.CW, LN_H4, "ABSU POWER",
+    listNode(colX(1, 3, AB.CW), AB.PWR, AB.CW, LN_H4, "ABSU POWER",
         pwr27 and S_LIVE or S_DEAD, {
             { "27 V", pwr27 and "ON" or "OFF", pwr27 and S_LIVE or S_DEAD },
             { "ABSU load", fmt(readv("tu-154/absu_power_cc"), 1) .. " A" },
@@ -103,7 +84,7 @@ local function drawAbsuDiagram()
               readv("tu-154/switchers/eng/hydro_circuit_auto_man") > 0.5 and "MANUAL" or "AUTO" },
         })
 
-    listNode(colX(2, 3, AB.COL), AB.PWR, AB.CW, LN_H4, "ABSU HEALTH",
+    listNode(colX(2, 3, AB.CW), AB.PWR, AB.CW, LN_H4, "ABSU HEALTH",
         failsig and S_FAULT or (healthy and S_LIVE or S_DEAD), {
             { "healthy", healthy and "YES" or "NO", healthy and S_LIVE or S_DEAD },
             { "stabilisation", readv("tu-154/lights/stab_work") > 0.5 and "ON" or "OFF" },
@@ -115,7 +96,7 @@ local function drawAbsuDiagram()
         })
 
     local toga = readv("tu-154/absu/toga_comm") > 0.5
-    listNode(colX(3, 3, AB.COL), AB.PWR, AB.CW, LN_H4, "AUTOTHROTTLE (STU)",
+    listNode(colX(3, 3, AB.CW), AB.PWR, AB.CW, LN_H4, "AUTOTHROTTLE (STU)",
         toga and S_LIVE or (readv("tu-154/absu/stu_mode") > 0.5 and S_STBY or S_DEAD), {
             { "mode", enumTxt({ [0] = "OFF", [1] = "ON", [2] = "ARMED", [3] = "STAB",
                                 [4] = "GO-AROUND" }, readv("tu-154/absu/stu_mode")) },
@@ -130,7 +111,7 @@ local function drawAbsuDiagram()
     -- ---- one column per axis ---------------------------------------------
     for i = 1, #ABSU_AX do
         local a = ABSU_AX[i]
-        local x = colX(a.col, 3, AB.COL)
+        local x = colX(a.col, 3, AB.CW)
         local bus, sum = x + 15, x + 325
         local cmd = readv(a.cmd)
         local contr = readv(a.contr)

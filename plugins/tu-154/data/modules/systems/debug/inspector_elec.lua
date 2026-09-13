@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_elec.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Elec tab's diagram (DIAGRAMS.elec).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Electrical one-line diagram (the Elec tab draws this instead of cards)
 --
@@ -36,25 +22,18 @@
 --     bat_is_source_*), so those feeders are coloured from the datarefs and
 --     each DC bus carries a chip naming its source. The 36 V TR cross-tie has
 --     no line of its own for the same reason -- the chip states it.
---
--- Nothing here re-implements systems logic: every value is a dataref read
--- through readv(), exactly as on the card tabs.
 -- ---------------------------------------------------------------------------
 
--- ---- Electrical diagram layout ---------------------------------------------
 -- Five equal columns carry the whole diagram: the sources, the converters, the
 -- DC buses (columns 1, 2, 4, 5) and the inverters all line up on them, so a
 -- feeder is a straight drop. The 115 V bus row uses its own widths because the
 -- two emergency buses are narrower than the three main ones.
--- Electrical diagram geometry. Depths are below CONTENT_T; W/BW/BEM are
--- column widths. Packed into one table rather than one local each: Lua
--- allows 200 locals per chunk, and the inspector, then one file, was at 185.
 local EG = {
     W      = 208,  -- the five-column width
     BW     = 250,  -- main and emergency 115 V bus widths
     BEM    = 170,  -- emergency 115 V bus width
-    SRC    = 10,   -- generators, APU generator, ground power
-    RAIL   = 104,   -- 115 V busbar
+    SRC    = 8,    -- generators, APU generator, ground power
+    RAIL   = 104,  -- 115 V busbar
     BUS    = 124,  -- 115 V buses
     STUB   = 202,  -- bus 1 / bus 3 distribution stubs
     VUR    = 224,  -- the stub tie that feeds the reserve VU
@@ -74,18 +53,14 @@ local EG = {
 -- MID and PTS are the vertical middles of the DC and inverter rows and ALTH /
 -- ALT the two legs of the alternate feed, so they move with DC / LOW / OUT.
 
--- The x side. Nothing in drawElecDiagram types a coordinate any more: the five
--- columns come from colX / colC, the 115 V row is laid out from its own widths
--- and gap (ELEC_AC, below), and every offset a wire takes from a node is named
--- here -- so moving or resizing a column moves every wire that meets it. These
--- are the values the diagram had always been drawn at; the refactor that
--- introduced them was checked to leave every primitive where it was.
+-- The x side: the five columns come from colX / colC, the 115 V row from its
+-- own widths (ELEC_AC, below), and every offset a wire takes from a node is
+-- named here, so moving a column moves every wire that meets it.
 EG.X, EG.C = {}, {}
 for i = 1, 5 do
     EG.X[i], EG.C[i] = colX(i, 5, EG.W), colC(i, 5, EG.W)
 end
 EG.MIDX = EG.C[3] -- the centre line: VU RESERVE, the stub tie, the bus tie
-EG.BGAP = 17      -- between 115 V buses (17.5 would reach the right margin)
 EG.VURO = 16      -- the stub tie's ends, outboard of the VU RESERVE node
 EG.VUO  = 22      -- VU 1 / VU 2 output drops, outboard of their centres
 EG.VRO  = 23      -- the reserve VU's drops into the 27 V buses, inboard of theirs
@@ -130,12 +105,18 @@ local ELEC_AC = {
     { w = EG.BEM, t = "115 V EMERG 2", strap = "BUS 3",
       volt = "tu-154/elec/bus115_em_2_volt" },
 }
--- laid out left to right from the content edge, EG.BGAP apart
+-- spread edge to edge like colX: the gap is fractional, the positions are not
 do
+    local used = 0
+    for _, b in ipairs(ELEC_AC) do
+        used = used + b.w
+    end
+    local gap = (CONTENT_W - used) / (#ELEC_AC - 1)
     local x = CONTENT_L
     for _, b in ipairs(ELEC_AC) do
-        b.x, b.cx = x, x + math.floor(b.w / 2)
-        x = x + b.w + EG.BGAP
+        b.x = math.floor(x)
+        b.cx = b.x + math.floor(b.w / 2)
+        x = x + b.w + gap
     end
 end
 

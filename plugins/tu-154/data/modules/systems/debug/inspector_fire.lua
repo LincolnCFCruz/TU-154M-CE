@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_fire.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Fire tab's diagram (DIAGRAMS.fire).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Fire protection one-line diagram (the Fire tab)
 --
@@ -47,11 +33,11 @@ local FR = {
     C3   = 340,  -- three-column node
     C4   = 275,  -- four-column node (the compartments)
     C2   = 570,  -- two-column node
-    TOP  = 8,    -- system, detection, bottle bank      (LN_H6 -> 103)
+    TOP  = 8,    -- system, detection, bottle bank      (LN_H6 -> 107)
     BAR  = 148,  -- the extinguisher manifold
-    ENG  = 193,  -- three engine compartments + the APU (LN_H6 -> 288)
-    HOT  = 333,  -- hot-start protection                (LN_H6 -> 428)
-    ZONE = 473,  -- smoke zones and what the sim is told (LN_H6 -> 568)
+    ENG  = 193,  -- three engine compartments + the APU (LN_H6 -> 292)
+    HOT  = 333,  -- hot-start protection                (LN_H6 -> 432)
+    ZONE = 473,  -- smoke zones and what the sim is told (LN_H6 -> 572)
 }
 
 -- Compartment 4 is the APU. It has a valve and a lamp and nothing behind them.

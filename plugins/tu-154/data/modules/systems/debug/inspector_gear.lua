@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_gear.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Gear tab's diagram (DIAGRAMS.gear).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---- Landing gear and brakes ------------------------------------------------
 -- The top half of this diagram is one line of landing_gears.lua:
 --
@@ -295,10 +281,7 @@ local function drawGearDiagram()
         S_DEAD, {
             { "nose steering", fmt(readv("tu-154/anim/lg/front_turn"), 1) .. " deg" },
             -- nosewheel.lua writes the limit: 10 or 63 deg by the selector, times
-            -- HS 2 pressure. (controlls/nosewheel_lever, the separate 3D tiller
-            -- handle position, is written too as of the 2026-09-12 patch, but
-            -- it is a 0..1 handle position, not a degree figure, so it is not
-            -- shown here.)
+            -- HS 2 pressure (controlls/nosewheel_lever is the 0..1 tiller handle)
             { "steering limit",
               fmt(readv("sim/aircraft/gear/acf_nw_steerdeg1"), 0) .. " deg" },
             { "nose strut compression",
@@ -340,6 +323,6 @@ local function drawGearDiagram()
 
     drawLegend(LEG_D, LG_LEGEND,
         "pressure scales the rate, it does not gate it: half pressure is half speed",
-        "The contactors are gear_move AND retract: with both 27 V buses dead the gear moves neither on the emergency system nor under its own weight." .. " A failed leg still free-falls.")
+        "The contactors are gear_move AND retract: with both 27 V buses dead the gear moves neither on the emergency system nor under its own weight. A failed leg still free-falls.")
 end
 DIAGRAMS.gear = drawGearDiagram

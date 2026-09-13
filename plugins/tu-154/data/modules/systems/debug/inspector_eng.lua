@@ -1,17 +1,3 @@
---[[
-
-  File: inspector_eng.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Eng tab's diagram (DIAGRAMS.eng).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Engines one-line diagram (the Eng tab)
 --
@@ -229,10 +215,8 @@ local function drawEngDiagram()
         local leak = readv("tu-154/failures/engn_oil_leak_" .. i) > 0.5
         local pmp = readv("tu-154/failures/eng_fuel_pmp_fail_" .. i) > 0.5
         local vib = readv("tu-154/gauges/eng/vibra_" .. i)
-        -- an explicit if, NOT `(i == 2) and nil or readv(...)`: in Lua that
-        -- whole expression evaluates to the readv, because `true and nil` is
-        -- nil and `nil or X` is X. Engine 2 has no reverser and was showing
-        -- engine 2's ratio as though it did.
+        -- an explicit if: `(i == 2) and nil or readv(...)` is always the readv
+        -- (CLAUDE.md 14), and engine 2 has no reverser
         local rev
         if i ~= 2 then
             rev = readv("sim/flightmodel2/engines/thrust_reverser_deploy_ratio["

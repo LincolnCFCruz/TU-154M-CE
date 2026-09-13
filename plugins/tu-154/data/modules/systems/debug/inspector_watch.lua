@@ -1,23 +1,8 @@
---[[
-
-  File: inspector_watch.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the Watch tab (DIAGRAMS.watch), the pinned value history.
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
 -- Watch tab: the pinned traces. Each row autoscales to its own window, because
 -- the interesting thing about a bus volt and a fuel flow on the same screen is
 -- the *shape* of each, not their ratio.
 -- ---------------------------------------------------------------------------
--- Watch tab geometry, same convention as EG above.
 local WG = {
     LBL = 340, -- width of the label column, left of the plot
 }
@@ -41,11 +26,8 @@ local function drawWatch()
         return
     end
 
-    -- The rows share the whole height out between however many are pinned, so
-    -- one pinned value is one full-height plot rather than a 150 px strip and
-    -- 490 px of nothing. A tall row is not wasted on a trace: the plot
-    -- autoscales to its own window, so the extra height is extra resolution on
-    -- exactly the small transient this tab exists to catch.
+    -- The rows share the whole height between however many are pinned: each
+    -- plot autoscales, so a tall row is extra resolution on the transient.
     local pitch = math.floor((CONTENT_H - 26) / #watch)
     -- every row has the same x axis
     local px0 = CONTENT_L + WG.LBL

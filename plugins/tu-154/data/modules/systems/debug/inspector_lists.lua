@@ -1,27 +1,7 @@
---[[
-
-  File: inspector_lists.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the list tabs' renderer (every tab with `fields`).
-
-  drawList takes the scroll offset, which the frame code owns.
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
-
 -- ---------------------------------------------------------------------------
--- Card tabs: grouped lists
---
--- A card tab used to be a grid of 74 px cards, one reading each, five across:
--- the ABSU tab showed 35 of its 81 readings and scrolled for the rest, and the
--- groups the schema is written in were lost on screen. It is now label | value
--- rows under their `section` headers in LS.NCOL balanced columns, so every
--- card tab fits one screen (ABSU, the largest, is ~1700 px against 3 x 642).
+-- The list tabs (every tab with `fields`): label | value rows under their
+-- `section` headers in LS.NCOL balanced columns, so every list tab fits one
+-- screen (ABSU, the largest, is ~1700 px against 3 x 642).
 -- A section too long for its column carries on at the top of the next as
 -- "TITLE (cont.)", and a header is never left alone at the foot of a column.
 -- A tab that ever outgrows LS.NCOL full columns scrolls the rest in, a column
@@ -181,6 +161,7 @@ function drawRow(x, top, f, zebra)
     end
 end
 
+-- `scroll` is in whole columns; the frame code owns it
 function drawList(i, scroll)
     local lay = listLayout(i)
     for _, it in ipairs(lay.items) do

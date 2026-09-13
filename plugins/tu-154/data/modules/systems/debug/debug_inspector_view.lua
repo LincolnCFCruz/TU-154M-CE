@@ -1,47 +1,19 @@
---[[
-
-  File: debug_inspector_view.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the tabbed UI component.
-
-  Developer/debug tool. Renders a graphical, tabbed overview of the major
-  aircraft systems by reading datarefs LIVE. Modelled on the sibling
-  An-24RV-CE tool of the same name.
-
-  DECOUPLING CONTRACT (do not break):
-    * The inspector reads aircraft state ONLY by dataref string name, through
-      a memoised globalProperty() cache (readv() in inspector_vocab.lua). It
-      never include()s or references any modules/systems/*.lua file, and it
-      never set()s a system dataref. The schema is just strings.
-    * "Commands" in X-Plane are momentary and have no readable state, and this
-      plugin creates none of its own anyway (CLAUDE.md section 10), so the
-      schema surfaces the *datarefs the commands act on* -- switch / lever /
-      mode positions, status lamps -- that is the observable system state.
-    * Every `dref` is a name created in core/dataref_creator_1/2/3.lua.
-      Nothing here creates a dataref, so Hard Rule 4 does not apply and the
-      component may be instantiated at any point.
-
-  This file is the frame: the tab bar and its badges, the header, the
-  DATAREFS overlay, the scrollbar, the clicks and the per-frame update. What
-  it draws lives beside it in systems/debug/:
-
-    inspector_schema.lua     the tabs, and the datarefs each list tab shows
-    inspector_vocab.lua      the shared vocabulary: palette, geometry, readv()
-                             and the value history, node / wire / symbol helpers
-    inspector_lists.lua      the list tabs' renderer
-    inspector_<key>.lua      one per diagram tab: elec, air, fuel, hydro, absu
-                             (the RA-56 tab), antiice, fire, ctrl, eng, gear,
-                             lamps, watch
-
-  Most tabs are grouped label | value lists built from their `fields`. A tab may
-  instead carry a `diagram` key naming an entry in DIAGRAMS, and then draw()
-  hands the whole content area to that function; such a tab does not scroll.
-
-  Layout is a fixed 1180x740 canvas (see debug_inspector.lua). A list tab that
-  outgrows three columns scrolls a column at a time (mouse wheel, or the
-  right-gutter arrows).
-
---]] size = { 1180, 740 }
+-- ---------------------------------------------------------------------------
+-- Tu-154M System Viewer / Debug Inspector -- the frame: the tab bar and its
+-- badges, the header, the DATAREFS overlay, the scrollbar, the clicks and the
+-- per-frame update. What it draws lives beside it:
+--
+--   inspector_schema.lua   the tabs, and the datarefs each list tab shows
+--   inspector_vocab.lua    palette, geometry, readv() and the value history,
+--                          the node / wire / symbol helpers
+--   inspector_lists.lua    the list tabs (every tab with `fields`)
+--   inspector_<key>.lua    one per `diagram` tab, registered in DIAGRAMS
+--
+-- Decoupling contract: aircraft state is read ONLY by dataref name, through
+-- readv(). Nothing here include()s a systems module, set()s a system dataref
+-- or creates a dataref, so Hard Rule 4 does not apply.
+-- ---------------------------------------------------------------------------
+size = { 1180, 740 }
 
 -- ---------------------------------------------------------------------------
 -- The inspector's files, and how they share names
@@ -262,29 +234,35 @@ function update()
     scroll_row = clamp(0, scroll_row, max_scroll)
 end
 
+-- Tab p's rect in whole pixels: TAB_W (1180 / 11) is not an integer, and a
+-- tab edge or group divider on a fraction is smeared over two pixel columns.
+local function tabRect(p)
+    local j = p - 1
+    local k = j % TAB_PER_ROW
+    local x0 = math.floor(k * TAB_W)
+    local y0 = Hh - (math.floor(j / TAB_PER_ROW) + 1) * TAB_H
+    return x0, y0, math.floor((k + 1) * TAB_W) - x0
+end
+
 local function drawTabBar()
     for p = 1, N_TABS do
         local i = TABS.order[p]
-        local j = p - 1
-        local row = math.floor(j / TAB_PER_ROW)
-        local x0 = (j % TAB_PER_ROW) * TAB_W
-        local y0 = Hh - (row + 1) * TAB_H
+        local x0, y0, tw = tabRect(p)
         local on = (i == current_tab)
-        sasl.gl.drawRectangle(x0, y0, TAB_W, TAB_H, on and COL_TABON or COL_TAB)
-        sasl.gl.drawText(font, x0 + TAB_W / 2, y0 + 9, schema[i].short, 13, false, false, TEXT_ALIGN_CENTER,
+        sasl.gl.drawRectangle(x0, y0, tw, TAB_H, on and COL_TABON or COL_TAB)
+        sasl.gl.drawText(font, x0 + tw / 2, y0 + 10, schema[i].short, 13, false, false, TEXT_ALIGN_CENTER,
             on and COL_TEXT or COL_DIM)
         if on then
-            sasl.gl.drawRectangle(x0, y0, TAB_W, 3, COL_TEXT)
+            sasl.gl.drawRectangle(x0, y0, tw, 3, COL_TEXT)
         end
         sasl.gl.drawLine(x0, y0, x0, y0 + TAB_H, COL_BG)
         -- a system group starts here, unless it also starts the row
-        if TABS.gstart[p] and j % TAB_PER_ROW ~= 0 then
+        if TABS.gstart[p] and (p - 1) % TAB_PER_ROW ~= 0 then
             sasl.gl.drawRectangle(x0 - 1, y0 + 7, 2, TAB_H - 14, COL_DIM)
         end
         local b = BADGE.tab[i]
         if b then
-            sasl.gl.drawCircle(math.floor(x0 + TAB_W - 14), math.floor(y0 + TAB_H / 2 + 1), 4,
-                true, stateCol(b))
+            sasl.gl.drawCircle(x0 + tw - 14, y0 + TAB_H / 2, 4, true, stateCol(b))
         end
     end
 end
@@ -296,18 +274,13 @@ local function drawHeader()
     -- The scrollbar's thumb says roughly where; this says which.
     local tab = schema[current_tab]
     if not tab.diagram and max_scroll > 0 then
-        sasl.gl.drawText(font, W - 412, y + 10, "columns " .. (scroll_row + 1) .. "-"
+        sasl.gl.drawText(font, W - 422, y + 10, "columns " .. (scroll_row + 1) .. "-"
             .. (scroll_row + LS.NCOL) .. " of " .. (max_scroll + LS.NCOL), 12, false, false,
             TEXT_ALIGN_RIGHT, COL_DIM)
     end
-    -- Always-on power readout, visible from every tab. Coloured by the same
-    -- NOM_27 / NOM_115 the diagrams use -- these lamps were the one place the
-    -- invented 24 / 104 survived the fix, so a 27 V bus at 18 V (live to the
-    -- whole aircraft) showed red here while the Elec tab showed it green.
-    -- A dead bus stays red rather than going grey as it would on a diagram:
-    -- on a diagram grey is one box among many, and here it is the alarm.
-    -- 115 V is the best of the three buses, because the lamp answers "is there
-    -- AC at all"; which bus is carrying is the Elec tab's question.
+    -- Always-on power readout, coloured by the diagrams' NOM_27 / NOM_115. A
+    -- dead bus stays red rather than grey: here it is the alarm. 115 V is the
+    -- best of the three buses -- the lamp answers "is there AC at all".
     local dcl = readv("tu-154/elec/bus27_volt_left")
     local dcr = readv("tu-154/elec/bus27_volt_right")
     local ac = math.max(readv("tu-154/elec/bus115_1_volt"),
@@ -322,9 +295,9 @@ local function drawHeader()
         sasl.gl.drawText(font, l[1] + 12, y + 7, l[2], 14, false, false, TEXT_ALIGN_LEFT, COL_DIM)
     end
     -- the dataref probe toggle, between the title and the power readout
-    sasl.gl.drawRectangle(W - 402, y + 4, 100, 20, refs_on and COL_SEL or COL_TAB)
-    sasl.gl.drawFrame(W - 402, y + 4, 100, 20, COL_FRAME)
-    sasl.gl.drawText(font, W - 352, y + 10, "DATAREFS", 12, false, false, TEXT_ALIGN_CENTER,
+    sasl.gl.drawRectangle(W - 412, y + 4, 100, 20, refs_on and COL_SEL or COL_TAB)
+    sasl.gl.drawFrame(W - 412, y + 4, 100, 20, COL_FRAME)
+    sasl.gl.drawText(font, W - 362, y + 10, "DATAREFS", 12, false, false, TEXT_ALIGN_CENTER,
         refs_on and COL_TEXT or COL_DIM)
     sasl.gl.drawLine(PAD, y + 2, W - PAD, y + 2, COL_FRAME)
 end
@@ -474,14 +447,13 @@ local function drawScrollbar()
 end
 
 function draw()
-    -- glyphs on the pixel grid: without this a label whose x lands on a half
-    -- pixel is rendered soft. Turned off again at the end so it stays this
-    -- component's business.
     -- the tab-bar dots: BADGE.per other tabs re-judged per frame, round robin
     for _ = 1, BADGE.per do
         BADGE.pass(BADGE.nxt)
         BADGE.nxt = BADGE.nxt % N_TABS + 1
     end
+    -- glyphs on the pixel grid: without this a label whose x lands on a half
+    -- pixel is rendered soft. Turned off again at the end.
     sasl.gl.setRenderTextPixelAligned(true)
     sasl.gl.drawRectangle(0, 0, W, Hh, COL_BG)
     drawTabBar()
@@ -543,12 +515,9 @@ local comps = {}
 do
     for p = 1, N_TABS do
         local i = TABS.order[p]
-        local j = p - 1
-        local row = math.floor(j / TAB_PER_ROW)
-        local x0 = (j % TAB_PER_ROW) * TAB_W
-        local y0 = Hh - (row + 1) * TAB_H
+        local x0, y0, tw = tabRect(p)
         comps[#comps + 1] = clickable {
-            position = { x0, y0, TAB_W, TAB_H },
+            position = { x0, y0, tw, TAB_H },
             onMouseDown = function()
                 current_tab = i
                 scroll_row = 0
@@ -560,7 +529,7 @@ end
 
 -- the dataref probe toggle in the header (matches the button in drawHeader)
 comps[#comps + 1] = clickable {
-    position = { W - 402, CONTENT_T + 4, 100, 20 },
+    position = { W - 412, CONTENT_T + 4, 100, 20 },
     onMouseDown = function()
         refs_on = not refs_on
         return true

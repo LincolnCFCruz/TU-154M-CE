@@ -1,27 +1,14 @@
---[[
-
-  File: inspector_vocab.lua
-  -----
-  Tu-154M System Viewer / Debug Inspector -- the shared vocabulary.
-
-  Everything the tabs draw with: the palette and font, readv() and the
-  DATAREFS capture, the Watch tab's value history, the canvas geometry, the
-  S_* states and their colours, the node / wire / symbol helpers, the tab
-  badges' state and DIAGRAMS.
-
-  Every top-level name here is shared, and none may be nil: a name the
-  namespace does not hold falls through to the component, and SASL hands
-  an unresolved name to its component loader on every read (CLAUDE.md 14).
-  That is why note_hook and watch_hover start as false. A temporary that
-  can be nil stays `local` (hinter).
-
-  Loaded by debug_inspector_view.lua into the inspector's shared namespace
-  (see "The inspector's files" there): the vocabulary it draws with --
-  listNode, wire, readv, the S_* states, colX, Y and the rest of
-  inspector_vocab.lua -- is in scope without being imported, and its own
-  top-level locals stay private to this file.
-
---]]
+-- ---------------------------------------------------------------------------
+-- The shared vocabulary: palette and font, readv() and the DATAREFS capture,
+-- the Watch tab's value history, the canvas geometry, the S_* states, the
+-- node / wire / symbol helpers, the tab badges' state and DIAGRAMS.
+--
+-- Every top-level name here is shared, and none may be nil: a name the
+-- namespace does not hold falls through to the component, and SASL hands an
+-- unresolved name to its component loader on every read (CLAUDE.md 14). That
+-- is why note_hook and watch_hover start as false. A temporary that can be
+-- nil stays `local` (hinter).
+-- ---------------------------------------------------------------------------
 
 -- ---------------------------------------------------------------------------
 -- Palette (SASL colours are {r,g,b,a} floats 0..1)
@@ -36,9 +23,7 @@ COL_DIM    = { 0.55, 0.58, 0.64, 1 }
 COL_GREEN  = { 0.27, 0.82, 0.40, 1 }
 COL_AMBER  = { 0.98, 0.74, 0.20, 1 }
 COL_RED    = { 0.94, 0.30, 0.30, 1 }
--- Pinned / plotted: a name on Watch, its trace, and nothing else. It used to be
--- the S_STBY state colour AND every piece of selected chrome as well, so a
--- selected tab, an armed pump and a pinned name were all the same blue.
+-- pinned / plotted: a name on Watch and its trace, and nothing else
 COL_ACCENT = { 0.32, 0.66, 0.96, 1 }
 -- S_STBY, "available / armed": the ECAM cyan, and used for nothing else
 COL_CYAN   = { 0.30, 0.82, 0.86, 1 }
@@ -79,14 +64,9 @@ function H(name)
     return h
 end
 
--- Dataref probe. The most common question after reading a value off this tool
--- is "what is that called, so I can watch it in DataRefTool" -- and the answer
--- used to be only in the source. Rather than name the datarefs at every one of
--- the ~200 node rows (which would rot the moment a row changed), readv() logs
--- what it touches while the tab's content draws, and the overlay lists exactly
--- that. It is therefore always correct and never needs maintaining.
--- Capture is off unless the overlay is up, so the normal path stays a plain
--- memoised read with one boolean test in front of it.
+-- Dataref probe: readv() logs what it touches while the tab's content draws,
+-- and the DATAREFS overlay lists exactly that, so the list cannot drift from
+-- the code. Capture is off unless the overlay is up.
 ref_capture = false -- log reads right now (content draw only)
 ref_seen = {}       -- name -> true, for de-duplication
 ref_list = {}       -- names in first-read order
@@ -104,17 +84,12 @@ function readv(name)
 end
 
 -- ---------------------------------------------------------------------------
--- Value history. The faults that are hardest to catch in this tree are
--- transients -- a pump that drops out for a frame, a bus that flickers during
--- an APU start, a regulator that hunts -- and a snapshot cannot show them. Pin
--- a dataref from the DATAREFS overlay on any tab and the Watch tab plots it.
+-- Value history for the Watch tab: the transients -- a pump dropping out for
+-- a frame, a bus flickering -- that a snapshot cannot show.
 --
--- Sampling is on a fixed *sim*-time cadence and never per frame (section 7a
--- rule 1). The accumulator is fed tu-154/time/frame_time, which is 0 while the
--- sim is paused, so a paused sim adds no samples: the traces freeze rather than
--- filling with a flat line, and the pause test in section 12.4 passes for this
--- tool as it does for a systems module. Time acceleration is followed for free,
--- because frame_time is derived from sim time rather than wall-clock time.
+-- Sampled on a fixed *sim*-time cadence, never per frame (CLAUDE.md 7a): the
+-- accumulator is fed tu-154/time/frame_time, so a paused sim adds no samples
+-- and time acceleration is followed for free.
 -- ---------------------------------------------------------------------------
 WATCH_MAX = 6  -- traces; more than this and the rows stop being readable
 WATCH_N = 190  -- samples per trace, about 4 px each across the plot
@@ -122,10 +97,8 @@ WATCH_DT = 0.1 -- sim seconds between samples, so 19 s of history
 watch = {}     -- { name = , v = ring, n = filled, w = next write slot }
 watch_hover = false -- the mouse over the content area, in window coordinates
 
--- Pins survive a reload: the names are written here whenever the set changes
--- and read back when the inspector loads. Only the names -- the history is at
--- most 19 s of samples and would be stale anyway. output/*.ini is already
--- gitignored, like saved_state.ini beside it.
+-- Pins survive a reload: the names (not the history) are written here whenever
+-- the set changes and read back when the inspector loads.
 WATCH_FILE = pluginDataDir .. "/output/debug_watch.ini"
 
 function watchSave()
@@ -194,7 +167,7 @@ function clamp(lo, v, hi)
 end
 
 -- ---------------------------------------------------------------------------
--- Geometry (fixed canvas; window scales it proportionally)
+-- Geometry: a fixed 1180 x 740 canvas, drawn 1:1 (debug_inspector.lua)
 -- ---------------------------------------------------------------------------
 W, Hh = size[1], size[2]
 TAB_H = 30
@@ -279,17 +252,12 @@ function stateTxt(s)
     return stateCol(s)
 end
 
--- The dots on the tab bar: which tabs have something red or amber on them, so
--- "where is the problem" is answered without clicking through 21 tabs. A
--- diagram is judged by drawing it with the sasl.gl drawing calls swapped for
--- no-ops (BADGE.pass, in debug_inspector_view.lua) while listNode and slimNode report every
--- state they are handed to BADGE.note -- so the badge is whatever the diagram
--- itself would have coloured, with no second copy of any rule. Only S_FAULT
--- and S_LOW count: a cold aircraft is grey and cyan, and gets no dots. One
--- other tab is re-judged per frame, round robin (BADGE.per), and the tab on
--- screen from its own draw. Kept in one table: this chunk has 200 locals.
--- Declared here, above every node helper: a function that reads it must come
--- after it, or the name resolves as a global (CLAUDE.md 14).
+-- The tab-bar dots: which tabs have something red or amber on them. A diagram
+-- is judged by drawing it with the sasl.gl calls swapped for no-ops
+-- (BADGE.pass, in the frame) while listNode and slimNode report every state
+-- they are handed to BADGE.note, so the dot is whatever the diagram itself
+-- would colour. Declared above every node helper: a function that reads it
+-- must come after it (CLAUDE.md 14).
 BADGE = { tab = {}, nxt = 1, per = 1, live = true, on = false, worst = nil,
                 dry = false } -- dry: a badge pass is drawing a tab that is not on screen
 
@@ -305,13 +273,9 @@ function BADGE.note(s)
     end
 end
 
--- The thresholds the systems modules themselves test against -- and this time
--- they really are. The old 104 / 33 / 24 were invented here and the comment
--- claiming otherwise was simply wrong: a 27 V bus sitting at 18 V is live to
--- every module in the aircraft and this diagram painted it amber. Counted
--- across systems/: 27 V is `> 13` at 94 sites and nothing else; 115 V is
--- `> 110` at 37 (four stricter `>= 115` sites test "fully up to voltage",
--- which is a different question); 36 V is `> 30` at 29.
+-- The thresholds systems/ itself tests: 27 V is `> 13` at 94 sites and
+-- nothing else, 115 V `> 110` at 37 (four `>= 115` sites ask "fully up to
+-- voltage", a different question), 36 V `> 30` at 29.
 NOM_115, NOM_36, NOM_27 = 110, 30, 13
 
 function voltState(v, nominal)
@@ -333,20 +297,15 @@ function feedState(available, selected)
     return selected and S_LIVE or S_STBY
 end
 
--- Depths below CONTENT_T, so each diagram is laid out in one top-down
--- coordinate system and Y() converts. Columns come from colX/colW above, so
--- only these depths are written out per diagram; CONTENT_H is 642 at the
--- current canvas, and a third tab row would take 30 px off that.
--- Every diagram's footer sits on this one line at the bottom of the content
--- area, rather than each picking a depth of its own and leaving whatever is
--- left over as dead space. The swatch row is 11 px tall and the note sits
--- 16 px under it, so this is the lowest depth that still fits both.
+-- Diagrams are laid out in depths below CONTENT_T (Y() converts) and in
+-- columns from colX / colC (below). CONTENT_H is 642; a third tab row would
+-- take 30 px off it. Every diagram's footer sits at LEG_D: the swatch row is
+-- 11 px and the note 16 px under it, the lowest depth that fits both.
 LEG_D = CONTENT_H - 24
 
 function Y(dy)
     return CONTENT_T - dy
 end
-
 
 -- orthogonal polyline: wire(state, x1, y1, x2, y2, ...)
 function wire(s, ...)
@@ -442,11 +401,9 @@ SYM_R = 9 -- the radius the round symbols share, so a row of them lines up
 -- Flow direction along (dx, dy). Every run in these diagrams is orthogonal, so
 -- only the sign of one axis matters.
 --
--- A solid head means something is MOVING -- it is drawn only on a live run.
--- Every other run gets a thin open chevron in its own colour, so the direction
--- is still there to read but nothing claims to be flowing. Drawn solid on every
--- run, a cold aircraft was covered in heads pointing along lines that carried
--- nothing, and the one path that was flowing did not stand out from them.
+-- A solid head means something is MOVING, so it is drawn only on a live run;
+-- every other run gets a thin open chevron in its own colour, which keeps the
+-- direction without claiming flow.
 function arrow(cx, cy, dx, dy, s)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
@@ -520,21 +477,14 @@ function roundSym(cx, cy, txt, s)
     sasl.gl.drawText(font, cx, cy - 4, txt, 10, false, false, TEXT_ALIGN_CENTER, stateTxt(s))
 end
 
--- A battery: two cells of long plate / short plate.
--- Two cells of long plate / short plate. The plates are drawn ACROSS the run
--- the symbol sits on, so a battery on a vertical tap gets horizontal plates --
--- drawing it the other way up made it read as a fence beside the wire.
+-- A battery: two cells of long plate / short plate, drawn ACROSS the run the
+-- symbol sits on (along it, it reads as a fence beside the wire).
 function battSym(cx, cy, s, horiz)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
-    -- Long plate then short plate, twice. The pair inside a cell sits 4 px
-    -- apart and the cells 7 px, because evenly spaced plates of similar length
-    -- read as a ladder rather than as a battery; the length is what carries
-    -- the symbol, so both strokes are the same weight.
-    -- Long plate then short plate, twice, reading along the run from the plus
-    -- terminal. SASL's y grows upward, so the short plate of a vertical cell
-    -- goes BELOW its long one -- putting it above drew the cells back to front
-    -- and the whole thing read as a ladder.
+    -- Read along the run from the plus terminal. A cell's plates sit 4 px
+    -- apart and the cells 7 px: evenly spaced plates read as a ladder. SASL's
+    -- y grows upward, so a vertical cell's short plate goes BELOW its long one.
     for i = 0, 1 do
         if horiz then
             local x = cx - 8 + i * 11
@@ -580,8 +530,8 @@ note_hook = false
 --                taking it out would shrink the node and move every depth
 --                table on the tab.
 --   note = true  fixed explanation, not a reading -- "returns to reservoir 1",
---                "nominal 210 kg/cm2". Drawn in tertiary grey so it recedes
---                behind the live rows it used to be indistinguishable from.
+--                "nominal 210 kg/cm2". Drawn in tertiary grey, behind the
+--                live rows.
 --                diagcheck fails a note whose text changes over its sweep.
 --
 -- `role` says what KIND of thing the node is:
@@ -590,15 +540,11 @@ note_hook = false
 --              the schematic stands forward and these recede. Use readout().
 --   nil        everything else: the plain box.
 --
--- The chrome follows the state too: the state bar is 4 px down the LEFT edge,
--- beside the title, where it used to be a 3 px stripe along the bottom, the
--- far end from where the eye starts; a dead node's title is dimmed, so what is
--- alive stands out on a cold aircraft; and a failed node is framed in red.
+-- The chrome follows the state too: a 4 px state bar down the left edge beside
+-- the title, a dead node's title dimmed, a failed node framed in red.
 --
--- Height for n rows is 21 + n * 13, named LN_H2..LN_H6 below. The 21 is the
--- title band plus the clearance the bottom row needs: SASL's drawText y is a
--- BASELINE, so a descender hangs below it, and at the old 17 the last row's
--- p and g sat in the 3 px state stripe.
+-- Height for n rows is 21 + n * 13 (LN_H2..LN_H6 below): the title band plus
+-- room for the bottom row's descenders, because drawText's y is a BASELINE.
 function listNode(x, dy, w, h, title, s, rows, fill, role)
     local yb = Y(dy + h)
     if role ~= "readout" then
@@ -606,8 +552,6 @@ function listNode(x, dy, w, h, title, s, rows, fill, role)
     end
     -- `fill` (0..1) washes the bottom of the node in its state colour, so a tank
     -- or a bus reads as "how full / how loaded" without doing the arithmetic.
-    -- The card grid had bar and gauge widgets for that; the first diagrams
-    -- replaced them with bare numbers and lost it.
     if fill and fill > 0 then
         local c = stateCol(s)
         sasl.gl.drawRectangle(x + 1, yb + 1, w - 2, (h - 2) * clamp(0, fill, 1),
@@ -660,10 +604,8 @@ end
 LN_H2, LN_H3, LN_H4, LN_H5, LN_H6 = 47, 60, 73, 86, 99
 
 -- x of the i-th of n equal columns of width w, spread edge to edge across the
--- content area. Every diagram column is derived from this rather than written
--- out, so the canvas size is a parameter instead of a rewrite: the first three
--- diagrams were hand-tuned to a 900 px content width and had to be re-measured
--- when the window grew.
+-- content area. Every diagram column comes from here, so the canvas size is a
+-- parameter rather than a rewrite.
 function colX(i, n, w)
     if n < 2 then
         return CONTENT_L + math.floor((CONTENT_W - w) / 2)
@@ -703,8 +645,7 @@ end
 
 -- The footer every diagram shares: state swatches on the left, a dim note on
 -- the right of the same line, and a full-width note 16 px under it. `dy` is
--- the swatch line's depth, so each diagram sits its footer under its own last
--- row instead of at one depth shared by all of them.
+-- the swatch line's depth; every diagram passes LEG_D.
 function drawLegend(dy, items, rightNote, note)
     local lx = CONTENT_L
     for i = 1, #items do
