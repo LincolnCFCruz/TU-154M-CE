@@ -1,8 +1,7 @@
--- this is voice and text messages logic
 size = {1000, 770}
 
 
-defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message")) -- 
+defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message"))
 -- 0 - none, 1 - Pull UP, 2 - alt callout, 3 - Pull Up, 4 - Terrain, 5 - Terrain Ahead, 6 - Too low, Terrain, 
 -- 7 - Alt collout, 8 - Too low, Gear, 9 - Too low, Flaps, 10 - Check altitude, 11 - Sink Rate, 12 - Don't sink, 13 - Glideslope
 defineProperty("hide_eng_objects", globalPropertyi("tu-154/lang/hide_eng_objects")) -- hide the English cockpit objects. 1 = RUS

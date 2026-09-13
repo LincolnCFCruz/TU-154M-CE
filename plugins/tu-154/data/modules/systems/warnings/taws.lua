@@ -1,4 +1,3 @@
--- this is main TAWS script
 size = {1000, 770}
 
 components = {

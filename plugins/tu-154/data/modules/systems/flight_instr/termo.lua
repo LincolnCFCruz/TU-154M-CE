@@ -5,7 +5,7 @@ defineProperty("thermo", globalPropertyf("sim/cockpit2/temperature/outside_air_t
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- results

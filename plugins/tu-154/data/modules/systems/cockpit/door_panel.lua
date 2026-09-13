@@ -1,4 +1,3 @@
--- this is the door lights panel
 
 -- controlls
 defineProperty("test_lamps", globalPropertyi("tu-154/buttons/lamp_test_doors")) -- engine panel lamp test button

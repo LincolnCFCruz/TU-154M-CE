@@ -48225,7 +48225,7 @@ P acf/_spoi2_v2 0.000000000
 P acf/_spoi2_with_flit_sbrk 0.000000000
 P acf/_spoi2_with_grnd_pitch 0.000000000
 P acf/_spoi2_with_grnd_sbrk 0.000000000
-P acf/_spool_time_compressor_jet 8.500000000
+P acf/_spool_time_compressor_jet 5.500000000
 P acf/_spool_time_compressor_prop 6.000000000
 P acf/_spot1_3d_rgb/0 1.000000000
 P acf/_spot1_3d_rgb/1 1.000000000

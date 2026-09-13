@@ -1,4 +1,3 @@
--- this is the crew voices logic
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 defineProperty("hide_rus_objects", globalPropertyi("tu-154/lang/hide_rus_objects")) -- hide the Russian cockpit objects
 

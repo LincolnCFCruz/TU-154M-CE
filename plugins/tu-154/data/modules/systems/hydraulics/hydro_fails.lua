@@ -1,27 +1,22 @@
--- hydro fails
+defineProperty("hs_leak_1", globalPropertyi("tu-154/failures/hydro_leak_1"))
+defineProperty("hs_leak_2", globalPropertyi("tu-154/failures/hydro_leak_2"))
+defineProperty("hs_leak_3", globalPropertyi("tu-154/failures/hydro_leak_3"))
+defineProperty("hs_leak_4", globalPropertyi("tu-154/failures/hydro_leak_4"))
 
+defineProperty("hydro_pump_fail_11", globalPropertyi("tu-154/failures/hydro_pump_fail_11"))
+defineProperty("hydro_pump_fail_12", globalPropertyi("tu-154/failures/hydro_pump_fail_12"))
+defineProperty("hydro_pump_fail_2", globalPropertyi("tu-154/failures/hydro_pump_fail_2"))
+defineProperty("hydro_pump_fail_3", globalPropertyi("tu-154/failures/hydro_pump_fail_3"))
 
--- failures
-defineProperty("hs_leak_1", globalPropertyi("tu-154/failures/hydro_leak_1")) -- leak
-defineProperty("hs_leak_2", globalPropertyi("tu-154/failures/hydro_leak_2")) -- leak
-defineProperty("hs_leak_3", globalPropertyi("tu-154/failures/hydro_leak_3")) -- leak
-defineProperty("hs_leak_4", globalPropertyi("tu-154/failures/hydro_leak_4")) -- leak
-
-defineProperty("hydro_pump_fail_11", globalPropertyi("tu-154/failures/hydro_pump_fail_11")) -- fail
-defineProperty("hydro_pump_fail_12", globalPropertyi("tu-154/failures/hydro_pump_fail_12")) -- fail
-defineProperty("hydro_pump_fail_2", globalPropertyi("tu-154/failures/hydro_pump_fail_2")) -- fail
-defineProperty("hydro_pump_fail_3", globalPropertyi("tu-154/failures/hydro_pump_fail_3")) -- fail
-
-defineProperty("hydro_elec_fail_2", globalPropertyi("tu-154/failures/hydro_elec_fail_2")) -- fail
-defineProperty("hydro_elec_fail_3", globalPropertyi("tu-154/failures/hydro_elec_fail_3")) -- fail
+defineProperty("hydro_elec_fail_2", globalPropertyi("tu-154/failures/hydro_elec_fail_2"))
+defineProperty("hydro_elec_fail_3", globalPropertyi("tu-154/failures/hydro_elec_fail_3"))
 
 defineProperty("system_qty_1", globalPropertyf("tu-154/hydro/gs_qty_1")) -- oil remaining in the system
 defineProperty("system_qty_2", globalPropertyf("tu-154/hydro/gs_qty_2")) -- oil remaining in the system
 defineProperty("system_qty_3", globalPropertyf("tu-154/hydro/gs_qty_3")) -- oil remaining in the system
 
 
--- define sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
 -- Smart Copilot
@@ -47,7 +42,6 @@ if MASTER then
 	
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed

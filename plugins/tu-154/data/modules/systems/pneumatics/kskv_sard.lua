@@ -1,7 +1,6 @@
--- this is pressure control logic
+-- SARD: cabin pressure control
 
--- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("xp_version", globalPropertyi("sim/version/xplane_internal_version"))
 
 

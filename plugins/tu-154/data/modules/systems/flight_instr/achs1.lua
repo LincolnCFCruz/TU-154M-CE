@@ -2,7 +2,7 @@
 -- source datarefs
 defineProperty("utc_time", globalPropertyf("sim/time/zulu_time_sec"))
 --defineProperty("world_green", globalPropertyf("sim/graphics/misc/cockpit_light_level_g"))  -- green component of natural light in cockpit
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- clock 1 - captain
 defineProperty("needle_hours_1", globalPropertyf("tu-154/gauges/acs1/needle_hours"))
@@ -46,7 +46,7 @@ defineProperty("LK3", globalPropertyi("tu-154/gauges/acs3/left_knob_press"))
 defineProperty("RK3", globalPropertyi("tu-154/gauges/acs3/right_knob_press"))
 defineProperty("flag_pos_3", globalPropertyi("tu-154/gauges/acs3/flag_pos"))
 
---defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio")) -- 
+--defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio"))
 
 
 -- failures

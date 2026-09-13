@@ -1,4 +1,3 @@
--- this is flight controls panel
 
 
 -- controls
@@ -109,8 +108,8 @@ defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deplo
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
 defineProperty("gear3_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[2]"))  -- deploy of left gear
 
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 
 defineProperty("indicated_airspeed", globalPropertyf("sim/flightmodel/position/indicated_airspeed")) -- indicated airspeed
@@ -139,7 +138,7 @@ defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) 
 defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
 
 -- other datarefs
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- control surfaces
 

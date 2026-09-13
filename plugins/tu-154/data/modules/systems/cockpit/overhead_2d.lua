@@ -1,4 +1,3 @@
--- this is overhead 2D panel
 size = {1458, 1013}
 
 defineProperty("hide_eng_objects", globalPropertyi("tu-154/lang/hide_eng_objects")) -- hide the English cockpit objects. 1 = RUS
@@ -3429,14 +3428,5 @@ components = {
 
 
 	
-	-- close button
-		clickable {
-		position = {size[1] - 15, size[2] - 15, 15, 15 },
-      
-		onMouseDown = function() 
-			set(show_ohvd_panel, 0)
-			return true
-		end,
-	},	
 
 }

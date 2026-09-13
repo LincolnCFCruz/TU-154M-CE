@@ -1,13 +1,10 @@
--- light system failures
-
--- failures
 defineProperty("lan_lamp_fail_FL", globalPropertyi("tu-154/failures/lan_lamp_fail_FL")) -- front left landing light failure
 defineProperty("lan_lamp_fail_FR", globalPropertyi("tu-154/failures/lan_lamp_fail_FR")) -- front right landing light failure
 defineProperty("lan_lamp_fail_WL", globalPropertyi("tu-154/failures/lan_lamp_fail_WL")) -- left wing landing light failure
 defineProperty("lan_lamp_fail_WR", globalPropertyi("tu-154/failures/lan_lamp_fail_WR")) -- right wing landing light failure
 
-defineProperty("rel_lites_nav", globalPropertyi("sim/operation/failures/rel_lites_nav")) -- 
-defineProperty("rel_lites_beac", globalPropertyi("sim/operation/failures/rel_lites_beac")) -- 
+defineProperty("rel_lites_nav", globalPropertyi("sim/operation/failures/rel_lites_nav"))
+defineProperty("rel_lites_beac", globalPropertyi("sim/operation/failures/rel_lites_beac"))
 
 
 
@@ -18,8 +15,7 @@ defineProperty("sim_lan_WL", globalProperty("sim/cockpit2/switches/landing_light
 defineProperty("sim_lan_WR", globalProperty("sim/cockpit2/switches/landing_lights_switch[4]")) -- wing right landing light
 
 
--- define sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
 -- Smart Copilot
@@ -61,7 +57,6 @@ if MASTER then
 	
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed

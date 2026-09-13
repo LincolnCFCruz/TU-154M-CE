@@ -1,8 +1,4 @@
--- this is main AHZ logic
-
-
--- this is aux ahz logic
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("pitch_sim", globalPropertyf("sim/flightmodel/position/theta"))
 defineProperty("roll_sim", globalPropertyf("sim/flightmodel/position/phi"))
@@ -80,7 +76,7 @@ defineProperty("dir_roll_flag", globalPropertyf("tu-154/gauges/ahz/dir_roll_flag
 defineProperty("dir_pitch_flag", globalPropertyf("tu-154/gauges/ahz/dir_pitch_flag_L")) -- captain's AGD pitch director failure flag
 
 
-defineProperty("ahz_flag", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L")) -- 
+defineProperty("ahz_flag", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L"))
 
 
 
@@ -345,7 +341,6 @@ local MASTER = get(ismaster) ~= 1
 
 if MASTER then	
 	
-	-- set results
 	
 	set(res_pitch, pitch_show_2)
 	set(pitch_int, pitch_absu)

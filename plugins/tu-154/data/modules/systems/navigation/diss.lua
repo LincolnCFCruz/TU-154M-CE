@@ -1,4 +1,3 @@
--- this is DISS main script
 
 components = {
 

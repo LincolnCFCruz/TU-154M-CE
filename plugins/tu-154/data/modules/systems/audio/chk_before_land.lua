@@ -1,4 +1,3 @@
--- this is after pressure set checklist
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 
 defineProperty("side",globalPropertyi("tu-154/checklist/side")) -- which side to show. 0 = before takeoff, 1 = before approach

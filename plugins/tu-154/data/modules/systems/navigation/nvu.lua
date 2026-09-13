@@ -1,4 +1,3 @@
--- this is NVU main script
 
 
 components = {

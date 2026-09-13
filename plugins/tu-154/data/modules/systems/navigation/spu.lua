@@ -1,4 +1,3 @@
--- this is simple SPU logic
 size = {140, 180}
 
 -- define property table

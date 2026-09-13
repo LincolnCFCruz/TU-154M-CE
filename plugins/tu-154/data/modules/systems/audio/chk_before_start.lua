@@ -1,4 +1,3 @@
--- this is before start checklist
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 
 defineProperty("side",globalPropertyi("tu-154/checklist/side")) -- which side to show. 0 = before takeoff, 1 = before approach
@@ -69,12 +68,12 @@ defineProperty("trimm_zero_pitch", globalPropertyf("tu-154/lights/trimm_zero_pit
 defineProperty("cg_pos_actual", globalPropertyf("tu-154/misc/cg_pos_actual")) -- actual CG position
 defineProperty("weight_actual", globalPropertyf("tu-154/misc/weight_actual")) -- actual mass
 
-defineProperty("v1_15", globalPropertyi("tu-154/speeds/v1_15")) -- 
-defineProperty("vr_15", globalPropertyi("tu-154/speeds/vr_15")) -- 
-defineProperty("v2_15", globalPropertyi("tu-154/speeds/v2_15")) -- 
-defineProperty("v1_28", globalPropertyi("tu-154/speeds/v1_28")) -- 
-defineProperty("vr_28", globalPropertyi("tu-154/speeds/vr_28")) -- 
-defineProperty("v2_28", globalPropertyi("tu-154/speeds/v2_28")) -- 
+defineProperty("v1_15", globalPropertyi("tu-154/speeds/v1_15"))
+defineProperty("vr_15", globalPropertyi("tu-154/speeds/vr_15"))
+defineProperty("v2_15", globalPropertyi("tu-154/speeds/v2_15"))
+defineProperty("v1_28", globalPropertyi("tu-154/speeds/v1_28"))
+defineProperty("vr_28", globalPropertyi("tu-154/speeds/vr_28"))
+defineProperty("v2_28", globalPropertyi("tu-154/speeds/v2_28"))
 
 
 defineProperty("stab_setting", globalPropertyi("tu-154/controll/stab_setting")) -- CG position for the stabiliser. 0 = aft, 1 = mid, 2 = fwd	1

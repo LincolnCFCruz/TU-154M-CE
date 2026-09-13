@@ -1,4 +1,3 @@
--- this is the logic of 27v buses
 
 -- each bus has several sources. 2 batteries, VU, VU aux and other bus, if it has its own sources
 
@@ -79,7 +78,7 @@ defineProperty("buses_connected", globalPropertyi("tu-154/elec/bus_connected"))
 defineProperty("vu_res_to_L", globalPropertyi("tu-154/elec/vu_res_to_L")) -- standby VU connected to the left bus
 defineProperty("vu_res_to_R", globalPropertyi("tu-154/elec/vu_res_to_R")) -- standby VU connected to the right bus
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- Smart Copilot
@@ -408,7 +407,6 @@ function update()
 
 		--print(get(bat_amp_2))
 		
-		-- set results 
 		set(bus27_volt_left, bus_volt_L)
 		set(bus27_volt_right, bus_volt_R)
 

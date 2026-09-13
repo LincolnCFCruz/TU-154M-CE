@@ -1,21 +1,20 @@
--- this is the simple logic of relative gyroscope, used for compases
+-- Relative gyroscope logic, used by the compass systems.
 
--- define property table
 -- source
 defineProperty("true_psi", globalPropertyf("sim/flightmodel/position/true_psi")) -- real course
 defineProperty("mag_psi", globalPropertyf("sim/flightmodel/position/mag_psi")) -- mag course
 
 defineProperty("course_mk", globalPropertyf("tu-154/tks/course_mk_1")) -- heading on MK5
 
-defineProperty("cur", globalPropertyf("sim/cockpit/gyros/psi_ind_degm4")) --
+defineProperty("cur", globalPropertyf("sim/cockpit/gyros/psi_ind_degm4"))
 
-defineProperty("roll", globalPropertyf("sim/flightmodel/position/phi")) --
-defineProperty("pitch", globalPropertyf("sim/flightmodel/position/true_theta")) --
+defineProperty("roll", globalPropertyf("sim/flightmodel/position/phi"))
+defineProperty("pitch", globalPropertyf("sim/flightmodel/position/true_theta"))
 
 defineProperty("latitude", globalPropertyd("sim/flightmodel/position/latitude")) -- real latitude position
 defineProperty("longitude", globalPropertyd("sim/flightmodel/position/longitude")) -- The longitude of the aircraft
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- controls
@@ -50,7 +49,6 @@ defineProperty("bus115_2_volt", globalPropertyf("tu-154/elec/bus115_2_volt"))
 defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
 
 
--- fail
 defineProperty("fail_1", globalPropertyf("sim/operation/failures/rel_ss_dgy"))
 defineProperty("fail_2", globalPropertyf("sim/operation/failures/rel_cop_dgy"))
 

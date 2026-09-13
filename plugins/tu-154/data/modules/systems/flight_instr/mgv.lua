@@ -1,8 +1,4 @@
--- this is main AHZ logic
-
-
--- this is aux ahz logic
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 --defineProperty("pitch_sim", globalPropertyf("sim/cockpit2/gauges/indicators/pitch_electric_deg_pilot"))
 --defineProperty("roll_sim", globalPropertyf("sim/cockpit2/gauges/indicators/roll_electric_deg_pilot"))
@@ -193,7 +189,6 @@ local MASTER = get(ismaster) ~= 1
 if MASTER then	
 
 	
-	-- set results
 	set(res_roll, roll_show)
 	set(res_pitch, pitch_show)
 	

@@ -1,4 +1,3 @@
--- this is fuel tanks manipulating logic
 -- FIX (XP12):
 --   1. Removed the forced shutdown of the tank 2, 3 and 4 pumps when the script loads
 --      (set tank4_pump=0, tank2R_pump=0 etc.) - this blocked the fuel supply
@@ -45,6 +44,12 @@ defineProperty("pump_tank1_4_work", globalPropertyi("tu-154/fuel/pump_tank1_4_wo
 
 defineProperty("reserv_trans", globalPropertyi("tu-154/fuel/reserv_trans"))
 
+-- porc_open decides whether fuel reaches tank 1 at all and was never published;
+-- reserv_trans below is only the >0.9 end of trans_pos, so the valve's travel
+-- was not visible either
+defineProperty("porc_open_out", globalPropertyi("tu-154/fuel/porc_open")) -- metering unit passing fuel
+defineProperty("trans_pos_out", globalPropertyf("tu-154/fuel/trans_pos")) -- standby transfer valve travel, 0..1
+
 defineProperty("apu_burn_fuel", globalPropertyf("tu-154/elec/apu_burning_fuel")) -- the APU is running and burning fuel
 
 -- altitude
@@ -58,7 +63,7 @@ defineProperty("rel_fuelcap",    globalPropertyi("sim/operation/failures/rel_fue
 defineProperty("fuel_porc_fail", globalPropertyi("tu-154/failures/fuel_porc_fail"))
 
 -- time
-defineProperty("frame_time",       globalPropertyf("tu-154/time/frame_time"))           -- flight time
+defineProperty("frame_time",       globalPropertyf("tu-154/time/frame_time"))
 defineProperty("frame_rate_period", globalPropertyf("sim/operation/misc/frame_rate_period")) -- standard fallback
 
 
@@ -246,7 +251,6 @@ function update()
 		fuel_temp_act_2 = air_temp
 	end
 
-	-- set results
 	set(tank1_w,  tank1_qty)
 	set(tank4_w,  tank4_qty)
 	set(tank2L_w, tank2L_qty)
@@ -256,6 +260,10 @@ function update()
 
 	set(fuel_temp_1, fuel_temp_act_1)
 	set(fuel_temp_2, fuel_temp_act_2)
+
+	-- publish the two valve states the transfer above depended on
+	set(porc_open_out, bool2int(porc_open))
+	set(trans_pos_out, trans_pos)
 
 	-- fix stupid failures
 	set(rel_fuelcap, 0)

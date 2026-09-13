@@ -1,4 +1,3 @@
--- this is the commands for ABSU
 defineProperty("absu_zk", globalPropertyi("tu-154/buttons/console/absu_zk")) -- selected heading (ZK) button on the ABSU panel
 defineProperty("absu_reset", globalPropertyi("tu-154/buttons/console/absu_reset")) -- programme reset button on the ABSU panel
 defineProperty("absu_nvu", globalPropertyi("tu-154/buttons/console/absu_nvu")) -- NVU button on the ABSU panel

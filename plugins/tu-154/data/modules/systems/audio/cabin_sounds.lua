@@ -1,6 +1,4 @@
--- this is the main cabin sounds logic
-
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external")) -- enviroment
 
@@ -70,8 +68,8 @@ defineProperty("air_usage_L", globalPropertyf("tu-154/bleed/air_usage_L")) -- le
 defineProperty("air_usage_R", globalPropertyf("tu-154/bleed/air_usage_R")) -- right air flow
 
 -- gears
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 defineProperty("groundspeed", globalPropertyf("sim/flightmodel/position/groundspeed")) -- GS, m/s
 
 -- flaps
@@ -79,20 +77,19 @@ defineProperty("flaps_lever", globalPropertyf("tu-154/controll/flaps_lever")) --
 
 
 -- loudness
-defineProperty("engine_volume_ratio", globalPropertyf("sim/operation/sound/engine_volume_ratio")) -- 
-defineProperty("prop_volume_ratio", globalPropertyf("sim/operation/sound/prop_volume_ratio")) -- 
-defineProperty("ground_volume_ratio", globalPropertyf("sim/operation/sound/ground_volume_ratio")) -- 
-defineProperty("weather_volume_ratio", globalPropertyf("sim/operation/sound/weather_volume_ratio")) -- 
-defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warning_volume_ratio")) -- 
-defineProperty("radio_volume_ratio", globalPropertyf("sim/operation/sound/radio_volume_ratio")) -- 
-defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio")) -- 
+defineProperty("engine_volume_ratio", globalPropertyf("sim/operation/sound/engine_volume_ratio"))
+defineProperty("prop_volume_ratio", globalPropertyf("sim/operation/sound/prop_volume_ratio"))
+defineProperty("ground_volume_ratio", globalPropertyf("sim/operation/sound/ground_volume_ratio"))
+defineProperty("weather_volume_ratio", globalPropertyf("sim/operation/sound/weather_volume_ratio"))
+defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warning_volume_ratio"))
+defineProperty("radio_volume_ratio", globalPropertyf("sim/operation/sound/radio_volume_ratio"))
+defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio"))
 
 
 -- failures
 defineProperty("main_alarm_fail", globalPropertyi("tu-154/failures/main_alarm_fail")) -- siren failure
 defineProperty("speaker_alarm_fail", globalPropertyi("tu-154/failures/speaker_alarm_fail")) -- siren failure
 
--- define sources
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
 -- Smart Copilot
@@ -394,7 +391,6 @@ if MASTER then
 	
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed

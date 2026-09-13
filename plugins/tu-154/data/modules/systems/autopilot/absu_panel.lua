@@ -1,4 +1,3 @@
--- this is ABSU panel script
 -- createGlobalPropertyf("tu-154/controlls/absu_debug1", 0)
 -- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
 
@@ -47,9 +46,9 @@ defineProperty("hydro_long_control", globalPropertyi("tu-154/switchers/eng/hydro
 defineProperty("hydro_circuit_auto_man_cap", globalPropertyi("tu-154/switchers/eng/hydro_circuit_auto_man_cap")) -- crossfeed auto - manual
 defineProperty("hydro_long_control_cap", globalPropertyi("tu-154/switchers/eng/hydro_long_control_cap")) -- longitudinal controllability
 
-defineProperty("ZK_select", globalPropertyi("tu-154/switchers/ZK_select")) -- 
-defineProperty("nav_select", globalPropertyi("tu-154/switchers/nav_select")) -- 
-defineProperty("vbe_select", globalPropertyi("tu-154/switchers/vbe_select")) -- 
+defineProperty("ZK_select", globalPropertyi("tu-154/switchers/ZK_select"))
+defineProperty("nav_select", globalPropertyi("tu-154/switchers/nav_select"))
+defineProperty("vbe_select", globalPropertyi("tu-154/switchers/vbe_select"))
 
 
 -- buttons
@@ -192,9 +191,9 @@ defineProperty("absu_course_out", globalPropertyi("tu-154/absu_course_out")) -- 
 defineProperty("absu_gs_out", globalPropertyi("tu-154/absu_gs_out")) -- flying outside the course limits
 
 
-defineProperty("pkp_fail_left", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L")) -- 
-defineProperty("pkp_fail_right", globalPropertyf("tu-154/gauges/ahz/ahz_flag_R")) -- 
-defineProperty("mgv_contr_fail", globalPropertyf("tu-154/gyro/mgv_contr_flag")) -- 
+defineProperty("pkp_fail_left", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L"))
+defineProperty("pkp_fail_right", globalPropertyf("tu-154/gauges/ahz/ahz_flag_R"))
+defineProperty("mgv_contr_fail", globalPropertyf("tu-154/gyro/mgv_contr_flag"))
 
 
 defineProperty("pressure_ind_1", globalPropertyf("tu-154/gauges/hydro/pressure_ind_1")) -- hydraulic system 1 pressure indicator
@@ -225,15 +224,15 @@ defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) 
 defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
 
 
-defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp")) -- 
-defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp")) -- 
-defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp")) -- 
-defineProperty("roll_contr_lamp", globalPropertyi("tu-154/absu/roll_contr_lamp")) -- 
-defineProperty("pitch_contr_lamp", globalPropertyi("tu-154/absu/pitch_contr_lamp")) -- 
-defineProperty("man_roll_lamp", globalPropertyi("tu-154/absu/man_roll_lamp")) -- 
-defineProperty("man_pitch_lamp", globalPropertyi("tu-154/absu/man_pitch_lamp")) -- 
-defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp")) -- 
-defineProperty("triangle_lamp_signal", globalPropertyi("tu-154/absu/triangle_lamp_signal")) -- 
+defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp"))
+defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp"))
+defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp"))
+defineProperty("roll_contr_lamp", globalPropertyi("tu-154/absu/roll_contr_lamp"))
+defineProperty("pitch_contr_lamp", globalPropertyi("tu-154/absu/pitch_contr_lamp"))
+defineProperty("man_roll_lamp", globalPropertyi("tu-154/absu/man_roll_lamp"))
+defineProperty("man_pitch_lamp", globalPropertyi("tu-154/absu/man_pitch_lamp"))
+defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp"))
+defineProperty("triangle_lamp_signal", globalPropertyi("tu-154/absu/triangle_lamp_signal"))
 
 
 -- failures

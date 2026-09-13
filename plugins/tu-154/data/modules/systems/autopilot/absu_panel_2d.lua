@@ -1,4 +1,3 @@
--- this is ABSU 2D panel
 
 size = {917, 597}
 
@@ -1318,16 +1317,6 @@ components = {
 	
 	--------------------------------
 
-	-- close button
-	clickable {
-		position = {size[1] - 30, size[2] - 30, 30, 30 },
-      
-		onMouseDown = function() 
-			set(show_absu_panel, 0)
-			
-			return true
-		end,
-	}, 	
 
 }
 

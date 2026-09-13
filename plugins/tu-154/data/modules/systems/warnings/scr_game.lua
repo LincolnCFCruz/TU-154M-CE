@@ -4,7 +4,7 @@ size = {500, 385}
 defineProperty("mode_set", globalPropertyi("tu-154/taws/mode_set")) -- screen operating mode. 0 - off, 1 - terrain map, 2 - side view, 3 - clock, 4 - power-up sequence, 5 - game
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 
 -- controls

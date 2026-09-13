@@ -1,10 +1,9 @@
--- this is RMI gauge, showing radiocompas values
 
 -- sources
 defineProperty("course_bgmk", globalPropertyf("tu-154/tks/course_bgmk_2")) -- heading on the BGMK
 
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("adf_bear_1", globalPropertyf("tu-154/radio/adf_bear_1"))
 defineProperty("adf_bear_2", globalPropertyf("tu-154/radio/adf_bear_2"))

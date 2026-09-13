@@ -1,4 +1,3 @@
--- this is flight controls main script
 
 components = {
 	controls_panel {},

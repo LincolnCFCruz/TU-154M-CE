@@ -1,4 +1,3 @@
--- global functions
 -- interpolates the table pairs values, like {[in1, out1], {in2, out2}, {in3, out3}}
 function interpolate(tbl, value)
     local lastActual = 0
@@ -18,21 +17,18 @@ function interpolate(tbl, value)
     return value - lastActual + lastReference
 end
 
--- return the sign of given number as +1 or -1
 function sign(x)
 	if x >= 0 then return 1 else return -1 end
 end
 
--- return the integer 0 or 1 by give boolean
 function bool2int(var)
 	if var then return 1
 	else return 0 end
 end
 
--- returns Y on the line with two points by given X
-function line(x, x1, y1, x2, y2)  
-	-- (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) -- line function 
-	
+function line(x, x1, y1, x2, y2)
+	-- (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1)
+
 	if x2 - x1 ~= 0 then 
 		return (x - x1)*(y2 - y1)/(x2 - x1) + y1
 	else return 0 
@@ -40,12 +36,10 @@ function line(x, x1, y1, x2, y2)
 
 end
 
--- simply maps the input value with given range x1 x2 into range y1 y2
 function map(value, x1, x2, y1, y2)
 	return line (value, x1, y1, x2, y2)
 end
 
--- returns true if current beacon is ILS
 function isILS(freq)
     if (10810 > freq) or (11195 < freq) then
         return false
@@ -128,10 +122,8 @@ function limit(value, vmin, vmax)
 	return lim
 end
 
--- map the value and limit it to given range
 function mapLim(value, x1, x2, y1, y2)
-	
-	-- check range
+
 	local limMin, limMax = y1, y2
 	if limMin > limMax then limMin, limMax = limMax, limMin end
 	
@@ -188,7 +180,6 @@ function tabMean(tab, num)
 	
 end
 
--- returns summ of all elements in table
 function tabSumm(tab)
 	if #tab == 0 then return nil end
 	
@@ -201,7 +192,6 @@ function tabSumm(tab)
 	
 end
 
--- shuffle the table. Just for fun :)
 function tabShuffle(tab)
 	if #tab == 0 or tab == nil then return false end
 	for i = #tab, 2, -1 do
@@ -212,7 +202,6 @@ function tabShuffle(tab)
 	return true
 end
 
--- print table
 function tabPrint(tab)
 	if #tab == 0 or tab == nil then return false end
 	for i = 1, #tab do

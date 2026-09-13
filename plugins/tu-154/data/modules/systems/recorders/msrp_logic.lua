@@ -1,4 +1,3 @@
--- this is MSRP recording logic
 
 -- power and controls
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
@@ -10,14 +9,14 @@ defineProperty("msrp_date_ten", globalPropertyf("tu-154/switchers/eng/msrp_date_
 defineProperty("msrp_date_one", globalPropertyf("tu-154/switchers/eng/msrp_date_one")) -- MSRP date, day units
 defineProperty("msrp_month_ten", globalPropertyf("tu-154/switchers/eng/msrp_month_ten")) -- MSRP date, month tens
 defineProperty("msrp_month_one", globalPropertyf("tu-154/switchers/eng/msrp_month_one")) -- MSRP date, month units
-defineProperty("msrp_year_ten", globalPropertyf("tu-154/switchers/eng/msrp_year_ten")) -- MSRP lamp test button
-defineProperty("msrp_year_one", globalPropertyf("tu-154/switchers/eng/msrp_year_one")) -- MSRP lamp test button
-defineProperty("msrp_route_hun", globalPropertyf("tu-154/switchers/eng/msrp_route_hun")) -- MSRP lamp test button
-defineProperty("msrp_route_ten", globalPropertyf("tu-154/switchers/eng/msrp_route_ten")) -- MSRP lamp test button
-defineProperty("msrp_route_one", globalPropertyf("tu-154/switchers/eng/msrp_route_one")) -- MSRP lamp test button
-defineProperty("msrp_mlp_1", globalPropertyf("tu-154/switchers/eng/msrp_mlp_1")) -- MSRP lamp test button
-defineProperty("msrp_mlp_2", globalPropertyf("tu-154/switchers/eng/msrp_mlp_2")) -- MSRP lamp test button
-defineProperty("msrp_night_day", globalPropertyf("tu-154/switchers/eng/msrp_night_day")) -- MSRP lamp test button
+defineProperty("msrp_year_ten", globalPropertyf("tu-154/switchers/eng/msrp_year_ten")) -- MSRP date, year tens
+defineProperty("msrp_year_one", globalPropertyf("tu-154/switchers/eng/msrp_year_one")) -- MSRP date, year units
+defineProperty("msrp_route_hun", globalPropertyf("tu-154/switchers/eng/msrp_route_hun")) -- MSRP route number, hundreds
+defineProperty("msrp_route_ten", globalPropertyf("tu-154/switchers/eng/msrp_route_ten")) -- MSRP route number, tens
+defineProperty("msrp_route_one", globalPropertyf("tu-154/switchers/eng/msrp_route_one")) -- MSRP route number, units
+defineProperty("msrp_mlp_1", globalPropertyf("tu-154/switchers/eng/msrp_mlp_1")) -- MLP marker switch 1 (drives msrp_mlp_main)
+defineProperty("msrp_mlp_2", globalPropertyf("tu-154/switchers/eng/msrp_mlp_2")) -- MLP marker switch 2 (drives msrp_mlp_aux)
+defineProperty("msrp_night_day", globalPropertyf("tu-154/switchers/eng/msrp_night_day")) -- day/night switch
 defineProperty("msrp_main_switch", globalPropertyf("tu-154/switchers/eng/msrp_main_switch")) -- master switch
 
 
@@ -105,15 +104,15 @@ defineProperty("m_total", globalPropertyf("sim/flightmodel/weight/m_total")) -- 
 defineProperty("m_fuel", globalPropertyf("sim/flightmodel/weight/m_fuel_total")) -- kgs	Fuel Tank Weight - for 9 tanks
 defineProperty("cg_pos_actual", globalPropertyf("tu-154/misc/cg_pos_actual")) -- actual CG position
 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 defineProperty("roll_main_mode", globalPropertyi("tu-154/absu/roll_main_mode")) -- ABSU main roll mode. 0 = off, 1 = control-wheel steering, 2 = stabilisation
 defineProperty("pitch_main_mode", globalPropertyi("tu-154/absu/pitch_main_mode")) -- ABSU main pitch mode. 0 = off, 1 = control-wheel steering, 2 = stabilisation
 defineProperty("stu_mode", globalPropertyi("tu-154/absu/stu_mode")) -- autothrottle modes. 0 = off, 1 = on, 2 = armed, 3 = stabilisation, 4 = go-around
 
-defineProperty("deploy_ratio_1", globalProperty("sim/flightmodel2/gear/deploy_ratio[0]")) -- 
-defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]")) -- 
-defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]")) -- 
+defineProperty("deploy_ratio_1", globalProperty("sim/flightmodel2/gear/deploy_ratio[0]"))
+defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]"))
+defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]"))
 
 defineProperty("outer_marker", globalPropertyi("sim/cockpit/misc/outer_marker_lit"))   -- runway markers
 defineProperty("middle_marker", globalPropertyi("sim/cockpit/misc/middle_marker_lit"))
@@ -146,7 +145,7 @@ defineProperty("msrp_power", globalPropertyi("tu-154/msrp/msrp_power"))  -- MSRP
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 

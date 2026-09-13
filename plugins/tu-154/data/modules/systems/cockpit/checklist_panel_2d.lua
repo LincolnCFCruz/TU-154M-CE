@@ -1,4 +1,3 @@
--- this is checklist panel
 size = {240, 850}
 
 defineProperty("hide_eng_objects", globalPropertyi("tu-154/lang/hide_eng_objects")) -- hide the English cockpit objects. 1 = RUS
@@ -623,16 +622,6 @@ components = {
 	
 	--------------------------------
 
-	-- close button
-	clickable {
-		position = {size[1] - 30, size[2] - 30, 30, 30 },
-      
-		onMouseDown = function() 
-			set(show_checklist_panel, 0)
-			
-			return true
-		end,
-	}, 	
 
 }
 

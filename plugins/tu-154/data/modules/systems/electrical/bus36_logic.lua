@@ -1,4 +1,3 @@
--- this is logic of 36v busses
 
 -- 4 busses
 -- bus 1 powers from TR 1, that connected to bus115_1 or reconnected to bus115_3
@@ -56,7 +55,7 @@ defineProperty("pts250_1_fail", globalPropertyi("tu-154/failures/pts250_1_fail")
 defineProperty("pts250_2_fail", globalPropertyi("tu-154/failures/pts250_2_fail")) -- PTS-250 failure
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- Smart Copilot
@@ -102,7 +101,6 @@ function update()
 			--set(bus115_1_amp, get(bus115_1_amp) + get(bus36_amp_right) / 3.25)
 		end
 		
-		-- set results
 		set(bus36_volt_left, bus_L_volt)
 		set(bus36_volt_right, bus_R_volt)
 		
@@ -167,7 +165,6 @@ function update()
 			set(bus27_amp_left, get(bus27_amp_left) + get(bus36_amp_pts250_2) * 1.4)
 		end
 		
-		-- set results
 		set(bus36_volt_pts250_1, bus_1_volt)
 		set(bus36_volt_pts250_2, bus_2_volt)
 		

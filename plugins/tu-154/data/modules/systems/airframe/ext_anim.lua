@@ -1,5 +1,4 @@
--- this is for external animation
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("replay_mode", globalPropertyi("sim/operation/prefs/replay_mode"))
 
 
@@ -42,9 +41,9 @@ defineProperty("cockpit_window_right", globalPropertyf("tu-154/anim/cockpit_wind
 defineProperty("cargo_1", globalPropertyf("tu-154/anim/cargo_1")) -- baggage
 defineProperty("cargo_2", globalPropertyf("tu-154/anim/cargo_2")) -- baggage
 
-defineProperty("pax_door_1", globalPropertyf("tu-154/anim/pax_door_1")) -- doors
-defineProperty("pax_door_2", globalPropertyf("tu-154/anim/pax_door_2")) -- doors
-defineProperty("pax_door_3", globalPropertyf("tu-154/anim/pax_door_3")) -- doors
+defineProperty("pax_door_1", globalPropertyf("tu-154/anim/pax_door_1"))
+defineProperty("pax_door_2", globalPropertyf("tu-154/anim/pax_door_2"))
+defineProperty("pax_door_3", globalPropertyf("tu-154/anim/pax_door_3"))
 
 defineProperty("cockpit_door", globalPropertyf("tu-154/anim/cockpit_door")) -- doors to the cockpit
 defineProperty("cockpit_table_1", globalPropertyf("tu-154/anim/cockpit_table_1")) -- table
@@ -57,44 +56,44 @@ defineProperty("rise_chair_arm_R", globalPropertyf("tu-154/anim/rise_chair_arm_R
 defineProperty("yokes_show", globalPropertyi("tu-154/anim/show_yokes")) -- control columns
 
 -- sliders
-defineProperty("slider_1", globalProperty("sim/cockpit2/switches/custom_slider_on[0]")) -- sim slider on
-defineProperty("slider_2", globalProperty("sim/cockpit2/switches/custom_slider_on[1]")) -- sim slider on
-defineProperty("slider_3", globalProperty("sim/cockpit2/switches/custom_slider_on[2]")) -- sim slider on
-defineProperty("slider_4", globalProperty("sim/cockpit2/switches/custom_slider_on[3]")) -- sim slider on
-defineProperty("slider_5", globalProperty("sim/cockpit2/switches/custom_slider_on[4]")) -- sim slider on
-defineProperty("slider_6", globalProperty("sim/cockpit2/switches/custom_slider_on[5]")) -- sim slider on
-defineProperty("slider_7", globalProperty("sim/cockpit2/switches/custom_slider_on[6]")) -- sim slider on
-defineProperty("slider_8", globalProperty("sim/cockpit2/switches/custom_slider_on[7]")) -- sim slider on
-defineProperty("slider_9", globalProperty("sim/cockpit2/switches/custom_slider_on[8]")) -- sim slider on
-defineProperty("slider_10", globalProperty("sim/cockpit2/switches/custom_slider_on[9]")) -- sim slider on
-defineProperty("slider_11", globalProperty("sim/cockpit2/switches/custom_slider_on[10]")) -- sim slider on
-defineProperty("slider_12", globalProperty("sim/cockpit2/switches/custom_slider_on[11]")) -- sim slider on
+defineProperty("slider_1", globalProperty("sim/cockpit2/switches/custom_slider_on[0]"))
+defineProperty("slider_2", globalProperty("sim/cockpit2/switches/custom_slider_on[1]"))
+defineProperty("slider_3", globalProperty("sim/cockpit2/switches/custom_slider_on[2]"))
+defineProperty("slider_4", globalProperty("sim/cockpit2/switches/custom_slider_on[3]"))
+defineProperty("slider_5", globalProperty("sim/cockpit2/switches/custom_slider_on[4]"))
+defineProperty("slider_6", globalProperty("sim/cockpit2/switches/custom_slider_on[5]"))
+defineProperty("slider_7", globalProperty("sim/cockpit2/switches/custom_slider_on[6]"))
+defineProperty("slider_8", globalProperty("sim/cockpit2/switches/custom_slider_on[7]"))
+defineProperty("slider_9", globalProperty("sim/cockpit2/switches/custom_slider_on[8]"))
+defineProperty("slider_10", globalProperty("sim/cockpit2/switches/custom_slider_on[9]"))
+defineProperty("slider_11", globalProperty("sim/cockpit2/switches/custom_slider_on[10]"))
+defineProperty("slider_12", globalProperty("sim/cockpit2/switches/custom_slider_on[11]"))
 
 -- brake levers
-defineProperty("brake_emerg", globalPropertyf("tu-154/controlls/brake_emerg")) --
-defineProperty("brake_emerg_L", globalPropertyf("tu-154/controlls/brake_emerg_L")) --
-defineProperty("brake_emerg_R", globalPropertyf("tu-154/controlls/brake_emerg_R")) --
+defineProperty("brake_emerg", globalPropertyf("tu-154/controlls/brake_emerg"))
+defineProperty("brake_emerg_L", globalPropertyf("tu-154/controlls/brake_emerg_L"))
+defineProperty("brake_emerg_R", globalPropertyf("tu-154/controlls/brake_emerg_R"))
 
 -- tables
-defineProperty("cockpit_table_1", globalPropertyf("tu-154/anim/cockpit_table_1")) --
-defineProperty("cockpit_table_2", globalPropertyf("tu-154/anim/cockpit_table_2")) --
+defineProperty("cockpit_table_1", globalPropertyf("tu-154/anim/cockpit_table_1"))
+defineProperty("cockpit_table_2", globalPropertyf("tu-154/anim/cockpit_table_2"))
 
-defineProperty("table_up_L", globalPropertyf("tu-154/anim/table_up_L")) --
-defineProperty("table_up_R", globalPropertyf("tu-154/anim/table_up_R")) --
+defineProperty("table_up_L", globalPropertyf("tu-154/anim/table_up_L"))
+defineProperty("table_up_R", globalPropertyf("tu-154/anim/table_up_R"))
 
 defineProperty("ground_stuff_angle", globalPropertyf("tu-154/anim/ground_stuff_angle")) -- pitch angle correction for maintenance
 
 
 -- sources
-defineProperty("tire_steer_actual_deg", globalProperty("sim/flightmodel2/gear/tire_steer_actual_deg[0]")) -- 
+defineProperty("tire_steer_actual_deg", globalProperty("sim/flightmodel2/gear/tire_steer_actual_deg[0]"))
 
-defineProperty("deploy_ratio_1", globalProperty("sim/flightmodel2/gear/deploy_ratio[0]")) -- 
-defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]")) -- 
-defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]")) -- 
+defineProperty("deploy_ratio_1", globalProperty("sim/flightmodel2/gear/deploy_ratio[0]"))
+defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]"))
+defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]"))
 
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]")) -- 
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 defineProperty("groundspeed", globalPropertyf("sim/flightmodel/position/groundspeed")) -- GS, m/s
 defineProperty("yaw_apd", globalPropertyf("sim/flightmodel/position/R")) -- GS, m/s
@@ -110,15 +109,15 @@ defineProperty("weel_angle2", globalPropertyf("sim/aircraft/gear/acf_nw_steerdeg
 
 
 
-defineProperty("brake_L", globalPropertyf("sim/flightmodel/controls/l_brake_add")) -- 
-defineProperty("brake_R", globalPropertyf("sim/flightmodel/controls/r_brake_add")) -- 
+defineProperty("brake_L", globalPropertyf("sim/flightmodel/controls/l_brake_add"))
+defineProperty("brake_R", globalPropertyf("sim/flightmodel/controls/r_brake_add"))
 
 --defineProperty("brake_L", globalPropertyf("tu-154/SC/controls/l_brake_add")) 
 --defineProperty("brake_R", globalPropertyf("tu-154/SC/controls/r_brake_add")) 
 
 
-defineProperty("EC_L", globalProperty("sim/flightmodel2/gear/eagle_claw_angle_deg[1]")) -- 
-defineProperty("EC_R", globalProperty("sim/flightmodel2/gear/eagle_claw_angle_deg[2]")) -- 
+defineProperty("EC_L", globalProperty("sim/flightmodel2/gear/eagle_claw_angle_deg[1]"))
+defineProperty("EC_R", globalProperty("sim/flightmodel2/gear/eagle_claw_angle_deg[2]"))
 
 defineProperty("indicated_airspeed", globalPropertyf("sim/flightmodel/position/indicated_airspeed")) -- indicated airspeed
 
@@ -260,7 +259,7 @@ function update()
 	local rot_L = get(EC_L)
 	local rot_R = get(EC_R)
 	
-	-- hide gears in hondoles
+	-- hide gears in gondolas
 	if pos_L < 0.9 then rot_L = -11 end
 	if pos_R < 0.9 then rot_R = -11 end
 	
@@ -338,7 +337,6 @@ function update()
 	
 	if window_L <= 0.01 and not door_may_open and window_but_L == 1 then set(slider_1, 0) end -- reset slider, if not able to open
 	
-	-- limits
 	if window_L > 1 then window_L = 1
 	elseif window_L < 0 then window_L = 0 end
 	
@@ -355,7 +353,6 @@ function update()
 	
 	if window_R <= 0.01 and not door_may_open and window_but_R == 1 then set(slider_2, 0) end-- reset slider, if not able to open
 	
-	-- limits
 	if window_R > 1 then window_R = 1
 	elseif window_R < 0 then window_R = 0 end
 	
@@ -383,7 +380,6 @@ function update()
 	
 	if cargo_FWD <= 0.01 and not door_may_open and cargo_1_cmd == 1 then set(slider_3, 0) end -- reset slider, if not able to open
 	
-	-- limits
 	if cargo_FWD > 1 then cargo_FWD = 1
 	elseif cargo_FWD < 0 then cargo_FWD = 0 end
 	
@@ -399,7 +395,6 @@ function update()
 	
 	if cargo_BK <= 0.01 and not door_may_open and cargo_2_cmd == 1 then set(slider_4, 0) end -- reset slider, if not able to open
 	
-	-- limits
 	if cargo_BK > 1 then cargo_BK = 1
 	elseif cargo_BK < 0 then cargo_BK = 0 end
 	
@@ -416,7 +411,6 @@ function update()
 	
 	if door_1 <= 0.01 and not door_may_open and door_1_cmd == 1 then set(slider_5, 0) end -- reset slider, if not able to open
 	
-	-- limits
 	if door_1 > 1 then door_1 = 1
 	elseif door_1 < 0 then door_1 = 0 end
 	
@@ -433,7 +427,6 @@ function update()
 	
 	if door_2 <= 0.01 and not door_may_open and door_2_cmd == 1 then set(slider_6, 0) end -- reset slider, if not able to open
 	
-	-- limits
 	if door_2 > 1 then door_2 = 1
 	elseif door_2 < 0 then door_2 = 0 end
 	
@@ -449,7 +442,6 @@ function update()
 	
 	if door_3 <= 0.01 and not door_may_open and door_3_cmd == 1 then set(slider_7, 0) end -- reset slider, if not able to open
 	
-	-- limits
 	if door_3 > 1 then door_3 = 1
 	elseif door_3 < 0 then door_3 = 0 end
 	
@@ -457,14 +449,12 @@ function update()
 	
 	
 	-- cockpit door
-	-- Door 3
 	local door_4 = get(cockpit_door)
 	local door_4_cmd = get(slider_8)
 	
 	door_4 = door_4 + (door_4_cmd * 2 - 1) * passed / 3
 
 	
-	-- limits
 	if door_4 > 1 then door_4 = 1
 	elseif door_4 < 0 then door_4 = 0 end
 	
@@ -484,7 +474,6 @@ function update()
 	
 	chair_L = chair_L + (chair_L_cmd * 2 - 1) * passed
 	
-	-- limits
 	if chair_L > 1 then chair_L = 1
 	elseif chair_L < 0 then chair_L = 0 end
 	
@@ -496,7 +485,6 @@ function update()
 	
 	chair_R = chair_R + (chair_R_cmd * 2 - 1) * passed
 	
-	-- limits
 	if chair_R > 1 then chair_R = 1
 	elseif chair_R < 0 then chair_R = 0 end
 	

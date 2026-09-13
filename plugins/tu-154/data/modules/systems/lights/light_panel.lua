@@ -1,4 +1,3 @@
--- this is panel logic for lights system
 
 
 -- define controls datarefs
@@ -52,7 +51,7 @@ defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) 
 defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) -- engine 2 rpm
 defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- last variables

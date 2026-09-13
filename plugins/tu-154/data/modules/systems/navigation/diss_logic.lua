@@ -1,7 +1,6 @@
--- this is DISS logic
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- power
@@ -63,7 +62,7 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 -- failures
-defineProperty("diss_fail", globalPropertyi("tu-154/failures/diss_fail")) --
+defineProperty("diss_fail", globalPropertyi("tu-154/failures/diss_fail"))
 
 
 
@@ -224,7 +223,6 @@ local MASTER = get(ismaster) ~= 1
 
 if MASTER then
 	
-	-- set results
 	set(diss_wind_course, wind_dir_act + acf_course)
 	set(diss_wind_spd, wind_spd_act * 3.6)
 	set(diss_groundspeed, g_spd * 3.6)

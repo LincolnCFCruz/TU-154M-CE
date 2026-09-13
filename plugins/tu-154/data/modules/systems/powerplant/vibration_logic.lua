@@ -1,8 +1,7 @@
--- this is vibration logic for engines
 
 -- sources
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 defineProperty("eng1_fail", globalPropertyf("sim/operation/failures/rel_engfai0")) -- engine fail
@@ -217,7 +216,6 @@ local MASTER = get(ismaster) ~= 1
 
 if MASTER then	
 	
-	-- set results
 	set(vibration_1, vibro1)
 	set(vibration_2, vibro2)
 	set(vibration_3, vibro3)

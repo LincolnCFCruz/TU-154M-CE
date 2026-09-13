@@ -1,4 +1,3 @@
--- this is the palette
 -- Tu-154M - speed and CG card
 -- The logic was brought into line with the Tu-154B2
 
@@ -336,11 +335,6 @@ components = {
 		visible = function() return show_side == 1 end,
 	},
 
-	-- close button
-	clickable {
-		position = {size[1]-15, size[2]-15, 15, 15},
-		onMouseDown = function() set(show_palette, 0); return true end,
-	},
 
 	-- change side
 	clickable {

@@ -1,4 +1,3 @@
--- this is tables for fuel calculations
 
 fl_200_tbl = {
 {0, 0},

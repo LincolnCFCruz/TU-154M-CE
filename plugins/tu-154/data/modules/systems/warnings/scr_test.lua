@@ -1,11 +1,10 @@
--- this is the clock screen of TAWS
 size = {1000, 770}
 
 defineProperty("mode_set", globalPropertyi("tu-154/taws/mode_set")) -- screen mode. 0 = off, 1 = terrain map, 2 = side view, 3 = clock, 4 = power-up sequence
 defineProperty("brt_handle", globalPropertyf("tu-154/rotary/srpbz/brightness")) -- brightness knob
 
 defineProperty("taws_english", globalPropertyi("tu-154/taws/taws_english")) -- system language. 0 - Russian, 1 - English	0
-defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message")) -- 
+defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message"))
 -- 0 - none, 1 - Pull UP, 2 - alt callout, 3 - Pull Up, 4 - Terrain, 5 - Terrain Ahead, 6 - Too low, Terrain, 
 -- 7 - Alt collout, 8 - Too low, Gear, 9 - Too low, Flaps, 10 - Check altitude, 11 - Sink Rate, 12 - Don't sink, 13 - Glideslope
 
@@ -16,7 +15,7 @@ defineProperty("gs_msg_vol", globalPropertyf("tu-154/taws/gs_msg_vol")) -- GLIDE
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- images
 defineProperty("screen_img_img", loadImage("taws_clock.png", 0, 254, 1000, 770))

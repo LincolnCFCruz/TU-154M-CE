@@ -1,4 +1,3 @@
--- this is ABSU modes logic
 
 -- controls
 defineProperty("absu_zpu_sel", globalPropertyi("tu-154/switchers/console/absu_zpu_sel")) -- desired-track (ZPU) selector. left - right
@@ -134,9 +133,9 @@ defineProperty("manip_roll", globalPropertyf("sim/cockpit2/controls/yoke_roll_ra
 
 
 
-defineProperty("pkp_fail_left", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L")) -- 
-defineProperty("pkp_fail_right", globalPropertyf("tu-154/gauges/ahz/ahz_flag_R")) -- 
-defineProperty("mgv_contr_fail", globalPropertyf("tu-154/gyro/mgv_contr_flag")) -- 
+defineProperty("pkp_fail_left", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L"))
+defineProperty("pkp_fail_right", globalPropertyf("tu-154/gauges/ahz/ahz_flag_R"))
+defineProperty("mgv_contr_fail", globalPropertyf("tu-154/gyro/mgv_contr_flag"))
 
 defineProperty("pressure_ind_1", globalPropertyf("tu-154/gauges/hydro/pressure_ind_1")) -- hydraulic system 1 pressure indicator
 defineProperty("pressure_ind_2", globalPropertyf("tu-154/gauges/hydro/pressure_ind_2")) -- hydraulic system 2 pressure indicator
@@ -173,15 +172,15 @@ defineProperty("absu_use_second_nav", globalPropertyi("tu-154/absu_use_second_na
 
 
 
-defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp")) -- 
-defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp")) -- 
-defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp")) -- 
-defineProperty("roll_contr_lamp", globalPropertyi("tu-154/absu/roll_contr_lamp")) -- 
-defineProperty("pitch_contr_lamp", globalPropertyi("tu-154/absu/pitch_contr_lamp")) -- 
-defineProperty("man_roll_lamp", globalPropertyi("tu-154/absu/man_roll_lamp")) -- 
-defineProperty("man_pitch_lamp", globalPropertyi("tu-154/absu/man_pitch_lamp")) -- 
-defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp")) -- 
-defineProperty("triangle_lamp_signal", globalPropertyi("tu-154/absu/triangle_lamp_signal")) -- 
+defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp"))
+defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp"))
+defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp"))
+defineProperty("roll_contr_lamp", globalPropertyi("tu-154/absu/roll_contr_lamp"))
+defineProperty("pitch_contr_lamp", globalPropertyi("tu-154/absu/pitch_contr_lamp"))
+defineProperty("man_roll_lamp", globalPropertyi("tu-154/absu/man_roll_lamp"))
+defineProperty("man_pitch_lamp", globalPropertyi("tu-154/absu/man_pitch_lamp"))
+defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp"))
+defineProperty("triangle_lamp_signal", globalPropertyi("tu-154/absu/triangle_lamp_signal"))
 
 
 
@@ -866,7 +865,6 @@ if MASTER then
 	
 
 
-	-- set results
 	set(roll_main_mode, roll_mode_main)
 	set(pitch_main_mode, pitch_mode_main)
 

@@ -1,4 +1,3 @@
--- this is tcas screen draw script
 size = {482, 530}
 
 defineProperty("non_intr_img", loadImage("tcas_marks.png", 333, 490, 18, 18))

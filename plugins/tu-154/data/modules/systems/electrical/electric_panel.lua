@@ -1,4 +1,3 @@
--- this is electric panel. here we have controls and indicators for electric system
 -- controls on panel
 defineProperty("gpu_on", globalPropertyi("tu-154/switchers/eng/gpu_on")) -- RAP switch
 defineProperty("apu_gen_on", globalPropertyi("tu-154/switchers/eng/apu_gen_on")) -- APU generator switch
@@ -48,7 +47,7 @@ defineProperty("bus27_amp1", globalPropertyf("tu-154/gauges/eng/bus27_amp1")) --
 defineProperty("bus27_amp2", globalPropertyf("tu-154/gauges/eng/bus27_amp2")) -- 36 V bus voltmeter - angle
 
 -- other datarefs
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- sources  for gauges
 -- bus 27v
@@ -694,7 +693,6 @@ local function lamps()
 	local pts_1_brt = math.max((1 - get(bus36_pts1_work)) * lamps_brt, test_btn)
 	local pts_2_brt = math.max(get(bus36_pts2_work) * lamps_brt, test_btn)
 
-	-- set results
 	set(lamp_apu_gen_on, gpu_brt)
 	set(bus_npk_1, npk_brt)
 	set(bus_npk_2, npk_brt)

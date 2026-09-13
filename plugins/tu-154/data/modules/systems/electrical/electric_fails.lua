@@ -1,6 +1,3 @@
--- this is logic for all electrical system's failures
-
--- define properties for fails
 defineProperty("bat_fail_1", globalPropertyi("tu-154/failures/bat_1_fail")) -- battery failure
 defineProperty("bat_fail_2", globalPropertyi("tu-154/failures/bat_2_fail")) -- battery failure
 defineProperty("bat_fail_3", globalPropertyi("tu-154/failures/bat_3_fail")) -- battery failure
@@ -28,8 +25,7 @@ defineProperty("sim_gen3_fail", globalPropertyi("sim/operation/failures/rel_gene
 
 
 
--- define sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
 defineProperty("vu1_amp", globalPropertyf("tu-154/elec/vu1_amp")) -- rectifier unit (VU) running
@@ -62,7 +58,6 @@ if MASTER then
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
 	
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed
@@ -92,9 +87,9 @@ if MASTER then
 			if get(pts250_2_fail) ~= 1 then set(pts250_2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
 			if get(inv115_fail) ~= 1 then set(inv115_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
 			
-			if get(sim_gen1_fail) ~= 1 then set(sim_gen1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(sim_gen2_fail) ~= 1 then set(sim_gen2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(sim_gen3_fail) ~= 1 then set(sim_gen3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			if get(sim_gen1_fail) ~= 6 then set(sim_gen1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
+			if get(sim_gen2_fail) ~= 6 then set(sim_gen2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
+			if get(sim_gen3_fail) ~= 6 then set(sim_gen3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
 			
 			
 		

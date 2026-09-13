@@ -1447,11 +1447,15 @@ createGlobalPropertyf("tu-154/engine/hotstart_3",0) -- engine 3 hot-start severi
 createGlobalPropertyi("tu-154/absu_power_27", 0)
 createGlobalPropertyf("tu-154/engines/d_isa_temp", 0)
 createGlobalPropertyf("tu-154/engines/engine2_case_temp", 0)
+-- ail_*_phys and spoil_*_phys are never written. flight_controls.lua writes the
+-- surfaces straight to sim/flightmodel/controls/wing3*_ail1def (ailerons),
+-- wing2*_spo2def (middle spoilers) and wing1*_spo1def (inner spoilers), in
+-- degrees and with the failure applied, and those are what to read.
 createGlobalPropertyf("tu-154/controlls/ail_L_phys", 0)
 createGlobalPropertyf("tu-154/controlls/ail_R_phys", 0)
 createGlobalPropertyf("tu-154/controlls/spoil_L_phys", 0)
 createGlobalPropertyf("tu-154/controlls/spoil_R_phys", 0)
-createGlobalPropertyf("tu-154/controlls/rudder_coeff",1)
+createGlobalPropertyf("tu-154/controlls/rudder_coeff",1) -- rudder authority: Mach schedule x reverser blanking (flight_controls.lua)
 
 -- ---------------------------------------------------------------------------
 -- Datarefs that modules bind but nothing writes yet. They were read through

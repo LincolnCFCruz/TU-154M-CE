@@ -1,4 +1,3 @@
--- this is simple logic of generators. calculations for each gen are here.
 
 
 -- gen parameters
@@ -59,7 +58,7 @@ defineProperty("sim_gen3_fail", globalPropertyi("sim/operation/failures/rel_gene
 defineProperty("apu_gen_fail", globalPropertyi("tu-154/failures/apu_gen_fail"))
 
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- Smart Copilot

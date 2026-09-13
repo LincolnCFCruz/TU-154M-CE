@@ -1,10 +1,7 @@
--- this is safe state script
-
-
 defineProperty("reset_state",globalPropertyi("tu-154/reset_state")) -- reset the aircraft state
 defineProperty("save_state", globalPropertyi("tu-154/save_state")) -- force-save the aircraft state
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("starter_torq", globalPropertyf("sim/aircraft/engine/acf_starter_torque_ratio")) -- starter power. 0.18 for a normal start
 
@@ -89,31 +86,31 @@ defineProperty("brake_runtime_right", globalPropertyf("tu-154/failures/brake_run
 defineProperty("rel_lbrakes", globalPropertyi("sim/operation/failures/rel_lbrakes")) -- brake failure
 defineProperty("rel_rbrakes", globalPropertyi("sim/operation/failures/rel_rbrakes")) -- brake failure
 
-defineProperty("ail_fail_left", globalPropertyi("tu-154/failures/ail_fail_left")) -- 
-defineProperty("ail_fail_right", globalPropertyi("tu-154/failures/ail_fail_right")) -- 
+defineProperty("ail_fail_left", globalPropertyi("tu-154/failures/ail_fail_left"))
+defineProperty("ail_fail_right", globalPropertyi("tu-154/failures/ail_fail_right"))
 
-defineProperty("fail_spoil_inn_left", globalPropertyi("tu-154/failures/fail_spoil_inn_left")) -- 
-defineProperty("fail_spoil_inn_right", globalPropertyi("tu-154/failures/fail_spoil_inn_right")) -- 
-defineProperty("fail_spoil_mid_left", globalPropertyi("tu-154/failures/fail_spoil_mid_left")) -- 
-defineProperty("fail_spoil_mid_right", globalPropertyi("tu-154/failures/fail_spoil_mid_right")) -- 
-defineProperty("fail_spoil_out_left", globalPropertyi("tu-154/failures/fail_spoil_out_left")) -- 
-defineProperty("fail_spoil_out_right", globalPropertyi("tu-154/failures/fail_spoil_out_right")) -- 
+defineProperty("fail_spoil_inn_left", globalPropertyi("tu-154/failures/fail_spoil_inn_left"))
+defineProperty("fail_spoil_inn_right", globalPropertyi("tu-154/failures/fail_spoil_inn_right"))
+defineProperty("fail_spoil_mid_left", globalPropertyi("tu-154/failures/fail_spoil_mid_left"))
+defineProperty("fail_spoil_mid_right", globalPropertyi("tu-154/failures/fail_spoil_mid_right"))
+defineProperty("fail_spoil_out_left", globalPropertyi("tu-154/failures/fail_spoil_out_left"))
+defineProperty("fail_spoil_out_right", globalPropertyi("tu-154/failures/fail_spoil_out_right"))
 
-defineProperty("rudder_fail", globalPropertyi("tu-154/failures/rudder_fail")) -- 
-defineProperty("elev_fail_left", globalPropertyi("tu-154/failures/elev_fail_left")) -- 
-defineProperty("elev_fail_right", globalPropertyi("tu-154/failures/elev_fail_right")) -- 
+defineProperty("rudder_fail", globalPropertyi("tu-154/failures/rudder_fail"))
+defineProperty("elev_fail_left", globalPropertyi("tu-154/failures/elev_fail_left"))
+defineProperty("elev_fail_right", globalPropertyi("tu-154/failures/elev_fail_right"))
 
-defineProperty("rel_trim_rud", globalPropertyi("sim/operation/failures/rel_trim_rud")) -- 
-defineProperty("rel_trim_ail", globalPropertyi("sim/operation/failures/rel_trim_ail")) -- 
-defineProperty("rel_trim_elv", globalPropertyi("sim/operation/failures/rel_trim_elv")) -- 
-defineProperty("trim_emerg_elv_fail", globalPropertyi("tu-154/failures/trim_emerg_elv_fail")) --
+defineProperty("rel_trim_rud", globalPropertyi("sim/operation/failures/rel_trim_rud"))
+defineProperty("rel_trim_ail", globalPropertyi("sim/operation/failures/rel_trim_ail"))
+defineProperty("rel_trim_elv", globalPropertyi("sim/operation/failures/rel_trim_elv"))
+defineProperty("trim_emerg_elv_fail", globalPropertyi("tu-154/failures/trim_emerg_elv_fail"))
 
-defineProperty("flap_fail_left", globalPropertyi("tu-154/failures/flap_fail_left")) -- 
-defineProperty("flap_fail_right", globalPropertyi("tu-154/failures/flap_fail_right")) -- 
+defineProperty("flap_fail_left", globalPropertyi("tu-154/failures/flap_fail_left"))
+defineProperty("flap_fail_right", globalPropertyi("tu-154/failures/flap_fail_right"))
 
-defineProperty("stab_eng_fail", globalPropertyi("tu-154/failures/stab_eng_fail")) -- 
-defineProperty("stab_automatic_fail", globalPropertyi("tu-154/failures/stab_automatic_fail")) -- 
-defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail")) -- 
+defineProperty("stab_eng_fail", globalPropertyi("tu-154/failures/stab_eng_fail"))
+defineProperty("stab_automatic_fail", globalPropertyi("tu-154/failures/stab_automatic_fail"))
+defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail"))
 
 defineProperty("retract1_fail", globalPropertyi("sim/operation/failures/rel_lagear1")) -- fail of retract gear
 defineProperty("retract2_fail", globalPropertyi("sim/operation/failures/rel_lagear2")) -- fail of retract gear
@@ -264,16 +261,16 @@ defineProperty("absu_calc_roll_fail", globalPropertyi("tu-154/failures/absu_calc
 defineProperty("absu_calc_pitch_fail", globalPropertyi("tu-154/failures/absu_calc_pitch_fail")) -- STU longitudinal channel failure
 
 
-defineProperty("diss_fail", globalPropertyi("tu-154/failures/diss_fail")) --
-defineProperty("nvu_fail", globalPropertyi("tu-154/failures/nvu_fail")) --
-defineProperty("radar_fail", globalPropertyi("tu-154/failures/radar_fail")) --
+defineProperty("diss_fail", globalPropertyi("tu-154/failures/diss_fail"))
+defineProperty("nvu_fail", globalPropertyi("tu-154/failures/nvu_fail"))
+defineProperty("radar_fail", globalPropertyi("tu-154/failures/radar_fail"))
 
 defineProperty("ark1_fail", globalPropertyi("sim/operation/failures/rel_adf1"))
 defineProperty("ark2_fail", globalPropertyi("sim/operation/failures/rel_adf2"))
-defineProperty("nav1fail", globalPropertyi("tu-154/failures/nav1_fail")) -- fail
-defineProperty("nav2fail", globalPropertyi("tu-154/failures/nav2_fail")) -- fail
-defineProperty("dme1_fail", globalPropertyi("tu-154/failures/dme1_fail")) -- fail
-defineProperty("dme2_fail", globalPropertyi("tu-154/failures/dme2_fail")) -- fail
+defineProperty("nav1fail", globalPropertyi("tu-154/failures/nav1_fail"))
+defineProperty("nav2fail", globalPropertyi("tu-154/failures/nav2_fail"))
+defineProperty("dme1_fail", globalPropertyi("tu-154/failures/dme1_fail"))
+defineProperty("dme2_fail", globalPropertyi("tu-154/failures/dme2_fail"))
 defineProperty("mrp_fail", globalPropertyi("tu-154/failures/mrp_fail"))
 
 defineProperty("rsbn_fail", globalPropertyi("tu-154/failures/rsbn_fail"))
@@ -298,21 +295,21 @@ defineProperty("bkk_fail", globalPropertyi("tu-154/failures/bkk_fail"))
 
 defineProperty("rel_pitot", globalPropertyi("tu-154/failures/pitot1")) -- Pitot 1 - Blockage
 defineProperty("rel_pitot2", globalPropertyi("tu-154/failures/pitot2")) -- Pitot 2 - Blockage
-defineProperty("static_fail_L", globalPropertyi("tu-154/failures/static1"))  -- static fail
-defineProperty("static_fail_R", globalPropertyi("tu-154/failures/static2"))  -- static fail
-defineProperty("svs_fail", globalPropertyi("sim/operation/failures/rel_adc_comp"))  -- static fail
+defineProperty("static_fail_L", globalPropertyi("tu-154/failures/static1"))
+defineProperty("static_fail_R", globalPropertyi("tu-154/failures/static2"))
+defineProperty("svs_fail", globalPropertyi("sim/operation/failures/rel_adc_comp")) -- air data computer failure
 
 
 defineProperty("mgv_fail", globalPropertyi("tu-154/failures/mgv_fail")) -- MGV failure
 defineProperty("pkp1fail", globalPropertyi("sim/operation/failures/rel_ss_ahz"))
 defineProperty("pkp2fail", globalPropertyi("sim/operation/failures/rel_cop_ahz"))
-defineProperty("rv1_fail", globalPropertyi("tu-154/failures/rv1_fail"))  -- fail
-defineProperty("rv2_fail", globalPropertyi("tu-154/failures/rv2_fail"))  -- fail
-defineProperty("uap_fail", globalPropertyi("tu-154/failures/AOA")) -- fail
-defineProperty("uap_warn_fail", globalPropertyi("sim/operation/failures/rel_stall_warn")) -- fail
-defineProperty("uvid_fail", globalPropertyi("tu-154/failures/uvid15_fail")) -- fail
-defineProperty("vvi1_fail", globalPropertyi("sim/operation/failures/rel_ss_vvi")) -- fail
-defineProperty("vvi2_fail", globalPropertyi("sim/operation/failures/rel_cop_vvi")) -- fail
+defineProperty("rv1_fail", globalPropertyi("tu-154/failures/rv1_fail"))
+defineProperty("rv2_fail", globalPropertyi("tu-154/failures/rv2_fail"))
+defineProperty("uap_fail", globalPropertyi("tu-154/failures/AOA"))
+defineProperty("uap_warn_fail", globalPropertyi("sim/operation/failures/rel_stall_warn"))
+defineProperty("uvid_fail", globalPropertyi("tu-154/failures/uvid15_fail"))
+defineProperty("vvi1_fail", globalPropertyi("sim/operation/failures/rel_ss_vvi"))
+defineProperty("vvi2_fail", globalPropertyi("sim/operation/failures/rel_cop_vvi"))
 
 
 
@@ -342,6 +339,10 @@ local var_table = {}
 	var_table["useNWaxis"] = get(have_pedals)
 	var_table["gnsInstaled"] = get(show_gns)
 	var_table["RXPInstaled"] = get(show_RXP)
+	-- menu_strip (core/panel_logic.lua) is a plain Lua table, not a dataref --
+	-- see its own declaration for why -- so it's read/written directly here
+	-- rather than through get()/set().
+	var_table["menuVisible"] = menu_strip.visible and 1 or 0
 	
 	var_table["pnpCrs1"] = get(pnp_1_crs)
 	var_table["pnpCrs2"] = get(pnp_2_crs)
@@ -637,7 +638,7 @@ local var_table = {}
 
 local function write_file()
 
-	local savefile = io.open(stateFileName, "w") -- open file for rewriting
+	local savefile = io.open(stateFileName, "w")
 	
 	if savefile then
 		savefile:write("rusLang="..get(hide_eng_objects).."\n")
@@ -656,6 +657,7 @@ local function write_file()
 		savefile:write("useNWaxis="..get(have_pedals).."\n")
 		savefile:write("gnsInstaled="..get(show_gns).."\n")
 		savefile:write("RXPInstaled="..get(show_RXP).."\n")
+		savefile:write("menuVisible="..(menu_strip.visible and 1 or 0).."\n")
 		
 		savefile:write("pnpCrs1="..get(pnp_1_crs) .."\n")
 		savefile:write("pnpCrs2="..get(pnp_2_crs) .."\n")
@@ -958,7 +960,7 @@ end
 
 local function read_file()
 	
-	local savefile = io.open(stateFileName, "r") -- open file for reading
+	local savefile = io.open(stateFileName, "r")
 	
 	if savefile then
 		local lines = savefile:read("*a")
@@ -1000,6 +1002,7 @@ local function read_file()
 		if var_table["useNWaxis"] then set(have_pedals, var_table["useNWaxis"]) end
 		if var_table["gnsInstaled"] then set(show_gns, var_table["gnsInstaled"]) end
 		if var_table["RXPInstaled"] then set(show_RXP, var_table["RXPInstaled"]) end
+		if var_table["menuVisible"] then menu_strip.visible = (var_table["menuVisible"] == 1) end
 		
 		if var_table["pnpCrs1"] then set(pnp_1_crs, var_table["pnpCrs1"]) end
 		if var_table["pnpCrs2"] then set(pnp_2_crs, var_table["pnpCrs2"]) end
@@ -1325,7 +1328,6 @@ function update()
 		
 	end
 	
-	-- save the file
 	if save_counter > 30 or get(save_state) == 1 then
 		write_file()
 		save_counter = 0

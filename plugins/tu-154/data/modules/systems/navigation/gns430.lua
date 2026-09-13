@@ -1,4 +1,3 @@
--- this is GNS supplement logicS
 
 defineProperty("show_gns", globalPropertyi("tu-154/anim/show_gns"))
 -- overrideGPS removed: X-Plane manages it itself through g430n1_popup
@@ -36,7 +35,7 @@ defineProperty("LS_angle", globalPropertyf("tu-154/rotary/GNS430/LS_angle")) -- 
 defineProperty("RB_angle", globalPropertyf("tu-154/rotary/GNS430/RB_angle")) -- RB_angle
 defineProperty("RS_angle", globalPropertyf("tu-154/rotary/GNS430/RS_angle")) -- RS_angle
 
-defineProperty("kill_map_fms_line", globalPropertyi("sim/graphics/misc/kill_map_fms_line")) --
+defineProperty("kill_map_fms_line", globalPropertyi("sim/graphics/misc/kill_map_fms_line"))
 
 
 -- Smart Copilot

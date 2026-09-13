@@ -1,4 +1,3 @@
--- this is simple logic of batteries. calculations for each bat are here.
 
 
 -- source
@@ -18,7 +17,7 @@ defineProperty("cockpit_temp", globalPropertyf("tu-154/thermo/cockpit_temp")) --
 
 
 -- other datarefs
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("sim_bat_on", globalProperty("sim/cockpit2/electrical/battery_on[0]")) -- sim battery on
 

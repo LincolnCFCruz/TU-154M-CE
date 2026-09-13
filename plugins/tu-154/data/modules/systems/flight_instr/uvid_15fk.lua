@@ -1,4 +1,3 @@
--- this is UVID-15FK logic
 
 
 defineProperty("static_fail_L", globalPropertyi("sim/operation/failures/rel_static"))  -- static fail
@@ -7,11 +6,10 @@ defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 
 defineProperty("bus115_volt", globalPropertyf("tu-154/elec/bus115_1_volt")) -- 115 V bus voltage
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
--- fail
-defineProperty("uvid_fail", globalPropertyi("tu-154/failures/uvid15_fail")) -- fail
+defineProperty("uvid_fail", globalPropertyi("tu-154/failures/uvid15_fail"))
 
 
 -- current altitude
@@ -107,7 +105,6 @@ function update()
 		
 	set(vd15_lamp, bool2int(lamp_shine))
 	
-	-- set results
 	set(uvid_needle_left, uvid_alt_act * 360 / 1000)
 	set(uvid_feet_counter, uvid_alt_act)
 	set(uvid_hundreads_counter, alt_dr_100)

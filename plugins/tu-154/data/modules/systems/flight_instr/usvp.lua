@@ -1,10 +1,10 @@
--- this is USVP gauge (true airspeed and groundspeed)
+-- USVP: true airspeed and groundspeed gauge
 
 -- sources
 defineProperty("tas_svs", globalPropertyf("tu-154/svs/true_airspeed")) -- TAS
 defineProperty("diss_groundspeed", globalPropertyf("tu-154/nvu/diss_groundspeed")) -- ground speed from the DISS
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- controls

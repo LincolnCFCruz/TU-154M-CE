@@ -1,4 +1,3 @@
--- this is TCAS calculation and signal generations
 size = {2048, 2048}
 -- controls
 defineProperty("tcas_on", globalPropertyi("tu-154/switchers/ovhd/tcas_on"))  -- TCAS switch
@@ -13,7 +12,7 @@ defineProperty("flt_id", globalPropertyi("tu-154/tcas/flt_id"))  -- 0 = cover, 1
 
 defineProperty("tcas_mode_rot", globalPropertyi("tu-154/switchers/tcas/tcas_mode"))  -- TCAS mode. -1 = test, 0 - stby, 1 = alt off, 2 = alt on, 3 = TA, 4 = TARA	3
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("tcas_ident_btn", globalPropertyi("tu-154/buttons/tcas/tcas_ident_btn"))  -- IDENT button
 defineProperty("tcas_fcn_btn", globalPropertyi("tu-154/buttons/tcas/tcas_fcn_btn"))  -- FCN button

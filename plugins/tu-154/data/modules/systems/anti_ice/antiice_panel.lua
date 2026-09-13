@@ -1,15 +1,14 @@
--- this is an antiice panel
 
 -- controls
 defineProperty("soi21_on", globalPropertyi("tu-154/switchers/eng/soi21_on")) -- SOI 21 switch
 defineProperty("soi21_test", globalPropertyi("tu-154/buttons/eng/soi21_test")) -- SOI 21 test
 
 
-defineProperty("antiice_slats", globalPropertyi("tu-154/switchers/eng/antiice_slats")) -- anti-icers
-defineProperty("antiice_eng_1", globalPropertyi("tu-154/switchers/eng/antiice_eng_1")) -- anti-icers
-defineProperty("antiice_eng_2", globalPropertyi("tu-154/switchers/eng/antiice_eng_2")) -- anti-icers
-defineProperty("antiice_eng_3", globalPropertyi("tu-154/switchers/eng/antiice_eng_3")) -- anti-icers
-defineProperty("antiice_wing", globalPropertyi("tu-154/switchers/eng/antiice_wing")) -- anti-icers
+defineProperty("antiice_slats", globalPropertyi("tu-154/switchers/eng/antiice_slats"))
+defineProperty("antiice_eng_1", globalPropertyi("tu-154/switchers/eng/antiice_eng_1"))
+defineProperty("antiice_eng_2", globalPropertyi("tu-154/switchers/eng/antiice_eng_2"))
+defineProperty("antiice_eng_3", globalPropertyi("tu-154/switchers/eng/antiice_eng_3"))
+defineProperty("antiice_wing", globalPropertyi("tu-154/switchers/eng/antiice_wing"))
 
 defineProperty("window_heat_1", globalPropertyi("tu-154/switchers/ovhd/window_heat_1")) -- window heating. -1 = low, 0 = off, 1 = high
 defineProperty("window_heat_2", globalPropertyi("tu-154/switchers/ovhd/window_heat_2")) -- window heating. -1 = low, 0 = off, 1 = high
@@ -26,7 +25,7 @@ defineProperty("heat_ok_1", globalPropertyf("tu-154/lights/small/heat_ok_1")) --
 defineProperty("heat_ok_2", globalPropertyf("tu-154/lights/small/heat_ok_2")) -- pitot heating healthy lamp
 defineProperty("heat_ok_3", globalPropertyf("tu-154/lights/small/heat_ok_3")) -- pitot heating healthy lamp
 
-defineProperty("soi_work", globalPropertyf("tu-154/lights/small/soi_work")) -- heating healthy lamp
+defineProperty("soi_work", globalPropertyf("tu-154/lights/small/soi_work")) -- SOI system operating lamp
 defineProperty("soi_ice_detected", globalPropertyf("tu-154/lights/small/soi_ice_detected")) -- ice detection lamp
 
 defineProperty("antiice_slats_lamp", globalPropertyf("tu-154/lights/small/antiice_slats")) -- heating healthy lamp
@@ -61,7 +60,7 @@ defineProperty("eng_heat_open_3", globalPropertyi("tu-154/antiice/eng_heat_open_
 
 defineProperty("ice_surfce_heat_on", globalPropertyi("sim/cockpit2/ice/ice_surfce_heat_on"))
 
-defineProperty("ice_detected", globalPropertyi("tu-154/antiice/ice_detected")) -- ice detected
+defineProperty("ice_detected", globalPropertyi("tu-154/antiice/ice_detected"))
 defineProperty("ice_detect_ok", globalPropertyi("tu-154/antiice/ice_detect_ok")) -- SOI system running
 
 -- failures
@@ -79,7 +78,7 @@ defineProperty("rel_ice_surf_heat", globalPropertyi("sim/operation/failures/rel_
 defineProperty("rel_ice_surf_heat2", globalPropertyi("sim/operation/failures/rel_ice_surf_heat2"))
 
 defineProperty("wing_heating", globalPropertyi("tu-154/antiice/wing_heating")) -- wing heating running
-defineProperty("slat_heating", globalPropertyi("tu-154/antiice/slat_heating")) -- wing heating running
+defineProperty("slat_heating", globalPropertyi("tu-154/antiice/slat_heating")) -- slat heating running
 
 
 -- engines
@@ -87,7 +86,7 @@ defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) 
 defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) -- engine 2 rpm
 defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- sounds
 local switcher_sound = loadSample('sounds/metal_switch.wav')
@@ -96,7 +95,7 @@ local button_sound = loadSample('sounds/plastic_btn.wav')
 local passed = get(frame_time)
 
 
--- reset swittchers for cold & dark
+-- reset switchers for cold & dark
 local notLoaded = true
 
 local function reset_switchers()

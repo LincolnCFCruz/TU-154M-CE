@@ -1,4 +1,3 @@
--- this is main RSBN script
 
 components = {
 

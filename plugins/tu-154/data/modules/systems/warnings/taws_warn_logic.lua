@@ -1,4 +1,3 @@
--- this is TAWS warning logic
 
 -- sources
 defineProperty("vvi_L", globalPropertyf("sim/cockpit2/gauges/indicators/vvi_fpm_pilot")) -- vertical speed in ft/min
@@ -25,9 +24,9 @@ defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deplo
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
 defineProperty("gear3_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[2]"))  -- deploy of left gear
 
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]")) -- 
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
 defineProperty("flap_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_fla1def")) -- inner flaps right
@@ -43,7 +42,7 @@ defineProperty("nav_cs_flag", globalPropertyi("tu-154/radio/nav1_cs_flag"))
 defineProperty("nav_gs_flag", globalPropertyi("tu-154/radio/nav1_gs_flag"))
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- controls
@@ -59,7 +58,7 @@ defineProperty("egpws_control", globalPropertyi("tu-154/buttons/ovhd/egpws_contr
 defineProperty("egpws_contr_gs", globalPropertyi("tu-154/buttons/ovhd/egpws_contr_gs")) -- SRPBZ glideslope test
 
 -- results
-defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message")) -- 
+defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message"))
 -- 0 - none, 1 - Pull UP, 2 - alt callout, 3 - Pull Up, 4 - Terrain, 5 - Terrain Ahead, 6 - Too low, Terrain, 
 -- 7 - Alt collout, 8 - Too low, Gear, 9 - Too low, Flaps, 10 - Check altitude, 11 - Sink Rate, 12 - Don't sink, 13 - Glideslope
 

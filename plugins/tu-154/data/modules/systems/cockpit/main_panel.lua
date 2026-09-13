@@ -1,17 +1,11 @@
--- this is actual panel. here will be placed all gauges for panel.png and 2D popup panels
+-- Aggregates the 3D-panel gauges drawn onto panel.png; the 2D popup panels are
+-- wired separately in panels/panel_windows.lua.
 
 size = { 2048, 2048 }
 
 
 components = {
 	
---[[	
-	test_hud {
-	
-		position = {1600, 0, 400, 400},
-	
-	},
---]]	
 	vers {},
 	
 	sc_controls {}, -- control through SmartCopilot

@@ -1,4 +1,3 @@
--- this is fuel system main script
 
 components = {
 	fuel_panel {},

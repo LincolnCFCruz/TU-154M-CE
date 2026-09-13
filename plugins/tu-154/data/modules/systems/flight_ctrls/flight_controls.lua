@@ -1,4 +1,3 @@
--- this is the flight controls logic 154M
 
 -- sources
 --defineProperty("joy_pitch", globalPropertyf("sim/cockpit2/controls/yoke_pitch_ratio")) -- pitch position of joytick
@@ -40,8 +39,8 @@ defineProperty("control_force_pos_rud", globalPropertyf("tu-154/controls/control
 defineProperty("contr_force_set", globalPropertyi("tu-154/controll/contr_force_set")) -- elevator/rudder feel unit selector. -1 = flight, 0 = auto, +1 = takeoff-landing
 
 
-defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]")) -- 
-defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]")) -- 
+defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]"))
+defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]"))
 
 defineProperty("gear1_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))  -- vertical deflection of front gear
 defineProperty("gear2_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))  -- vertical deflection of left gear
@@ -127,8 +126,8 @@ defineProperty("anim_rud2_ENG", globalPropertyf("tu-154/controlls/throttle_2_ENG
 defineProperty("anim_rud3_ENG", globalPropertyf("tu-154/controlls/throttle_3_ENG")) -- flight engineer's throttle 3
 
 -- spoilers sources
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 defineProperty("revers_L", globalPropertyf("tu-154/controlls/revers_L")) -- left reverser lever
 defineProperty("revers_R", globalPropertyf("tu-154/controlls/revers_R")) -- right reverser lever
 
@@ -158,20 +157,20 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 -- failures
-defineProperty("ail_fail_left", globalPropertyi("tu-154/failures/ail_fail_left")) -- 
-defineProperty("ail_fail_right", globalPropertyi("tu-154/failures/ail_fail_right")) -- 
-defineProperty("fail_spoil_inn_left", globalPropertyi("tu-154/failures/fail_spoil_inn_left")) -- 
-defineProperty("fail_spoil_inn_right", globalPropertyi("tu-154/failures/fail_spoil_inn_right")) -- 
-defineProperty("fail_spoil_mid_left", globalPropertyi("tu-154/failures/fail_spoil_mid_left")) -- 
-defineProperty("fail_spoil_mid_right", globalPropertyi("tu-154/failures/fail_spoil_mid_right")) -- 
-defineProperty("fail_spoil_out_left", globalPropertyi("tu-154/failures/fail_spoil_out_left")) -- 
-defineProperty("fail_spoil_out_right", globalPropertyi("tu-154/failures/fail_spoil_out_right")) -- 
+defineProperty("ail_fail_left", globalPropertyi("tu-154/failures/ail_fail_left"))
+defineProperty("ail_fail_right", globalPropertyi("tu-154/failures/ail_fail_right"))
+defineProperty("fail_spoil_inn_left", globalPropertyi("tu-154/failures/fail_spoil_inn_left"))
+defineProperty("fail_spoil_inn_right", globalPropertyi("tu-154/failures/fail_spoil_inn_right"))
+defineProperty("fail_spoil_mid_left", globalPropertyi("tu-154/failures/fail_spoil_mid_left"))
+defineProperty("fail_spoil_mid_right", globalPropertyi("tu-154/failures/fail_spoil_mid_right"))
+defineProperty("fail_spoil_out_left", globalPropertyi("tu-154/failures/fail_spoil_out_left"))
+defineProperty("fail_spoil_out_right", globalPropertyi("tu-154/failures/fail_spoil_out_right"))
 
-defineProperty("rudder_fail", globalPropertyi("tu-154/failures/rudder_fail")) -- 
-defineProperty("elev_fail_left", globalPropertyi("tu-154/failures/elev_fail_left")) -- 
-defineProperty("elev_fail_right", globalPropertyi("tu-154/failures/elev_fail_right")) -- 
-defineProperty("kontur_on", globalPropertyf("tu-154/b2/kontur_on")) -- 
-defineProperty("spb_inn_anim", globalPropertyf("tu-154/b2/spb_inn_anim")) -- 
+defineProperty("rudder_fail", globalPropertyi("tu-154/failures/rudder_fail"))
+defineProperty("elev_fail_left", globalPropertyi("tu-154/failures/elev_fail_left"))
+defineProperty("elev_fail_right", globalPropertyi("tu-154/failures/elev_fail_right"))
+defineProperty("kontur_on", globalPropertyf("tu-154/b2/kontur_on"))
+defineProperty("spb_inn_anim", globalPropertyf("tu-154/b2/spb_inn_anim"))
 
 defineProperty("elev_coeff", globalPropertyf("tu-154/controlls/elev_coeff"))
 
@@ -182,6 +181,9 @@ defineProperty("yoke_offset", globalPropertyf("tu-154/controlls/yoke_offset"))
 
 defineProperty("elev_L_ph", globalPropertyf("tu-154/controlls/elev_L_phys"))
 defineProperty("elev_R_ph", globalPropertyf("tu-154/controlls/elev_R_phys"))
+-- published for the debug inspector: the Mach schedule and reverser blanking
+-- below were only ever inline, so rudder_coeff sat at its creator default of 1
+defineProperty("rudder_coeff_pub", globalPropertyf("tu-154/controlls/rudder_coeff"))
 
 --defineProperty("db1", globalPropertyf("tu-154/controlls/debug1"))
 
@@ -304,7 +306,6 @@ function update()
 	if right_ail_pos <= -1.5 then roll_sp_R = -((right_ail_pos + 1.5) / 18.5) * 45 end
 	
 	
-	-- set results
 	
 if MASTER then
 	set(ail_L, left_ail_pos * (1 - get(ail_fail_left)))
@@ -683,7 +684,6 @@ end
 
 	
 if MASTER then	
-	-- set results
 	set(elevator_L, elev_left_aero * elev_coef * (1 - get(elev_fail_left)))
 	set(elevator_R, elev_right_aero * elev_coef * (1 - get(elev_fail_right)))
 end	
@@ -724,11 +724,15 @@ end
 		yaw_pos_act = yaw_pos_act + (rud_cmd - yaw_pos_act) * math.max(HS1 * buster_1_ON, HS2 * buster_2_ON, HS3 * buster_3_ON) * passed * 10
 	end
 	
-	local rudder_pos = yaw_pos_act * 25 * line(mach, 0, 1, 0.8, 0.5) -- can add failures here
+	local rudder_mach = line(mach, 0, 1, 0.8, 0.5)
+	local rudder_pos = yaw_pos_act * 25 * rudder_mach -- can add failures here
 
 	-- rudder --
 	local rudder_L = 1 - math.max(get(revers_flap_L) - 0.5, 0) * get(rpm_high_1) * 0.015
 	local rudder_R = 1 - math.max(get(revers_flap_R) - 0.5, 0) * get(rpm_high_3) * 0.015
+	-- everything between the actuator and the surface except the failure,
+	-- written outside MASTER as elev_L_phys is, so a SmartCopilot slave has it too
+	set(rudder_coeff_pub, rudder_mach * ((rudder_L + rudder_R) * 0.5))
 
 if MASTER then	
 	set(rudder, rudder_pos * ((rudder_L + rudder_R) * 0.5) * (1 - get(rudder_fail)))

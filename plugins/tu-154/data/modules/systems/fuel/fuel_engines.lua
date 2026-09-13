@@ -1,4 +1,3 @@
--- this is fuel to engines logic
 
 -- controls
 defineProperty("fire_valve_1", globalPropertyi("tu-154/switchers/fuel/fire_valve_1")) -- fire shutoff valve
@@ -22,7 +21,7 @@ defineProperty("fuel_cutoff_2", globalPropertyf("tu-154/controlls/fuel_cutoff_2"
 defineProperty("fuel_cutoff_3", globalPropertyf("tu-154/controlls/fuel_cutoff_3")) -- fire shutoff valve lever
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- results
 defineProperty("eng_fuel_press_1", globalPropertyi("tu-154/fuel/eng_fuel_press_1")) -- fuel can reach the engine. ignores the shutoff cocks
@@ -197,7 +196,6 @@ if MASTER then
 	set(eng_fuel_fluctuation_2, 6 * bool2int(press_2 == 0 and MSL > 7000))
 	set(eng_fuel_fluctuation_3, 6 * bool2int(press_3 == 0 and MSL > 7000))
 	
-	-- set results
 	set(eng_fuel_press_1, press_1)
 	set(eng_fuel_press_2, press_2)
 	set(eng_fuel_press_3, press_3)

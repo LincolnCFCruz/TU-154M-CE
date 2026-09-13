@@ -1,4 +1,3 @@
--- this is RSBN logic
 
 
 
@@ -18,7 +17,7 @@ defineProperty("latitude", globalPropertyd("sim/flightmodel/position/latitude"))
 defineProperty("longitude", globalPropertyd("sim/flightmodel/position/longitude")) -- The longitude of the aircraft
 defineProperty("elevation", globalPropertyd("sim/flightmodel/position/elevation")) -- The longitude of the aircraft
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
@@ -288,7 +287,6 @@ function update()
 	if beacon_azimuth ~= 0 and beacon_azimuth then azimuth_show = beacon_azimuth end
 	
 	
-	-- set results
 	set(distance, dist_show * 0.001)
 	set(azimuth, azimuth_show)
 	

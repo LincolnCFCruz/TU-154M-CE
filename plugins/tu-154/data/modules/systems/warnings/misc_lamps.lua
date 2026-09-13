@@ -1,4 +1,5 @@
--- this is various lamps, that connects different gauges and systems
+-- Lamps that read state from more than one system, so they don't belong to
+-- any single system's own module.
 
 -- power and test buttons
 
@@ -87,14 +88,14 @@ defineProperty("MSGalert", globalPropertyi("tu-154/xap/KLN90/MSG"))
 defineProperty("speaker_speed", globalPropertyi("tu-154/alarm/speaker_speed")) -- limit speed
 
 -- ABSU
-defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp")) -- 
-defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp")) -- 
-defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp")) -- 
-defineProperty("roll_contr_lamp", globalPropertyi("tu-154/absu/roll_contr_lamp")) -- 
-defineProperty("pitch_contr_lamp", globalPropertyi("tu-154/absu/pitch_contr_lamp")) -- 
-defineProperty("man_roll_lamp", globalPropertyi("tu-154/absu/man_roll_lamp")) -- 
-defineProperty("man_pitch_lamp", globalPropertyi("tu-154/absu/man_pitch_lamp")) -- 
-defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp")) -- 
+defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp"))
+defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp"))
+defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp"))
+defineProperty("roll_contr_lamp", globalPropertyi("tu-154/absu/roll_contr_lamp"))
+defineProperty("pitch_contr_lamp", globalPropertyi("tu-154/absu/pitch_contr_lamp"))
+defineProperty("man_roll_lamp", globalPropertyi("tu-154/absu/man_roll_lamp"))
+defineProperty("man_pitch_lamp", globalPropertyi("tu-154/absu/man_pitch_lamp"))
+defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp"))
 
 defineProperty("absu_landing_on", globalPropertyi("tu-154/switchers/console/absu_landing_on")) -- landing needles
 defineProperty("roll_main_mode", globalPropertyi("tu-154/absu/roll_main_mode")) -- ABSU main roll mode. 0 = off, 1 = control-wheel steering, 2 = stabilisation
@@ -107,8 +108,8 @@ defineProperty("nav_gs_flag", globalPropertyi("tu-154/radio/nav1_gs_flag"))
 
 defineProperty("nav1_pow_cc", globalPropertyf("tu-154/radio/nav1_pow_cc")) -- Kurs-MP current draw
 defineProperty("nav2_pow_cc", globalPropertyf("tu-154/radio/nav2_pow_cc")) -- Kurs-MP current draw
-defineProperty("nav1_fail", globalPropertyi("tu-154/failures/nav1_fail")) -- fail
-defineProperty("nav2_fail", globalPropertyi("tu-154/failures/nav2_fail")) -- fail
+defineProperty("nav1_fail", globalPropertyi("tu-154/failures/nav1_fail"))
+defineProperty("nav2_fail", globalPropertyi("tu-154/failures/nav2_fail"))
 
 -- ready
 defineProperty("to_ready", globalPropertyi("tu-154/checklist/to_ready")) -- lamp lit
@@ -219,7 +220,13 @@ function update()
 	
 	local mach = get(mach_sim)
 	
-	local over_spd = (alt_std_mtr < 7000 and ias > 600) or (alt_std_mtr >= 7000 and alt_std_mtr < 10300 and ias > 575) or (alt_std_mtr >= 10300 and mach > 0.88)
+	-- V max e / M max e, Flight Manual sec. 2.5.4.1 (1), CG 32 % MAC or less:
+	--   ground .. 7000 m : 600 km/h IAS
+	--   7000 m and above : 575 km/h IAS or M 0.86, whichever comes first
+	-- (they cross at about 9960 m; below 7000 m M is never limiting - at
+	--  600 km/h IAS / 7000 m the Mach number is only about 0.74)
+	local over_spd = (alt_std_mtr < 7000 and ias > 600) or
+	                 (alt_std_mtr >= 7000 and (ias > 575 or mach > 0.86))
 	
 	set(speaker_speed, bool2int(over_spd))
 	

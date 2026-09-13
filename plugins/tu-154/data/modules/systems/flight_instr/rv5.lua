@@ -1,5 +1,5 @@
 -- RV-5 radio altimeter
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external"))
 
 -- radio altitude
@@ -11,7 +11,7 @@ defineProperty("test_btn", globalPropertyf("tu-154/gauges/alt/radioalt_button_le
 
 defineProperty("rv_on", globalPropertyi("tu-154/switchers/ovhd/rv5_1_on"))  -- switcher
 
-defineProperty("rv_fail", globalPropertyi("tu-154/failures/rv1_fail"))  -- fail
+defineProperty("rv_fail", globalPropertyi("tu-154/failures/rv1_fail"))
 
 -- power
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left"))
@@ -118,7 +118,6 @@ function update()
 	set(rv_lamp, lamp_lit * lamp_coef)
 	set(rv5_dh_signal, lamp_lit)
 	
-	-- set results
 	set(rv_angle, alt_angle_act)
 	set(rv5_alt, alt)
 

@@ -1,4 +1,3 @@
--- this is another transponder panel SO-72
 
 size = {440, 167}
 
@@ -8,7 +7,7 @@ defineProperty("xpdr_code", globalPropertyf("sim/cockpit/radios/transponder_code
 ident_cmd = findCommand("sim/transponder/transponder_ident")  -- comand of transponder ident
 defineProperty("xpdr_fail", globalPropertyi("sim/operation/failures/rel_xpndr"))
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage

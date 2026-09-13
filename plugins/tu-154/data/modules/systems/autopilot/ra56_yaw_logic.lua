@@ -18,6 +18,15 @@ defineProperty("hod1", globalPropertyf("tu-154/absu/d_ra1_y"))
 defineProperty("hod2", globalPropertyf("tu-154/absu/d_ra2_y"))
 defineProperty("hod3", globalPropertyf("tu-154/absu/d_ra3_y"))
 
+-- Per-channel rod POSITION. d_raN above is the servo's commanded rate, which
+-- this module integrates into a local; the position itself was never published,
+-- yet it is what the bypass detector below compares between channels
+-- (|ra1_act - ra2_act| > 0.075 disconnects a channel). Without it you can see
+-- that a channel dropped out but not that it had drifted out of step first.
+defineProperty("pos1_out", globalPropertyf("tu-154/absu/pos_ra1_y"))
+defineProperty("pos2_out", globalPropertyf("tu-154/absu/pos_ra2_y"))
+defineProperty("pos3_out", globalPropertyf("tu-154/absu/pos_ra3_y"))
+
 
 -- createGlobalPropertyf("tu-154/controlls/absu_debug1", 1)
 
@@ -335,6 +344,9 @@ function update()
 	set(hod1,d_ra1_p)
 	set(hod2,d_ra2_p)
 	set(hod3,d_ra3_p)
+	set(pos1_out,ra1_act_p)
+	set(pos2_out,ra2_act_p)
+	set(pos3_out,ra3_act_p)
 	-- set(absu_debug1,ra1_act_p)
 	-- set(absu_debug2,ra2_act_p)
 	-- set(absu_debug3,ra3_act_p)

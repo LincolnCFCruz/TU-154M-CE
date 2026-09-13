@@ -17,15 +17,32 @@
 
   * The content panels now carry X-Plane's own window decoration (title bar +
     close button) instead of SASL2's in-texture close cross and drag/resize
-    corner. The decorative close cross that each panel drew is kept, so the art
-    is unchanged. Closing through the decoration writes the panel dataref back
-    (see core/panel_logic.lua).
+    corner. The decoration's close button is the only one: the in-panel close
+    cross and the invisible corner hotspot under it are gone. Closing through
+    the decoration writes the panel dataref back (see core/panel_logic.lua).
 
   * SASL3/XP12 floating windows have a 100x100 minimum, and the six menu strips
-    are 31x30 .. 121x31. They are therefore merged into ONE 160x160 undecorated,
+    are 31x30 .. 151x31. They are therefore merged into ONE 181x160 undecorated,
     transparent window at the same screen origin, with every strip placed at its
-    original screen offset inside it. Geometry on screen is identical; each
-    strip keeps its own visibility expression, now on the child components.
+    original screen offset inside it. Each strip keeps its own visibility
+    expression, now on the child components.
+
+  Drawn, not textured
+  -------------------
+  The menu strip is drawn from primitives (components/menu_button.lua, body in
+  core/glbl_draw.lua) instead of cropped from the old menus.png. Two things
+  that bought, beyond crisp text:
+
+  * A cell that opens a panel lights green while that panel is showing, read
+    from the same tu-154/panels/* dataref updatePanels() syncs -- the art could
+    only light the four group cells.
+  * MISC carries a fifth cell, DBG, for the debug inspector. The inspector is
+    not a panel here: it owns no dataref, so the cell works through the
+    window handle debug_inspector.lua publishes as cw_panels.inspector, which is
+    resolved at click/draw time because that component loads after this one.
+
+  The menu window is fixed-size (noResize, proportional = false), so the cells
+  draw 1:1 and the captions stay on whole pixels.
 
   Panel order below follows panels_2d.lua.
 
@@ -61,8 +78,6 @@ drf_panels.fails      = globalPropertyi("tu-154/panels/show_fail_panel")
 -- resolution less then 1024 by height.  (unchanged from panels_2d.lua)
 local coef = (get(window_height) / 1024) * 0.8
 if coef > 1 then coef = 1 end
-
-defineProperty("closeImage", loadImage("close.png")) -- close cross image
 
 -- ---------------------------------------------------------------------------
 -- Content panels
@@ -101,9 +116,6 @@ local content = {
 
 for _, p in ipairs(panels) do
     local w, h = p.w * coef, p.h * coef
-    -- the uphone drew a coef-scaled close cross; every other panel a fixed 15px one
-    local cw, ch = 15, 15
-    if p.key == "uphone" then cw, ch = 16 * coef, 16 * coef end
 
     cw_panels[p.key] = contextWindow {
         name         = p.name,
@@ -115,10 +127,6 @@ for _, p in ipairs(panels) do
         layer        = SASL_CW_LAYER_FLOATING_WINDOWS,
         components   = {
             content[p.key](w, h),
-            textureLit {
-                position = { w - cw, h - ch, cw, ch },
-                image    = get(closeImage),
-            },
         },
     }
 end
@@ -126,31 +134,14 @@ end
 -- ---------------------------------------------------------------------------
 -- Menu strips
 --
--- Merged into one transparent, undecorated 160x160 window whose origin is the
--- former ext_menu/misc_menu origin (0, 510). Every strip below therefore uses
--- its ORIGINAL screen position minus (0, 510); the comment on each block gives
--- the SASL2 subpanel rect it came from.
---
--- Image crops: SASL2's loadImage() took the sub-rect with a TOP-LEFT origin,
--- SASL3 takes it BOTTOM-LEFT, so every y below is (256 - old_y - height) for
--- the 256x256 menus.png.
+-- Merged into one transparent, undecorated window whose origin is the former
+-- ext_menu/misc_menu origin (0, 510). Every strip below therefore uses its
+-- ORIGINAL screen position minus (0, 510); the comment on each block gives the
+-- SASL2 subpanel rect it came from. Cells are 31 px on a 30 px pitch, so
+-- neighbours share their 1 px edge, as they did in menus.png.
 -- ---------------------------------------------------------------------------
 local MENU_X, MENU_Y = 0, 510
-
-defineProperty("menu_wt",      loadImage("menus.png", 0, 226, 31, 30)) -- was y=0
-defineProperty("menu_gr",      loadImage("menus.png", 30, 226, 31, 30)) -- was y=0
-defineProperty("menu_ex_wt",   loadImage("menus.png", 0, 136, 31, 90)) -- was y=30
-
-defineProperty("nav_ext_gr",   loadImage("menus.png", 30, 196, 31, 30)) -- was y=30
-defineProperty("serv_ext_gr",  loadImage("menus.png", 30, 166, 31, 30)) -- was y=60
-defineProperty("misc_ext_gr",  loadImage("menus.png", 30, 136, 31, 30)) -- was y=90
-
-defineProperty("nav_menu_wt",  loadImage("menus.png", 60, 196, 121, 31)) -- was y=29
-defineProperty("serv_menu_wt", loadImage("menus.png", 60, 166, 61, 31)) -- was y=59
-defineProperty("misc_menu_wt", loadImage("menus.png", 60, 136, 121, 31)) -- was y=89
-
-defineProperty("thro_red",     loadImage("menus.png", 90, 226, 31, 30)) -- was y=0
-defineProperty("thro_grn",     loadImage("menus.png", 120, 226, 31, 30)) -- was y=0
+local MENU_W, MENU_H = 181, 160 -- the MISC strip's fifth cell ends at x = 181
 
 local main_menu_ext = false
 local nav_ext  = false
@@ -163,9 +154,37 @@ local function miscVisible() return main_menu_ext and misc_ext end
 local function extVisible()  return main_menu_ext end
 local function throVisible() return get(ismaster) > 0 end
 
+local function lit(b) return b and "on" or "off" end
+
+-- a cell that opens one of the content panels above: toggles its dataref and
+-- lights while it is showing
+local function panelCell(key, x, y, label, visible)
+    return menu_button {
+        position = { x, y, 31, 31 },
+        label    = label,
+        visible  = visible,
+        state    = function() return lit(get(drf_panels[key]) == 1) end,
+        onMouseDown = function()
+            set(drf_panels[key], 1 - get(drf_panels[key]))
+            return true
+        end,
+    }
+end
+
+-- a group cell in the ext column: toggles its strip
+local function groupCell(y, label, isOpen, toggle)
+    return menu_button {
+        position = { 0, y, 31, 30 },
+        label    = label,
+        visible  = extVisible,
+        state    = function() return lit(isOpen()) end,
+        onMouseDown = function() toggle(); return true end,
+    }
+end
+
 cw_panels.menu = contextWindow {
     name         = "tu154_menu",
-    position     = { MENU_X, MENU_Y, 160, 160 },
+    position     = { MENU_X, MENU_Y, MENU_W, MENU_H },
     noDecore     = true,
     noBackground = true,
     noMove       = true,
@@ -175,28 +194,22 @@ cw_panels.menu = contextWindow {
     layer        = SASL_CW_LAYER_FLOATING_WINDOWS,
     components   = {
 
-        -- thro_button -- was subpanel { 0, 640, 31, 30 }
-        textureLit {
+        -- thro_button -- was subpanel { 0, 640, 31, 30 }. Red and green are the
+        -- two art states; any other SmartCopilot combination drew nothing and
+        -- still took the click, and that is kept.
+        menu_button {
             position = { 0, 130, 31, 30 },
-            image    = get(thro_red),
-            visible  = function()
-                return throVisible() and
-                    ((get(hascontrol_1) == 2 and get(control_thro_other) == 1) or
-                     (get(hascontrol_1) == 1 and get(control_thro_other) == 0))
-            end,
-        },
-        textureLit {
-            position = { 0, 130, 31, 30 },
-            image    = get(thro_grn),
-            visible  = function()
-                return throVisible() and
-                    ((get(hascontrol_1) == 2 and get(control_thro_other) == 0) or
-                     (get(hascontrol_1) == 1 and get(control_thro_other) == 1))
-            end,
-        },
-        clickable {
-            position = { 0, 130, 31, 30 },
+            label    = "THRO",
             visible  = throVisible,
+            state    = function()
+                local hc, other = get(hascontrol_1), get(control_thro_other)
+                if (hc == 2 and other == 1) or (hc == 1 and other == 0) then
+                    return "alert"
+                elseif (hc == 2 and other == 0) or (hc == 1 and other == 1) then
+                    return "on"
+                end
+                return nil
+            end,
             onMouseDown = function()
                 set(control_thro_other, 1 - get(control_thro_other))
                 return true
@@ -204,17 +217,10 @@ cw_panels.menu = contextWindow {
         },
 
         -- main_menu -- was subpanel { 0, 600, 31, 30 } (always visible)
-        textureLit {
+        menu_button {
             position = { 0, 90, 31, 30 },
-            image    = get(menu_wt),
-        },
-        textureLit {
-            position = { 0, 90, 31, 30 },
-            image    = get(menu_gr),
-            visible  = function() return main_menu_ext end,
-        },
-        clickable {
-            position = { 0, 90, 31, 30 },
+            label    = "MENU",
+            state    = function() return lit(main_menu_ext) end,
             onMouseDown = function()
                 main_menu_ext = not main_menu_ext
                 return true
@@ -222,51 +228,21 @@ cw_panels.menu = contextWindow {
         },
 
         -- ext_menu -- was subpanel { 0, 510, 31, 90 }
-        textureLit {
-            position = { 0, 0, 31, 90 },
-            image    = get(menu_ex_wt),
-            visible  = extVisible,
-        },
-        textureLit {
-            position = { 0, 60, 31, 30 },
-            image    = get(nav_ext_gr),
-            visible  = function() return main_menu_ext and nav_ext end,
-        },
-        textureLit {
-            position = { 0, 30, 31, 30 },
-            image    = get(serv_ext_gr),
-            visible  = function() return main_menu_ext and serv_ext end,
-        },
-        textureLit {
-            position = { 0, 0, 31, 30 },
-            image    = get(misc_ext_gr),
-            visible  = function() return main_menu_ext and misc_ext end,
-        },
-        clickable {
-            position = { 0, 60, 31, 30 },
-            visible  = extVisible,
-            onMouseDown = function() nav_ext = not nav_ext; return true end,
-        },
-        clickable {
-            position = { 0, 30, 31, 30 },
-            visible  = extVisible,
-            onMouseDown = function() serv_ext = not serv_ext; return true end,
-        },
-        clickable {
-            position = { 0, 0, 31, 30 },
-            visible  = extVisible,
-            onMouseDown = function() misc_ext = not misc_ext; return true end,
-        },
+        groupCell(60, "NAV",  function() return nav_ext  end, function() nav_ext  = not nav_ext  end),
+        groupCell(30, "SERV", function() return serv_ext end, function() serv_ext = not serv_ext end),
+        groupCell(0,  "MISC", function() return misc_ext end, function() misc_ext = not misc_ext end),
 
         -- nav_menu -- was subpanel { 30, 570, 121, 31 }
-        textureLit {
-            position = { 30, 60, 121, 31 },
-            image    = get(nav_menu_wt),
-            visible  = navVisible,
-        },
-        clickable { -- KLN
+        panelCell("nvu",  30, 60, "NVU",  navVisible),
+        panelCell("absu", 60, 60, "ABSU", navVisible),
+        panelCell("ovhd", 90, 60, "OVHD", navVisible),
+        menu_button { -- GPS: the KLN90B window, or the GNS popup when that is fitted
             position = { 120, 60, 31, 31 },
+            label    = "GPS",
             visible  = navVisible,
+            state    = function()
+                return lit(get(show_gns) == 0 and get(KLN90visible) == 1)
+            end,
             onMouseDown = function()
                 if get(show_gns) == 1 then      -- GNS
                     commandOnce(findCommand("sim/GPS/g430n1_popup"))
@@ -278,91 +254,100 @@ cw_panels.menu = contextWindow {
                 return true
             end,
         },
-        clickable { -- OVHD
-            position = { 90, 60, 31, 31 },
-            visible  = navVisible,
-            onMouseDown = function()
-                set(drf_panels.ovhd, 1 - get(drf_panels.ovhd))
-                return true
-            end,
-        },
-        clickable { -- ABSU
-            position = { 60, 60, 31, 31 },
-            visible  = navVisible,
-            onMouseDown = function()
-                set(drf_panels.absu, 1 - get(drf_panels.absu))
-                return true
-            end,
-        },
-        clickable { -- NVU
-            position = { 30, 60, 31, 31 },
-            visible  = navVisible,
-            onMouseDown = function()
-                set(drf_panels.nvu, 1 - get(drf_panels.nvu))
-                return true
-            end,
-        },
 
         -- serv_menu -- was subpanel { 30, 540, 61, 31 }
-        textureLit {
-            position = { 30, 30, 61, 31 },
-            image    = get(serv_menu_wt),
-            visible  = servVisible,
-        },
-        clickable {
-            position = { 30, 30, 31, 31 },
-            visible  = servVisible,
-            onMouseDown = function()
-                set(drf_panels.payload, 1 - get(drf_panels.payload))
-                return true
-            end,
-        },
-        clickable {
-            position = { 60, 30, 31, 31 },
-            visible  = servVisible,
-            onMouseDown = function()
-                set(drf_panels.ground, 1 - get(drf_panels.ground))
-                return true
-            end,
-        },
+        panelCell("payload", 30, 30, "LOAD", servVisible),
+        panelCell("ground",  60, 30, "GND",  servVisible),
 
-        -- misc_menu -- was subpanel { 30, 510, 121, 31 }
-        textureLit {
-            position = { 30, 0, 121, 31 },
-            image    = get(misc_menu_wt),
+        -- misc_menu -- was subpanel { 30, 510, 121, 31 }, plus the DBG cell
+        panelCell("camera",    30, 0, "CAM",      miscVisible),
+        panelCell("uphone",    60, 0, "PHON",     miscVisible),
+        panelCell("checklist", 90, 0, "CHK\nLST", miscVisible),
+        panelCell("palette",  120, 0, "TAB",      miscVisible),
+        menu_button { -- debug inspector (systems/debug/debug_inspector.lua)
+            position = { 150, 0, 31, 31 },
+            label    = "DBG",
             visible  = miscVisible,
-        },
-        clickable {
-            position = { 90, 0, 31, 31 },
-            visible  = miscVisible,
-            onMouseDown = function()
-                set(drf_panels.checklist, 1 - get(drf_panels.checklist))
-                return true
+            state    = function()
+                local win = cw_panels.inspector
+                if not win then return "na" end
+                return lit(win:isVisible())
             end,
-        },
-        clickable {
-            position = { 60, 0, 31, 31 },
-            visible  = miscVisible,
             onMouseDown = function()
-                set(drf_panels.uphone, 1 - get(drf_panels.uphone))
-                return true
-            end,
-        },
-        clickable {
-            position = { 30, 0, 31, 31 },
-            visible  = miscVisible,
-            onMouseDown = function()
-                set(drf_panels.camera, 1 - get(drf_panels.camera))
-                return true
-            end,
-        },
-        clickable {
-            position = { 120, 0, 31, 31 },
-            visible  = miscVisible,
-            onMouseDown = function()
-                set(drf_panels.palette, 1 - get(drf_panels.palette))
+                local win = cw_panels.inspector
+                if win then win:setIsVisible(not win:isVisible()) end
                 return true
             end,
         },
     },
 }
+
+-- ---------------------------------------------------------------------------
+-- X-Plane top bar menu
+--
+-- One "Tu-154M" submenu under Plugins, mirroring the menu strip above rather
+-- than duplicating it: each content-panel item flips the same
+-- tu-154/panels/show_* dataref a menu-strip cell does (updatePanels() then
+-- moves the actual contextWindow, exactly as it does for a 3D hotspot), and
+-- the "Menu Strip" item flips menu_strip_visible, which core/panel_logic.lua
+-- now drives cw_panels.menu from instead of forcing it permanently on. Every
+-- item is a checkbox; updateTopBarMenu() (called from main.lua's update(),
+-- right after updatePanels()) keeps the ticks in sync with whichever side
+-- changed the state.
+-- ---------------------------------------------------------------------------
+local topbar_labels = {
+    palette   = "Tab Palette",
+    payload   = "Payload",
+    absu      = "ABSU",
+    ovhd      = "Overhead",
+    nvu       = "NVU",
+    checklist = "Checklist",
+    ground    = "Ground Service",
+    uphone    = "Interphone",
+    camera    = "Camera",
+    fails     = "Failures",
+}
+
+local topbar_menu_item = sasl.appendMenuItem(PLUGINS_MENU_ID, "Tu-154M")
+local topbar_menu      = sasl.createMenu("", PLUGINS_MENU_ID, topbar_menu_item)
+local topbar_items     = {} -- { {id = menuItemID, checked = fun():bool}, ... }
+
+for _, p in ipairs(panels) do
+    local key = p.key
+    local id = sasl.appendMenuItem(topbar_menu, topbar_labels[key], function()
+        set(drf_panels[key], 1 - get(drf_panels[key]))
+    end)
+    topbar_items[#topbar_items + 1] = {
+        id      = id,
+        checked = function() return get(drf_panels[key]) == 1 end,
+    }
+end
+
+sasl.appendMenuSeparator(topbar_menu)
+
+local menu_strip_menu_id = sasl.appendMenuItem(topbar_menu, "MENU Panel", function()
+    -- menu_strip is a table (core/panel_logic.lua), so this mutates the same
+    -- one updatePanels() reads, exactly like drf_panels/cw_panels elsewhere --
+    -- see the comment above menu_strip's declaration for why it isn't a bare
+    -- boolean
+    menu_strip.visible = not menu_strip.visible
+end)
+topbar_items[#topbar_items + 1] = {
+    id      = menu_strip_menu_id,
+    checked = function() return menu_strip.visible end,
+}
+
+-- MENU_CHECKED/MENU_UNCHECKED, looked up once via rawget rather than referenced
+-- bare: a bare unresolved global inside a component is handed to the component
+-- loader and logs "can't load component MENU_UNCHECKED" -- the same trap
+-- FONT_HINTER_NATIVE hits in the debug inspector (see CLAUDE.md, SASL3 API traps)
+local MENU_CHECKED_STATE   = rawget(_G, "MENU_CHECKED")
+local MENU_UNCHECKED_STATE = rawget(_G, "MENU_UNCHECKED")
+
+-- published on _G (see glbl_func.lua) so main.lua's update() can call it --
+-- a plain top-level declaration here would stay private to this component
+function _G.updateTopBarMenu()
+    for _, item in ipairs(topbar_items) do
+        sasl.setMenuItemState(topbar_menu, item.id, item.checked() and MENU_CHECKED_STATE or MENU_UNCHECKED_STATE)
+    end
+end

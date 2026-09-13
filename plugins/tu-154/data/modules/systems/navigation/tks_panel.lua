@@ -1,4 +1,3 @@
--- this is TKS panel logic
 
 -- controls
 defineProperty("tks_mode", globalPropertyi("tu-154/switchers/ovhd/tks_mode")) -- TKS mode. 0 = MK, 1 = GPK, 2 = AK

@@ -1,4 +1,3 @@
--- this is camera panel
 
 size = {512, 512}
 defineProperty("show_cam",globalPropertyi("tu-154/panels/show_cam")) -- show the camera panel
@@ -193,14 +192,6 @@ components = {
 
 
 
-	clickable {
-		position = {size[1]-15, size[2]-15, 15, 15 },
-      
-		onMouseDown = function() 
-			set(show_cam, 0)
-			return true
-		end,
-	},		
 	
 
 

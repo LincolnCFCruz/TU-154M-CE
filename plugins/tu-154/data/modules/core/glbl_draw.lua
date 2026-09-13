@@ -192,3 +192,79 @@ function _G.drawDigitStrip(img, overlayImg, value, digits, frac, allowNonRound,
         sasl.gl.drawTexture(overlayImg, 0, 0, w, h, color)
     end
 end
+
+-- ---------------------------------------------------------------------------
+-- Popup chrome: menu_button.lua (panels/panel_windows.lua). Drawn from
+-- primitives rather than cropped from the old menus.png, so no texture-part
+-- conversion is involved -- only the component extent.
+-- ---------------------------------------------------------------------------
+
+-- The font is resolved on first draw, not at include time: this file is
+-- included before any component exists. rawget, not a bare FONT_HINTER_NATIVE:
+-- see CLAUDE.md 14 (an unresolved global is handed to the component loader).
+local UI_FONT_NAME = "Roboto-Regular.ttf"
+local uiFont
+local function getUIFont()
+    if uiFont == nil then
+        local hinter = rawget(_G, "FONT_HINTER_NATIVE")
+        uiFont = (hinter and sasl.gl.loadFontHinted(UI_FONT_NAME, hinter))
+            or sasl.gl.loadFont(UI_FONT_NAME) or false
+    end
+    return uiFont or nil
+end
+
+local CELL_BG = {0.05, 0.06, 0.07, 0.92}
+local CELL_EDGE = {0.78, 0.80, 0.83, 1}
+local CELL_FONT_MAX, CELL_FONT_MIN = 11, 7
+local CAP_HEIGHT = 0.711 -- Roboto cap height, in em
+
+-- menu_button.lua: a framed cell with a centred caption. "\n" in `label`
+-- stacks lines ("CHK\nLST"). The size steps down from CELL_FONT_MAX until the
+-- widest line fits, so a caption never runs into the frame. Edges are 1 px
+-- rectangles on whole pixels rather than drawFrame, whose lines straddle the
+-- boundary and lose half their width to the clip on the outer cells.
+function _G.drawMenuCell(w, h, label, textCol)
+    sasl.gl.drawRectangle(0, 0, w, h, CELL_BG)
+    sasl.gl.drawRectangle(0, 0, w, 1, CELL_EDGE)
+    sasl.gl.drawRectangle(0, h - 1, w, 1, CELL_EDGE)
+    sasl.gl.drawRectangle(0, 0, 1, h, CELL_EDGE)
+    sasl.gl.drawRectangle(w - 1, 0, 1, h, CELL_EDGE)
+
+    local font = getUIFont()
+    if not font or not label or label == "" then
+        return
+    end
+    local lines = {}
+    for s in string.gmatch(label, "[^\n]+") do
+        lines[#lines + 1] = s
+    end
+    local n = #lines
+
+    local fs = CELL_FONT_MAX
+    while fs > CELL_FONT_MIN do
+        local widest = 0
+        for i = 1, n do
+            local tw = sasl.gl.measureText(font, lines[i], fs, false, false)
+            if tw > widest then
+                widest = tw
+            end
+        end
+        if widest <= w - 5 and n * (fs + 1) <= h - 4 then
+            break
+        end
+        fs = fs - 1
+    end
+
+    -- drawText's y is a BASELINE: centre the block of cap heights, not the em
+    -- boxes, so an all-caps caption sits optically in the middle.
+    local pitch = fs + 1
+    local capH = math.floor(fs * CAP_HEIGHT + 0.5)
+    local base = math.floor((h - ((n - 1) * pitch + capH)) / 2)
+    local cx = math.floor(w / 2)
+    sasl.gl.setRenderTextPixelAligned(true)
+    for i = 1, n do
+        sasl.gl.drawText(font, cx, base + (n - i) * pitch, lines[i], fs,
+            false, false, TEXT_ALIGN_CENTER, textCol)
+    end
+    sasl.gl.setRenderTextPixelAligned(false)
+end

@@ -778,11 +778,8 @@ function update()
     set(apu_doors,        apu_doors_pos)
     set(apu_oil_t,        oil_temp)
     set(apu_oil_q,        oil_q)
-    -- oil pressure: builds above RPM > 15% (the oil pump)
-    -- normally 3.8 kgf/cm2, min 3.4 at +50 C (Flight Manual 8.2.1(3))
-    -- oil pressure per Flight Manual 8.2.1(3):
-    -- normally 3.8 kgf/cm2 at +15 C, min 3.4 at +50 C
-    -- builds above RPM > 15% (the oil pump)
+    -- oil pressure per Flight Manual 8.2.1(3): normally 3.8 kgf/cm2 at +15 C,
+    -- min 3.4 at +50 C; builds above RPM > 15% (the oil pump)
     local oil_press = oil_q * 3.8 * math.min(1, math.max(0, (RPM - 15) / 30))
     set(apu_oil_p,        oil_press)
     set(apu_egt,          egt)

@@ -1,4 +1,3 @@
--- this is ARK panel
 
 -- source
 defineProperty("left_freq", globalPropertyf("sim/cockpit2/radios/actuators/adf1_left_frequency_hz"))  -- left frequency
@@ -8,7 +7,7 @@ defineProperty("fail", globalPropertyf("sim/operation/failures/rel_adf1"))
 defineProperty("adf", globalPropertyf("sim/cockpit2/radios/indicators/adf1_relative_bearing_deg"))
 defineProperty("audio_selection", globalPropertyi("sim/cockpit2/radios/actuators/audio_selection_adf1"))
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- controls
 defineProperty("ark_mode", globalPropertyi("tu-154/switchers/ovhd/ark_1_mode")) -- ARK 1 mode. 0 = off, 1 = compass, 2 = antenna, 3 = loop

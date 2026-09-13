@@ -34,7 +34,7 @@ defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right
 defineProperty("test_lamps", globalPropertyi("tu-154/buttons/lamp_test_front")) -- APU panel lamp test button
 defineProperty("day_night_set", globalPropertyf("tu-154/lights/day_night_set")) -- day/night switch. 0 = day, 1 = night. dims the annunciator lamps.
 
-defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message")) -- 
+defineProperty("taws_message", globalPropertyi("tu-154/taws/taws_message"))
 -- 0 - none, 1 - Pull UP, 2 - alt callout, 3 - Pull Up, 4 - Terrain, 5 - Terrain Ahead, 6 - Too low, Terrain, 
 -- 7 - Alt collout, 8 - Too low, Gear, 9 - Too low, Flaps, 10 - Check altitude, 11 - Sink Rate, 12 - Don't sink, 13 - Glideslope
 
@@ -45,7 +45,7 @@ defineProperty("mode_set", globalPropertyi("tu-154/taws/mode_set")) -- screen op
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- sounds
@@ -115,7 +115,7 @@ local function switchers_check()
 	changes = changes - egpws_alarm_1_last - egpws_alarm_2_last - egpws_relief_last - egpws_mode_last
 	
 	if changes ~= 0 then
-		playSample (switcher_sound, 0)
+		playSample(switcher_sound, false)
 	end
 	
 	-- caps

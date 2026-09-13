@@ -1,4 +1,3 @@
--- this is TCAS main screen
 size = {170, 45}
 
 defineProperty("text")

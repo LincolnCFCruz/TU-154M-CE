@@ -1,5 +1,4 @@
--- this is big course indicator USh1
-
+-- USh-3: large course indicator
 
 -- sources
 defineProperty("course_ga_1", globalPropertyf("tu-154/tks/course_ga_1")) -- heading on GA1
@@ -7,7 +6,7 @@ defineProperty("course_ga_2", globalPropertyf("tu-154/tks/course_ga_2")) -- head
 defineProperty("diss_slip_angle", globalPropertyf("tu-154/nvu/diss_slip_angle")) -- drift angle from the DISS
 defineProperty("tks_mode", globalPropertyi("tu-154/switchers/ovhd/tks_mode")) -- TKS mode. 0 = MK, 1 = GPK, 2 = AK
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- power
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))

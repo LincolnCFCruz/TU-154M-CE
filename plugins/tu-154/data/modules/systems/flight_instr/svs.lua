@@ -1,4 +1,3 @@
--- this is SVS logic
 
 -- sources
 defineProperty("mach_sim", globalPropertyf("sim/flightmodel/misc/machno")) -- Mach number

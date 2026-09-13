@@ -1,4 +1,3 @@
--- this is VHF radio
 include("functions.lua")
 size = {420, 90}
 

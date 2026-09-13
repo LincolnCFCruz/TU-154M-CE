@@ -1,4 +1,4 @@
--- this is flight controls override script for SmartCopilot
+-- Flight-controls override for SmartCopilot sync.
 
 -- Sim Datarefs
 --defineProperty("yoke_pitch_ratio", globalPropertyf("sim/joystick/yoke_pitch_ratio")) 

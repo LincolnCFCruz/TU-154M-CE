@@ -1,4 +1,3 @@
--- this is the NVU logic
 
 -- controls
 defineProperty("nvu_param_sel", globalPropertyi("tu-154/switchers/console/nvu_param_sel")) -- NVU parameter entry selector knob. -4 - Z, -3 - S, -2 - Zm, -1 - Sm, 0 - off, 1 - Sn, 2 - Zn, 3 - S, 4 - Z
@@ -36,7 +35,7 @@ defineProperty("diss_slip_angle", globalPropertyf("tu-154/nvu/diss_slip_angle"))
 defineProperty("distance", globalPropertyf("tu-154/rsbn/distance")) -- slant range from the beacon
 defineProperty("azimuth", globalPropertyf("tu-154/rsbn/azimuth")) -- azimuth from the beacon
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("rsbn_distance", globalPropertyf("tu-154/rsbn/distance")) -- slant range from the beacon
 defineProperty("rsbn_azimuth", globalPropertyf("tu-154/rsbn/azimuth")) -- azimuth from the beacon
@@ -81,7 +80,7 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 -- failures
-defineProperty("nvu_fail", globalPropertyi("tu-154/failures/nvu_fail")) --
+defineProperty("nvu_fail", globalPropertyi("tu-154/failures/nvu_fail"))
 
 
 

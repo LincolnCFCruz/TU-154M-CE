@@ -1,4 +1,3 @@
--- this is the ABSU indicators
 
 -- sources
 defineProperty("absu_contr_pitch", globalPropertyf("tu-154/absu/contr_pitch")) -- RA-56 pitch actuator rod travel

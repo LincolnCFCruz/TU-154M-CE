@@ -1,4 +1,3 @@
--- this is NVU panel
 size = {636, 786}
 
 defineProperty("hide_eng_objects", globalPropertyi("tu-154/lang/hide_eng_objects")) -- hide the English cockpit objects. 1 = RUS
@@ -1563,13 +1562,5 @@ components = {
 	
 	
 	
-	-- close panel
-	clickable {
-		position = {size[1]-20, size[2]-20, 20, 20},
-		onMouseDown = function()
-			set(show_nvu_panel, 0)
-			return true
-		end,
-	},
 	
 }

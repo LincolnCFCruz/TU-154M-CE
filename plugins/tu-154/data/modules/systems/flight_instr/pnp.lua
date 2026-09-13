@@ -1,4 +1,3 @@
--- this is PNP gauge
 
 
 -- sources
@@ -27,7 +26,7 @@ defineProperty("obs", globalPropertyf("tu-154/gauges/compas/pkp_obs_set_L"))  --
 defineProperty("obs_side", globalPropertyf("tu-154/gauges/compas/pkp_obs_set_R"))  -- set the course
 
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 defineProperty("gyro_fail", globalPropertyi("tu-154/tks/fail_left")) -- failure flag
@@ -101,9 +100,9 @@ defineProperty("pkp_obs_hundr", globalPropertyf("tu-154/gauges/compas/pkp_obs_hu
 
 
 -- lapms
-defineProperty("pnp_sp_lamp", globalPropertyf("tu-154/lights/small/pnp_sp_left")) -- 
-defineProperty("pnp_vor_lamp", globalPropertyf("tu-154/lights/small/pnp_vor_left")) -- 
-defineProperty("pnp_nv_lamp", globalPropertyf("tu-154/lights/small/pnp_nv_left")) -- 
+defineProperty("pnp_sp_lamp", globalPropertyf("tu-154/lights/small/pnp_sp_left"))
+defineProperty("pnp_vor_lamp", globalPropertyf("tu-154/lights/small/pnp_vor_left"))
+defineProperty("pnp_nv_lamp", globalPropertyf("tu-154/lights/small/pnp_nv_left"))
 
 
 

@@ -1,4 +1,3 @@
--- this is MSRP clock panel
 
 size = {195, 84}
 

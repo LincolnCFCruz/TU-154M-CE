@@ -1,4 +1,3 @@
--- this is the main APU script
 
 components = {
 	

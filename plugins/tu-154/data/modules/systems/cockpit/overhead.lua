@@ -1,4 +1,3 @@
--- this is overhead panel
 
 -- switchers
 defineProperty("var_left", globalPropertyi("tu-154/switchers/ovhd/var_left"))  -- overhead. left variometer
@@ -72,7 +71,7 @@ defineProperty("mgv_contr_cap", globalPropertyi("tu-154/switchers/ovhd/mgv_contr
 defineProperty("emerg_light_cap", globalPropertyi("tu-154/switchers/ovhd/emerg_light_cap"))  -- emergency lighting cover
 
 -- other datarefs
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) -- engine 1 rpm
 defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) -- engine 2 rpm

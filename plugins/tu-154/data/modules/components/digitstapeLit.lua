@@ -1,16 +1,14 @@
--- no image by default
 defineProperty("image")
 
 -- image to display over digits (for 3d effect)
 defineProperty("overlayImage")
 
--- default value
 defineProperty("value", 0)
 
--- maximum digits
+-- number of digits
 defineProperty("digits", 1)
 
--- maximum digits
+-- number of fractional digits
 defineProperty("fractional", 0)
 
 -- allow non-round values

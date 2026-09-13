@@ -1,5 +1,3 @@
--- Radio fails
-
 defineProperty("rel_adf1", globalPropertyi("sim/operation/failures/rel_adf1"))
 defineProperty("rel_adf2", globalPropertyi("sim/operation/failures/rel_adf2"))
 defineProperty("nav1_fail", globalPropertyi("tu-154/failures/nav1_fail"))
@@ -14,8 +12,7 @@ defineProperty("mrp_fail", globalPropertyi("tu-154/failures/mrp_fail"))
 
 
 
--- define sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
 -- Smart Copilot
@@ -44,7 +41,6 @@ if MASTER then
 	
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed

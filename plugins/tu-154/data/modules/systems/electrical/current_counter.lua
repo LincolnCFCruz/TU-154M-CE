@@ -1,4 +1,3 @@
--- this is power counters logic
 
 
 -- busses currents. results

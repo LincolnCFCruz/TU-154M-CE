@@ -1,8 +1,5 @@
--- failures logic
-
-
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 
@@ -26,8 +23,8 @@ defineProperty("window_heat_fail_2", globalPropertyi("tu-154/failures/window_hea
 defineProperty("window_heat_fail_3", globalPropertyi("tu-154/failures/window_heat_fail_3"))
 
 -- sources
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 
 -- 
@@ -84,7 +81,7 @@ if get(ismaster) ~= 1 then
 			-- dependent random
 			if ppd1_counter > 1200 and get(rel_ice_pitot_heat1) ~= 6 then set(rel_ice_pitot_heat1, bool2int(math.random() < 0.1 * FAIL * 0.3) * 6) end
 			if ppd2_counter > 1200 and get(rel_ice_pitot_heat2) ~= 6 then set(rel_ice_pitot_heat2, bool2int(math.random() < 0.1 * FAIL * 0.3) * 6) end
-			if ppd3_counter > 1200 and get(ppd_3_heat_fail) ~= 6 then set(ppd_3_heat_fail, bool2int(math.random() < 0.1 * FAIL * 0.3) * 6) end
+			if ppd3_counter > 1200 and get(ppd_3_heat_fail) ~= 1 then set(ppd_3_heat_fail, bool2int(math.random() < 0.1 * FAIL * 0.3) * 1) end
 			
 			if wing_counter > 90 and get(rel_ice_surf_heat) ~= 6 then set(rel_ice_surf_heat, bool2int(math.random() < 0.3 * FAIL * 0.3) * 6) end
 			if stab_counter > 90 and get(rel_ice_surf_heat2) ~= 6 then set(rel_ice_surf_heat2, bool2int(math.random() < 0.3 * FAIL * 0.3) * 6) end

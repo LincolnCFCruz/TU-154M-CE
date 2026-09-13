@@ -1,11 +1,11 @@
--- this is magnetic correction gauge KM-5
+-- KM-5: magnetic correction gauge
 
 -- source
 defineProperty("mag_psi", globalPropertyf("sim/flightmodel/position/mag_psi")) -- mag course
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
-defineProperty("gforce_fwd", globalPropertyf("sim/flightmodel2/misc/gforce_axil")) -- 
-defineProperty("gforce_side", globalPropertyf("sim/flightmodel2/misc/gforce_side")) -- 
+defineProperty("gforce_fwd", globalPropertyf("sim/flightmodel2/misc/gforce_axil"))
+defineProperty("gforce_side", globalPropertyf("sim/flightmodel2/misc/gforce_side"))
 
 -- power
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage

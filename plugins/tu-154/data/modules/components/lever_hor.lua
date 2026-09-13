@@ -1,21 +1,18 @@
 size = {139, 29}
 
--- property table
-defineProperty("value", 0) -- variable for changing
+defineProperty("value", 0)
 
 defineProperty("minimum", 0) -- minimum for variable, lower position of lever
 defineProperty("maximum", 1) -- maximum for variable, higher position of lever
 
-defineProperty("addFunc") -- variable for changing
+defineProperty("addFunc") -- callback fired when the drag ends
 
-
--- images
-defineProperty("back_img") -- background image
-defineProperty("lever_img") -- lever image  
+defineProperty("back_img")
+defineProperty("lever_img")
 
 local Min = get(minimum)
 local Max = get(maximum)
-local Range = Max - Min  -- define range of used variable
+local Range = Max - Min
 
 
 local mouse_stat = false
@@ -26,9 +23,8 @@ local mouse_stat = false
 -- space, so they normalise by the real width. The resulting value is identical.
 local CLICK_W = 109
 
--- lever consist of several components
 components = {
-           
+
      -- movable lever image
     free_texture {
         image = get(lever_img),
@@ -43,7 +39,7 @@ components = {
         height = 30, 
     },
     
-    -- clicable area for lever
+    -- clickable area for the lever
     clickable {
        position = { 15, 0, CLICK_W, 29 },
        --[[ 

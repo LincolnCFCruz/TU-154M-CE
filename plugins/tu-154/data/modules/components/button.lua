@@ -1,18 +1,15 @@
 
 -- button is clickable area with texture
 
--- no image
 defineProperty("image")
 
 -- function
 defineProperty("action")
 
 components = {
-    
-    -- background image
+
     texture { image = image };
 
-    -- clickable area
     clickable {
         cursor = { 
             x = 8, 

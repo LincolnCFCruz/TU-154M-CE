@@ -1,7 +1,6 @@
 -- draw texture with a controllable brightness
 -- SASL3: the component extent is size[1] x size[2] (SASL2's implicit 100x100).
 
--- no default texture
 defineProperty("image")
 defineProperty("lapha")
 

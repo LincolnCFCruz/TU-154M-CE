@@ -1,4 +1,3 @@
--- this is the voice tables
 
 
 -- there is an idea to make a single table for both languages. under each cell name there would be two indices. depending on the language index, play the corresponding file

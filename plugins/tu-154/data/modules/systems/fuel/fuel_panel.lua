@@ -596,7 +596,6 @@ local function electric_meters()
 		else summ_front_act = summ_front_act + (summ_front_need - summ_front_act) * passed * 10 end
 	end
 
-	-- set results
 	set(fuel_meter_summ,        summ_act)
 	set(fuel_meter_tank1,       tank1_act)
 	set(fuel_meter_tank2_left,  tank2L_act)

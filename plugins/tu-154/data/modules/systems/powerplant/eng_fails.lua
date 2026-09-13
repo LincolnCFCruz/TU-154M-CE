@@ -1,4 +1,3 @@
--- failures
 defineProperty("engine_runtime_1", globalPropertyf("tu-154/failures/engine_runtime_1")) 
 defineProperty("engine_runtime_2", globalPropertyf("tu-154/failures/engine_runtime_2")) 
 defineProperty("engine_runtime_3", globalPropertyf("tu-154/failures/engine_runtime_3"))
@@ -92,7 +91,7 @@ defineProperty("msl_press", globalPropertyf("sim/weather/region/sealevel_pressur
 defineProperty("pressure", globalPropertyf("tu-154/gauges/alt/vbe_press_left"))  -- pressure in hPa
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
@@ -158,7 +157,6 @@ if get(ismaster) ~= 1 then
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
 	
-	-- check failures
 	if FAIL > 0 then
 		
 		

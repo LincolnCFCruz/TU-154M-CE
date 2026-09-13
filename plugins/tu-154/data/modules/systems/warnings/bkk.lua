@@ -1,4 +1,4 @@
--- this is roll control system BKK
+-- BKK: bank/attitude monitoring unit
 
 -- controll
 defineProperty("bkk_on", globalPropertyi("tu-154/switchers/ovhd/bkk_on")) -- switch
@@ -14,8 +14,7 @@ defineProperty("pitch_a", globalPropertyf("tu-154/gyro/ahz_pitch_int_L")) -- AGR
 defineProperty("pitch_b", globalPropertyf("tu-154/gyro/ahz_pitch_int_R")) -- AGR pitch, + up
 defineProperty("pitch_c", globalPropertyf("tu-154/gyro/mgv_contr_pitch")) -- AGR pitch, + up
 
--- fail
-defineProperty("bkk_fail", globalPropertyi("tu-154/failures/bkk_fail")) -- fail
+defineProperty("bkk_fail", globalPropertyi("tu-154/failures/bkk_fail"))
 
 
 
@@ -171,7 +170,6 @@ function update()
 	
 	
 	
-	-- set results
 	set(left_roll_big, roll_left)
 	set(right_roll_big, roll_right)
 	set(mgv_contr_fail, mgv_fail)

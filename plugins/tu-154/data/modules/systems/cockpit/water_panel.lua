@@ -1,4 +1,4 @@
--- this is water panel on engineer's upper part
+-- Panel on the flight engineer's upper station.
 
 -- controls
 defineProperty("wing_light", globalPropertyi("tu-154/switchers/eng/wing_light")) -- wing ground marker lights
@@ -28,21 +28,21 @@ defineProperty("water_level_12", globalPropertyf("tu-154/lights/water_level_12")
 defineProperty("water_level_14", globalPropertyf("tu-154/lights/water_level_14")) -- water level 1
 defineProperty("water_level_0", globalPropertyf("tu-154/lights/water_level_0")) -- water level 1
 
-defineProperty("tail_temp_high", globalPropertyf("tu-154/lights/small/tail_temp_high")) -- 
-defineProperty("lavatory_heat_lamp", globalPropertyf("tu-154/lights/small/lavatory_heat")) -- 
-defineProperty("galley_heat_lamp", globalPropertyf("tu-154/lights/small/galley_heat")) -- 
+defineProperty("tail_temp_high", globalPropertyf("tu-154/lights/small/tail_temp_high"))
+defineProperty("lavatory_heat_lamp", globalPropertyf("tu-154/lights/small/lavatory_heat"))
+defineProperty("galley_heat_lamp", globalPropertyf("tu-154/lights/small/galley_heat"))
 
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- gears
-defineProperty("deploy_ratio_1", globalProperty("sim/flightmodel2/gear/deploy_ratio[0]")) -- 
-defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]")) -- 
-defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]")) -- 
+defineProperty("deploy_ratio_1", globalProperty("sim/flightmodel2/gear/deploy_ratio[0]"))
+defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]"))
+defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]"))
 
 defineProperty("groundspeed", globalPropertyf("sim/flightmodel/position/groundspeed")) -- GS, m/s
 

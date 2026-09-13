@@ -1,4 +1,3 @@
--- this is TCAS panel
 size = {2048, 2048}
 
 defineProperty("tcas_on", globalPropertyi("tu-154/switchers/ovhd/tcas_on"))  -- TCAS switch
@@ -39,7 +38,7 @@ ident_cmd = findCommand("sim/transponder/transponder_ident")  -- comand of trans
 defineProperty("xpdr_fail", globalPropertyi("sim/operation/failures/rel_xpndr"))
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- TCAS
 defineProperty("ra_scale_set", globalPropertyi("tu-154/tcas/ra_scale_set"))  -- RA mode scale set. 0 = none.

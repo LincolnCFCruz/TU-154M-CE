@@ -12,7 +12,7 @@ defineProperty("show_fail_panel", globalPropertyi("tu-154/panels/show_fail_panel
 
 defineProperty("reset_state", globalPropertyi("tu-154/reset_state")) -- reset the aircraft state
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled")) -- failures enabled
 
@@ -619,16 +619,6 @@ components = {
 	
 	--------------------------------
 
-	-- close button
-	clickable {
-		position = {size[1] - 30, size[2] - 30, 30, 30 },
-      
-		onMouseDown = function() 
-			set(show_fail_panel, 0)
-			
-			return true
-		end,
-	}, 	
 
 }
 

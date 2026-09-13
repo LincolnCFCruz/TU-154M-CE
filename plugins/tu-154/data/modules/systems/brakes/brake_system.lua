@@ -1,4 +1,4 @@
--- this is the improved brakes system for XP12 (Cold/Wet conditions + Anti-skid)jeni
+-- Brakes system for XP12: cold/wet friction and anti-skid.
 
 defineProperty("have_pedals", globalPropertyi("tu-154/have_pedals"))
 
@@ -39,8 +39,11 @@ defineProperty("brake_R", globalPropertyf("tu-154/controlls/brake_R"))
 defineProperty("int_brakes_L", globalPropertyf("tu-154/brakes/int_brakes_L")) 
 defineProperty("int_brakes_R", globalPropertyf("tu-154/brakes/int_brakes_R")) 
 
--- sim/operation/override/override_gearbrake
-defineProperty("overr", globalPropertyi("sim/operation/override/override_gearbrake")) 
+-- published for the debug inspector: the anti-skid coefficient was a local
+defineProperty("antiskid_out_L", globalPropertyf("tu-154/brakes/antiskid_L"))
+defineProperty("antiskid_out_R", globalPropertyf("tu-154/brakes/antiskid_R"))
+
+defineProperty("overr", globalPropertyi("sim/operation/override/override_gearbrake"))
 
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) 
@@ -193,11 +196,13 @@ function update()
     if spd > 5 then -- Works only above 10 knots
         local wheelL = get(wheel_spd_L)
         local wheelR = get(wheel_spd_R)
-        
-        -- If the wheel has slowed too much (a skid)
+
         if wheelL < spd * 0.8 then antiskid_L = 0.0 end
         if wheelR < spd * 0.8 then antiskid_R = 0.0 end
     end
+
+    set(antiskid_out_L, antiskid_L)
+    set(antiskid_out_R, antiskid_R)
 
     -- Controls & Pressures
     local brake_1 = get(joy_value_L)

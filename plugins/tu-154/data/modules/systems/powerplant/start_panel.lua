@@ -1,4 +1,3 @@
--- this is start-up panel
 
 -- controls and gauges
 defineProperty("starter_press", globalPropertyf("tu-154/gauges/eng/starter_press")) -- pressure in the start system
@@ -31,7 +30,7 @@ defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right
 defineProperty("bus36_volt_left", globalPropertyf("tu-154/elec/bus36_volt_left")) -- 36 V left bus voltage
 defineProperty("bus36_volt_right", globalPropertyf("tu-154/elec/bus36_volt_right")) -- 36 V left bus voltage
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("starter_pressure", globalPropertyf("tu-154/start/starter_pressure")) -- pressure in the start system
 

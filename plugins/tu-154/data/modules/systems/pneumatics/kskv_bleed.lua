@@ -1,4 +1,4 @@
--- this is KSKV logic's air bleed part
+-- KSKV: the air bleed subsystem
 
 -- engines
 defineProperty("rpm_high_1", globalPropertyf("tu-154/gauges/engine/rpm_high_1")) -- engine 1 high-pressure spool rpm
@@ -41,6 +41,15 @@ defineProperty("gear_defl", globalProperty("sim/flightmodel2/gear/tire_vertical_
 defineProperty("air_usage_L", globalPropertyf("tu-154/bleed/air_usage_L")) -- left air flow
 defineProperty("air_usage_R", globalPropertyf("tu-154/bleed/air_usage_R")) -- right air flow
 
+-- Valve travel this module computes and used to keep to itself. Without it
+-- nothing outside could tell a shut main valve from an engine that simply is
+-- not bleeding, and the PSVP could only be reported as its switch position.
+defineProperty("main_valve_L_out", globalPropertyf("tu-154/bleed/main_valve_L")) -- left main bleed valve, 0..1
+defineProperty("main_valve_R_out", globalPropertyf("tu-154/bleed/main_valve_R")) -- right main bleed valve, 0..1
+defineProperty("psvp_L_out", globalPropertyf("tu-154/bleed/psvp_L")) -- left PSVP travel, 0..1
+defineProperty("psvp_R_out", globalPropertyf("tu-154/bleed/psvp_R")) -- right PSVP travel, 0..1
+defineProperty("smooth_vlv_out", globalPropertyf("tu-154/bleed/smooth_valve")) -- ground smoothing valve, 0..0.2
+
 defineProperty("eng_airvalve_1", globalPropertyf("tu-154/bleed/eng_airvalve_1")) -- engine bleed air valve opening
 defineProperty("eng_airvalve_2", globalPropertyf("tu-154/bleed/eng_airvalve_2")) -- engine bleed air valve opening
 defineProperty("eng_airvalve_3", globalPropertyf("tu-154/bleed/eng_airvalve_3")) -- engine bleed air valve opening
@@ -61,7 +70,7 @@ defineProperty("engine_bleed_sov_3", globalProperty("sim/cockpit2/bleedair/actua
 -- sim/cockpit2/bleedair/actuators/engine_bleed_sov
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- Smart Copilot
@@ -238,7 +247,6 @@ if MASTER then
 	flow_left = (eng_airflow_1 + eng_airflow_2 * 0.5 + eng_airflow_4 * 0.5) * math.min(main_valve_L, psvp_L)
 	flow_right = (eng_airflow_3 + eng_airflow_2 * 0.5 + eng_airflow_4 * 0.5) * math.min(main_valve_R + smooth_vlv, psvp_R + smooth_vlv, 1)  
 	
-		-- set results
 	set(eng_airvalve_1, valve_1)
 	set(eng_airvalve_2, valve_2)
 	set(eng_airvalve_3, valve_3)
@@ -251,6 +259,13 @@ if MASTER then
 	
 	set(air_usage_L, flow_left)
 	set(air_usage_R, flow_right)
+
+	-- publish the valve travel the flows above were calculated from
+	set(main_valve_L_out, main_valve_L)
+	set(main_valve_R_out, main_valve_R)
+	set(psvp_L_out, psvp_L)
+	set(psvp_R_out, psvp_R)
+	set(smooth_vlv_out, smooth_vlv)
 
 end	
 

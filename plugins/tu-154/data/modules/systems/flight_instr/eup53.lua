@@ -1,15 +1,13 @@
--- this is turn indicator
 defineProperty("turn", globalPropertyf("sim/cockpit2/gauges/indicators/turn_rate_heading_deg_pilot"))
 defineProperty("slip", globalPropertyf("sim/flightmodel/misc/slip"))
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- power
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("eup_on", globalPropertyi("tu-154/switchers/ovhd/eup_on"))
 
--- fail
 defineProperty("eup_fail", globalPropertyi("sim/operation/failures/rel_ss_tsi"))
 
 

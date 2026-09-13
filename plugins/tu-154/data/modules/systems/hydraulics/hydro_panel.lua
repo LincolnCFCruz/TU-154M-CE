@@ -1,5 +1,3 @@
--- this is hydraulic panel
-
 -- gauges
 defineProperty("pressure_ind_1", globalPropertyf("tu-154/gauges/hydro/pressure_ind_1")) -- hydraulic system 1 pressure indicator
 defineProperty("pressure_ind_2", globalPropertyf("tu-154/gauges/hydro/pressure_ind_2")) -- hydraulic system 2 pressure indicator
@@ -15,7 +13,7 @@ defineProperty("gear_brake_press_R", globalPropertyf("tu-154/gauges/console/gear
 
 -- controls
 defineProperty("lamp_test_hydro", globalPropertyi("tu-154/buttons/lamp_test_hydro")) -- lamp test button on the hydraulic panel
-defineProperty("lamp_test_front", globalPropertyi("tu-154/buttons/lamp_test_front")) -- lamp test button on the hydraulic panel
+defineProperty("lamp_test_front", globalPropertyi("tu-154/buttons/lamp_test_front")) -- lamp test button on the front panel
 
 defineProperty("qty_test_12", globalPropertyi("tu-154/buttons/hydro/qty_test_12")) -- level test
 defineProperty("qty_test_3", globalPropertyi("tu-154/buttons/hydro/qty_test_3")) -- level test
@@ -24,12 +22,11 @@ defineProperty("accum_fill", globalPropertyi("tu-154/buttons/hydro/accum_fill"))
 
 
 defineProperty("connect2to1", globalPropertyi("tu-154/switchers/hydro/connect2to1")) -- connect hydraulic system 2 to system 1
-defineProperty("connect2to1_cap", globalPropertyi("tu-154/switchers/hydro/connect2to1_cap")) -- connect hydraulic system 2 to system 1
-defineProperty("pump_2", globalPropertyi("tu-154/switchers/hydro/pump_2")) -- connect hydraulic system 2 to system 1
-defineProperty("pump_3", globalPropertyi("tu-154/switchers/hydro/pump_3")) -- connect hydraulic system 2 to system 1
+defineProperty("connect2to1_cap", globalPropertyi("tu-154/switchers/hydro/connect2to1_cap")) -- guard cap over the connect switch
+defineProperty("pump_2", globalPropertyi("tu-154/switchers/hydro/pump_2")) -- electric pump station 2 switch
+defineProperty("pump_3", globalPropertyi("tu-154/switchers/hydro/pump_3")) -- electric pump station 3 switch
 
--- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- lamps
 defineProperty("eng_hydr_fail_1", globalPropertyf("tu-154/lights/small/eng_hydr_fail_1")) -- hydraulic system 1 low pressure. flight engineer's panel
@@ -44,8 +41,8 @@ defineProperty("front_hydr_fail_4", globalPropertyf("tu-154/lights/small/front_h
 
 
 -- sources
-defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
-defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
+defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
+defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 defineProperty("bus36_volt_right", globalPropertyf("tu-154/elec/bus36_volt_right")) -- 36 V right bus voltage
 defineProperty("bus36_volt_pts250_1", globalPropertyf("tu-154/elec/bus36_volt_pts250_1")) -- 36 V bus voltage, PTS 1
@@ -71,8 +68,8 @@ defineProperty("r_brake_add", globalPropertyf("tu-154/brakes/int_brakes_R")) -- 
 
 
 
---defineProperty("l_brake_add", globalPropertyf("tu-154/controlls/brake_L")) -- 
---defineProperty("r_brake_add", globalPropertyf("tu-154/controlls/brake_R")) -- 
+--defineProperty("l_brake_add", globalPropertyf("tu-154/controlls/brake_L"))
+--defineProperty("r_brake_add", globalPropertyf("tu-154/controlls/brake_R"))
 
 defineProperty("parkbrake", globalPropertyf("sim/flightmodel/controls/parkbrake")) -- Parking Brake
 --defineProperty("parkbrake", globalPropertyf("tu-154/SC/controls/parkbrake")) 
@@ -81,8 +78,8 @@ defineProperty("parkbrake", globalPropertyf("sim/flightmodel/controls/parkbrake"
 defineProperty("brake_emerg", globalPropertyf("tu-154/controlls/brake_emerg")) -- emergency brake
 
 -- failures
-defineProperty("rel_lbrakes", globalPropertyi("sim/operation/failures/rel_lbrakes")) -- Left Brakes
-defineProperty("rel_rbrakes", globalPropertyi("sim/operation/failures/rel_rbrakes")) -- Right Brakes
+defineProperty("rel_lbrakes", globalPropertyi("sim/operation/failures/rel_lbrakes"))
+defineProperty("rel_rbrakes", globalPropertyi("sim/operation/failures/rel_rbrakes"))
 
 
 

@@ -1,4 +1,3 @@
--- this is mach meters logic
 
 -- source
 defineProperty("mach", globalPropertyf("sim/flightmodel/misc/machno")) -- Mach number
@@ -9,7 +8,7 @@ defineProperty("rel_pitot", globalPropertyi("sim/operation/failures/rel_pitot"))
 defineProperty("rel_pitot2", globalPropertyi("sim/operation/failures/rel_pitot2")) -- Pitot 2 - Blockage
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- results
 defineProperty("mach_ind_left", globalPropertyf("tu-154/gauges/speed/mach_left")) -- captain's mach

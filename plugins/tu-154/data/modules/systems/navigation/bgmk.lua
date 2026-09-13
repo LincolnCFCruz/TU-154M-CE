@@ -1,4 +1,3 @@
--- this is BGMK logic
 
 -- sources
 defineProperty("course_ga_1", globalPropertyf("tu-154/tks/course_ga_1")) -- heading on GA1
@@ -9,7 +8,7 @@ defineProperty("course_mk_2", globalPropertyf("tu-154/tks/course_mk_2")) -- head
 
 
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
@@ -154,7 +153,6 @@ function update()
 	if bgmk_corr_1 > 180 then bgmk_corr_1 = bgmk_corr_1 - 360
 	elseif bgmk_corr_1 < -180 then bgmk_corr_1 = bgmk_corr_1 + 360 end
 	
-	-- set results
 	if bgmk_cur_1 > 180 then bgmk_cur_1 = bgmk_cur_1 - 360
 	elseif bgmk_cur_1 < -180 then bgmk_cur_1 = bgmk_cur_1 + 360 end
 	
@@ -235,7 +233,6 @@ function update()
 	if bgmk_corr_2 > 180 then bgmk_corr_2 = bgmk_corr_2 - 360
 	elseif bgmk_corr_2 < -180 then bgmk_corr_2 = bgmk_corr_2 + 360 end
 	
-	-- set results
 	if bgmk_cur_2 > 180 then bgmk_cur_2 = bgmk_cur_2 - 360
 	elseif bgmk_cur_2 < -180 then bgmk_cur_2 = bgmk_cur_2 + 360 end
 	

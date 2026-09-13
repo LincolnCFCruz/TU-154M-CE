@@ -1,4 +1,3 @@
--- this is NVU panel
 
 -- controls
 defineProperty("nvu_param_sel", globalPropertyi("tu-154/switchers/console/nvu_param_sel")) -- NVU parameter entry selector knob. -4 - Z, -3 - S, -2 - Zm, -1 - Sm, 0 - off, 1 - Sn, 2 - Zn, 3 - S, 4 - Z
@@ -185,7 +184,7 @@ defineProperty("nvu_fail", globalPropertyi("tu-154/nvu/nvu_fail")) -- failure or
 defineProperty("nvu_mode", globalPropertyi("tu-154/nvu/nvu_mode")) -- NVU mode. 0 = off, 1 = ready, 2 = dead reckoning, 3 = correction
 defineProperty("nvu_active", globalPropertyi("tu-154/nvu/nvu_active")) -- active NVU set. 1 - 2
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("test_lamps", globalPropertyi("tu-154/buttons/lamp_test_front")) -- lamp test button
 defineProperty("day_night_set", globalPropertyf("tu-154/lights/day_night_set")) -- day/night switch. 0 = day, 1 = night. dims the annunciator lamps.

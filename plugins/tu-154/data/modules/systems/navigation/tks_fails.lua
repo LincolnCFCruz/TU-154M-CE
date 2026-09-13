@@ -1,4 +1,3 @@
--- TKS fails
 defineProperty("gyro_fail_1", globalPropertyi("sim/operation/failures/rel_ss_dgy"))
 defineProperty("gyro_fail_2", globalPropertyi("sim/operation/failures/rel_cop_dgy"))
 
@@ -11,8 +10,7 @@ defineProperty("tks_bgmk2_fail", globalPropertyi("tu-154/failures/tks_bgmk2_fail
 
 
 
--- define sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
 
 -- Smart Copilot
@@ -41,7 +39,6 @@ if MASTER then
 	
 	local FAIL = get(failures_enabled)
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed

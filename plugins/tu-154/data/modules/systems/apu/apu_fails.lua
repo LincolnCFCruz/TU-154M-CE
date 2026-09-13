@@ -1,18 +1,10 @@
--- this is logic of APU failures
-
--- there are few cases of failures:
--- +++ oil temperature >115C leads to oil burning and APU destruction. maybe - fire
--- +++ starting the APU when it's own temperature is above 150C leads to its destruction. maybe - fire
--- +++ fuel inside the APU before it starts can lead to rapid EGT grow and may leads to its destruction. maybe - fire
-
-
-
-
--- failures logic
-
+-- Modeled failure scenarios:
+--   * oil temperature above 115 C burns the oil and destroys the APU (possible fire)
+--   * starting the APU while it is above 150 C destroys it (possible fire)
+--   * fuel pooled inside the APU before start spikes EGT and may destroy it (possible fire)
 
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
@@ -46,7 +38,6 @@ if get(ismaster) ~= 1 then
 	local FAIL = get(failures_enabled)
 	
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed

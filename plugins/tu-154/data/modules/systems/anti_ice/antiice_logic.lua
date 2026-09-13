@@ -1,15 +1,14 @@
--- this is antiice logic.
 
 -- controls
 defineProperty("soi21_on", globalPropertyi("tu-154/switchers/eng/soi21_on")) -- SOI 21 switch
 defineProperty("soi21_test", globalPropertyi("tu-154/buttons/eng/soi21_test")) -- SOI 21 test
 
 
-defineProperty("antiice_slats", globalPropertyi("tu-154/switchers/eng/antiice_slats")) -- anti-icers
-defineProperty("antiice_eng_1", globalPropertyi("tu-154/switchers/eng/antiice_eng_1")) -- anti-icers
-defineProperty("antiice_eng_2", globalPropertyi("tu-154/switchers/eng/antiice_eng_2")) -- anti-icers
-defineProperty("antiice_eng_3", globalPropertyi("tu-154/switchers/eng/antiice_eng_3")) -- anti-icers
-defineProperty("antiice_wing", globalPropertyi("tu-154/switchers/eng/antiice_wing")) -- anti-icers
+defineProperty("antiice_slats", globalPropertyi("tu-154/switchers/eng/antiice_slats"))
+defineProperty("antiice_eng_1", globalPropertyi("tu-154/switchers/eng/antiice_eng_1"))
+defineProperty("antiice_eng_2", globalPropertyi("tu-154/switchers/eng/antiice_eng_2"))
+defineProperty("antiice_eng_3", globalPropertyi("tu-154/switchers/eng/antiice_eng_3"))
+defineProperty("antiice_wing", globalPropertyi("tu-154/switchers/eng/antiice_wing"))
 
 defineProperty("window_heat_1", globalPropertyi("tu-154/switchers/ovhd/window_heat_1")) -- window heating. -1 = low, 0 = off, 1 = high
 defineProperty("window_heat_2", globalPropertyi("tu-154/switchers/ovhd/window_heat_2")) -- window heating. -1 = low, 0 = off, 1 = high
@@ -46,12 +45,12 @@ defineProperty("rpm_high_3", globalPropertyf("tu-154/gauges/engine/rpm_high_3"))
 --defineProperty("termo", globalPropertyf("sim/weather/temperature_ambient_c")) -- air temperature xp11
 defineProperty("termo", globalPropertyf("sim/weather/aircraft/temperature_ambient_deg_c")) -- air temperature xp12
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("IAS", globalPropertyf("sim/flightmodel/position/indicated_airspeed")) 
 
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 -- failures
 defineProperty("ppd_3_heat_fail", globalPropertyi("tu-154/antiice/ppd_3_heat_fail"))
@@ -74,7 +73,7 @@ defineProperty("window_heat_fail_2", globalPropertyi("tu-154/failures/window_hea
 defineProperty("window_heat_fail_3", globalPropertyi("tu-154/failures/window_heat_fail_3"))
 
 -- results
-defineProperty("ice_detected", globalPropertyi("tu-154/antiice/ice_detected")) -- ice detected
+defineProperty("ice_detected", globalPropertyi("tu-154/antiice/ice_detected"))
 defineProperty("ice_detect_ok", globalPropertyi("tu-154/antiice/ice_detect_ok")) -- SOI system running
 
 defineProperty("ice_window_heat_on", globalPropertyi("sim/cockpit2/ice/ice_window_heat_on")) -- window heating in the sim
@@ -84,23 +83,23 @@ defineProperty("window_ice_2", globalPropertyf("tu-154/anim/window_ice_2")) -- i
 defineProperty("window_ice_3", globalPropertyf("tu-154/anim/window_ice_3")) -- ice on the windows
 defineProperty("window_ice_4", globalPropertyf("tu-154/anim/window_ice_4")) -- ice on the windows
 
-defineProperty("inlet_heat_1", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[0]")) -- 
-defineProperty("inlet_heat_2", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[1]")) -- 
-defineProperty("inlet_heat_3", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[2]")) -- 
+defineProperty("inlet_heat_1", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[0]"))
+defineProperty("inlet_heat_2", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[1]"))
+defineProperty("inlet_heat_3", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[2]"))
 
-defineProperty("sim_pitot_heat_1", globalPropertyi("sim/cockpit2/ice/ice_pitot_heat_on_pilot")) -- 
-defineProperty("sim_pitot_heat_2", globalPropertyi("sim/cockpit2/ice/ice_pitot_heat_on_copilot")) -- 
+defineProperty("sim_pitot_heat_1", globalPropertyi("sim/cockpit2/ice/ice_pitot_heat_on_pilot"))
+defineProperty("sim_pitot_heat_2", globalPropertyi("sim/cockpit2/ice/ice_pitot_heat_on_copilot"))
 
-defineProperty("AOA_heat_on", globalPropertyi("sim/cockpit2/ice/ice_AOA_heat_on")) -- 
-defineProperty("AOA_heat_on_copilot", globalPropertyi("sim/cockpit2/ice/ice_AOA_heat_on_copilot")) --
+defineProperty("AOA_heat_on", globalPropertyi("sim/cockpit2/ice/ice_AOA_heat_on"))
+defineProperty("AOA_heat_on_copilot", globalPropertyi("sim/cockpit2/ice/ice_AOA_heat_on_copilot"))
 
-defineProperty("wings_heat_on", globalPropertyi("sim/cockpit2/ice/ice_surfce_heat_on")) --
+defineProperty("wings_heat_on", globalPropertyi("sim/cockpit2/ice/ice_surfce_heat_on"))
 
-defineProperty("frm_ice", globalPropertyf("sim/flightmodel/failures/frm_ice")) --
-defineProperty("frm_ice2", globalPropertyf("sim/flightmodel/failures/frm_ice2")) --
+defineProperty("frm_ice", globalPropertyf("sim/flightmodel/failures/frm_ice"))
+defineProperty("frm_ice2", globalPropertyf("sim/flightmodel/failures/frm_ice2"))
 
 defineProperty("wing_heating", globalPropertyi("tu-154/antiice/wing_heating")) -- wing heating running
-defineProperty("slat_heating", globalPropertyi("tu-154/antiice/slat_heating")) -- wing heating running
+defineProperty("slat_heating", globalPropertyi("tu-154/antiice/slat_heating")) -- slat heating running
 
 defineProperty("ai_27_L_cc", globalPropertyf("tu-154/antiice/ai_27_L_cc")) -- bus load
 defineProperty("ai_27_R_cc", globalPropertyf("tu-154/antiice/ai_27_R_cc")) -- bus load
@@ -118,6 +117,20 @@ defineProperty("eng_heat_open_3", globalPropertyi("tu-154/antiice/eng_heat_open_
 -- gauges
 defineProperty("wing_heat_t", globalPropertyf("tu-154/antiice/wing_heat_t")) -- wing anti-ice temperature
 defineProperty("stab_heat_t", globalPropertyf("tu-154/antiice/stab_heat_t")) -- stabiliser anti-ice temperature
+
+-- Published for the anti-ice diagram; nothing else reads them and nothing
+-- here changes as a result. Each was already being computed and then dropped
+-- into a local, which is why the system could be watched but not explained.
+defineProperty("ice_speed_out", globalPropertyf("tu-154/antiice/ice_speed")) -- icing rate
+defineProperty("soi_ice_timer", globalPropertyf("tu-154/antiice/soi_ice_timer")) -- s since ice last seen
+defineProperty("soi_test_timer", globalPropertyf("tu-154/antiice/soi_test_timer")) -- s since the SOI test button
+defineProperty("window_heat_rate_1", globalPropertyf("tu-154/antiice/window_heat_rate_1")) -- delivered window heat
+defineProperty("window_heat_rate_2", globalPropertyf("tu-154/antiice/window_heat_rate_2"))
+defineProperty("window_heat_rate_3", globalPropertyf("tu-154/antiice/window_heat_rate_3"))
+defineProperty("ice_wing_L_out", globalPropertyf("tu-154/antiice/ice_wing_L")) -- ice on the wings, bleed-air heated
+defineProperty("ice_wing_R_out", globalPropertyf("tu-154/antiice/ice_wing_R"))
+defineProperty("ice_slat_L_out", globalPropertyf("tu-154/antiice/ice_slat_L")) -- ice on the slats, electrically heated
+defineProperty("ice_slat_R_out", globalPropertyf("tu-154/antiice/ice_slat_R"))
 
 
 -- Smart Copilot
@@ -188,6 +201,7 @@ if MASTER then
 	end
 	
 	ice_ratio_last = ice_ratio
+	set(ice_speed_out, ice_speed)
 
 
 	
@@ -226,23 +240,29 @@ if MASTER then
 		--set(ice_window_heat_on, 0)
 	end
 
+	set(soi_ice_timer, ice_timer)
+	set(soi_test_timer, ice_work_timer)
+
 	-- set amount of ice on windows
 	local window_heat_spd_1 = 0
 	local win_heat_sw_1 = get(window_heat_1)
 	if win_heat_sw_1 == 1 and power27_L and power115_1 then window_heat_spd_1 = 0.02 * (1 - get(window_heat_fail_1))
 	elseif win_heat_sw_1 == -1 and power27_L and power115_1 then window_heat_spd_1 = 0.015 * (1 - get(window_heat_fail_1)) end
+	set(window_heat_rate_1, window_heat_spd_1)
 	
 	
 	local window_heat_spd_2 = 0
 	local win_heat_sw_2 = get(window_heat_2)
 	if win_heat_sw_2 == 1 and power27_R and power115_3 then window_heat_spd_2 = 0.02 * (1 - get(window_heat_fail_2))
 	elseif win_heat_sw_2 == -1 and power27_R and power115_3 then window_heat_spd_2 = 0.015 * (1 - get(window_heat_fail_2)) end
+	set(window_heat_rate_2, window_heat_spd_2)
 	
 	
 	local window_heat_spd_3 = 0
 	local win_heat_sw_3 = get(window_heat_3)
 	if win_heat_sw_3 == 1 and power27_R and power115_3 then window_heat_spd_3 = 0.02 * (1 - get(window_heat_fail_3))
 	elseif win_heat_sw_3 == -1 and power27_R and power115_3 then window_heat_spd_3 = 0.015 * (1 - get(window_heat_fail_3)) end
+	set(window_heat_rate_3, window_heat_spd_3)
 	
 
 	
@@ -314,7 +334,7 @@ end
 	set(inlet_heat_3, bool2int(rpm_3 and power27_R) * get(antiice_eng_3) * bool2int(get(rel_ice_inlet_heat3) ~= 6))
 	set(eng_heat_open_3, bool2int(get(rel_ice_inlet_heat3) ~= 6 and power27_R) * get(antiice_eng_3))
 	
-	-- wings ans slat heat
+	-- wings and slat heat
 	set(wings_heat_on, bool2int((rpm_1 or rpm_2 or rpm_3) and (power27_L or power27_R)) * get(antiice_wing))
 	
 	local wing_heat = bool2int((rpm_1 or rpm_2 or rpm_3) and (power27_L or power27_R) and get(rel_ice_surf_heat) < 6) * get(antiice_wing)
@@ -360,6 +380,11 @@ end
 	
 	if ice_on_slats_L > 0.2 then ice_on_slats_L = 0.2 end
 	if ice_on_slats_R > 0.2 then ice_on_slats_R = 0.2 end
+
+	set(ice_wing_L_out, ice_on_wings_L)
+	set(ice_wing_R_out, ice_on_wings_R)
+	set(ice_slat_L_out, ice_on_slats_L)
+	set(ice_slat_R_out, ice_on_slats_R)
 	
 	
 	if MASTER then 

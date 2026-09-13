@@ -1,4 +1,3 @@
--- this is overall light system
 
 
 components = {

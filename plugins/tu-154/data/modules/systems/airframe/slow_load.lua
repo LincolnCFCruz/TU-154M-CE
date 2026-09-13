@@ -1,6 +1,4 @@
--- slow load animation
--- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("tank_1_pr",globalPropertyi("tu-154/payload/tank_1"))
 defineProperty("tank_4_pr",globalPropertyi("tu-154/payload/tank_4"))
@@ -10,7 +8,7 @@ defineProperty("tank_3L_pr",globalPropertyi("tu-154/payload/tank_3L"))
 defineProperty("tank_3R_pr",globalPropertyi("tu-154/payload/tank_3R"))
 
 -- ground stuff
-defineProperty("fuel_tanker_call", globalPropertyi("tu-154/anim/fuel_tanker_call")) -- 
+defineProperty("fuel_tanker_call", globalPropertyi("tu-154/anim/fuel_tanker_call"))
 defineProperty("gear_blocks", globalPropertyi("tu-154/anim/gear_blocks")) -- landing gear block setting
 
 

@@ -1,4 +1,3 @@
--- this is fuel pumps logic
 -- MERGED VERSION (the old working logic + XP12 compatibility)
 -- Key changes:
 --   1. Pump logic from the old version - aggregate datarefs (pump_tank2_left_work = 0/1/2)
@@ -282,7 +281,6 @@ function update()
 	local bus_3_load = (pump1_2_work + pump1_4_work) * 8.3 + shared_load * 2.6
 
 
-	-- set results
 	local p2L = bool2int(pump_2L_P > 0.9)
 	local p2R = bool2int(pump_2R_P > 0.9)
 	local p3L = bool2int(pump_3L_P > 0.9)

@@ -1,4 +1,3 @@
--- this is map screen
 --include("corr_tbl.lua")
 
 

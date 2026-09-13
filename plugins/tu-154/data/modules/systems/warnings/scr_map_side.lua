@@ -1,4 +1,3 @@
--- this is side view map
 --include("corr_tbl.lua")
 size = {1000, 770}
 
@@ -26,7 +25,7 @@ defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deplo
 defineProperty("gear3_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[2]"))  -- deploy of left gear
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- images
 defineProperty("scale_side_img", loadImage("taws_scale_2.png", 0, 254, 1000, 770))
@@ -163,10 +162,17 @@ function update()
 			--local correct = interpolate(correct_tbl, probe_dist) - 130
 			
 			--heightTable[row] = locationY + correct - plane_y
-			local lat, lon, alt = localToWorld(locationX, locationY, locationZ)
+			-- [FIX-PROBE] probeTerrain returns nil location values outside loaded
+			-- scenery (same guard as scr_map_top.lua and taws_warn_logic.lua,
+			-- which both already have this check with the identical comment).
+			-- Without it, localToWorld and the subtraction below ran on nils on
+			-- every probe point beyond loaded scenery, throwing on every frame
+			-- for the whole flight -- Evgeniy reported a very rough 50-minute
+			-- flight on 2026-09-09 with this in the log continuously.
+			local lat, lon, alt
+			if locationX then lat, lon, alt = localToWorld(locationX, locationY, locationZ) end
 			
-			
-			heightTable[row] = alt - acf_alt
+			heightTable[row] = alt and (alt - acf_alt) or -5000  -- -5000: same "no data" sentinel used above
 		end	
 		
 		local elev_now = get(elevation)

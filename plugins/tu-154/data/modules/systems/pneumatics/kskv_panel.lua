@@ -82,7 +82,7 @@ defineProperty("air_flow_2", globalPropertyf("tu-154/gauges/airbleed/air_flow_2"
 
 
 -- sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))

@@ -1,9 +1,6 @@
--- this is logic for GPU Hobart 60kVA - 150A
-
-
--- GPU 
-defineProperty("gpu_present", globalPropertyi("tu-154/anim/gpu_present")) -- 
-defineProperty("gpu_work_anim", globalPropertyf("tu-154/anim/gpu_work")) -- 
+-- Ground power unit: Hobart 60 kVA / 150 A.
+defineProperty("gpu_present", globalPropertyi("tu-154/anim/gpu_present"))
+defineProperty("gpu_work_anim", globalPropertyf("tu-154/anim/gpu_work"))
 defineProperty("gpu_volt", globalPropertyf("tu-154/elec/gpu_volt"))
 defineProperty("gpu_amp", globalPropertyf("tu-154/elec/gpu_amp"))
 defineProperty("gpu_overload", globalPropertyi("tu-154/elec/gpu_overload"))
@@ -17,7 +14,7 @@ defineProperty("DC_27_volt2", globalPropertyf("tu-154/elec/bus27_volt_right")) -
 
 -- sim
 defineProperty("GS", globalPropertyf("sim/flightmodel/position/groundspeed"))  -- ground speed
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- enviroment
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external"))

@@ -1,4 +1,3 @@
--- this is the lights commands
 
 defineProperty("nav_lights_set", globalPropertyi("tu-154/lights/nav_lights_set")) -- nav lights switch
 defineProperty("strobe_set", globalPropertyi("tu-154/lights/strobe_set")) -- red beacon switch

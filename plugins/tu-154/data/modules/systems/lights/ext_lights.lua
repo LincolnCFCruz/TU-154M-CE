@@ -78,7 +78,7 @@ defineProperty("landing_light_off_cap", globalPropertyi("tu-154/lights/landing_l
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- failures
 defineProperty("lan_lamp_fail_FL", globalPropertyi("tu-154/failures/lan_lamp_fail_FL")) -- front left landing light failure

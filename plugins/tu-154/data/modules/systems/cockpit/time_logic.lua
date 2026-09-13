@@ -1,5 +1,3 @@
--- this is time logic for all scripts
---
 -- Produces tu-154/time/frame_time -- the ONE delta-time source every system
 -- module integrates against (131 modules under systems/ and core/ read it).
 --

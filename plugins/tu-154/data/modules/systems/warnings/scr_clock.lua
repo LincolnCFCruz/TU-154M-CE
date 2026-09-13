@@ -1,4 +1,3 @@
--- this is the clock screen of TAWS
 size = {1000, 770}
 
 defineProperty("mode_set", globalPropertyi("tu-154/taws/mode_set")) -- screen mode. 0 = off, 1 = terrain map, 2 = side view, 3 = clock, 4 = power-up sequence
@@ -18,7 +17,7 @@ defineProperty("sim_time", globalPropertyf("sim/time/zulu_time_sec"))  -- zulu t
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- images
 defineProperty("screen_img_img", loadImage("taws_clock.png", 0, 254, 1000, 770))

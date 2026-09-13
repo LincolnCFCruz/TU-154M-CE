@@ -1,10 +1,7 @@
--- ================================================================= --
--- Tu-154M high-lift device aerodynamics: flaps, slats and landing
--- FULLY CORRECTED VERSION (globalPropertyf error fix)
--- Optimised for the 78-80% RPM setting and a soft touchdown
--- ================================================================= --
+-- Tu-154M high-lift device aerodynamics: flaps, slats and landing.
+-- Tuned for the 78-80% RPM setting and a soft touchdown.
 
--- Main coefficients (DataRefs) - globalPropertyf is used throughout
+-- Flap-effect coefficients written back to X-Plane
 defineProperty("cl", globalPropertyf("sim/aircraft/controls/acf_flap_cl"))
 defineProperty("cd", globalPropertyf("sim/aircraft/controls/acf_flap_cd"))
 defineProperty("cm", globalPropertyf("sim/aircraft/controls/acf_flap_cm"))
@@ -18,18 +15,18 @@ defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fl
 defineProperty("flap_mid_L", globalPropertyf("sim/flightmodel/controls/wing2l_fla2def")) 
 defineProperty("slat_L", globalPropertyf("sim/flightmodel2/controls/slat1_deploy_ratio")) -- Slats, 0..1 deployment ratio (driven by flight_ctrls/flaps.lua)
 
--- Engine and atmosphere parameters (corrected to globalPropertyf)
+-- Engine and atmosphere parameters
 defineProperty("thrust_L", globalProperty("sim/cockpit2/engine/indicators/thrust_n[0]")) 
 defineProperty("thrust_R", globalProperty("sim/cockpit2/engine/indicators/thrust_n[2]"))
 defineProperty("true_airspeed", globalPropertyf("sim/flightmodel/position/true_airspeed"))
 defineProperty("dens", globalPropertyf("sim/weather/rho"))
 
--- Ground effect and landing gear (corrected to globalPropertyf)
+-- Ground effect and landing gear
 defineProperty("cl_GE1", globalProperty("sim/flightmodel/parts/CL_grndeffect[8]"))
 defineProperty("gear_on_ground_L", globalProperty("sim/flightmodel2/gear/on_ground[1]")) 
 defineProperty("gear_on_ground_R", globalProperty("sim/flightmodel2/gear/on_ground[2]")) 
 
--- Forces and moments (corrected to globalPropertyf)
+-- Forces and moments
 defineProperty("pitch_add", globalPropertyf("sim/flightmodel/forces/M_plug_acf"))
 defineProperty("lift_left", globalProperty("sim/flightmodel2/wing/elements/element_cl_total[2]"))
 defineProperty("lift_right", globalProperty("sim/flightmodel2/wing/elements/element_cl_total[12]"))
@@ -38,13 +35,14 @@ defineProperty("lift_right", globalProperty("sim/flightmodel2/wing/elements/elem
 local engine_lift_tbl = { {-300, 1}, {300, 1}, {420, 0}, {1000, 0} }
 local engine_lift_tbl2 = { {0, 0}, {5500, 1}, {100000, 1} }
 
--- Slat travel at full extension, degrees. Matches the slat animation in
+-- Slat travel at full extension, degrees: 22 matches the slat animation in
 -- objects/wings.obj (ANIM_rotate_key 1 -> 22.00) and converts the 0..1
 -- deployment ratio back into the degrees the coefficients below expect.
--- local SLAT_FULL_DEG = 22
+-- Read from tu-154/tune/slat_deg_scale (default 22) so test card T6 can fly
+-- it against the pre-patch 1 without a reload.
+defineProperty("slat_deg_scale", globalPropertyf("tu-154/tune/slat_deg_scale"))
 
 function update()
-    -- Getting the data
     local t_L = get(thrust_L)
     local t_R = get(thrust_R)
     local tas = get(true_airspeed) * 3.6
@@ -52,7 +50,7 @@ function update()
     
     local f_inn = math.max(get(flap_inn_L), 15)
     local f_out = math.max(get(flap_mid_L), 15)
-    local slat = get(slat_L) -- * SLAT_FULL_DEG -- ratio -> degrees
+    local slat = get(slat_L) * get(slat_deg_scale) -- ratio -> degrees
     
     -- Touchdown state
     local main_on_ground = (get(gear_on_ground_L) + get(gear_on_ground_R)) > 0.5
@@ -103,7 +101,6 @@ function update()
         set(pitch_add, 0)
     end
 
-    -- Writing the final values
     set(cl, flap1_cl)
     set(cl2, flap2_cl)
     set(cd, final_cd1)

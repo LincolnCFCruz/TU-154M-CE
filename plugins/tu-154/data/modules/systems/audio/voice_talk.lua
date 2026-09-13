@@ -4,9 +4,9 @@ defineProperty("reset_crew", globalPropertyi("tu-154/sound/reset_crew")) -- rese
 -- sources
 
 -- gears
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]")) -- 
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[0]"))  -- deploy of front gear
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
@@ -94,12 +94,12 @@ defineProperty("revers_flap_R", globalProperty("sim/flightmodel2/engines/thrust_
 
 
 -- speeds
-defineProperty("v1_15", globalPropertyi("tu-154/speeds/v1_15")) -- 
-defineProperty("vr_15", globalPropertyi("tu-154/speeds/vr_15")) -- 
-defineProperty("v2_15", globalPropertyi("tu-154/speeds/v2_15")) -- 
-defineProperty("v1_28", globalPropertyi("tu-154/speeds/v1_28")) -- 
-defineProperty("vr_28", globalPropertyi("tu-154/speeds/vr_28")) -- 
-defineProperty("v2_28", globalPropertyi("tu-154/speeds/v2_28")) -- 
+defineProperty("v1_15", globalPropertyi("tu-154/speeds/v1_15"))
+defineProperty("vr_15", globalPropertyi("tu-154/speeds/vr_15"))
+defineProperty("v2_15", globalPropertyi("tu-154/speeds/v2_15"))
+defineProperty("v1_28", globalPropertyi("tu-154/speeds/v1_28"))
+defineProperty("vr_28", globalPropertyi("tu-154/speeds/vr_28"))
+defineProperty("v2_28", globalPropertyi("tu-154/speeds/v2_28"))
 
 defineProperty("ias_left", globalPropertyf("tu-154/gauges/speed/ias_left")) -- indicated airspeed, captain
 defineProperty("ias_right", globalPropertyf("tu-154/gauges/speed/ias_right")) -- indicated airspeed, copilot

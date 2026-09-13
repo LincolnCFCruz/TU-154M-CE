@@ -143,21 +143,4 @@ components = {
 	}, 
 	
 	
-	-- clickable area for closing main menu
-	clickable {
-		position = { size[1]-20, size[2]-20, 20, 20 },
-		
-		cursor = { 
-			x = 16, 
-			y = 32,  
-			width = 16, 
-			height = 16, 
-			shape = loadImage("clickable.png")
-		},  
-		
-		onMouseDown = function()
-		set(uphone_subpanel, 0 )
-		return true
-		end
-	},
 }

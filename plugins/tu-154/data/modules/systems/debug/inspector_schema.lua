@@ -1,0 +1,762 @@
+--[[
+
+  File: inspector_schema.lua
+  -----
+  Tu-154M System Viewer / Debug Inspector -- the tabs: what each one is
+  called and, for a list tab, the datarefs it shows.
+
+  Pure data: strings and tables. The geometry in inspector_vocab.lua sizes
+  the tab bar from the number of entries, so this file is loaded first.
+
+  Loaded by debug_inspector_view.lua into the inspector's shared namespace
+  (see "The inspector's files" there): the vocabulary it draws with --
+  listNode, wire, readv, the S_* states, colX, Y and the rest of
+  inspector_vocab.lua -- is in scope without being imported, and its own
+  top-level locals stay private to this file.
+
+--]]
+
+-- ---------------------------------------------------------------------------
+-- Schema: one entry per tab. `short` is the tab-bar label, `name` the header.
+-- Field kinds: gauge | bar | value | lamp | fail | enum
+--   gauge/bar : min, max, unit, [warn_lo], [warn_hi], [dp]
+--   value     : unit, [dp]
+--   lamp      : on at value > 0.5; [fault]=true => on is bad (red), off is OK
+--   fail      : a tu-154/failures/... flag -- 0 OK, non-zero FAIL
+--   enum      : map = { [n] = "LABEL", ... }
+-- A `{ section = "TITLE" }` entry between fields starts a titled group; the
+-- list layout draws it as a header and may carry a long group on into the next
+-- column as "TITLE (cont.)". It has no dref and is skipped by everything that
+-- reads fields.
+-- Any field may also carry
+--   dead      : true when nothing in the aircraft writes `dref`, so the card
+--               says "not modelled" rather than drawing the creator default as
+--               a reading -- a fail card at 0 would otherwise be a green OK for
+--               a flag nobody can set. Not a judgement call: diagcheck's `dead`
+--               rule fails a field nothing writes that lacks it, and a field
+--               something now writes that still carries it.
+--
+-- `value` is used wherever the real-world scale of a dataref is not certain,
+-- so no card ever implies a limit the systems code does not actually use.
+-- ---------------------------------------------------------------------------
+ENUM_BUS27_SRC  = { [0] = "NONE", [1] = "VU", [2] = "VU RES", [3] = "BAT 1+3", [4] = "BAT 1", [5] = "BAT 2" }
+ENUM_AXIS_MAIN  = { [0] = "OFF", [1] = "CWS", [2] = "STAB" }
+ENUM_PNP        = { [0] = "OFF", [1] = "NVU", [2] = "VOR 1", [3] = "VOR 2", [4] = "LANDING" }
+ENUM_RMI_SRC    = { [0] = "BLANK", [1] = "ARK 1", [2] = "ARK 2", [3] = "VOR 1", [4] = "VOR 2", [5] = "RSBN" }
+ENUM_TRIM_SW    = { [-1] = "LEFT", [0] = "OFF", [1] = "RIGHT" }
+ENUM_FIRE_STATE = { [0] = "NORMAL", [1] = "OVERHEAT", [2] = "FIRE" }
+ENUM_WIN_HEAT   = { [-1] = "LOW", [0] = "OFF", [1] = "HIGH" }
+-- A pitot switch at -1 is CHECK, not a second heat setting: antiice_panel
+-- lights the HEAT OK lamp on == -1 while antiice_logic's math.max(sw, 0)
+-- leaves the element cold.
+ENUM_PPD        = { [-1] = "CHECK", [0] = "OFF", [1] = "HEAT" }
+
+schema = {
+
+    -- =======================================================================
+    -- The electrical tab is a schematic, not a card grid: `diagram` names an
+    -- entry in DIAGRAMS (inspector_elec.lua) and draw() calls it in place of the
+    -- cards. Every dataref the card grid used to show is on the diagram except
+    -- the six no module in the tree ever writes -- elec/avto_L_volt,
+    -- avto_R_volt, avto_L_amp, avto_R_amp, elec/bus115_freq and
+    -- failures/gen_dist_fail -- which the diagram names in its footer instead
+    -- of drawing gauges that can only ever read 0.
+    { name = "Electrical -- one-line diagram", short = "Elec", diagram = "elec" },
+
+    -- =======================================================================
+    { name = "Batteries and rectifiers", short = "Bat/VU", fields = {
+        { section = "RECTIFIERS (VU)" },
+        { label = "VU 1 volt",           dref = "tu-154/elec/vu1_volt",            kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 24 },
+        { label = "VU 2 volt",           dref = "tu-154/elec/vu2_volt",            kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 24 },
+        { label = "VU standby volt",     dref = "tu-154/elec/vu_res_volt",         kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 24 },
+        { label = "VU 1 amp",            dref = "tu-154/elec/vu1_amp",             kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "VU 2 amp",            dref = "tu-154/elec/vu2_amp",             kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "VU standby amp",      dref = "tu-154/elec/vu_res_amp",          kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "VU standby to left",  dref = "tu-154/elec/vu_res_to_L",         kind = "lamp" },
+        { label = "VU standby to right", dref = "tu-154/elec/vu_res_to_R",         kind = "lamp" },
+
+        { section = "BATTERIES" },
+        { label = "BAT 1 volt",          dref = "tu-154/elec/bat_volt_1",          kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 22 },
+        { label = "BAT 2 volt",          dref = "tu-154/elec/bat_volt_2",          kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 22 },
+        { label = "BAT 3 volt",          dref = "tu-154/elec/bat_volt_3",          kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 22 },
+        { label = "BAT 4 volt",          dref = "tu-154/elec/bat_volt_4",          kind = "gauge", min = 0, max = 32,  unit = "V", warn_lo = 22 },
+        { label = "BAT 1 amp",           dref = "tu-154/elec/bat_amp_1",           kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "BAT 2 amp",           dref = "tu-154/elec/bat_amp_2",           kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "BAT 3 amp",           dref = "tu-154/elec/bat_amp_3",           kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "BAT 4 amp",           dref = "tu-154/elec/bat_amp_4",           kind = "bar",   min = 0, max = 300, unit = "A" },
+        { label = "BAT 1 charge",        dref = "tu-154/elec/bat_cc_1",            kind = "value", unit = "A", dp = 1 },
+        { label = "BAT 2 charge",        dref = "tu-154/elec/bat_cc_2",            kind = "value", unit = "A", dp = 1 },
+        { label = "BAT 3 charge",        dref = "tu-154/elec/bat_cc_3",            kind = "value", unit = "A", dp = 1 },
+        { label = "BAT 4 charge",        dref = "tu-154/elec/bat_cc_4",            kind = "value", unit = "A", dp = 1 },
+        { label = "BAT 1 temp",          dref = "tu-154/elec/bat_therm_1",         kind = "gauge", min = 0, max = 100, unit = "C", warn_hi = 55 },
+        { label = "BAT 2 temp",          dref = "tu-154/elec/bat_therm_2",         kind = "gauge", min = 0, max = 100, unit = "C", warn_hi = 55 },
+        { label = "BAT 3 temp",          dref = "tu-154/elec/bat_therm_3",         kind = "gauge", min = 0, max = 100, unit = "C", warn_hi = 55 },
+        { label = "BAT 4 temp",          dref = "tu-154/elec/bat_therm_4",         kind = "gauge", min = 0, max = 100, unit = "C", warn_hi = 55 },
+        { label = "BAT 1 is source",     dref = "tu-154/elec/bat_is_source_1",     kind = "lamp" },
+        { label = "BAT 2 is source",     dref = "tu-154/elec/bat_is_source_2",     kind = "lamp" },
+        { label = "BAT 3 is source",     dref = "tu-154/elec/bat_is_source_3",     kind = "lamp" },
+        { label = "BAT 4 is source",     dref = "tu-154/elec/bat_is_source_4",     kind = "lamp" },
+
+        { section = "FAILURES" },
+        { label = "BAT 1 failed",        dref = "tu-154/failures/bat_1_fail",      kind = "fail" },
+        { label = "BAT 2 failed",        dref = "tu-154/failures/bat_2_fail",      kind = "fail" },
+        { label = "BAT 3 failed",        dref = "tu-154/failures/bat_3_fail",      kind = "fail" },
+        { label = "BAT 4 failed",        dref = "tu-154/failures/bat_4_fail",      kind = "fail" },
+        { label = "BAT 1 short/runaway", dref = "tu-154/failures/bat_1_kz",        kind = "fail" },
+        { label = "BAT 2 short/runaway", dref = "tu-154/failures/bat_2_kz",        kind = "fail" },
+        { label = "BAT 3 short/runaway", dref = "tu-154/failures/bat_3_kz",        kind = "fail" },
+        { label = "BAT 4 short/runaway", dref = "tu-154/failures/bat_4_kz",        kind = "fail" },
+        { label = "VU 1 failed",         dref = "tu-154/failures/vu1_fail",        kind = "fail" },
+        { label = "VU 2 failed",         dref = "tu-154/failures/vu2_fail",        kind = "fail" },
+        { label = "VU standby failed",   dref = "tu-154/failures/vu3_fail",        kind = "fail" },
+        { label = "TR 1 failed",         dref = "tu-154/failures/tr1_fail",        kind = "fail" },
+        { label = "TR 2 failed",         dref = "tu-154/failures/tr2_fail",        kind = "fail" },
+        { label = "PTS-250 1 failed",    dref = "tu-154/failures/pts250_1_fail",   kind = "fail" },
+        { label = "PTS-250 2 failed",    dref = "tu-154/failures/pts250_2_fail",   kind = "fail" },
+        { label = "115 V inverter fail", dref = "tu-154/failures/inv115_fail",     kind = "fail" },
+    } },
+
+    -- =======================================================================
+    -- The third schematic tab: supply tanks -> transfer -> tank 1 -> ring main
+    -- -> fire valves -> engines. Everything the card grid showed is on it, plus
+    -- the real tank contents beside each gauge, the per-gauge failure flags and
+    -- the tank 1 pump switches. Nothing on this tab is unwritten -- unlike Elec
+    -- and Air, every fuel dataref here has a writer.
+    { name = "Fuel -- one-line diagram", short = "Fuel", diagram = "fuel" },
+
+    -- =======================================================================
+    -- The fourth schematic. Three closed loops side by side; the eleven
+    -- datarefs it needed -- pump deliveries, pump-station run flags, the
+    -- latched booster states and the two cross-feed flags -- were added to
+    -- hydro_logic.lua rather than inferred, the same way the other three went.
+    { name = "Hydraulics -- one-line diagram", short = "Hydr", diagram = "hydro" },
+
+    -- =======================================================================
+    -- Tab label was "NK-8-2U", which is the Tu-154B's engine. The M flies the
+    -- D-30KU-154 2nd series; the limits quoted below come from its own RLE 8.1.1.
+    { name = "Engines -- D-30KU-154", short = "Eng", diagram = "eng" },
+
+    -- =======================================================================
+    { name = "APU and engine start", short = "APU", fields = {
+        { section = "APU" },
+        { label = "APU system on",       dref = "tu-154/eng/apu_system_on",        kind = "lamp" },
+        { label = "APU ready",           dref = "tu-154/eng/apu_ready",            kind = "lamp" },
+        { label = "APU start phase",     dref = "tu-154/eng/apu_start_phase",      kind = "enum", map = { [0] = "NONE", [1] = "COLD CRANK", [2] = "STARTER", [3] = "COMBUSTION", [4] = "OVERSHOOT", [5] = "WARM-UP", [6] = "RUNNING" } },
+        { label = "APU rpm",             dref = "tu-154/eng/apu_n1",               kind = "gauge", min = 0, max = 110, unit = "%" },
+        { label = "APU EGT",             dref = "tu-154/eng/apu_egt",              kind = "gauge", min = 0, max = 800, unit = "C", warn_hi = 700 },
+        { label = "APU oil temp",        dref = "tu-154/eng/apu_oil_t",            kind = "gauge", min = 0, max = 150, unit = "C", warn_hi = 110 },
+        { label = "APU oil press",       dref = "tu-154/eng/apu_oil_p",            kind = "value", dp = 2 },
+        { label = "APU oil qty",         dref = "tu-154/eng/apu_oil_q",            kind = "value", unit = "l", dp = 1 },
+        { label = "APU fuel press",      dref = "tu-154/eng/apu_fuel_p",           kind = "value", dp = 2 },
+        { label = "APU air press",       dref = "tu-154/eng/apu_air_press",        kind = "value", dp = 2 },
+        { label = "APU air doors",       dref = "tu-154/eng/apu_air_doors",        kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "APU doors anim",      dref = "tu-154/anim/apu_doors",           kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "APU chamber fuel",    dref = "tu-154/eng/apu_fuel_last",        kind = "value", unit = "", dp = 2 },
+        { label = "APU cooldown",        dref = "tu-154/eng/apu_cooldown",         kind = "value", unit = "s" },
+        { label = "APU runtime",         dref = "tu-154/failures/apu_runtime",     kind = "value", unit = "s", dp = 0 },
+        { label = "APU oil remaining",   dref = "tu-154/failures/apu_oil_qty", dead = true,     kind = "value", unit = "l", dp = 1 },
+
+        { section = "APU GAUGES AND LAMPS" },
+        { label = "APU rpm gauge",       dref = "tu-154/gauges/eng/apu_rpm",       kind = "value", dp = 1 },
+        { label = "APU EGT gauge",       dref = "tu-154/gauges/eng/apu_egt",       kind = "value", dp = 1 },
+        { label = "APU oil T gauge",     dref = "tu-154/gauges/eng/apu_oil_temp",  kind = "value", dp = 1 },
+        { label = "APU doors lamp",      dref = "tu-154/lights/apu/doors_open",    kind = "lamp" },
+        { label = "APU fuel P lamp",     dref = "tu-154/lights/apu/fuel_press",    kind = "lamp", fault = true },
+
+        { section = "APU ELECTRICS" },
+        { label = "APU start bus",       dref = "tu-154/elec/apu_start_bus",       kind = "gauge", min = 0, max = 32, unit = "V" },
+        { label = "APU starter amp",     dref = "tu-154/elec/apu_start_cc",        kind = "value", unit = "A" },
+        { label = "APU start seq",       dref = "tu-154/elec/apu_start_seq",       kind = "lamp" },
+        { label = "APU APD working",     dref = "tu-154/elec/apu_apd_working",     kind = "lamp" },
+        { label = "APU burning fuel",    dref = "tu-154/elec/apu_burning_fuel",    kind = "value", dp = 3 },
+
+        { section = "ENGINE START" },
+        { label = "Start sys pressure",  dref = "tu-154/start/starter_pressure",   kind = "value", dp = 2 },
+        { label = "Starter P gauge",     dref = "tu-154/gauges/eng/starter_press", kind = "value", dp = 2 },
+        { label = "Start system on",     dref = "tu-154/start/start_sys_work",     kind = "lamp" },
+        { label = "APD 1 running",       dref = "tu-154/start/apd_working_1",      kind = "lamp" },
+        { label = "APD 2 running",       dref = "tu-154/start/apd_working_2",      kind = "lamp" },
+        { label = "APD 3 running",       dref = "tu-154/start/apd_working_3",      kind = "lamp" },
+        { label = "Start fuel eng 1",    dref = "tu-154/start/fuel_in_1",          kind = "lamp" },
+        { label = "Start fuel eng 2",    dref = "tu-154/start/fuel_in_2",          kind = "lamp" },
+        { label = "Start fuel eng 3",    dref = "tu-154/start/fuel_in_3",          kind = "lamp" },
+
+        { section = "FAILURES" },
+        { label = "APU failed",          dref = "tu-154/failures/apu_fail",            kind = "fail" },
+        { label = "APU starter fail",    dref = "tu-154/failures/apu_start_fail",      kind = "fail" },
+        { label = "APU gen fail",        dref = "tu-154/failures/apu_gen_fail",        kind = "fail" },
+        { label = "APU bleed fail",      dref = "tu-154/failures/apu_press_fail",      kind = "fail" },
+        { label = "APU oil overheat",    dref = "tu-154/failures/apu_fail_oilt",       kind = "fail" },
+        { label = "APU EGT exceed",      dref = "tu-154/failures/apu_fail_egt",        kind = "fail" },
+        { label = "APU fuel in chamber", dref = "tu-154/failures/apu_fail_fuel_left",  kind = "fail" },
+        { label = "APU oil cooler fail", dref = "tu-154/failures/apu_fail_oil_cooler", dead = true, kind = "fail" },
+    } },
+
+    -- =======================================================================
+    { name = "Fire protection", short = "Fire", diagram = "fire" },
+
+    -- =======================================================================
+    { name = "Anti-ice", short = "Ice", diagram = "antiice" },
+
+    -- =======================================================================
+    -- Like Elec, the air tab is a schematic: bleed sources -> manifolds ->
+    -- conditioning -> zones -> cabin -> outflow, which is what this system is
+    -- about. The readings the card grid used to show are on it, except the six
+    -- no module writes (gauges/airbleed/cabin_alt_new + cabin_diff_new,
+    -- kskv/ard_temp, thermo/cockpit_temp + cabin1_temp + cabin2_temp), which
+    -- the footer names, and the potable-water pair, which was never part of
+    -- this system and now sits on the Load tab.
+    { name = "Bleed air, conditioning and pressurisation (KSKV)", short = "Air", diagram = "air" },
+
+    -- =======================================================================
+    -- The gear is three parallel drive paths that ADD, and then a hard
+    -- electrical gate that all three of them -- including the emergency
+    -- system -- have to pass through. A card grid showed the 33 readings
+    -- and none of that structure.
+    { name = "Landing gear and brakes", short = "Gear", diagram = "gear" },
+    -- =======================================================================
+    { name = "Flight controls", short = "Ctrl", diagram = "ctrl" },
+
+    -- =======================================================================
+    { name = "Flight instruments", short = "Flt", fields = {
+        { section = "AIRSPEED AND MACH" },
+        { label = "SVS altitude",        dref = "tu-154/svs/altitude",                  kind = "value", unit = "m" },
+        { label = "SVS mach",            dref = "tu-154/svs/machno",                    kind = "value", dp = 3 },
+        { label = "SVS TAS",             dref = "tu-154/svs/true_airspeed",             kind = "value", unit = "km/h" },
+        { label = "IAS captain",         dref = "tu-154/gauges/speed/ias_left",         kind = "value", unit = "km/h" },
+        { label = "IAS copilot",         dref = "tu-154/gauges/speed/ias_right",        kind = "value", unit = "km/h" },
+        { label = "Mach captain",        dref = "tu-154/gauges/speed/mach_left",        kind = "value", dp = 3 },
+        { label = "Mach copilot",        dref = "tu-154/gauges/speed/mach_right",       kind = "value", dp = 3 },
+        { label = "KUS IAS captain",     dref = "tu-154/gauges/speed/kus_ias_left",     kind = "value", unit = "km/h" },
+        { label = "KUS TAS captain",     dref = "tu-154/gauges/speed/kus_tas_left",     kind = "value", unit = "km/h" },
+        { label = "Yellow marker L",     dref = "tu-154/gauges/speed/ias_yellow_left",  kind = "value", unit = "km/h" },
+        { label = "Yellow marker R",     dref = "tu-154/gauges/speed/ias_yellow_right", kind = "value", unit = "km/h" },
+
+        { section = "ALTITUDE AND VERTICAL SPEED" },
+        { label = "VSI left",            dref = "tu-154/gauges/vvi_left",                  kind = "value", unit = "m/s", dp = 1 },
+        { label = "VSI right",           dref = "tu-154/gauges/vvi_right",                 kind = "value", unit = "m/s", dp = 1 },
+        { label = "VAR-75",              dref = "tu-154/gauges/alt/var75",                 kind = "value", dp = 2 },
+        { label = "VAR-30",              dref = "tu-154/gauges/alt/var30",                 kind = "value", dp = 2 },
+        { label = "VD-15 alt captain",   dref = "tu-154/gauges/alt/vd15_alt_left",         kind = "value", unit = "m" },
+        { label = "VD-15 alt copilot",   dref = "tu-154/gauges/alt/vd15_alt_right",        kind = "value", unit = "m" },
+        { label = "VD-15 press cap",     dref = "tu-154/gauges/alt/vd15_pressure_left",    kind = "value", dp = 1 },
+        { label = "VD-15 press cop",     dref = "tu-154/gauges/alt/vd15_pressure_right",   kind = "value", dp = 1 },
+        { label = "VBE alt left",        dref = "tu-154/gauges/alt/vbe_alt_left",          kind = "value", unit = "m" },
+        { label = "VBE alt right",       dref = "tu-154/gauges/alt/vbe_alt_right",         kind = "value", unit = "m" },
+        { label = "VBE press left",      dref = "tu-154/gauges/alt/vbe_press_left",        kind = "value" },
+        { label = "VBE press right",     dref = "tu-154/gauges/alt/vbe_press_right",       kind = "value" },
+        { label = "VBE FL left",         dref = "tu-154/gauges/alt/vbe_flightlevel_left",  kind = "value" },
+        { label = "VBE FL right",        dref = "tu-154/gauges/alt/vbe_flightlevel_right", kind = "value" },
+        { label = "VBE STD left",        dref = "tu-154/gauges/alt/vbe_std_left",          kind = "lamp" },
+        { label = "VBE STD right",       dref = "tu-154/gauges/alt/vbe_std_right",         kind = "lamp" },
+        { label = "UVID-15 needle",      dref = "tu-154/gauges/alt/uvid_needle_left",      kind = "value", dp = 1 },
+
+        { section = "RADIO ALTIMETERS (RV-5)" },
+        { label = "RV-5 alt left",       dref = "tu-154/misc/rv5_alt_left",                 kind = "value", unit = "m", dp = 1 },
+        { label = "RV-5 alt right",      dref = "tu-154/misc/rv5_alt_right",                kind = "value", unit = "m", dp = 1 },
+        { label = "RV-5 DH left",        dref = "tu-154/misc/rv5_dh_signal_left",           kind = "lamp" },
+        { label = "RV-5 DH right",       dref = "tu-154/misc/rv5_dh_signal_right",          kind = "lamp" },
+        { label = "RV-5 flag left",      dref = "tu-154/gauges/alt/radioalt_flag_left",     kind = "lamp", fault = true },
+        { label = "RV-5 flag right",     dref = "tu-154/gauges/alt/radioalt_flag_right",    kind = "lamp", fault = true },
+
+        { section = "ATTITUDE" },
+        { label = "Roll captain",        dref = "tu-154/gauges/ahz/roll_L",         kind = "value", unit = "deg", dp = 1 },
+        { label = "Pitch captain",       dref = "tu-154/gauges/ahz/pitch_L",        kind = "value", unit = "deg", dp = 1 },
+        { label = "Roll copilot",        dref = "tu-154/gauges/ahz/roll_R",         kind = "value", unit = "deg", dp = 1 },
+        { label = "Pitch copilot",       dref = "tu-154/gauges/ahz/pitch_R",        kind = "value", unit = "deg", dp = 1 },
+        { label = "Roll AGR",            dref = "tu-154/gauges/ahz/roll_C",         kind = "value", unit = "deg", dp = 1 },
+        { label = "Pitch AGR",           dref = "tu-154/gauges/ahz/pitch_C",        kind = "value", unit = "deg", dp = 1 },
+        { label = "AGD flag captain",    dref = "tu-154/gauges/ahz/ahz_flag_L",     kind = "lamp", fault = true },
+        { label = "AGD flag copilot",    dref = "tu-154/gauges/ahz/ahz_flag_R",     kind = "lamp", fault = true },
+        { label = "AGR flag",            dref = "tu-154/gauges/ahz/ahz_flag_C",     kind = "lamp", fault = true },
+        { label = "MGV monitor roll",    dref = "tu-154/gyro/mgv_contr_roll",       kind = "value", unit = "deg", dp = 1 },
+        { label = "MGV monitor pitch",   dref = "tu-154/gyro/mgv_contr_pitch",      kind = "value", unit = "deg", dp = 1 },
+        { label = "MGV monitor flag",    dref = "tu-154/gyro/mgv_contr_flag",       kind = "lamp", fault = true },
+        { label = "BKK pitch",           dref = "tu-154/bkk/bkk_pitch",             kind = "value", unit = "deg", dp = 1 },
+        { label = "BKK roll",            dref = "tu-154/bkk/bkk_roll",              kind = "value", unit = "deg", dp = 1 },
+        { label = "PKP roll left",       dref = "tu-154/bkk/pkp_roll_left",         kind = "value", unit = "deg", dp = 1 },
+        { label = "PKP roll right",      dref = "tu-154/bkk/pkp_roll_right",        kind = "value", unit = "deg", dp = 1 },
+
+        { section = "AOA, G AND AIR" },
+        { label = "Angle of attack",     dref = "tu-154/gauges/misc/aoa_ind",       kind = "value", unit = "deg", dp = 1 },
+        { label = "AoA sector",          dref = "tu-154/gauges/misc/aoa_sector",    kind = "value", dp = 1 },
+        { label = "G load",              dref = "tu-154/gauges/misc/gforce_ind",    kind = "value", unit = "g", dp = 2 },
+        { label = "G load max",          dref = "tu-154/gauges/misc/gforce_max",    kind = "value", unit = "g", dp = 2 },
+        { label = "G load min",          dref = "tu-154/gauges/misc/gforce_min",    kind = "value", unit = "g", dp = 2 },
+        { label = "Turn rate",           dref = "tu-154/gauges/misc/turn_rate_ind", kind = "value", dp = 2 },
+        { label = "Slip",                dref = "tu-154/gauges/misc/slip_rate_ind", kind = "value", dp = 2 },
+        { label = "Outside air temp",    dref = "tu-154/gauges/misc/thermo_outside", kind = "value", unit = "C", dp = 1 },
+
+        { section = "FAILURES" },
+        { label = "Pitot 1 failed",      dref = "tu-154/failures/pitot1",           kind = "fail" },
+        { label = "Pitot 2 failed",      dref = "tu-154/failures/pitot2",           kind = "fail" },
+        { label = "Static 1 failed",     dref = "tu-154/failures/static1",          kind = "fail" },
+        { label = "Static 2 failed",     dref = "tu-154/failures/static2",          kind = "fail" },
+        { label = "AoA sensor failed",   dref = "tu-154/failures/AOA",              kind = "fail" },
+        { label = "UVID-15 failed",      dref = "tu-154/failures/uvid15_fail",      kind = "fail" },
+        { label = "RV-5 1 failed",       dref = "tu-154/failures/rv1_fail",         kind = "fail" },
+        { label = "RV-5 2 failed",       dref = "tu-154/failures/rv2_fail",         kind = "fail" },
+        { label = "AGR failed",          dref = "tu-154/failures/agr_fail",         kind = "fail" },
+        { label = "MGV failed",          dref = "tu-154/failures/mgv_fail",         kind = "fail" },
+        { label = "BKK failed",          dref = "tu-154/failures/bkk_fail",         kind = "fail" },
+        { label = "KPP 1 failed",        dref = "tu-154/failures/kpp_1_fail", dead = true,       kind = "fail" },
+        { label = "KPP 2 failed",        dref = "tu-154/failures/kpp_2_fail", dead = true,       kind = "fail" },
+        { label = "KPP 3 failed",        dref = "tu-154/failures/kpp_3_fail",       kind = "fail" },
+    } },
+
+    -- =======================================================================
+    { name = "ABSU-154 autopilot", short = "ABSU", fields = {
+        { section = "MODES" },
+        { label = "Roll main mode",      dref = "tu-154/absu/roll_main_mode",               kind = "enum", map = ENUM_AXIS_MAIN },
+        { label = "Pitch main mode",     dref = "tu-154/absu/pitch_main_mode",              kind = "enum", map = ENUM_AXIS_MAIN },
+        { label = "Roll sub mode",       dref = "tu-154/absu/roll_sub_mode",                kind = "enum", map = { [0] = "OFF", [1] = "STAB", [2] = "ZK", [3] = "NVU", [4] = "AZ 1", [5] = "AZ 2", [6] = "APPROACH" } },
+        { label = "Pitch sub mode",      dref = "tu-154/absu/pitch_sub_mode",               kind = "enum", map = { [0] = "OFF", [1] = "STAB", [2] = "V", [3] = "M", [4] = "H", [5] = "GLIDESLOPE", [6] = "GO-AROUND" } },
+        { label = "Roll mode console",   dref = "tu-154/gauges/console/absu_roll_mode",     kind = "enum", map = ENUM_AXIS_MAIN },
+        { label = "Pitch mode console",  dref = "tu-154/gauges/console/absu_pitch_mode",    kind = "enum", map = ENUM_AXIS_MAIN },
+        { label = "Autothrottle mode",   dref = "tu-154/absu/stu_mode",                     kind = "enum", map = { [0] = "OFF", [1] = "ON", [2] = "ARMED", [3] = "STAB", [4] = "GO-AROUND" } },
+        { label = "Go-around command",   dref = "tu-154/absu/toga_comm",                    kind = "lamp" },
+        { label = "STU mode selector",   dref = "tu-154/switchers/console/absu_speed_mode", kind = "enum", map = { [0] = "OFF", [1] = "NVU", [2] = "AZ 1", [3] = "AZ 2", [4] = "LANDING" } },
+        { label = "PNP mode 1",          dref = "tu-154/absu/absu_pnp_mode_1",              kind = "enum", map = ENUM_PNP },
+        { label = "PNP mode 2",          dref = "tu-154/absu/absu_pnp_mode_2",              kind = "enum", map = ENUM_PNP },
+
+        { section = "DIRECTORS AND COMMANDS" },
+        { label = "Roll director",       dref = "tu-154/absu/absu_roll_ind",       kind = "value", dp = 2 },
+        { label = "Pitch director",      dref = "tu-154/absu/absu_pitch_ind",      kind = "value", dp = 2 },
+        { label = "Roll director flag",  dref = "tu-154/absu/absu_roll_flag",      kind = "lamp", fault = true },
+        { label = "Pitch dir flag",      dref = "tu-154/absu/absu_pitch_flag",     kind = "lamp", fault = true },
+        { label = "RA-56 pitch rod",     dref = "tu-154/absu/contr_pitch",         kind = "value", dp = 3 },
+        { label = "RA-56 roll rod",      dref = "tu-154/absu/contr_roll",          kind = "value", dp = 3 },
+        { label = "RA-56 yaw rod",       dref = "tu-154/absu/contr_yaw",           kind = "value", dp = 3 },
+        { label = "Command pitch",       dref = "tu-154/absu/cmd_pitch",           kind = "value", dp = 3 },
+        { label = "Command roll",        dref = "tu-154/absu/cmd_roll",            kind = "value", dp = 3 },
+        { label = "Command yaw",         dref = "tu-154/absu/cmd_yaw",             kind = "value", dp = 3 },
+        { label = "Throttle 1 rate",     dref = "tu-154/absu/rud_1_spd",           kind = "value", dp = 3 },
+        { label = "Throttle 2 rate",     dref = "tu-154/absu/rud_2_spd",           kind = "value", dp = 3 },
+        { label = "Throttle 3 rate",     dref = "tu-154/absu/rud_3_spd",           kind = "value", dp = 3 },
+        { label = "ABSU pitch trim",     dref = "tu-154/absu/absu_pitch_trimm",    kind = "enum", map = { [-1] = "NOSE DN", [0] = "OFF", [1] = "NOSE UP" } },
+        { label = "H integral",          dref = "tu-154/absu/d_H_integral", dead = true,        kind = "value", dp = 3 },
+        { label = "V integral",          dref = "tu-154/absu/d_V_integral", dead = true,        kind = "value", dp = 3 },
+        { label = "M integral",          dref = "tu-154/absu/d_M_integral", dead = true,        kind = "value", dp = 4 },
+
+        { section = "AUTOTHROTTLE TESTS" },
+        { label = "AT gain",             dref = "tu-154/absu/at_gain",             kind = "value", dp = 2 },
+        { label = "AT lever command",    dref = "tu-154/absu/at_cmd",              kind = "value", dp = 3 },
+        { label = "Accel, body axis",    dref = "tu-154/absu/at_accel_body",       kind = "value", dp = 2, unit = "km/h/s" },
+        { label = "Accel, flight path",  dref = "tu-154/absu/at_accel_path",       kind = "value", dp = 2, unit = "km/h/s" },
+        { label = "Idle stop",           dref = "tu-154/engines/idle_stop",        kind = "value", dp = 3 },
+        { label = "Idle stop selected",  dref = "tu-154/engines/idle_stop_mode",   kind = "enum", map = { [0] = "GROUND", [1] = "MG", [2] = "PMG" } },
+
+        { section = "LAMPS AND SIGNALS" },
+        { label = "ABSU healthy",        dref = "tu-154/lights/absu_work",         kind = "lamp" },
+        { label = "Stabilisation on",    dref = "tu-154/lights/stab_work",         kind = "lamp" },
+        { label = "STAB roll",           dref = "tu-154/lights/stab_roll",         kind = "lamp" },
+        { label = "STAB pitch",          dref = "tu-154/lights/stab_pitch",        kind = "lamp" },
+        { label = "STAB H",              dref = "tu-154/lights/stab_h",            kind = "lamp" },
+        { label = "STAB V",              dref = "tu-154/lights/stab_v",            kind = "lamp" },
+        { label = "STAB M",              dref = "tu-154/lights/stab_m",            kind = "lamp" },
+        { label = "STU roll lamp",       dref = "tu-154/lights/small/stu_roll",    kind = "lamp" },
+        { label = "STU pitch lamp",      dref = "tu-154/lights/small/stu_pitch",   kind = "lamp" },
+        { label = "STU go-around lamp",  dref = "tu-154/lights/small/stu_toga",    kind = "lamp" },
+        { label = "AT 2 lamp",           dref = "tu-154/lights/small/at_2",        kind = "lamp" },
+        { label = "Roll damper fail",    dref = "tu-154/absu/damp_roll_lamp",      kind = "lamp", fault = true },
+        { label = "Pitch damper fail",   dref = "tu-154/absu/damp_pitch_lamp",     kind = "lamp", fault = true },
+        { label = "Yaw damper fail",     dref = "tu-154/absu/damp_yaw_lamp",       kind = "lamp", fault = true },
+        { label = "Roll control fail",   dref = "tu-154/absu/roll_contr_lamp",     kind = "lamp", fault = true },
+        { label = "Pitch control fail",  dref = "tu-154/absu/pitch_contr_lamp",    kind = "lamp", fault = true },
+        { label = "Fly roll manually",   dref = "tu-154/absu/man_roll_lamp",       kind = "lamp" },
+        { label = "Fly pitch manually",  dref = "tu-154/absu/man_pitch_lamp",      kind = "lamp" },
+        { label = "Fly go-around",       dref = "tu-154/absu/man_toga_lamp",       kind = "lamp" },
+        { label = "Triangle lamp",       dref = "tu-154/absu/triangle_lamp_signal", kind = "lamp", fault = true },
+        { label = "ABSU fail siren",     dref = "tu-154/absu/absu_fail_signal",    kind = "lamp", fault = true },
+        { label = "AT fail signal",      dref = "tu-154/absu/at_fail_signal", dead = true,      kind = "lamp", fault = true },
+        { label = "ABSU siren",          dref = "tu-154/alarm/speaker_absu", dead = true,       kind = "lamp", fault = true },
+        { label = "Outside course",      dref = "tu-154/absu_course_out",          kind = "lamp", fault = true },
+        { label = "Outside glideslope",  dref = "tu-154/absu_gs_out",              kind = "lamp", fault = true },
+        { label = "AT speed diff L",     dref = "tu-154/absu_at_dif_left",         kind = "value", dp = 1 },
+        { label = "AT speed diff R",     dref = "tu-154/absu_at_dif_right",        kind = "value", dp = 1 },
+        { label = "Second Kurs-MP",      dref = "tu-154/absu_use_second_nav",      kind = "lamp" },
+        { label = "ABSU 27 V power",     dref = "tu-154/absu_power_27",            kind = "lamp" },
+        { label = "ABSU load",           dref = "tu-154/absu_power_cc",            kind = "bar", min = 0, max = 50, unit = "A" },
+        { label = "AT load",             dref = "tu-154/absu_at_power_cc",         kind = "bar", min = 0, max = 50, unit = "A" },
+
+        { section = "CONSOLE" },
+        { label = "Roll channel on",     dref = "tu-154/switchers/console/absu_roll_ch_on",  kind = "lamp" },
+        { label = "Pitch channel on",    dref = "tu-154/switchers/console/absu_pitch_ch_on", kind = "lamp" },
+        { label = "Turbulence mode",     dref = "tu-154/switchers/console/absu_smooth_on",   kind = "lamp" },
+        { label = "Turn knob",           dref = "tu-154/switchers/console/absu_turn_handle", kind = "value" },
+        { label = "Pitch thumbwheel",    dref = "tu-154/switchers/console/absu_pitch_wheel", kind = "value", dp = 2 },
+        { label = "Nav needles on",      dref = "tu-154/switchers/console/absu_nav_on",      kind = "lamp" },
+        { label = "Landing needles on",  dref = "tu-154/switchers/console/absu_landing_on",  kind = "lamp" },
+
+        { section = "FAILURES" },
+        { label = "RA-56 roll failed",   dref = "tu-154/failures/absu_ra56_roll_fail",   kind = "fail" },
+        { label = "RA-56 pitch failed",  dref = "tu-154/failures/absu_ra56_pitch_fail",  kind = "fail" },
+        { label = "RA-56 yaw failed",    dref = "tu-154/failures/absu_ra56_yaw_fail",    kind = "fail" },
+        { label = "AT 1 failed",         dref = "tu-154/failures/absu_at1_fail",         kind = "fail" },
+        { label = "AT 2 failed",         dref = "tu-154/failures/absu_at2_fail",         kind = "fail" },
+        { label = "Roll damper failed",  dref = "tu-154/failures/absu_damp_roll_fail",   kind = "fail" },
+        { label = "Pitch damp failed",   dref = "tu-154/failures/absu_damp_pitch_fail",  kind = "fail" },
+        { label = "Yaw damper failed",   dref = "tu-154/failures/absu_damp_yaw_fail",    kind = "fail" },
+        { label = "Lateral ctrl failed", dref = "tu-154/failures/absu_contr_roll_fail",  kind = "fail" },
+        { label = "Long ctrl failed",    dref = "tu-154/failures/absu_contr_pitch_fail", kind = "fail" },
+        { label = "Go-around calc fail", dref = "tu-154/failures/absu_calc_toga_fail",   kind = "fail" },
+        { label = "STU lateral failed",  dref = "tu-154/failures/absu_calc_roll_fail",   kind = "fail" },
+        { label = "STU long failed",     dref = "tu-154/failures/absu_calc_pitch_fail",  kind = "fail" },
+        { label = "BDLU failed",         dref = "tu-154/failures/absu_bdlu_fail", dead = true,        kind = "fail" },
+        { label = "AT blocked",          dref = "tu-154/failures/absu_at_blocked", dead = true,       kind = "fail" },
+    } },
+
+    -- =======================================================================
+    { name = "Navigation -- NVU / DISS / TKS / RSBN", short = "Nav", fields = {
+        { section = "NVU" },
+        { label = "NVU mode",            dref = "tu-154/nvu/nvu_mode",                   kind = "enum", map = { [0] = "OFF", [1] = "READY", [2] = "DEAD RECK", [3] = "CORRECTION" } },
+        { label = "Active NVU set",      dref = "tu-154/nvu/nvu_active",                 kind = "enum", map = { [0] = "NONE", [1] = "NVU 1", [2] = "NVU 2" } },
+        { label = "NVU heading",         dref = "tu-154/nvu/nvu_res_course",             kind = "value", unit = "deg", dp = 1 },
+        { label = "NVU track offset",    dref = "tu-154/nvu/nvu_res_z",                  kind = "value", unit = "km", dp = 2 },
+        { label = "Changing orthodrome", dref = "tu-154/nvu/nvu_changing_ort",           kind = "lamp" },
+        { label = "NVU not available",   dref = "tu-154/nvu/nvu_fail",                   kind = "lamp", fault = true },
+        { label = "Current S1",          dref = "tu-154/nvu/current_S1",                 kind = "value", dp = 1 },
+        { label = "Current Z1",          dref = "tu-154/nvu/current_Z1",                 kind = "value", dp = 1 },
+        { label = "Next S1",             dref = "tu-154/nvu/next_S1",                    kind = "value", dp = 1 },
+        { label = "Next Z1",             dref = "tu-154/nvu/next_Z1",                    kind = "value", dp = 1 },
+        { label = "Current S2",          dref = "tu-154/nvu/current_S2",                 kind = "value", dp = 1 },
+        { label = "Current Z2",          dref = "tu-154/nvu/current_Z2",                 kind = "value", dp = 1 },
+        { label = "Next S2",             dref = "tu-154/nvu/next_S2",                    kind = "value", dp = 1 },
+        { label = "Next Z2",             dref = "tu-154/nvu/next_Z2",                    kind = "value", dp = 1 },
+        { label = "ZPU 1",               dref = "tu-154/nvu/zpu1",                       kind = "value", unit = "deg", dp = 1 },
+        { label = "ZPU 2",               dref = "tu-154/nvu/zpu2",                       kind = "value", unit = "deg", dp = 1 },
+        { label = "NVU power on",        dref = "tu-154/switchers/console/nvu_power_on", kind = "lamp" },
+        { label = "NVU reckoning on",    dref = "tu-154/switchers/console/nvu_calc_on",  kind = "lamp" },
+        { label = "NVU correction on",   dref = "tu-154/switchers/console/nvu_corr_on",  kind = "lamp" },
+        { label = "Turn radius knob",    dref = "tu-154/switchers/console/nvu_turn_sel", kind = "enum", map = { [-1] = "FORCED", [0] = "OFF", [1] = "R 5", [2] = "R 10", [3] = "R 15", [4] = "R 20", [5] = "R 25" } },
+        { label = "NVU / SNS select",    dref = "tu-154/switchers/nav_select",           kind = "enum", map = { [0] = "NVU", [1] = "SNS" } },
+        { label = "ZK entry side",       dref = "tu-154/switchers/ZK_select",            kind = "enum", map = { [0] = "LEFT", [1] = "RIGHT" } },
+        { label = "NVU load",            dref = "tu-154/nvu/nvu_cc",                     kind = "bar", min = 0, max = 50, unit = "A" },
+
+        { section = "DISS" },
+        { label = "DISS mode",           dref = "tu-154/nvu/diss_mode",            kind = "enum", map = { [0] = "OFF", [1] = "OPERATE", [2] = "MEMORY" } },
+        { label = "DISS ground speed",   dref = "tu-154/nvu/diss_groundspeed",     kind = "value", unit = "km/h" },
+        { label = "DISS drift angle",    dref = "tu-154/nvu/diss_slip_angle",      kind = "value", unit = "deg", dp = 1 },
+        { label = "DISS wind dir",       dref = "tu-154/nvu/diss_wind_course",     kind = "value", unit = "deg" },
+        { label = "DISS wind speed",     dref = "tu-154/nvu/diss_wind_spd",        kind = "value", unit = "km/h" },
+        { label = "DISS load",           dref = "tu-154/nvu/diss_cc",              kind = "bar", min = 0, max = 50, unit = "A" },
+
+        { section = "TKS HEADING" },
+        { label = "TKS heading GPK",     dref = "tu-154/tks/course_gpk",             kind = "value", unit = "deg", dp = 1 },
+        { label = "TKS heading GMK",     dref = "tu-154/tks/course_gmk",             kind = "value", unit = "deg", dp = 1 },
+        { label = "MK-5 heading 1",      dref = "tu-154/tks/course_mk_1",            kind = "value", unit = "deg", dp = 1 },
+        { label = "MK-5 heading 2",      dref = "tu-154/tks/course_mk_2",            kind = "value", unit = "deg", dp = 1 },
+        { label = "GA-1 heading",        dref = "tu-154/tks/course_ga_1",            kind = "value", unit = "deg", dp = 1 },
+        { label = "GA-2 heading",        dref = "tu-154/tks/course_ga_2",            kind = "value", unit = "deg", dp = 1 },
+        { label = "BGMK 1 heading",      dref = "tu-154/tks/course_bgmk_1",          kind = "value", unit = "deg", dp = 1 },
+        { label = "BGMK 2 heading",      dref = "tu-154/tks/course_bgmk_2",          kind = "value", unit = "deg", dp = 1 },
+        { label = "TKS fail left",       dref = "tu-154/tks/fail_left",              kind = "lamp", fault = true },
+        { label = "TKS fail right",      dref = "tu-154/tks/fail_right",             kind = "lamp", fault = true },
+        { label = "TKS main GA fail",    dref = "tu-154/lights/small/tks_main_fail",  kind = "lamp", fault = true },
+        { label = "TKS ctrl GA fail",    dref = "tu-154/lights/small/tks_contr_fail", kind = "lamp", fault = true },
+
+        { section = "RSBN" },
+        { label = "RSBN azimuth",        dref = "tu-154/rsbn/azimuth",                    kind = "value", unit = "deg", dp = 1 },
+        { label = "RSBN distance",       dref = "tu-154/rsbn/distance",                   kind = "value", unit = "km", dp = 1 },
+        { label = "RSBN azimuth gauge",  dref = "tu-154/gauges/misc/rsbn_azimuth_ind",    kind = "value", dp = 1 },
+        { label = "RSBN dist gauge",     dref = "tu-154/gauges/misc/rsbn_distance_km",    kind = "value", unit = "km", dp = 1 },
+        { label = "RSBN receiving",      dref = "tu-154/failures/rsbn_rec", dead = true,               kind = "lamp" },
+        { label = "RSBN power",          dref = "tu-154/switchers/ovhd/rsbn_on",          kind = "lamp" },
+        { label = "RSBN load",           dref = "tu-154/radio/rsbn_cc",                   kind = "bar", min = 0, max = 30, unit = "A" },
+
+        { section = "KLN 90B" },
+        { label = "KLN desired track",   dref = "tu-154/kln90/kln_course",         kind = "value", unit = "deg", dp = 1 },
+        { label = "KLN deviation",       dref = "tu-154/kln90/kln_dev",            kind = "value", unit = "nm", dp = 2 },
+        { label = "KLN flag",            dref = "tu-154/kln90/kln_flag",           kind = "lamp", fault = true },
+        { label = "KLN switch",          dref = "tu-154/switchers/ovhd/kln_on",    kind = "lamp" },
+
+        { section = "FAILURES" },
+        { label = "NVU failed",          dref = "tu-154/failures/nvu_fail",             kind = "fail" },
+        { label = "DISS failed",         dref = "tu-154/failures/diss_fail",            kind = "fail" },
+        { label = "RSBN failed",         dref = "tu-154/failures/rsbn_fail",            kind = "fail" },
+        { label = "NVU-VOR auto fail",   dref = "tu-154/failures/nvu_vor_avtomat_fail", dead = true, kind = "fail" },
+        { label = "TKS KM 1 failed",     dref = "tu-154/failures/tks_km1_fail",         kind = "fail" },
+        { label = "TKS KM 2 failed",     dref = "tu-154/failures/tks_km2_fail",         kind = "fail" },
+        { label = "TKS BGMK 1 failed",   dref = "tu-154/failures/tks_bgmk1_fail",       kind = "fail" },
+        { label = "TKS BGMK 2 failed",   dref = "tu-154/failures/tks_bgmk2_fail",       kind = "fail" },
+    } },
+
+    -- =======================================================================
+    -- The RA-56 servo layer, as a diagram. Unlike the other four this ADDS a
+    -- tab instead of converting one: the ABSU grid above carries 81 scalars and
+    -- lamps that a grid shows well, and the servo matrix adds about thirty more
+    -- readings. Both in one diagram would just be a grid again, so the grid
+    -- keeps the scalars and this takes the part with structure.
+    { name = "RA-56 servo channels (ABSU)", short = "RA-56", diagram = "absu" },
+
+    -- =======================================================================
+    { name = "Radio navigation and comms", short = "Radio", fields = {
+        { section = "ADF (ARK-15)" },
+        { label = "ARK 1 bearing",       dref = "tu-154/radio/adf_bear_1",             kind = "value", unit = "deg", dp = 1 },
+        { label = "ARK 2 bearing",       dref = "tu-154/radio/adf_bear_2",             kind = "value", unit = "deg", dp = 1 },
+        { label = "ARK 1 signal",        dref = "tu-154/radio/ark15_L_signal", dead = true,         kind = "value", dp = 2 },
+        { label = "ARK 2 signal",        dref = "tu-154/radio/ark15_R_signal", dead = true,         kind = "value", dp = 2 },
+        { label = "ARK 1 mode",          dref = "tu-154/switchers/ovhd/ark_1_mode",    kind = "enum", map = { [0] = "OFF", [1] = "COMPASS", [2] = "ANTENNA", [3] = "LOOP" } },
+        { label = "ARK 2 mode",          dref = "tu-154/switchers/ovhd/ark_2_mode",    kind = "enum", map = { [0] = "OFF", [1] = "COMPASS", [2] = "ANTENNA", [3] = "LOOP" } },
+        { label = "ARK 1 channel",       dref = "tu-154/switchers/ovhd/ark_1_channel", kind = "value" },
+        { label = "ARK 2 channel",       dref = "tu-154/switchers/ovhd/ark_2_channel", kind = "value" },
+
+        { section = "VOR, DME AND ILS" },
+        { label = "VOR 1 bearing",       dref = "tu-154/radio/vor_bear_1",         kind = "value", unit = "deg", dp = 1 },
+        { label = "VOR 2 bearing",       dref = "tu-154/radio/vor_bear_2",         kind = "value", unit = "deg", dp = 1 },
+        { label = "DME 1 distance",      dref = "tu-154/radio/vor_dme_1",          kind = "value", dp = 1 },
+        { label = "DME 2 distance",      dref = "tu-154/radio/vor_dme_2",          kind = "value", dp = 1 },
+        { label = "NAV 1 course bar",    dref = "tu-154/radio/nav1_cs",            kind = "value", dp = 3 },
+        { label = "NAV 1 glideslope",    dref = "tu-154/radio/nav1_gs",            kind = "value", dp = 3 },
+        { label = "NAV 2 course bar",    dref = "tu-154/radio/nav2_cs",            kind = "value", dp = 3 },
+        { label = "NAV 2 glideslope",    dref = "tu-154/radio/nav2_gs",            kind = "value", dp = 3 },
+        { label = "NAV 1 course flag",   dref = "tu-154/radio/nav1_cs_flag",       kind = "lamp", fault = true },
+        { label = "NAV 1 GS flag",       dref = "tu-154/radio/nav1_gs_flag",       kind = "lamp", fault = true },
+        { label = "NAV 2 course flag",   dref = "tu-154/radio/nav2_cs_flag",       kind = "lamp", fault = true },
+        { label = "NAV 2 GS flag",       dref = "tu-154/radio/nav2_gs_flag",       kind = "lamp", fault = true },
+        { label = "SP-50 course 1",      dref = "tu-154/lights/small/sp50_c1", dead = true,     kind = "lamp" },
+        { label = "SP-50 GS 1",          dref = "tu-154/lights/small/sp50_g1", dead = true,     kind = "lamp" },
+        { label = "SP-50 course 2",      dref = "tu-154/lights/small/sp50_c2", dead = true,     kind = "lamp" },
+        { label = "SP-50 GS 2",          dref = "tu-154/lights/small/sp50_g2", dead = true,     kind = "lamp" },
+        { label = "SP-50 mode",          dref = "tu-154/switchers/ovhd/sp50_mode", dead = true,     kind = "enum", map = { [0] = "ILS", [1] = "KATET", [2] = "SP-50" } },
+        { label = "SP-50 nav mode",      dref = "tu-154/switchers/ovhd/sp50_nav_mode", dead = true, kind = "enum", map = { [0] = "LANDING", [1] = "EN ROUTE" } },
+        { label = "SP-50 DME/RSBN",      dref = "tu-154/switchers/ovhd/sp50_dme_rsbn", kind = "enum", map = { [0] = "DME", [1] = "RSBN" } },
+
+        { section = "RMI" },
+        { label = "RMI 1 src captain",   dref = "tu-154/gauges/compas/source_1_switch_left",  kind = "enum", map = ENUM_RMI_SRC },
+        { label = "RMI 2 src captain",   dref = "tu-154/gauges/compas/source_2_switch_left",  kind = "enum", map = ENUM_RMI_SRC },
+        { label = "RMI 1 src copilot",   dref = "tu-154/gauges/compas/source_1_switch_right", kind = "enum", map = ENUM_RMI_SRC },
+        { label = "RMI 2 src copilot",   dref = "tu-154/gauges/compas/source_2_switch_right", kind = "enum", map = ENUM_RMI_SRC },
+        { label = "Bearing 1 captain",   dref = "tu-154/gauges/compas/bearing_1_left",        kind = "value", unit = "deg", dp = 1 },
+        { label = "Bearing 2 captain",   dref = "tu-154/gauges/compas/bearing_2_left",        kind = "value", unit = "deg", dp = 1 },
+        { label = "Bearing 1 copilot",   dref = "tu-154/gauges/compas/bearing_1_right",       kind = "value", unit = "deg", dp = 1 },
+        { label = "Bearing 2 copilot",   dref = "tu-154/gauges/compas/bearing_2_right",       kind = "value", unit = "deg", dp = 1 },
+
+        { section = "WEATHER RADAR" },
+        { label = "Radar on",            dref = "tu-154/switchers/console/rls_on",       kind = "lamp" },
+        { label = "Radar mode",          dref = "tu-154/switchers/console/rls_mode",     kind = "enum", map = { [0] = "READY", [1] = "WEATHER" } },
+        { label = "Radar range",         dref = "tu-154/switchers/console/rls_distance", kind = "value" },
+        { label = "Radar ready lamp",    dref = "tu-154/lights/small/rls_ready",         kind = "lamp" },
+        { label = "Radar weather lamp",  dref = "tu-154/lights/small/rls_weather",       kind = "lamp" },
+
+        { section = "TRANSPONDER" },
+        { label = "Transponder red",     dref = "tu-154/lights/small/transponder_red",   kind = "lamp", fault = true },
+        { label = "Transponder green",   dref = "tu-154/lights/small/transponder_green", kind = "lamp" },
+        { label = "Transponder fail",    dref = "tu-154/lights/small/transponder1_fail", dead = true, kind = "lamp", fault = true },
+
+        { section = "LOADS" },
+        { label = "VHF 1 load",          dref = "tu-154/radio/vhf1_cc",            kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "VHF 2 load",          dref = "tu-154/radio/vhf2_cc",            kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "ARK 1 load",          dref = "tu-154/radio/ark15_L_cc",         kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "ARK 2 load",          dref = "tu-154/radio/ark15_R_cc",         kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "Kurs-MP 1 load",      dref = "tu-154/radio/nav1_pow_cc",        kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "Kurs-MP 2 load",      dref = "tu-154/radio/nav2_pow_cc",        kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "Radar load",          dref = "tu-154/radio/radar_cc",           kind = "bar", min = 0, max = 20, unit = "A" },
+
+        { section = "FAILURES" },
+        { label = "Kurs-MP 1 failed",    dref = "tu-154/failures/nav1_fail",       kind = "fail" },
+        { label = "Kurs-MP 2 failed",    dref = "tu-154/failures/nav2_fail",       kind = "fail" },
+        { label = "SD-72 1 failed",      dref = "tu-154/failures/dme1_fail",       kind = "fail" },
+        { label = "SD-72 2 failed",      dref = "tu-154/failures/dme2_fail",       kind = "fail" },
+        { label = "MRP failed",          dref = "tu-154/failures/mrp_fail",        kind = "fail" },
+        { label = "Radar failed",        dref = "tu-154/failures/radar_fail",      kind = "fail" },
+    } },
+
+    -- =======================================================================
+    { name = "Warnings -- SRPBZ / TCAS / BKK", short = "Warn", fields = {
+        { section = "SIRENS AND MASTER LAMPS" },
+        { label = "Gear/flap warning",   dref = "tu-154/alarm/main_gear_flaps",    kind = "lamp", fault = true },
+        { label = "Cabin pressure",      dref = "tu-154/alarm/main_pressure",      kind = "lamp", fault = true },
+        { label = "AoA / g siren",       dref = "tu-154/alarm/speaker_auasp",      kind = "lamp", fault = true },
+        { label = "Fuel siren",          dref = "tu-154/alarm/speaker_fuel",       kind = "lamp", fault = true },
+        { label = "Overspeed siren",     dref = "tu-154/alarm/speaker_speed",      kind = "lamp", fault = true },
+        { label = "ABSU siren",          dref = "tu-154/alarm/speaker_absu", dead = true,       kind = "lamp", fault = true },
+        { label = "Triangle lamp",       dref = "tu-154/lights/triangle",          kind = "lamp", fault = true },
+        { label = "Terrain warning",     dref = "tu-154/lights/warning_terrain",   kind = "lamp", fault = true },
+
+        { section = "AUASP AND BKK" },
+        { label = "Critical AoA",        dref = "tu-154/auasp/alpha_critical",     kind = "lamp", fault = true },
+        { label = "Critical g",          dref = "tu-154/auasp/gforce_critical",    kind = "lamp", fault = true },
+        { label = "BKK left bank big",   dref = "tu-154/bkk/left_roll_big",        kind = "lamp", fault = true },
+        { label = "BKK right bank big",  dref = "tu-154/bkk/right_roll_big",       kind = "lamp", fault = true },
+        { label = "BKK MGV ctrl fail",   dref = "tu-154/bkk/mgv_contr_fail",       kind = "lamp", fault = true },
+        { label = "BKK no AG monitor",   dref = "tu-154/bkk/no_contr_ag",          kind = "lamp", fault = true },
+        { label = "BKK PKP left fail",   dref = "tu-154/bkk/pkp_fail_left",        kind = "lamp", fault = true },
+        { label = "BKK PKP right fail",  dref = "tu-154/bkk/pkp_fail_right",       kind = "lamp", fault = true },
+        { label = "BKK healthy lamp",    dref = "tu-154/lights/small/bkk_ok",      kind = "lamp" },
+
+        { section = "SRPBZ (TAWS)" },
+        { label = "SRPBZ mode",          dref = "tu-154/taws/mode_set",            kind = "enum", map = { [0] = "OFF", [1] = "TERRAIN", [2] = "PROFILE", [3] = "CLOCK", [4] = "POWER UP" } },
+        { label = "SRPBZ range",         dref = "tu-154/taws/distance_set",        kind = "enum", map = { [0] = "10 km", [1] = "20 km", [2] = "40 km", [3] = "80 km", [4] = "160 km", [5] = "320 km", [6] = "640 km" } },
+        { label = "SRPBZ message",       dref = "tu-154/taws/taws_message",        kind = "enum", map = { [0] = "NONE", [1] = "PULL UP", [2] = "ALT CALL", [3] = "PULL UP", [4] = "TERRAIN", [5] = "TERR AHEAD", [6] = "LOW TERRAIN", [7] = "ALT CALL", [8] = "LOW GEAR", [9] = "LOW FLAPS", [10] = "CHECK ALT", [11] = "SINK RATE", [12] = "DONT SINK", [13] = "GLIDESLOPE" } },
+        { label = "SRPBZ language",      dref = "tu-154/taws/taws_english",        kind = "enum", map = { [0] = "RUSSIAN", [1] = "ENGLISH" } },
+        { label = "SRPBZ alt left",      dref = "tu-154/taws/taws_alt_left",       kind = "lamp" },
+        { label = "SRPBZ alt right",     dref = "tu-154/taws/taws_alt_right",      kind = "lamp" },
+        { label = "SRPBZ load",          dref = "tu-154/taws/taws_cc",             kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "GS alert interval",   dref = "tu-154/taws/gs_msg_int", dead = true,          kind = "value", dp = 2 },
+        { label = "GS alert volume",     dref = "tu-154/taws/gs_msg_vol",          kind = "value", dp = 2 },
+        { label = "EGPWS sound inhibit", dref = "tu-154/egpws/dis_sound", dead = true,          kind = "lamp", fault = true },
+        { label = "EGPWS GS inhibit",    dref = "tu-154/egpws/dis_gs", dead = true,             kind = "lamp", fault = true },
+        { label = "EGPWS RPPZ inhibit",  dref = "tu-154/egpws/dis_rppz", dead = true,           kind = "lamp", fault = true },
+        { label = "EGPWS flap inhibit",  dref = "tu-154/egpws/dis_flaps", dead = true,          kind = "lamp", fault = true },
+        { label = "EGPWS gear inhibit",  dref = "tu-154/egpws/dis_gear", dead = true,           kind = "lamp", fault = true },
+
+        { section = "TCAS" },
+        { label = "TCAS mode",           dref = "tu-154/tcas/mode_set",            kind = "enum", map = { [-1] = "TEST", [0] = "STBY", [1] = "ALT OFF", [2] = "ALT ON", [3] = "TA", [4] = "TA/RA" } },
+        { label = "TCAS range",          dref = "tu-154/tcas/range_set",           kind = "enum", map = { [0] = "3 nm", [1] = "5 nm", [2] = "10 nm", [3] = "15 nm" } },
+        { label = "TCAS level mode",     dref = "tu-154/tcas/level_mode",          kind = "enum", map = { [-1] = "BELOW", [0] = "NORMAL", [1] = "ABOVE" } },
+        { label = "TCAS FL mode",        dref = "tu-154/tcas/fl_mode",             kind = "enum", map = { [0] = "ABSOLUTE", [1] = "RELATIVE" } },
+        { label = "TCAS traffic",        dref = "tu-154/tcas/traffic_det",         kind = "lamp", fault = true },
+
+        { section = "MSRP RECORDER" },
+        { label = "MSRP power",          dref = "tu-154/msrp/msrp_power",          kind = "lamp" },
+        { label = "MSRP recording",      dref = "tu-154/msrp/msrp_recording",      kind = "lamp" },
+        { label = "MSRP load 27 L",      dref = "tu-154/msrp/msrp_27_L_cc",        kind = "bar", min = 0, max = 20, unit = "A" },
+        { label = "MSRP load 27 R",      dref = "tu-154/msrp/msrp_27_R_cc",        kind = "bar", min = 0, max = 20, unit = "A" },
+
+        { section = "FAILURES" },
+        { label = "SRPBZ failed",        dref = "tu-154/failures/taws_fail",          kind = "fail" },
+        { label = "Main siren failed",   dref = "tu-154/failures/main_alarm_fail",    kind = "fail" },
+        { label = "Speaker siren fail",  dref = "tu-154/failures/speaker_alarm_fail", kind = "fail" },
+    } },
+
+    -- =======================================================================
+    { name = "Doors, lights and payload", short = "Load", fields = {
+        { section = "DOORS" },
+        { label = "Front pax door L",    dref = "tu-154/lights/left_front_pax_door", kind = "lamp", fault = true },
+        { label = "Mid pax door L",      dref = "tu-154/lights/left_mid_pax_door",   kind = "lamp", fault = true },
+        { label = "Mid pax door R",      dref = "tu-154/lights/right_mid_pax_door",  kind = "lamp", fault = true },
+        { label = "Front cargo hatch",   dref = "tu-154/lights/cargo_front_door",    kind = "lamp", fault = true },
+        { label = "Rear cargo hatch",    dref = "tu-154/lights/cargo_back_door",     kind = "lamp", fault = true },
+        { label = "Cargo door 1 anim",   dref = "tu-154/anim/cargo_1",               kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Cargo door 2 anim",   dref = "tu-154/anim/cargo_2",               kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Pax door 1 anim",     dref = "tu-154/anim/pax_door_1",            kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Pax door 2 anim",     dref = "tu-154/anim/pax_door_2",            kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Pax door 3 anim",     dref = "tu-154/anim/pax_door_3",            kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Cockpit door anim",   dref = "tu-154/anim/cockpit_door",          kind = "bar", min = 0, max = 1, dp = 2 },
+
+        { section = "LIGHTS" },
+        { label = "Landing light L",     dref = "tu-154/anim/light_open_left",        kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Landing light R",     dref = "tu-154/anim/light_open_right",       kind = "bar", min = 0, max = 1, dp = 2 },
+        { label = "Land lamp fail FL",   dref = "tu-154/failures/lan_lamp_fail_FL",   kind = "fail" },
+        { label = "Land lamp fail FR",   dref = "tu-154/failures/lan_lamp_fail_FR",   kind = "fail" },
+        { label = "Land lamp fail WL",   dref = "tu-154/failures/lan_lamp_fail_WL",   kind = "fail" },
+        { label = "Land lamp fail WR",   dref = "tu-154/failures/lan_lamp_fail_WR",   kind = "fail" },
+        { label = "Cockpit light L amp", dref = "tu-154/elec/cockpit_light_cc_left",  kind = "bar", min = 0, max = 100, unit = "A" },
+        { label = "Cockpit light R amp", dref = "tu-154/elec/cockpit_light_cc_right", kind = "bar", min = 0, max = 100, unit = "A" },
+        { label = "Cockpit light 115",   dref = "tu-154/elec/cockpit_light_cc_115",   kind = "bar", min = 0, max = 100, unit = "A" },
+        { label = "Ext light L amp",     dref = "tu-154/elec/ext_light_cc_left",      kind = "bar", min = 0, max = 100, unit = "A" },
+        { label = "Ext light R amp",     dref = "tu-154/elec/ext_light_cc_right",     kind = "bar", min = 0, max = 100, unit = "A" },
+        { label = "Ext light 115 amp",   dref = "tu-154/elec/ext_light_cc_115", dead = true,       kind = "bar", min = 0, max = 100, unit = "A" },
+
+        { section = "PAYLOAD AND FUEL PLAN" },
+        { label = "Actual weight",       dref = "tu-154/misc/weight_actual",       kind = "value", unit = "kg" },
+        { label = "Actual CG",           dref = "tu-154/misc/cg_pos_actual",       kind = "value", unit = "%", dp = 2 },
+        { label = "Crew in cockpit",     dref = "tu-154/payload/crew_num",         kind = "value" },
+        { label = "Cabin crew",          dref = "tu-154/payload/cabin_num",        kind = "value" },
+        { label = "Pax zone 1",          dref = "tu-154/payload/zone_1",           kind = "value" },
+        { label = "Pax zone 2",          dref = "tu-154/payload/zone_2",           kind = "value" },
+        { label = "Pax zone 4",          dref = "tu-154/payload/zone_4",           kind = "value" },
+        { label = "Pax zone 5",          dref = "tu-154/payload/zone_5",           kind = "value" },
+        { label = "Pax zone 6",          dref = "tu-154/payload/zone_6",           kind = "value" },
+        { label = "Baggage 1",           dref = "tu-154/payload/cargo_1",          kind = "value", unit = "kg" },
+        { label = "Baggage 2",           dref = "tu-154/payload/cargo_2",          kind = "value", unit = "kg" },
+        { label = "Galley load",         dref = "tu-154/payload/kitchens",         kind = "value", unit = "kg" },
+        { label = "Other load",          dref = "tu-154/payload/various",          kind = "value", unit = "kg" },
+        { label = "Planned tank 1",      dref = "tu-154/payload/tank_1",           kind = "value", unit = "kg" },
+        { label = "Planned tank 2L",     dref = "tu-154/payload/tank_2L",          kind = "value", unit = "kg" },
+        { label = "Planned tank 2R",     dref = "tu-154/payload/tank_2R",          kind = "value", unit = "kg" },
+        { label = "Planned tank 3L",     dref = "tu-154/payload/tank_3L",          kind = "value", unit = "kg" },
+        { label = "Planned tank 3R",     dref = "tu-154/payload/tank_3R",          kind = "value", unit = "kg" },
+        { label = "Planned tank 4",      dref = "tu-154/payload/tank_4",           kind = "value", unit = "kg" },
+
+        -- potable water (systems/cockpit/water_panel.lua) -- not an air system,
+        -- it sat on the Air tab only because that tab was the nearest bucket
+        { section = "POTABLE WATER" },
+        { label = "Water level",         dref = "tu-154/misc/water_level",          kind = "value", dp = 2 },
+        { label = "Water pressure",      dref = "tu-154/gauges/eng/water_pressure", kind = "value", dp = 2 },
+    } },
+
+    -- =======================================================================
+    { name = "Failure master and remaining flags", short = "Fail", fields = {
+        { section = "MASTER AND TIME BASE" },
+        { label = "Failures enabled",    dref = "tu-154/failures/failures_enabled", kind = "lamp" },
+        { label = "Save state enabled",  dref = "tu-154/save_state_enabled", dead = true,        kind = "lamp" },
+        { label = "Hardware cockpit",    dref = "tu-154/hardware_cockpit", dead = true,          kind = "lamp" },
+        -- Time base. Frame time is the plugin's own delta; the three sim
+        -- values beside it are what it is derived from, so a disagreement is
+        -- visible at a glance. Under time acceleration, Frame time should
+        -- track (sim speed actual / FPS), not 1/FPS -- see CLAUDE.md
+        -- "Time base".
+        { label = "Frame time",          dref = "tu-154/time/frame_time",           kind = "value", unit = "s", dp = 4 },
+        { label = "Sim paused",          dref = "sim/time/paused",                  kind = "lamp" },
+        { label = "Sim speed",           dref = "sim/time/sim_speed",               kind = "value", unit = "x", dp = 0 },
+        { label = "Sim speed actual",    dref = "sim/time/sim_speed_actual",        kind = "value", unit = "x", dp = 2 },
+        { label = "Sim frame period",    dref = "sim/operation/misc/frame_rate_period", kind = "value", unit = "s", dp = 4 },
+
+        { section = "CLOCKS" },
+        { label = "ACHS-1 captain fail",  dref = "tu-154/failures/acs1_fail",       kind = "fail" },
+        { label = "ACHS-1 copilot fail",  dref = "tu-154/failures/acs2_fail",       kind = "fail" },
+        { label = "ACHS-1 engineer fail", dref = "tu-154/failures/acs3_fail",       kind = "fail" },
+
+        { section = "FUEL" },
+        { label = "Fuel pump 1 fail",    dref = "tu-154/failures/fuel_pump_1_fail",      kind = "fail" },
+        { label = "Fuel pump 2L fail",   dref = "tu-154/failures/fuel_pump_2l_fail",     kind = "fail" },
+        { label = "Fuel pump 2R fail",   dref = "tu-154/failures/fuel_pump_2r_fail",     kind = "fail" },
+        { label = "Fuel pump 3L fail",   dref = "tu-154/failures/fuel_pump_3l_fail",     kind = "fail" },
+        { label = "Fuel pump 3R fail",   dref = "tu-154/failures/fuel_pump_3r_fail",     kind = "fail" },
+        { label = "Fuel pump 4 fail",    dref = "tu-154/failures/fuel_pump_4_fail",      kind = "fail" },
+        { label = "Fuel meter 1 fail",   dref = "tu-154/failures/fuel_meter_1_fail",     kind = "fail" },
+        { label = "Fuel meter 2L fail",  dref = "tu-154/failures/fuel_meter_2l_fail",    kind = "fail" },
+        { label = "Fuel meter 2R fail",  dref = "tu-154/failures/fuel_meter_2r_fail",    kind = "fail" },
+        { label = "Fuel meter 3L fail",  dref = "tu-154/failures/fuel_meter_3l_fail",    kind = "fail" },
+        { label = "Fuel meter 3R fail",  dref = "tu-154/failures/fuel_meter_3r_fail",    kind = "fail" },
+        { label = "Fuel meter 4 fail",   dref = "tu-154/failures/fuel_meter_4_fail",     kind = "fail" },
+        { label = "Fuel meter sum fail", dref = "tu-154/failures/fuel_meter_summ",       kind = "fail" },
+        { label = "Flowmeter 1 fail",    dref = "tu-154/failures/fuel_flowmeter_1_fail", kind = "fail" },
+        { label = "Flowmeter 2 fail",    dref = "tu-154/failures/fuel_flowmeter_2_fail", kind = "fail" },
+        { label = "Flowmeter 3 fail",    dref = "tu-154/failures/fuel_flowmeter_3_fail", kind = "fail" },
+
+        { section = "ABSU, GYROS AND RA-56" },
+        { label = "UTE 1 fail",          dref = "tu-154/failures/ute_1_fail", dead = true,          kind = "fail" },
+        { label = "UTE 2 fail",          dref = "tu-154/failures/ute_2_fail", dead = true,          kind = "fail" },
+        { label = "BShU pitch fail",     dref = "tu-154/failures/bshu_tet_fail", dead = true,       kind = "fail" },
+        { label = "BShU roll fail",      dref = "tu-154/failures/bshu_gam_fail", dead = true,       kind = "fail" },
+        { label = "BNS pitch fail",      dref = "tu-154/failures/bns_tet_fail", dead = true,        kind = "fail" },
+        { label = "BNS roll fail",       dref = "tu-154/failures/bns_gam_fail", dead = true,        kind = "fail" },
+        { label = "ABSU VU 1 fail",      dref = "tu-154/failures/absu_vu1_fail", dead = true,       kind = "fail" },
+        { label = "ABSU VU 2 fail",      dref = "tu-154/failures/absu_vu2_fail", dead = true,       kind = "fail" },
+        { label = "ABSU VU 3 fail",      dref = "tu-154/failures/absu_vu3_fail", dead = true,       kind = "fail" },
+        { label = "ABSU VKV fail",       dref = "tu-154/failures/absu_vkv_fail", dead = true,       kind = "fail" },
+        { label = "ABSU alt/spd fail",   dref = "tu-154/failures/absu_alt_speed_fail", dead = true, kind = "fail" },
+        { label = "ABSU AT fail",        dref = "tu-154/failures/absu_at_fail", dead = true,        kind = "fail" },
+        { label = "ABSU BAP pitch",      dref = "tu-154/failures/absu_bap_pitch_fail", dead = true, kind = "fail" },
+        { label = "ABSU BAP roll",       dref = "tu-154/failures/absu_bap_roll_fail", dead = true,  kind = "fail" },
+        { label = "MGV pitch 1 fail",    dref = "tu-154/failures/mgv_thet_1_fail", dead = true,     kind = "fail" },
+        { label = "MGV pitch 2 fail",    dref = "tu-154/failures/mgv_thet_2_fail", dead = true,     kind = "fail" },
+        { label = "MGV pitch 3 fail",    dref = "tu-154/failures/mgv_thet_3_fail", dead = true,     kind = "fail" },
+        { label = "MGV roll 1 fail",     dref = "tu-154/failures/mgv_gam_1_fail", dead = true,      kind = "fail" },
+        { label = "MGV roll 2 fail",     dref = "tu-154/failures/mgv_gam_2_fail", dead = true,      kind = "fail" },
+        { label = "MGV roll 3 fail",     dref = "tu-154/failures/mgv_gam_3_fail", dead = true,      kind = "fail" },
+        { label = "RA-56 1 roll fail",   dref = "tu-154/failures/absu_ra1_roll_fail",  kind = "fail" },
+        { label = "RA-56 2 roll fail",   dref = "tu-154/failures/absu_ra2_roll_fail",  kind = "fail" },
+        { label = "RA-56 3 roll fail",   dref = "tu-154/failures/absu_ra3_roll_fail",  kind = "fail" },
+        { label = "RA-56 1 pitch fail",  dref = "tu-154/failures/absu_ra1_pitch_fail", kind = "fail" },
+        { label = "RA-56 2 pitch fail",  dref = "tu-154/failures/absu_ra2_pitch_fail", kind = "fail" },
+        { label = "RA-56 3 pitch fail",  dref = "tu-154/failures/absu_ra3_pitch_fail", kind = "fail" },
+        { label = "RA-56 1 yaw fail",    dref = "tu-154/failures/absu_ra1_yaw_fail",   kind = "fail" },
+        { label = "RA-56 2 yaw fail",    dref = "tu-154/failures/absu_ra2_yaw_fail",   kind = "fail" },
+        { label = "RA-56 3 yaw fail",    dref = "tu-154/failures/absu_ra3_yaw_fail",   kind = "fail" },
+    } },
+
+    -- =======================================================================
+    -- Every lamp in tu-154/lights/, read from the registry rather than listed
+    -- here, with a LIT view of what is lit right now.
+    { name = "Annunciators and lights", short = "Lamps", diagram = "lamps" },
+
+    -- =======================================================================
+    -- Not a system: this is where a dataref lands when you click it in the
+    -- DATAREFS overlay on any other tab. It plots the values pinned there, so
+    -- a transient that a snapshot cannot show has somewhere to appear.
+    { name = "Watch -- pinned value history", short = "Watch", diagram = "watch" },
+}

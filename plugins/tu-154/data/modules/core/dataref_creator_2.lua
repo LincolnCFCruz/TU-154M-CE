@@ -77,6 +77,13 @@ createGlobalPropertyf("tu-154/elec/bus115_3_amp", 0																) -- 115 V bu
 createGlobalPropertyf("tu-154/elec/bus115_em_1_amp", 0																) -- 115 V bus current
 createGlobalPropertyf("tu-154/elec/bus115_em_2_amp", 0																) -- 115 V bus current
 createGlobalPropertyf("tu-154/elec/bus115_freq", 0																) -- 115 V bus current
+-- Which source bus115_logic.lua selected for each 115 V bus. Its ladder is
+-- seventeen branches deep and used to publish nothing, so the feed could only
+-- be guessed at from which generator was carrying amps.
+-- 0 = none, 1 = GEN 1, 2 = GEN 2, 3 = GEN 3, 4 = APU GEN, 5 = RAP (ground)
+createGlobalPropertyi("tu-154/elec/bus115_src_1", 0) -- 115 V bus 1 source
+createGlobalPropertyi("tu-154/elec/bus115_src_2", 0) -- 115 V bus 2 source
+createGlobalPropertyi("tu-154/elec/bus115_src_3", 0) -- 115 V bus 3 source
 createGlobalPropertyf("tu-154/elec/gen1_amp", 0																) -- generator load
 createGlobalPropertyf("tu-154/elec/gen2_amp", 0																) -- generator load
 createGlobalPropertyf("tu-154/elec/gen3_amp", 0																) -- generator load
@@ -147,6 +154,10 @@ createGlobalPropertyi("tu-154/fuel/reserv_trans", 0																) -- standby 
 createGlobalPropertyi("tu-154/fuel/auto_tanks_turn", 0																) -- the tanks in the current usage order. 0, 1 - not working, 2, 3, 4
 createGlobalPropertyi("tu-154/fuel/auto_tank_level_2", 0) -- balancing in tanks 2. -1 = L, 0 = none, +1 = R
 createGlobalPropertyi("tu-154/fuel/auto_tank_level_3", 0															) -- balancing in tanks 3. -1 = L, 0 = none, +1 = R
+-- fuel_tanks.lua kept both of these as module locals: reserv_trans below is
+-- only the >0.9 end of trans_pos, and nothing published the metering unit at all
+createGlobalPropertyi("tu-154/fuel/porc_open", 0) -- metering unit (PORC) passing fuel to tank 1
+createGlobalPropertyf("tu-154/fuel/trans_pos", 0) -- standby transfer valve travel, 0..1
 createGlobalPropertyf("tu-154/fuel/fire_vlv_open_1", 1																) -- fire shutoff valve open
 createGlobalPropertyf("tu-154/fuel/fire_vlv_open_2", 1																) -- fire shutoff valve open
 createGlobalPropertyf("tu-154/fuel/fire_vlv_open_3", 1																) -- fire shutoff valve open
@@ -164,6 +175,34 @@ createGlobalPropertyf("tu-154/hydro/gs_qty_12_show", 48																) -- flui
 createGlobalPropertyf("tu-154/hydro/gs_qty_3_show", 24																) -- fluid remaining in the hydraulic tank
 createGlobalPropertyf("tu-154/hydro/gs_pump_2_cc", 0																) -- pump station current
 createGlobalPropertyf("tu-154/hydro/gs_pump_3_cc", 0																) -- pump station current
+-- RA-56 per-channel rod position, one per channel per axis. tu-154/absu/d_raN_*
+-- is the servo's commanded *rate*; ra56_*_logic.lua integrates it into a local
+-- and never published the position, even though its own bypass detector keys on
+-- the difference between two channels' positions exceeding 0.075.
+createGlobalPropertyf("tu-154/absu/pos_ra1_p", 0) -- RA-56 channel 1 rod position, pitch
+createGlobalPropertyf("tu-154/absu/pos_ra2_p", 0)
+createGlobalPropertyf("tu-154/absu/pos_ra3_p", 0)
+createGlobalPropertyf("tu-154/absu/pos_ra1_r", 0) -- roll
+createGlobalPropertyf("tu-154/absu/pos_ra2_r", 0)
+createGlobalPropertyf("tu-154/absu/pos_ra3_r", 0)
+createGlobalPropertyf("tu-154/absu/pos_ra1_y", 0) -- yaw
+createGlobalPropertyf("tu-154/absu/pos_ra2_y", 0)
+createGlobalPropertyf("tu-154/absu/pos_ra3_y", 0)
+
+-- Which pump is actually delivering, and which cross-feed is actually open.
+-- hydro_logic.lua computed all of this and kept it in locals, so from datarefs
+-- alone you could see a system's pressure but not what was making it.
+createGlobalPropertyf("tu-154/hydro/eng_pump_11", 0) -- HS1 engine pump 1 delivery, l/s
+createGlobalPropertyf("tu-154/hydro/eng_pump_12", 0) -- HS1 engine pump 2 delivery, l/s
+createGlobalPropertyf("tu-154/hydro/eng_pump_2", 0) -- HS2 engine pump delivery, l/s
+createGlobalPropertyf("tu-154/hydro/eng_pump_3", 0) -- HS3 engine pump delivery, l/s
+createGlobalPropertyi("tu-154/hydro/elec_pump_2_work", 0) -- HS2 electric pump station running
+createGlobalPropertyi("tu-154/hydro/elec_pump_3_work", 0) -- HS3 electric pump station running
+createGlobalPropertyi("tu-154/hydro/booster_1", 0) -- booster 1 engaged (latched: holds its state when 27 V is lost)
+createGlobalPropertyi("tu-154/hydro/booster_2", 0) -- booster 2 engaged (latched)
+createGlobalPropertyi("tu-154/hydro/booster_3", 0) -- booster 3 engaged (latched)
+createGlobalPropertyi("tu-154/hydro/connect_2to1", 0) -- HS2 -> HS1 cross-feed passing fluid
+createGlobalPropertyi("tu-154/hydro/accum_charge", 0) -- HS1 -> emergency brake accumulator charging
 createGlobalPropertyf("tu-154/hydro/gs_bak_qty_1", 17.17																) -- oil remaining in the tank
 createGlobalPropertyf("tu-154/hydro/gs_bak_qty_2", 17.17																) -- oil remaining in the tank
 createGlobalPropertyf("tu-154/hydro/gs_bak_qty_3", 23.8																) -- oil remaining in the tank
@@ -179,6 +218,21 @@ createGlobalPropertyf("tu-154/bleed/cabin1_tube_t", 30																) -- tempe
 createGlobalPropertyf("tu-154/bleed/cabin2_tube_t", 30																) -- temperature in the duct to cabin 2
 createGlobalPropertyf("tu-154/bleed/cold_tube1_t", 30																) -- duct temperature 1
 createGlobalPropertyf("tu-154/bleed/cold_tube2_t", 30																) -- duct temperature 2
+-- Valve travel and mixing ratios that kskv_bleed.lua and kskv_cond.lua used to
+-- keep as module locals. Without them the manifolds could only show the switch
+-- position, and the zone mixers nothing at all.
+createGlobalPropertyf("tu-154/bleed/main_valve_L", 1) -- left main bleed valve, 0..1
+createGlobalPropertyf("tu-154/bleed/main_valve_R", 1) -- right main bleed valve, 0..1
+createGlobalPropertyf("tu-154/bleed/psvp_L", 1) -- left PSVP travel, 0..1
+createGlobalPropertyf("tu-154/bleed/psvp_R", 1) -- right PSVP travel, 0..1
+createGlobalPropertyf("tu-154/bleed/smooth_valve", 0) -- ground bleed smoothing valve, 0..0.2
+createGlobalPropertyf("tu-154/bleed/cold_air_t", 20) -- cold air header, the flow-weighted mix of both cold ducts
+createGlobalPropertyf("tu-154/bleed/reg_cold_L", 0.1) -- left turbo-cooler hot-air bypass, 0..0.6
+createGlobalPropertyf("tu-154/bleed/reg_cold_R", 0.1) -- right turbo-cooler hot-air bypass, 0..0.6
+createGlobalPropertyf("tu-154/bleed/reg_cockpit", 0.1) -- cockpit mixer, 0 = cold .. 0.5 = hot
+createGlobalPropertyf("tu-154/bleed/reg_cabin1", 0.1) -- cabin 1 mixer, 0 = cold .. 0.5 = hot
+createGlobalPropertyf("tu-154/bleed/reg_cabin2", 0.1) -- cabin 2 mixer, 0 = cold .. 0.5 = hot
+createGlobalPropertyf("tu-154/bleed/reg_door_heat", 0) -- door heating mixer, 0 = cold .. 1 = hot
 createGlobalPropertyf("tu-154/bleed/cockpit_temp", 20																) -- cabin temperature
 createGlobalPropertyf("tu-154/bleed/cabin_1_temp", 20																) -- cabin 1 temperature
 createGlobalPropertyf("tu-154/bleed/cabin_2_temp", 20																) -- cabin 2 temperature
@@ -203,6 +257,13 @@ createGlobalPropertyi("tu-154/fire/valve_open_1", 0																) -- engine 1
 createGlobalPropertyi("tu-154/fire/valve_open_2", 0																) -- engine 2 extinguishing valve
 createGlobalPropertyi("tu-154/fire/valve_open_3", 0																) -- engine 3 extinguishing valve
 createGlobalPropertyi("tu-154/fire/valve_open_4", 0																) -- APU extinguishing valve
+-- The 550 C start clock fire_logic.lua keeps per engine. Its severity goes out
+-- as tu-154/engine/hotstart_N and the latch shows up as engine_fire_state_N = 1,
+-- but how many of the four permitted seconds have been used was a module local,
+-- so a start that is cooking looks identical to one that is not until it trips.
+createGlobalPropertyf("tu-154/fire/hotstart_timer_1", 0) -- s above 550 C this start
+createGlobalPropertyf("tu-154/fire/hotstart_timer_2", 0)
+createGlobalPropertyf("tu-154/fire/hotstart_timer_3", 0)
 createGlobalPropertyi("tu-154/fire/fire_siren", 0																) -- fire siren running
 createGlobalPropertyi("tu-154/fire/engine_fire_state_1", 0																) -- engine state. 0 = normal, 1 = overheat, 2 = fire
 createGlobalPropertyi("tu-154/fire/engine_fire_state_2", 0																) -- engine state. 0 = normal, 1 = overheat, 2 = fire
@@ -227,6 +288,28 @@ createGlobalPropertyf("tu-154/antiice/ai_115_3_cc", 0) -- bus load
 createGlobalPropertyi("tu-154/antiice/eng_heat_open_1", 0) -- engine heating flap open
 createGlobalPropertyi("tu-154/antiice/eng_heat_open_2", 0) -- engine heating flap open
 createGlobalPropertyi("tu-154/antiice/eng_heat_open_3", 0															) -- engine heating flap open
+-- What antiice_logic.lua works out every frame and then kept to itself. The
+-- icing rate drives the whole system and was a local; the two SOI clocks are
+-- what make its lamps behave the way they do (ice_detected holds for 8 s, and
+-- the test lamp only answers between 30 s and 55 s after the button); the
+-- window heat rate is the delivered heat, which is not the switch position
+-- because it also needs both buses and an unfailed element; and the four ice
+-- accumulators are blended 0.8/0.2 into sim/flightmodel/failures/frm_ice*,
+-- so the wing and slat halves -- heated by completely different systems --
+-- could not be told apart from outside.
+-- The first six are computed inside the SmartCopilot MASTER branch and stay at
+-- 0 on a slave, which receives the synced result rather than the working; the
+-- four ice accumulators are computed on both.
+createGlobalPropertyf("tu-154/antiice/ice_speed", 0) -- icing rate the SOI and every surface reacts to
+createGlobalPropertyf("tu-154/antiice/soi_ice_timer", 20) -- s since ice was last seen; under 8 lights ice_detected
+createGlobalPropertyf("tu-154/antiice/soi_test_timer", 150) -- s since the SOI test button; 30..55 lights ice_detect_ok
+createGlobalPropertyf("tu-154/antiice/window_heat_rate_1", 0) -- delivered window heat, /s: 0.02 high, 0.015 low, 0 otherwise
+createGlobalPropertyf("tu-154/antiice/window_heat_rate_2", 0)
+createGlobalPropertyf("tu-154/antiice/window_heat_rate_3", 0)
+createGlobalPropertyf("tu-154/antiice/ice_wing_L", 0) -- ice accreted on the left wing (bleed-air heated)
+createGlobalPropertyf("tu-154/antiice/ice_wing_R", 0)
+createGlobalPropertyf("tu-154/antiice/ice_slat_L", 0) -- ice accreted on the left slats (electrically heated, capped at 0.2)
+createGlobalPropertyf("tu-154/antiice/ice_slat_R", 0)
 createGlobalPropertyi("tu-154/msrp/msrp_power", 1																) -- MSRP power for the clock indicator
 createGlobalPropertyi("tu-154/msrp/msrp_recording", 1																) -- MSRP power for the clock indicator
 createGlobalPropertyf("tu-154/msrp/msrp_27_L_cc", 0																) -- bus load
@@ -361,6 +444,18 @@ createGlobalPropertyi("tu-154/absu_course_out", 0																) -- flying out
 createGlobalPropertyi("tu-154/absu_gs_out", 0																) -- flying outside the glideslope limits
 createGlobalPropertyf("tu-154/absu_power_cc", 0	) -- ABSU current draw
 createGlobalPropertyf("tu-154/absu_at_power_cc", 0) -- ABSU current draw
+createGlobalPropertyf("tu-154/absu/at_gain", 0) -- autothrottle PD gain from the schedule in use, published for the inspector
+createGlobalPropertyf("tu-154/absu/at_cmd", 0) -- autothrottle lever-rate command before the channel split, 1/s; 0 unless stabilising
+createGlobalPropertyf("tu-154/absu/at_accel_body", 0) -- forward acceleration, km/h/s, from gforce_axil and BKK pitch (acceleration source 1)
+createGlobalPropertyf("tu-154/absu/at_accel_path", 0) -- forward acceleration, km/h/s, along the flight path (acceleration source 2)
+-- Test switches for the 2026-09-10 powerplant/autothrottle patch. Nothing in
+-- the aircraft writes these: they are set from DataRefTool during a test flight.
+createGlobalPropertyi("tu-154/tune/at_gain_table", 1) -- autothrottle gain schedule: 0 = pre-patch breakpoints, 1 = patch (300/330/400 km/h)
+createGlobalPropertyi("tu-154/tune/at_ax_mode", 0) -- autothrottle acceleration term: 0 = off, 1 = body axis (patch), 2 = flight path
+createGlobalPropertyf("tu-154/tune/thro_alt_offset", 0) -- XP12 throttle zero point at 11 km: 0 (patch) or 0.35 (pre-patch)
+createGlobalPropertyf("tu-154/tune/idle_11k", 0.45) -- flight idle (MG) throttle stop at 11 km, trimmed on test card T3
+createGlobalPropertyf("tu-154/tune/slat_deg_scale", 22) -- flap_aero slat ratio to degrees: 22 (patch) or 1 (pre-patch)
+createGlobalPropertyi("tu-154/tune/pmg_gate", 0) -- rud_logic flap-gated 0.42-nominal idle stop: 0 = off (no such stop in the manuals), 1 = the patch's gate
 createGlobalPropertyi("tu-154/absu_use_second_nav", 0) -- the ABSU switched to the second KursMP
 createGlobalPropertyi("tu-154/absu/damp_roll_lamp", 0) -- signal to the lamp. roll damper failure
 createGlobalPropertyi("tu-154/absu/damp_pitch_lamp", 0) -- signal to the lamp. pitch damper failure
@@ -492,6 +587,26 @@ createGlobalPropertyf("tu-154/gauges/alt/vbe_flightlevel_left", 0) -- selected a
 createGlobalPropertyf("tu-154/gauges/alt/vbe_flightlevel_right", 0) -- selected altitude on the VBE
 createGlobalPropertyf("tu-154/brakes/int_brakes_L", 0) -- actual brake position
 createGlobalPropertyf("tu-154/brakes/int_brakes_R", 0) -- actual brake position
+-- brake_system.lua releases a wheel whose speed has fallen below 80 % of the
+-- aircraft's, and kept the coefficient in a local -- so the one part of the
+-- brake system that acts on its own was the one part nothing could see.
+createGlobalPropertyf("tu-154/brakes/antiskid_L", 1) -- 1 = holding, 0 = released
+createGlobalPropertyf("tu-154/brakes/antiskid_R", 1) -- 1 = holding, 0 = released
+
+-- Landing gear drive, gates and locks. landing_gears.lua computes every one
+-- of these each frame and kept them all in locals, so from datarefs alone you
+-- could watch the gear stop moving without being able to tell which of the
+-- four reasons had stopped it.
+createGlobalPropertyf("tu-154/gears/drive", 0) -- summed extension drive: normal + 3GS + emergency
+createGlobalPropertyi("tu-154/gears/power_gate", 0) -- 27 V present on the bus the selected path needs
+createGlobalPropertyi("tu-154/gears/retract_gate", 0) -- movement interlock released
+createGlobalPropertyf("tu-154/gears/grav_front", 0) -- gravity term in the nose leg rate
+createGlobalPropertyf("tu-154/gears/grav_main", 0) -- gravity term in each main leg rate
+createGlobalPropertyf("tu-154/gears/load_front", 0) -- air load opposing the nose leg
+createGlobalPropertyf("tu-154/gears/load_main", 0) -- air load opposing each main leg
+createGlobalPropertyi("tu-154/gears/lock_front", 1) -- nose leg locked at an end stop
+createGlobalPropertyi("tu-154/gears/lock_left", 1) -- left main locked at an end stop
+createGlobalPropertyi("tu-154/gears/lock_right", 1) -- right main locked at an end stop
 createGlobalPropertyf("tu-154/gauges/vvi_left", 0) -- variometer reading
 createGlobalPropertyf("tu-154/gauges/vvi_right", 0) -- variometer reading
 createGlobalPropertyi("tu-154/SC/control_thro_other", 0) -- the other person is controlling the throttles
@@ -564,6 +679,8 @@ createGlobalPropertyi("tu-154/engines/rna_2",0)
 createGlobalPropertyi("tu-154/engines/rna_3",0)
 createGlobalPropertyf("tu-154/engines/flight_idle",0)
 createGlobalPropertyf("tu-154/engines/flight_idle_rpm",0)
+createGlobalPropertyf("tu-154/engines/idle_stop",0) -- throttle floor rud_logic applies this frame, 0..1
+createGlobalPropertyi("tu-154/engines/idle_stop_mode",0) -- idle stop selected: 0 = ground, 1 = flight idle (MG), 2 = configuration stop (PMG)
 createGlobalPropertyf("tu-154/engines/delta_FF",0)
 createGlobalPropertyf("tu-154/engines/FuelFlow_1",0)
 createGlobalPropertyf("tu-154/engines/FuelFlow_2",0)
@@ -574,7 +691,7 @@ createGlobalPropertyf("tu-154/engines/nk_rotation_3",0)
 createGlobalPropertyf("tu-154/engines/knd_1",0) -- engine 1 KND spool speed, written by powerplant/engine_gauges.lua
 createGlobalPropertyf("tu-154/engines/knd_3",0) -- engine 3 KND spool speed, written by powerplant/engine_gauges.lua
 createGlobalPropertyf("tu-154/anim/tiller_pos",0)
-createGlobalPropertyi("tu-154/hydro/nosewheel_turn_power", 0)
+createGlobalPropertyi("tu-154/hydro/nosewheel_turn_power", 0) -- nosewheel steering powered: either 27 V bus, the steering switch, HS 2 over 20 % (nosewheel.lua)
 createGlobalPropertyf("tu-154/SC/engine/nk8_kvd1", 0)
 createGlobalPropertyf("tu-154/SC/engine/nk8_kvd2", 0)
 createGlobalPropertyf("tu-154/SC/engine/nk8_kvd3", 0)

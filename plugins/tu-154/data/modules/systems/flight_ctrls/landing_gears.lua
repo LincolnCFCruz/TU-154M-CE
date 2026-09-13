@@ -1,4 +1,3 @@
--- this is landing gear extending and retracting logic
 
 -- hydraulics
 defineProperty("gs_press_1", globalPropertyf("tu-154/hydro/gs_press_1")) -- hydraulic system 1 pressure
@@ -45,6 +44,18 @@ defineProperty("rel_collapse3", globalPropertyi("sim/operation/failures/rel_coll
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
+
+-- published for the debug inspector; all of these were module locals
+defineProperty("pub_drive", globalPropertyf("tu-154/gears/drive"))
+defineProperty("pub_power_gate", globalPropertyi("tu-154/gears/power_gate"))
+defineProperty("pub_retract_gate", globalPropertyi("tu-154/gears/retract_gate"))
+defineProperty("pub_grav_front", globalPropertyf("tu-154/gears/grav_front"))
+defineProperty("pub_grav_main", globalPropertyf("tu-154/gears/grav_main"))
+defineProperty("pub_load_front", globalPropertyf("tu-154/gears/load_front"))
+defineProperty("pub_load_main", globalPropertyf("tu-154/gears/load_main"))
+defineProperty("pub_lock_front", globalPropertyi("tu-154/gears/lock_front"))
+defineProperty("pub_lock_left", globalPropertyi("tu-154/gears/lock_left"))
+defineProperty("pub_lock_right", globalPropertyi("tu-154/gears/lock_right"))
 
 defineProperty("cam_in_cockpit", globalPropertyi("sim/graphics/view/view_is_external"))
 
@@ -266,6 +277,21 @@ local MASTER = get(ismaster) ~= 1
 		local power_R = bool2int(get(bus27_volt_right) > 13)
 		
 		local IAS = get(airspeed) ^ 2
+
+		-- The gravity and air-load terms of each leg rate, lifted out of the
+		-- three position expressions below so they can be published. They are
+		-- pure functions of G, IAS and pos1_last, and pos1_last is not touched
+		-- until the end of update(), so evaluating them here computes exactly
+		-- what the inline copies computed. Note that the MAIN legs take these
+		-- from pos1_last too -- the nose gear position, not their own.
+		local grav_front = get(G) * (math.cos(math.pi * pos1_last / 4) + 0.2) * G_coef_front
+		local grav_main = get(G) * (math.cos(math.pi * pos1_last / 5) + 0.3) * G_coef_main
+		local load_front = IAS * math.sin(math.pi * pos1_last / 3) * A_coef_front
+		local load_main = IAS * math.sin(math.pi * pos1_last / 5) * A_coef_main
+		set(pub_grav_front, grav_front)
+		set(pub_grav_main, grav_main)
+		set(pub_load_front, load_front)
+		set(pub_load_main, load_main)
 		
 		-- calculate if gears can retract depending on autoblock
 		local retract = false
@@ -281,6 +307,8 @@ local MASTER = get(ismaster) ~= 1
 		local gs_in_use = get(gears_ext_3GS)
 		local lever = get(gear_lever) * bool2int(get(actuator_fail) ~= 6)
 		local dirrection = lever * main_hydro * power_L * (1 - gs_in_use) * 2 + lever * aux_hydro * power_R * gs_in_use * 1.3 + get(emerg_gear_ext) * main_hydro_2 * 1.3
+		set(pub_drive, dirrection)
+		set(pub_retract_gate, bool2int(retract))
 		
 		
 		-- manipulate sim levers
@@ -298,11 +326,12 @@ local MASTER = get(ismaster) ~= 1
 		
 
 		local gear_move = bool2int(power_L * (1 - gs_in_use) == 1 or power_R * gs_in_use == 1)
+		set(pub_power_gate, gear_move)
 		
 		-- calculations for gear 1
 		if not lock1 and retract then
 			-- calculate position		
-			pos1 = pos1_last + GEAR_SPEED_FRONT * (dirrection * bool2int(get(retract1_fail) < 6) + get(G) * (math.cos(math.pi * pos1_last / 4) + 0.2) * G_coef_front - IAS * math.sin(math.pi * pos1_last / 3) * A_coef_front) * passed * gear_move
+			pos1 = pos1_last + GEAR_SPEED_FRONT * (dirrection * bool2int(get(retract1_fail) < 6) + grav_front - load_front) * passed * gear_move
 			if pos1 < 0 then  -- limit positions and close lock when reached
 				pos1 = 0
 				lock1 = true
@@ -318,7 +347,7 @@ local MASTER = get(ismaster) ~= 1
 		-- calculations for gear 2
 		if not lock2 and retract then
 			-- calculate position		
-			pos2 = pos2_last + GEAR_SPEED_LEFT * (dirrection * bool2int(get(retract2_fail) < 6) + get(G) * (math.cos(math.pi * pos1_last / 5) + 0.3) * G_coef_main - IAS * math.sin(math.pi * pos1_last / 5) * A_coef_main) * passed * gear_move
+			pos2 = pos2_last + GEAR_SPEED_LEFT * (dirrection * bool2int(get(retract2_fail) < 6) + grav_main - load_main) * passed * gear_move
 			if pos2 < 0 then  -- limit positions and close lock when reached
 				pos2 = 0
 				lock2 = true
@@ -333,7 +362,7 @@ local MASTER = get(ismaster) ~= 1
 		-- calculations for gear 3
 		if not lock3 and retract then
 			-- calculate position		
-			pos3 = pos3_last + GEAR_SPEED_RIGHT * (dirrection * bool2int(get(retract3_fail) < 6) + get(G) * (math.cos(math.pi * pos1_last / 5) + 0.3) * G_coef_main - IAS * math.sin(math.pi * pos1_last / 5) * A_coef_main) * passed * gear_move
+			pos3 = pos3_last + GEAR_SPEED_RIGHT * (dirrection * bool2int(get(retract3_fail) < 6) + grav_main - load_main) * passed * gear_move
 			if pos3 < 0 then  -- limit positions and close lock when reached
 				pos3 = 0
 				lock3 = true
@@ -379,6 +408,10 @@ local MASTER = get(ismaster) ~= 1
 		
 
 	
+		set(pub_lock_front, bool2int(lock1))
+		set(pub_lock_left, bool2int(lock2))
+		set(pub_lock_right, bool2int(lock3))
+
 		-- sounds
 		if lock1_last ~= lock1 then --or lock2_last ~= lock2 or lock3_last ~= lock3 then
 			playSample(lock_sound, false)
@@ -399,7 +432,6 @@ local MASTER = get(ismaster) ~= 1
 		if get(rel_wing1R) == 6 then pos2 = 0 end
 
 if MASTER then	
-		-- set results
 		set(gear1_deploy, pos1)
 		set(gear2_deploy, pos2)	
 		set(gear3_deploy, pos3)

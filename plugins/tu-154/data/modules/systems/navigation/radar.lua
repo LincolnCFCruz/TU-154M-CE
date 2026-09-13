@@ -1,8 +1,7 @@
--- this is rude try to make RLS
+-- Rough, first-pass implementation of the weather radar (RLS).
 size = {2048, 2048}
 
--- define property table
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("deg1", globalPropertyf("sim/flightmodel/position/psi")) -- acf mag heading
 defineProperty("deg2", globalPropertyf("sim/flightmodel/position/hpath")) -- real mag heading
@@ -95,7 +94,7 @@ defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) 
 defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
 
 -- failures
-defineProperty("radar_fail", globalPropertyi("tu-154/failures/radar_fail")) --
+defineProperty("radar_fail", globalPropertyi("tu-154/failures/radar_fail"))
 
 
 -- sim/graphics/misc/kill_map_fms_line

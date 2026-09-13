@@ -1,7 +1,6 @@
--- this is air conditioning part of KSKV logic
+-- KSKV: the air conditioning subsystem
 
--- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- internal
 defineProperty("air_usage_L", globalPropertyf("tu-154/bleed/air_usage_L")) -- left air flow
@@ -14,6 +13,17 @@ defineProperty("cabin1_tube_t", globalPropertyf("tu-154/bleed/cabin1_tube_t")) -
 defineProperty("cabin2_tube_t", globalPropertyf("tu-154/bleed/cabin2_tube_t")) -- temperature in the duct to cabin 2
 defineProperty("cold_tube1_t", globalPropertyf("tu-154/bleed/cold_tube1_t")) -- duct 1 temperature
 defineProperty("cold_tube2_t", globalPropertyf("tu-154/bleed/cold_tube2_t")) -- duct 2 temperature
+
+-- The cold header and the mixing ratios. Every zone duct temperature below is
+-- cold_air_T and hot_air_T blended by one of these regulators, but only the two
+-- endpoints were published, so the blend itself could not be seen at all.
+defineProperty("cold_air_t_out", globalPropertyf("tu-154/bleed/cold_air_t")) -- cold header, both cold ducts mixed by flow
+defineProperty("reg_cold_L_out", globalPropertyf("tu-154/bleed/reg_cold_L")) -- left turbo-cooler hot bypass, 0..0.6
+defineProperty("reg_cold_R_out", globalPropertyf("tu-154/bleed/reg_cold_R")) -- right turbo-cooler hot bypass, 0..0.6
+defineProperty("reg_cockpit_out", globalPropertyf("tu-154/bleed/reg_cockpit")) -- cockpit mixer, 0 = cold .. 0.5 = hot
+defineProperty("reg_cabin1_out", globalPropertyf("tu-154/bleed/reg_cabin1")) -- cabin 1 mixer, 0 = cold .. 0.5 = hot
+defineProperty("reg_cabin2_out", globalPropertyf("tu-154/bleed/reg_cabin2")) -- cabin 2 mixer, 0 = cold .. 0.5 = hot
+defineProperty("reg_door_heat_out", globalPropertyf("tu-154/bleed/reg_door_heat")) -- door heating mixer, 0 = cold .. 1 = hot
 
 defineProperty("cockpit_temp", globalPropertyf("tu-154/bleed/cockpit_temp")) -- cabin temperature
 defineProperty("cabin_1_temp", globalPropertyf("tu-154/bleed/cabin_1_temp")) -- cabin 1 temperature
@@ -344,7 +354,16 @@ if MASTER then
 	set(cabin1_tube_t, cabin_1_tube_temp)
 	set(cabin_1_temp, cabin_1_T)
 	set(cabin2_tube_t, cabin_2_tube_temp)
-	set(cabin_2_temp, cabin_2_T)	
+	set(cabin_2_temp, cabin_2_T)
+
+	-- publish the header and the mixing ratios the duct temperatures came from
+	set(cold_air_t_out, cold_air_T)
+	set(reg_cold_L_out, cold_tube_reg_L)
+	set(reg_cold_R_out, cold_tube_reg_R)
+	set(reg_cockpit_out, cockpit_reg)
+	set(reg_cabin1_out, cabin_1_reg)
+	set(reg_cabin2_out, cabin_2_reg)
+	set(reg_door_heat_out, door_heat_reg)
 
 end
 	

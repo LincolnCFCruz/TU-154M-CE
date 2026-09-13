@@ -1,8 +1,8 @@
 -- RUD (throttle) logic for the Tu-154M, XP12
 -- The lever lag filter that the old "No Delay" edit deleted has been restored -
 -- see the virtual_rud_*_act block, which integrates rud_T_tbl / outside_air_temp again.
--- Flight idle (PMG) is scheduled here as well and published on
--- tu-154/engines/flight_idle and tu-154/engines/flight_idle_rpm.
+-- The three idle stops (ground, flight idle MG, configuration stop PMG) are
+-- scheduled here as well - see the idle-stop block below the tables.
 -- UPDATED for X-Plane 12: the obsolete barometer_sealevel_inhg dataref was replaced
 -- A commented-out copy of forward_table used to sit here, marked "FIX prm
 -- engine !!!". It was value-for-value identical to the live table further down,
@@ -60,10 +60,18 @@ defineProperty("comsta2", globalPropertyi("sim/operation/failures/rel_comsta2"))
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) 
 defineProperty("outside_air_temp", globalPropertyf("sim/cockpit2/temperature/outside_air_temp_degc")) 
 defineProperty("onground", globalPropertyi("sim/flightmodel/failures/onground_any"))
+-- landing-configuration gate for the PMG (approach idle) stop - see below
+defineProperty("flap_ratio", globalPropertyf("sim/flightmodel2/controls/flap1_deploy_ratio"))
 
 -- idle regime references, published for engine_gauges.lua and the debug inspector
 defineProperty("flight_idle",     globalPropertyf("tu-154/engines/flight_idle"))     -- sim-N2 idle reference
 defineProperty("flight_idle_rpm", globalPropertyf("tu-154/engines/flight_idle_rpm")) -- gauge-scale idle N2, %
+defineProperty("idle_stop",       globalPropertyf("tu-154/engines/idle_stop"))       -- throttle floor applied this frame
+defineProperty("idle_stop_mode",  globalPropertyi("tu-154/engines/idle_stop_mode"))  -- 0 ground, 1 MG, 2 PMG
+-- test switches, set from DataRefTool (see core/dataref_creator_2.lua)
+defineProperty("tune_idle_11k",   globalPropertyf("tu-154/tune/idle_11k"))
+defineProperty("tune_offset",     globalPropertyf("tu-154/tune/thro_alt_offset"))
+defineProperty("tune_pmg_gate",   globalPropertyi("tu-154/tune/pmg_gate"))
 
 defineProperty("rev_fail", globalPropertyi("sim/operation/failures/rel_revloc1")) 
 defineProperty("rev_fail_2", globalPropertyi("sim/operation/failures/rel_revers1")) 
@@ -180,32 +188,29 @@ local function rud_lag(act, target, rate, dt)
 	return act + (target - act) * math.min(1, dt * rate)
 end
 
--- Idle regimes (MG / PMG). GROUND_IDLE_OUT is the joy=0 point of forward_table;
--- airborne the floor rises to FLIGHT_IDLE_OUT, which is what the PMG stop does.
+-- Idle stops. There are three since 2026-09-10; before that one airborne stop
+-- was applied from liftoff to touchdown, and the aircraft could not decelerate.
+--   GROUND_IDLE_OUT    on the ground. CALIBRATED - see the sweep below. It is
+--                      forward_table's joy=0 row and MUST carry the same number:
+--                      the floor is math.max() of the two, so changing one alone
+--                      silently does nothing.
+--   flight idle (MG)   airborne, clean. Scheduled with altitude from
+--                      FLIGHT_IDLE_OUT_SL to tu-154/tune/idle_11k (default
+--                      0.45). PROVISIONAL - see "Flight idle calibration" below.
+--   APPROACH_IDLE_OUT  airborne with the flaps past PMG_FLAP_RATIO, and ONLY
+--                      when tu-154/tune/pmg_gate is 1 - it is 0 by default.
+--                      Its value is the single airborne stop this code used
+--                      before the split. Neither manual describes such a stop:
+--                      the lever has one idle position, МАЛЫЙ ГАЗ, whose N2
+--                      rises with altitude (RLE 8.1.4.2, 8.1.16.1 note 2), and
+--                      0.42 nominal - "посадочный малый газ" in the RLE,
+--                      "полетный малый газ" in the engine manual's tables - is
+--                      a regime the crew sets with the lever. Descent is flown
+--                      at МАЛЫЙ ГАЗ (RLE 4.5.1) and idle is selected at 6-4 m
+--                      (4.7.1). Kept behind the switch for comparison only;
+--                      see R-14 in _extras/docs/patch-2026-09-10/decisions_EN.txt.
+-- tu-154/engines/idle_stop and idle_stop_mode publish which stop applies.
 --
--- The old note here said "Table 8.1.2 has NO altitude idle row, so the FLIGHT_*
--- values are estimates". It does have one - Malyy gaz at H=11 km is N1 63.0 /
--- N2 78.0 / EGT 365 C - but that row is not what these constants describe
--- anyway. Airborne, this code raises the idle *stop*, and the stop is PMG
--- (posadochnyy malyy gaz, approach idle) = 0.42 nominal, which both Table 8.1.1
--- and Table 8.1.2 put at N2 81.0...83.5 %. FLIGHT_IDLE_OUT = 0.42 says the
--- author meant exactly that. Midpoint 82 % is used below.
---
--- THE TWO PAIRS ARE NOT A MAPPED PAIR, despite looking like one:
---   *_N2_SIM  feeds tu-154/engines/flight_idle, read by engine_gauges.lua as
---             idle_rpm and compared against RAW sim N2. It sets the idle N1
---             reference (li1..li3 -> cturb1..3) and the needle-jitter band, so
---             it is a physics tuning value. Left alone deliberately: retuning
---             it changes the LP spool model and cannot be done from the desk.
---   *_N2_DISP feeds tu-154/engines/flight_idle_rpm, which nothing consumes but
---             the debug inspector. It is a documented-value readout, which is
---             why the ground figure is 60.5 (the FM 59.5...61.5 midpoint) and
---             not the 63.5 that 68 on the sim scale would display as.
---
--- So the documented number belongs in the DISP row only. NOTE that this does
--- not by itself make the engine hold 82 % at flight idle - what the engine
--- actually settles at comes from FLIGHT_IDLE_OUT below, through X-Plane's own
--- model, and is still unverified. Check it on the calibration flight.
 -- GROUND_IDLE_OUT is CALIBRATED, not chosen. From the throttle sweep at UUEE:
 --     r = 0.15 -> 862 kgf     r = 0.17 -> 944 kgf
 --     r = 0.16 -> 903 kgf     r = 0.18 -> 986 kgf   (SL-equivalent thrust)
@@ -214,24 +219,50 @@ end
 -- gauge mid-band. The old 0.38 produced ~1871 kgf - twice the documented idle -
 -- which is what made the aircraft float, refuse to slow down and descend flat.
 --
--- MUST stay equal to forward_table's {0.0, ...} row: the idle floor is
--- math.max() of the two, so changing one alone silently does nothing.
---
--- FLIGHT_IDLE_OUT is left at 0.42 for now but is very probably wrong - see the
--- note below the table; it needs an airborne check, not a static one.
-local GROUND_IDLE_OUT, FLIGHT_IDLE_OUT = 0.16, 0.42
--- SUSPECT: FLIGHT_IDLE_OUT = 0.42 looks like a units confusion rather than a
+-- Flight idle calibration. MG rises with altitude - real FCU behaviour, and the
+-- ONLY row of Tables 8.1.1 / 8.1.2 that changes with height:
+--     ground (Table 8.1.1) .... N1 30.0 / N2 59.5...61.5
+--     H=11 km (Table 8.1.2) ... N1 63.0 / N2 78.0 / EGT 365 C
+-- Every regime ABOVE idle carries the same N2 at both altitudes (nominal
+-- 93.0...95.0, 0.7 nominal 87.5...90.0, 0.42 nominal 81.0...83.5), which is
+-- why the lever-to-regime mapping should not shift with height - see
+-- thro_high further down, and test card T4.
+-- To calibrate: climb to 11 km, M 0.8, throttles to the stop, and trim
+-- tu-154/tune/idle_11k until the gauge reads N2 78.0 % (test card T3). Whatever
+-- value does that IS flight idle, by definition. FLIGHT_IDLE_OUT_SL has no
+-- documented anchor; it only has to sit just above ground idle.
+local GROUND_IDLE_OUT, APPROACH_IDLE_OUT = 0.16, 0.42
+local FLIGHT_IDLE_OUT_SL = 0.20   -- MG near sea level, PROVISIONAL
+-- Flaps beyond the takeoff settings (15/28 deg) stand in for the landing
+-- configuration: 0.7 of the 45 deg maximum is 31.5 deg, so the gate selects the
+-- 36 and 45 deg settings. Only read when tu-154/tune/pmg_gate is 1.
+local PMG_FLAP_RATIO = 0.7
+-- SUSPECT: APPROACH_IDLE_OUT = 0.42 looks like a units confusion rather than a
 -- calibration. The regime it models is named "0.42 nominal" - 0.42 of NOMINAL
 -- THRUST, i.e. 4000 kgf - but this constant is a throttle fraction, and 0.42 of
 -- throttle is not 0.42 of thrust. The sweep puts throttle 0.4316 at about
--- 2350 kgf and raw N2 ~74, where PMG should be 4000 kgf and N2 81.0...83.5 %.
--- By the same thrust anchoring used for the ground stop, PMG wants r ~= 0.595.
--- Left alone here on purpose: it only bites airborne, it changes approach
--- handling (PMG is deliberately a HIGH idle so the engines spool fast), and it
--- cannot be checked from a static ground run like everything else in this pass.
--- the same two regimes on the gauge scales, for tu-154/engines/flight_idle*
-local GROUND_IDLE_N2_SIM,  FLIGHT_IDLE_N2_SIM  = 68,   72    -- sim N2, physics tuning - see above
-local GROUND_IDLE_N2_DISP, FLIGHT_IDLE_N2_DISP = 60.5, 82.0  -- gauge N2 %, documented: MG 59.5...61.5, PMG 81.0...83.5
+-- 2350 kgf and raw N2 ~74, where 0.42 nominal should be 4000 kgf and N2
+-- 81.0...83.5 %. By the same thrust anchoring used for the ground stop it
+-- wants r ~= 0.595. Left alone: it changes approach handling and needs an
+-- airborne check (question Q2 of the readiness plan).
+--
+-- Idle references for tu-154/engines/flight_idle*.
+-- THE TWO KINDS ARE NOT A MAPPED PAIR, despite looking like one:
+--   *_N2_SIM  feeds tu-154/engines/flight_idle, read by engine_gauges.lua as
+--             idle_rpm and compared against RAW sim N2. It sets the idle N1
+--             reference (li1..li3 -> cturb1..3) and the needle-jitter band, so
+--             it is a physics tuning value that cannot be set from the desk.
+--             Both airborne values are still the single 72 used before the
+--             stop was split: T3 records the raw sim N2 at each stop to
+--             replace them.
+--   *_N2_DISP feeds tu-154/engines/flight_idle_rpm, which nothing consumes but
+--             the debug inspector. It is a documented-value readout: 60.5 on
+--             the ground (the FM 59.5...61.5 midpoint), MG from 60.5 at sea
+--             level to 78.0 at 11 km, and 82.0 for 0.42 nominal (81.0...83.5).
+local GROUND_IDLE_N2_SIM = 68
+local MG_IDLE_N2_SIM, PMG_IDLE_N2_SIM = 72, 72   -- PLACEHOLDERS until test card T3
+local GROUND_IDLE_N2_DISP, PMG_IDLE_N2_DISP = 60.5, 82.0
+local MG_IDLE_N2_DISP_SL, MG_IDLE_N2_DISP_11K = 60.5, 78.0
 local IDLE_BLEND_RATE = 0.2  -- ~5 s to move between the regimes
 
 local thro_1_pos, thro_2_pos, thro_3_pos = 0, 0, 0
@@ -262,10 +293,37 @@ function update()
 	local passed = get(frame_time)
 	local stop_lever = get(throttle_lock) 
 
-	-- flight idle (PMG): the idle stop rises once the aircraft is airborne
+	-- Barometric altitude. MOVED UP 2026-09-10: the idle-stop schedule below
+	-- needs alt_blend, and it used to be computed further down - which left
+	-- alt_blend nil at that point and threw on every frame.
+	-- CHANGED for XP12: the pressure now arrives in Pascals, converted to inHg
+	-- 1 inHg = 3386.389 Pa
+	local baro_inhg = get(baro_press_pas) / 3386.389
+	-- barometric altitude in metres (msl_alt is already in metres in XP12)
+	local alt_baro = get(msl_alt) + (29.92 - baro_inhg) * 304.8
+	-- line() extrapolates without limit, so clamp the blend argument to the
+	-- 0..11000 m band the two schedules below are actually defined over
+	local alt_blend = math.max(0, math.min(11000, alt_baro))
+	
+	-- Idle stop selection. Airborne the stop rises to flight idle (MG),
+	-- scheduled with altitude. Only when tu-154/tune/pmg_gate is 1 and the
+	-- flaps are past PMG_FLAP_RATIO does it rise further, to the configuration
+	-- stop (PMG). Before 2026-09-10 the PMG value applied for
+	-- the whole flight, which left about 7400 kgf of residual thrust at 6 km and
+	-- made it impossible to decelerate below roughly 460 km/h indicated.
+	-- NB: the local must NOT be called flight_idle - that is the property
+	-- defined above, and a local of the same name would shadow it.
+	local idle_11k = math.max(GROUND_IDLE_OUT, math.min(1, get(tune_idle_11k)))
+	local flight_idle_stop = line(alt_blend, 0, FLIGHT_IDLE_OUT_SL, 11000, idle_11k)
+	-- the flap-gated stop is off unless tu-154/tune/pmg_gate is 1 (see the
+	-- idle-stop block above: the manuals describe no such stop)
+	local pmg_config = get(tune_pmg_gate) == 1 and get(flap_ratio) > PMG_FLAP_RATIO
+	local airborne_stop = flight_idle_stop
+	if pmg_config then airborne_stop = APPROACH_IDLE_OUT end
+	
 	local idle_target = get(onground) == 1 and 0 or 1
 	idle_blend = idle_blend + (idle_target - idle_blend) * math.min(1, passed * IDLE_BLEND_RATE)
-	local idle_out = GROUND_IDLE_OUT + (FLIGHT_IDLE_OUT - GROUND_IDLE_OUT) * idle_blend
+	local idle_out = GROUND_IDLE_OUT + (airborne_stop - GROUND_IDLE_OUT) * idle_blend
 	
 	local rev_L = get(eng_modL) == 3
 	local rev_R = get(eng_modR) == 3
@@ -278,14 +336,6 @@ function update()
 		joy_rud_MIN_1, joy_rud_MIN_2, joy_rud_MIN_3 = 0.175, 0.175, 0.175
 	end
 
-	-- CHANGED for XP12: the pressure now arrives in Pascals, converted to inHg
-	-- 1 inHg = 3386.389 Pa
-	local baro_inhg = get(baro_press_pas) / 3386.389
-	-- barometric altitude in metres (msl_alt is already in metres in XP12)
-	local alt_baro = get(msl_alt) + (29.92 - baro_inhg) * 304.8
-	-- line() extrapolates without limit, so clamp the blend argument to the
-	-- 0..11000 m band the two schedules below are actually defined over
-	local alt_blend = math.max(0, math.min(11000, alt_baro))
 
 	-- Thrust-with-altitude coefficient for the D-30KU-154
 	-- Per Flight Manual Table 8.1.2 (H=11 km M=0.8): takeoff setting, HP 95.5-97.5%
@@ -370,9 +420,22 @@ function update()
 	virtual_rud_3_act = rud_lag(virtual_rud_3_act, virtual_rud_3, rud_rate, passed)
 	---------------------------------------------------------
 	
-	local thro_high_1 = line(virtual_rud_1_act, 0, XP11 and 0.525 or 0.35, 1, XP11 and 1.07 or 1.1)
-	local thro_high_2 = line(virtual_rud_2_act, 0, XP11 and 0.525 or 0.35, 1, XP11 and 1.07 or 1.1)
-	local thro_high_3 = line(virtual_rud_3_act, 0, XP11 and 0.525 or 0.35, 1, XP11 and 1.07 or 1.1)
+	-- The zero-point offset was removed for XP12 on 2026-09-10. Tables 8.1.1 and
+	-- 8.1.2 give the SAME N2 for every regime above idle at sea level and at
+	-- 11 km, so lever-to-regime must not shift with height. The old offset of
+	-- 0.35 pushed the WHOLE range up: with the throttles fully back it sent 0.554
+	-- to X-Plane at 6 km and 0.665 at 11 km - over half travel, at the idle stop.
+	-- That is why idle thrust barely lapsed with altitude. The 1.1 slope is kept:
+	-- takeoff N2 does rise slightly with height (94.5...96.0 -> 95.5...97.5).
+	-- XP11 is left untouched - it was never re-measured and XP11 lapses harder.
+	-- The offset moves EVERY lever position at altitude, not only idle: at
+	-- 11 km the nominal detent sent 0.954 with 0.35 and sends 0.886 with 0.
+	-- It is read from tu-154/tune/thro_alt_offset so test card T4 can fly both
+	-- against Table 8.1.2 (nominal N2 93.0...95.0 %).
+	local thro_offset = XP11 and 0.525 or get(tune_offset)
+	local thro_high_1 = line(virtual_rud_1_act, 0, thro_offset, 1, XP11 and 1.07 or 1.1)
+	local thro_high_2 = line(virtual_rud_2_act, 0, thro_offset, 1, XP11 and 1.07 or 1.1)
+	local thro_high_3 = line(virtual_rud_3_act, 0, thro_offset, 1, XP11 and 1.07 or 1.1)
 	
 	local thro_1 = line(alt_blend, 0, virtual_rud_1_act, 11000, thro_high_1)
 	local thro_2 = line(alt_blend, 0, virtual_rud_2_act, 11000, thro_high_2)
@@ -398,10 +461,20 @@ function update()
 		set(sim_rud_3, thro_3)
 	end
 	
-	-- idle references for the gauges - derived from onground only, so both
-	-- SmartCopilot sides compute the same value and it needs no sync entry
-	set(flight_idle,     GROUND_IDLE_N2_SIM  + (FLIGHT_IDLE_N2_SIM  - GROUND_IDLE_N2_SIM)  * idle_blend)
-	set(flight_idle_rpm, GROUND_IDLE_N2_DISP + (FLIGHT_IDLE_N2_DISP - GROUND_IDLE_N2_DISP) * idle_blend)
+	-- idle references for the gauges - derived from onground, the flap gate and
+	-- altitude only, so both SmartCopilot sides compute the same value and it
+	-- needs no sync entry. Airborne they follow the stop in use.
+	local air_n2_sim = pmg_config and PMG_IDLE_N2_SIM or MG_IDLE_N2_SIM
+	local air_n2_disp = pmg_config and PMG_IDLE_N2_DISP
+		or line(alt_blend, 0, MG_IDLE_N2_DISP_SL, 11000, MG_IDLE_N2_DISP_11K)
+	set(flight_idle,     GROUND_IDLE_N2_SIM  + (air_n2_sim  - GROUND_IDLE_N2_SIM)  * idle_blend)
+	set(flight_idle_rpm, GROUND_IDLE_N2_DISP + (air_n2_disp - GROUND_IDLE_N2_DISP) * idle_blend)
+
+	-- which stop applies, for the inspector's ABSU tab and the test cards
+	local stop_mode = 1
+	if get(onground) == 1 then stop_mode = 0 elseif pmg_config then stop_mode = 2 end
+	set(idle_stop, idle_out)
+	set(idle_stop_mode, stop_mode)
 
 	set(rev_fail, 6) 
 	set(rev_fail_2, 6)

@@ -43,27 +43,23 @@ function _G.interpolate(tbl, value)
     return value - lastActual + lastReference
 end
 
--- return the sign of given number as +1 or -1
 function _G.sign(x)
     if x >= 0 then return 1 else return -1 end
 end
 
--- return the integer 0 or 1 by give boolean
 function _G.bool2int(var)
     if var then return 1
     else return 0 end
 end
 
--- returns Y on the line with two points by given X
 function _G.line(x, x1, y1, x2, y2)
-    -- (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) -- line function
+    -- (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1)
     if x2 - x1 ~= 0 then
         return (x - x1) * (y2 - y1) / (x2 - x1) + y1
     else return 0
     end
 end
 
--- returns true if current beacon is ILS
 function _G.isILS(freq)
     if (10810 > freq) or (11195 < freq) then
         return false
@@ -244,13 +240,62 @@ local _sasl3_gps = globalPropertys
 -- single-player flight, say) logs a warning on every retry -- that was 8622
 -- warnings in one short flight, 5435 of them for scp/api/ismaster alone.
 --
--- So: the first bind is deliberately noisy, once per missing name, which is the
--- useful diagnostic. After that the name is re-probed silently, on a wall clock
--- rather than a lookup count, so a dataref read 143 times a frame does not get
--- retried 143 times a frame.
+-- [QUIET-BIND] The first bind used to be deliberately noisy (one real,
+-- warning-producing call per missing name) as a diagnostic: so a genuine typo
+-- in a dataref path would still show up once in Log.txt. In practice this
+-- aircraft's three documented optional-plugin families (SmartCopilot,
+-- RealityXP GNS/BetterPushback, the inherited An-24 xap/* names) are the only
+-- things that ever hit it, every single flight, on every install that lacks
+-- those plugins -- 78 files reference scp/api/ismaster alone -- so the
+-- "diagnostic" was pure noise (172 warnings/flight) rather than a signal. The
+-- first bind now uses the same quiet probe as the retries, so a genuinely
+-- missing name is silent, matching the SASL2 behaviour this wrapper restores.
+--
+-- What that silence cost is a misspelt name, which now reads 0 without a word.
+-- So the diagnostic comes back as ONE line: REPORT_AFTER seconds after load,
+-- the first read of any still-unresolved property logs every name that is
+-- still unresolved, minus the optional-plugin families below. A clean install
+-- logs nothing; a typo logs once per flight.
 local resolveClock = sasl.createTimer()
 sasl.startTimer(resolveClock)
 local RETRY_PERIOD = 2.0 -- seconds between silent re-probes
+local REPORT_AFTER = 60  -- seconds of real time before the one-line report
+
+local OPTIONAL_PREFIXES = {
+    "scp/api/",                    -- SmartCopilot
+    "RXP/", "bp/",                 -- RealityXP GNS, BetterPushback
+    "custom/KLN90/", "custom/MD41/",
+}
+-- ...and the names plugins/kln90b creates in this aircraft's own namespace,
+-- written without their "tu-154/" head: they are prefixes, not dataref names,
+-- and drefcheck.py would report them as never created.
+local OPTIONAL_OWN = { "kln90/", "xap/KLN90", "xap/MD41" }
+local unresolved = {}  -- name -> true while its deferred property is unbound
+local reported = false
+
+local function startsWithAny(s, prefixes)
+    for _, p in ipairs(prefixes) do
+        if s:sub(1, #p) == p then return true end
+    end
+    return false
+end
+
+local function reportUnresolved()
+    reported = true
+    local list = {}
+    for name in pairs(unresolved) do
+        local own = name:match("^tu%-154/(.*)")
+        local optional = startsWithAny(name, OPTIONAL_PREFIXES)
+            or (own ~= nil and startsWithAny(own, OPTIONAL_OWN))
+        if not optional then list[#list + 1] = name end
+    end
+    if #list > 0 then
+        table.sort(list)
+        sasl.logWarning("datarefs still unresolved " .. REPORT_AFTER
+            .. " s after load (a typo, or a plugin that never loaded): "
+            .. table.concat(list, ", "))
+    end
+end
 
 -- Read through rawget: this file is included into a COMPONENT environment, whose
 -- __index turns an unknown global into loadComponent("TYPE_UNKNOWN") and an
@@ -260,17 +305,21 @@ local TYPE_ANY = rawget(_G, "TYPE_UNKNOWN")
 
 local function deferredProperty(finder, name, zero)
     local real, nextTry = nil, 0
+    unresolved[name] = true
     local function resolve()
         if real then return real end
-        if sasl.getElapsedSeconds(resolveClock) < nextTry then
+        local now = sasl.getElapsedSeconds(resolveClock)
+        if not reported and now >= REPORT_AFTER then reportUnresolved() end
+        if now < nextTry then
             return nil
         end
-        nextTry = sasl.getElapsedSeconds(resolveClock) + RETRY_PERIOD
+        nextTry = now + RETRY_PERIOD
         -- quiet existence check; only bind for real once the dataref is there
         if not sasl.findDataRef(name, TYPE_ANY, true) then
             return nil
         end
         real = finder(name)
+        if real then unresolved[name] = nil end
         return real
     end
     return {
@@ -301,15 +350,29 @@ local function deferredProperty(finder, name, zero)
     }
 end
 
+-- [QUIET-BIND] Quiet existence check before the first (real) call, so a
+-- missing name goes straight to deferredProperty without ever invoking the
+-- noisy native lookup. A name that IS present still binds immediately and
+-- permanently below, with no wrapper and no per-frame overhead.
+-- A name that exists but has a type the typed accessor refuses (a scalar
+-- accessor on an array, say) makes the finder return nil; it falls through to
+-- the deferred property and reads 0, exactly as before quietBind.
+local function quietBind(finder, name, zero)
+    if sasl.findDataRef(name, TYPE_ANY, true) then
+        return finder(name) or deferredProperty(finder, name, zero)
+    end
+    return deferredProperty(finder, name, zero)
+end
+
 function _G.globalPropertyf(name)
-    return _sasl3_gpf(name) or deferredProperty(_sasl3_gpf, name, 0)
+    return quietBind(_sasl3_gpf, name, 0)
 end
 function _G.globalPropertyi(name)
-    return _sasl3_gpi(name) or deferredProperty(_sasl3_gpi, name, 0)
+    return quietBind(_sasl3_gpi, name, 0)
 end
 function _G.globalPropertyd(name)
-    return _sasl3_gpd(name) or deferredProperty(_sasl3_gpd, name, 0)
+    return quietBind(_sasl3_gpd, name, 0)
 end
 function _G.globalPropertys(name)
-    return _sasl3_gps(name) or deferredProperty(_sasl3_gps, name, "")
+    return quietBind(_sasl3_gps, name, "")
 end

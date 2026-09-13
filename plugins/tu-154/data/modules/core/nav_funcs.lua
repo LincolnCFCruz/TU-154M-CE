@@ -1,6 +1,3 @@
--- this is a set of functions for navigational systems
-
-
 -- distance by coords in degrees
 function calc_range(lat1, lon1, lat2, lon2)
 	
@@ -51,7 +48,7 @@ end
 
 function dist_new(speed, passed_time)
 	
-	return speed * passed_time / 3600	-- distane in miles
+	return speed * passed_time / 3600	-- distance in miles
 	
 end
 
@@ -70,7 +67,6 @@ end
 
 local R = 6378.145 / 1.852 -- NM
 
--- calculate distance in nautical miles.   cords in radians
 function calcDistanceRad(lat1, lon1, lat2, lon2)
     local d = math.acos(math.sin(lat1) * math.sin(lat2) + 
                   math.cos(lat1) * math.cos(lat2) *
@@ -78,7 +74,6 @@ function calcDistanceRad(lat1, lon1, lat2, lon2)
     return d
 end
 
--- calculate distance in nautical miles.   cords in degreese
 function calcDistance(lat1, lon1, lat2, lon2)
     lat1 = math.rad(lat1)
     lon1 = math.rad(lon1)
@@ -88,7 +83,6 @@ function calcDistance(lat1, lon1, lat2, lon2)
     return calcDistanceRad(lat1, lon1, lat2, lon2)
 end
 
--- calculate bearing from first point to second in radians
 function calcBearingRad(lat1, lon1, lat2, lon2)
     if (lat1 == lat2) and (lon1 == lon2) then
         return 0
@@ -102,7 +96,6 @@ function calcBearingRad(lat1, lon1, lat2, lon2)
     return math.atan2(y, x)
 end
 
--- calculate bearing from first point to second
 function calcBearing(lat1, lon1, lat2, lon2)
     lat1 = math.rad(lat1)
     lon1 = math.rad(lon1)
@@ -112,7 +105,6 @@ function calcBearing(lat1, lon1, lat2, lon2)
     return math.deg(calcBearingRad(lat1, lon1, lat2, lon2))
 end
 
--- calculate midpoint
 function calcMidpoint(lat1, lon1, lat2, lon2)
     lat1 = math.rad(lat1)
     lon1 = math.rad(lon1)

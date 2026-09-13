@@ -1,4 +1,3 @@
--- this is the MSRP panel
 
 -- lights
 defineProperty("msrp_mlp_main", globalPropertyf("tu-154/lights/small/msrp_mlp_main")) -- MSRP. MLP main
@@ -14,29 +13,29 @@ defineProperty("msrp_date_ten", globalPropertyi("tu-154/switchers/eng/msrp_date_
 defineProperty("msrp_date_one", globalPropertyi("tu-154/switchers/eng/msrp_date_one")) -- MSRP date, day units
 defineProperty("msrp_month_ten", globalPropertyi("tu-154/switchers/eng/msrp_month_ten")) -- MSRP date, month tens
 defineProperty("msrp_month_one", globalPropertyi("tu-154/switchers/eng/msrp_month_one")) -- MSRP date, month units
-defineProperty("msrp_year_ten", globalPropertyi("tu-154/switchers/eng/msrp_year_ten")) -- MSRP lamp test button
-defineProperty("msrp_year_one", globalPropertyi("tu-154/switchers/eng/msrp_year_one")) -- MSRP lamp test button
-defineProperty("msrp_route_hun", globalPropertyi("tu-154/switchers/eng/msrp_route_hun")) -- MSRP lamp test button
-defineProperty("msrp_route_ten", globalPropertyi("tu-154/switchers/eng/msrp_route_ten")) -- MSRP lamp test button
-defineProperty("msrp_route_one", globalPropertyi("tu-154/switchers/eng/msrp_route_one")) -- MSRP lamp test button
-defineProperty("msrp_mlp_1", globalPropertyi("tu-154/switchers/eng/msrp_mlp_1")) -- MSRP lamp test button
-defineProperty("msrp_mlp_2", globalPropertyi("tu-154/switchers/eng/msrp_mlp_2")) -- MSRP lamp test button
-defineProperty("msrp_night_day", globalPropertyi("tu-154/switchers/eng/msrp_night_day")) -- MSRP lamp test button
-defineProperty("msrp_main_switch", globalPropertyi("tu-154/switchers/eng/msrp_main_switch")) -- MSRP lamp test button
+defineProperty("msrp_year_ten", globalPropertyi("tu-154/switchers/eng/msrp_year_ten")) -- MSRP date, year tens
+defineProperty("msrp_year_one", globalPropertyi("tu-154/switchers/eng/msrp_year_one")) -- MSRP date, year units
+defineProperty("msrp_route_hun", globalPropertyi("tu-154/switchers/eng/msrp_route_hun")) -- MSRP route number, hundreds
+defineProperty("msrp_route_ten", globalPropertyi("tu-154/switchers/eng/msrp_route_ten")) -- MSRP route number, tens
+defineProperty("msrp_route_one", globalPropertyi("tu-154/switchers/eng/msrp_route_one")) -- MSRP route number, units
+defineProperty("msrp_mlp_1", globalPropertyi("tu-154/switchers/eng/msrp_mlp_1")) -- MLP marker switch 1 (drives msrp_mlp_main)
+defineProperty("msrp_mlp_2", globalPropertyi("tu-154/switchers/eng/msrp_mlp_2")) -- MLP marker switch 2 (drives msrp_mlp_aux)
+defineProperty("msrp_night_day", globalPropertyi("tu-154/switchers/eng/msrp_night_day")) -- day/night switch
+defineProperty("msrp_main_switch", globalPropertyi("tu-154/switchers/eng/msrp_main_switch")) -- MSRP master switch
 
 defineProperty("mars_on", globalPropertyi("tu-154/switchers/ovhd/mars_on")) --  MARS
 
 
 
 -- other sources
-defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
-defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
+defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
+defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 defineProperty("msrp_recording", globalPropertyi("tu-154/msrp/msrp_recording")) -- MSRP in record mode
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- engines
 defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) -- engine 1 rpm
@@ -232,7 +231,6 @@ local function check_controls()
 	
 	set(msrp_date_ten, msrp_date_ten_sw)
 	
-	--
 	while msrp_date_one_sw > 9 do
 		msrp_date_one_sw = msrp_date_one_sw - 10
 	end
@@ -243,7 +241,6 @@ local function check_controls()
 	
 	set(msrp_date_one, msrp_date_one_sw)	
 	
-	--
 	while msrp_month_ten_sw > 9 do
 		msrp_month_ten_sw = msrp_month_ten_sw - 10
 	end
@@ -254,7 +251,6 @@ local function check_controls()
 	
 	set(msrp_month_ten, msrp_month_ten_sw)		
 	
-	--
 	while msrp_month_one_sw > 9 do
 		msrp_month_one_sw = msrp_month_one_sw - 10
 	end
@@ -265,7 +261,6 @@ local function check_controls()
 	
 	set(msrp_month_one, msrp_month_one_sw)		
 	
-	--
 	while msrp_year_ten_sw > 9 do
 		msrp_year_ten_sw = msrp_year_ten_sw - 10
 	end
@@ -276,7 +271,6 @@ local function check_controls()
 	
 	set(msrp_year_ten, msrp_year_ten_sw)		
 	
-	--
 	while msrp_year_one_sw > 9 do
 		msrp_year_one_sw = msrp_year_one_sw - 10
 	end
@@ -288,7 +282,6 @@ local function check_controls()
 	set(msrp_year_one, msrp_year_one_sw)	
 	
 	
-	--
 	while msrp_route_hun_sw > 9 do
 		msrp_route_hun_sw = msrp_route_hun_sw - 10
 	end
@@ -299,7 +292,6 @@ local function check_controls()
 	
 	set(msrp_route_hun, msrp_route_hun_sw)	
 	
-	--
 	while msrp_route_ten_sw > 9 do
 		msrp_route_ten_sw = msrp_route_ten_sw - 10
 	end
@@ -310,7 +302,6 @@ local function check_controls()
 	
 	set(msrp_route_ten, msrp_route_ten_sw)		
 	
-	--
 	while msrp_route_one_sw > 9 do
 		msrp_route_one_sw = msrp_route_one_sw - 10
 	end

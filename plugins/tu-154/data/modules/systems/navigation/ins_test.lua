@@ -1,14 +1,13 @@
--- this is a test logic for INS calculations..
+-- Test logic for INS dead-reckoning calculations.
 
--- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- world DataRefs
 defineProperty("groundspeed", globalPropertyf("sim/flightmodel/position/groundspeed")) -- groundspeed
 
 defineProperty("latitude", globalPropertyd("sim/flightmodel/position/latitude")) -- real latitude position
 defineProperty("longitude", globalPropertyd("sim/flightmodel/position/longitude")) -- The longitude of the aircraft
-defineProperty("elevation", globalPropertyd("sim/flightmodel/position/elevation")) -- The longitude of the aircraft
+defineProperty("elevation", globalPropertyd("sim/flightmodel/position/elevation")) -- the elevation of the aircraft
 
 defineProperty("true_course", globalPropertyf("sim/flightmodel/position/hpath")) -- true course, that aircraft moves to
 	

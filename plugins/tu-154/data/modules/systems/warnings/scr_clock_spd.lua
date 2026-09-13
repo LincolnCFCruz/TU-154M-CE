@@ -1,5 +1,3 @@
--- this is speed scale
-
 size = {180, 350}
 
 defineProperty("speed", 0)

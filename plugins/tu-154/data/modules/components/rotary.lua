@@ -8,13 +8,8 @@
 --     (core/glbl_func.lua), which restores the SASL2 cadence; with autoRepeat
 --     disabled the hold does nothing, as before.
 
--- no image
 defineProperty("image")
-
--- default value
 defineProperty("value", 0)
-
--- default step
 defineProperty("step", 1)
 
 defineProperty('autoRepeat', true)
@@ -35,10 +30,8 @@ end
 local repeatDec = holdToRepeat(function() updateValue(get(value) - get(step)) end)
 local repeatInc = holdToRepeat(function() updateValue(get(value) + get(step)) end)
 
--- rotary consists of texture and two clickable areas
 components = {
 
-    -- background image
     texture { image = image },
 
     clickable {

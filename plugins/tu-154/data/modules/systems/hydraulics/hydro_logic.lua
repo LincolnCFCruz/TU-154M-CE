@@ -5,13 +5,12 @@
 -- defineProperty("absu_debug2", globalPropertyf("tu-154/controlls/absu_debug2")) 
 -- defineProperty("absu_debug3", globalPropertyf("tu-154/controlls/absu_debug3")) 
 
--- this is hydraulic logic
 -- controls
 defineProperty("accum_fill", globalPropertyi("tu-154/buttons/hydro/accum_fill")) -- battery charging
 
 defineProperty("connect2to1", globalPropertyi("tu-154/switchers/hydro/connect2to1")) -- connect hydraulic system 2 to system 1
-defineProperty("pump_2", globalPropertyi("tu-154/switchers/hydro/pump_2")) -- pump 2 on
-defineProperty("pump_3", globalPropertyi("tu-154/switchers/hydro/pump_3")) -- pump 3 on
+defineProperty("pump_2", globalPropertyi("tu-154/switchers/hydro/pump_2"))
+defineProperty("pump_3", globalPropertyi("tu-154/switchers/hydro/pump_3"))
 
 -- sources
 defineProperty("rpm_high_1", globalPropertyf("tu-154/gauges/engine/rpm_high_1")) -- engine 1 high-pressure spool rpm
@@ -21,8 +20,8 @@ defineProperty("rpm_high_3", globalPropertyf("tu-154/gauges/engine/rpm_high_3"))
 defineProperty("bus115_1_volt", globalPropertyf("tu-154/elec/bus115_1_volt"))
 defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
 
-defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
-defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
+defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
+defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 -- results
 defineProperty("gs_press_1", globalPropertyf("tu-154/hydro/gs_press_1")) -- hydraulic system 1 pressure
@@ -50,18 +49,18 @@ defineProperty("hs_leak_2", globalPropertyi("tu-154/failures/hydro_leak_2")) -- 
 defineProperty("hs_leak_3", globalPropertyi("tu-154/failures/hydro_leak_3")) -- leak
 defineProperty("hs_leak_4", globalPropertyi("tu-154/failures/hydro_leak_4")) -- leak
 
-defineProperty("hydro_pump_fail_11", globalPropertyi("tu-154/failures/hydro_pump_fail_11")) -- fail
-defineProperty("hydro_pump_fail_12", globalPropertyi("tu-154/failures/hydro_pump_fail_12")) -- fail
-defineProperty("hydro_pump_fail_2", globalPropertyi("tu-154/failures/hydro_pump_fail_2")) -- fail
-defineProperty("hydro_pump_fail_3", globalPropertyi("tu-154/failures/hydro_pump_fail_3")) -- fail
+defineProperty("hydro_pump_fail_11", globalPropertyi("tu-154/failures/hydro_pump_fail_11"))
+defineProperty("hydro_pump_fail_12", globalPropertyi("tu-154/failures/hydro_pump_fail_12"))
+defineProperty("hydro_pump_fail_2", globalPropertyi("tu-154/failures/hydro_pump_fail_2"))
+defineProperty("hydro_pump_fail_3", globalPropertyi("tu-154/failures/hydro_pump_fail_3"))
 
-defineProperty("hydro_elec_fail_2", globalPropertyi("tu-154/failures/hydro_elec_fail_2")) -- fail
-defineProperty("hydro_elec_fail_3", globalPropertyi("tu-154/failures/hydro_elec_fail_3")) -- fail
+defineProperty("hydro_elec_fail_2", globalPropertyi("tu-154/failures/hydro_elec_fail_2"))
+defineProperty("hydro_elec_fail_3", globalPropertyi("tu-154/failures/hydro_elec_fail_3"))
 
 
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
 -- engines
@@ -145,6 +144,20 @@ defineProperty("buster_on_3", globalPropertyi("tu-154/switchers/console/buster_o
 -- currents
 defineProperty("gs_pump_2_cc", globalPropertyf("tu-154/hydro/gs_pump_2_cc")) -- pump station current
 defineProperty("gs_pump_3_cc", globalPropertyf("tu-154/hydro/gs_pump_3_cc")) -- pump station current
+
+-- What is actually driving each system. All of this was computed below and then
+-- dropped into locals, so the pressure was visible but never its cause.
+defineProperty("eng_pump_11_out", globalPropertyf("tu-154/hydro/eng_pump_11")) -- HS1 engine pump 1 delivery
+defineProperty("eng_pump_12_out", globalPropertyf("tu-154/hydro/eng_pump_12")) -- HS1 engine pump 2 delivery
+defineProperty("eng_pump_2_out", globalPropertyf("tu-154/hydro/eng_pump_2")) -- HS2 engine pump delivery
+defineProperty("eng_pump_3_out", globalPropertyf("tu-154/hydro/eng_pump_3")) -- HS3 engine pump delivery
+defineProperty("elec_pump_2_out", globalPropertyi("tu-154/hydro/elec_pump_2_work")) -- HS2 pump station running
+defineProperty("elec_pump_3_out", globalPropertyi("tu-154/hydro/elec_pump_3_work")) -- HS3 pump station running
+defineProperty("booster_1_out", globalPropertyi("tu-154/hydro/booster_1")) -- booster engaged, latched
+defineProperty("booster_2_out", globalPropertyi("tu-154/hydro/booster_2"))
+defineProperty("booster_3_out", globalPropertyi("tu-154/hydro/booster_3"))
+defineProperty("connect_2to1_out", globalPropertyi("tu-154/hydro/connect_2to1")) -- cross-feed passing fluid
+defineProperty("accum_charge_out", globalPropertyi("tu-154/hydro/accum_charge")) -- accumulator charging
 
 defineProperty("hod1_p", globalPropertyf("tu-154/absu/d_ra1_p"))
 defineProperty("hod2_p", globalPropertyf("tu-154/absu/d_ra2_p"))
@@ -302,7 +315,6 @@ if MASTER then
 	
 	
 	
-	-- calculate oil amount
 	local sys_qty_1 = get(system_qty_1)
 	local sys_qty_2 = get(system_qty_2)
 	local sys_qty_3 = get(system_qty_3)
@@ -319,7 +331,6 @@ if MASTER then
 	local hs2_qty = sys_qty_2 - 34 - acc_2 - acc_4/2 -- quantity of oil
 	local hs3_qty = sys_qty_3 - 21 - acc_3 -- quantity of oil
 	
-	-- limit zero amount in barrels
 	if hs1_qty < 0 then hs1_qty = 0 end
 	if hs2_qty < 0 then hs2_qty = 0 end
 	if hs3_qty < 0 then hs3_qty = 0 end
@@ -334,7 +345,6 @@ if MASTER then
 	end
 	
 	
-	-- check power
 	local power27L = get(bus27_volt_left) > 13
 	local power27R = get(bus27_volt_right) > 13
 	
@@ -357,7 +367,6 @@ if MASTER then
 	local eng_pump_1_2 = math.max((-3.3/(1+math.exp(-eng_k2*(acc_1-4.2)))+1.64)*c_eng2* (1 - get(hydro_pump_fail_12)),0)
 	local eng_pump_2 = math.max((-3.3/(1+math.exp(-eng_k2*(acc_2-4.2)))+1.64)*c_eng2* (1 - get(hydro_pump_fail_2)),0)
 	local eng_pump_3 = math.max((-3.3/(1+math.exp(-eng_k3*(acc_3-4.2)))+1.64)*c_eng3* (1 - get(hydro_pump_fail_3)),0)
--- 41 93
 	-- pump oil from storage to accums
 	if hs1_qty > 0 then 
 		local flow = (eng_pump_1_1 + eng_pump_1_2) * passed
@@ -400,21 +409,25 @@ if MASTER then
 	
 
 	-- charge the accumulator for emergency brakes
+	local accum_charging = 0
 	if get(accum_fill) == 1 and acc_4 < acc_1 and power27L then
 		local flow = (acc_1 - acc_4)
 		if flow > 2 then flow = 2 end
-		
+
 		acc_1 = acc_1 - flow * passed
 		acc_4 = acc_4 + flow * passed
+		accum_charging = 1
 	end
 
 	-- connect HS 1 and HS2
+	local xfeed_2to1 = 0
 	if get(connect2to1) == 1 and power27L and acc_2 > acc_1 then
 		local flow = acc_2 - acc_1
 		if flow > 2 then flow = 2 end
-		
+
 		acc_1 = acc_1 + flow * passed
 		acc_2 = acc_2 - flow * passed
+		xfeed_2to1 = 1
 	end
 
 	
@@ -458,7 +471,6 @@ if MASTER then
 
 
 	
-	-- check leak failure
 	local high_leak_1 = get(hs_leak_1)
 	local high_leak_2 = get(hs_leak_2)
 	local high_leak_3 = get(hs_leak_3)
@@ -470,11 +482,11 @@ if MASTER then
 	acc_4 = acc_4 - high_leak_4 * acc_4 * passed * 0.05
 	
 
-	-- for every pressure consumer, the oil transfer from the accumulators back to the tanks has to be written out
-	-- apart from leaks :)
-	
-	-- brakes --
-	-- takes 0.04 l for full brake for each gear
+	-- Every consumer below debits the accumulator it draws from and credits the
+	-- same amount back to that system's barrel (hsN_qty) -- fluid only leaves a
+	-- system through a leak, never through use.
+
+	-- brakes: 0.04 l for full brake application, per gear
 	local brakes_L = get(l_brake_add)
 	local brakes_R = get(r_brake_add)
 	--local brakes = get(parkbrake)
@@ -491,13 +503,13 @@ if MASTER then
 	--brakes_last = brakes
 	
 	if acc_1 > 0 and main_brakes_feed > 0 then 
-		acc_1 = acc_1 - main_brakes_feed -- take oil from HS1
-		hs1_qty = hs1_qty + main_brakes_feed -- return it to barrel
+		acc_1 = acc_1 - main_brakes_feed
+		hs1_qty = hs1_qty + main_brakes_feed
 	end
 	
 	if acc_2 > 0 and nws_feed > 0 then 
-		acc_2 = acc_2 - nws_feed -- take oil from HS1
-		hs2_qty = hs2_qty + nws_feed -- return it to barrel
+		acc_2 = acc_2 - nws_feed
+		hs2_qty = hs2_qty + nws_feed
 	end
 	
 	-- emergency brakes
@@ -513,14 +525,13 @@ if MASTER then
 	brakes_EM_last = brakes_EM
 	
 	if acc_4 > 0 and EM_brakes_feed > 0 then 
-		acc_4 = acc_4 - EM_brakes_feed -- take oil from HS4
-		hs1_qty = hs1_qty + EM_brakes_feed -- return it to barrel
+		acc_4 = acc_4 - EM_brakes_feed
+		hs1_qty = hs1_qty + EM_brakes_feed
 	end	
 	
 	
 	
 	
-	------
 	-- flaps
 	local flap_L_now = get(flap_inn_L)
 	local flap_R_now = get(flap_inn_R)	
@@ -533,7 +544,6 @@ if MASTER then
 	
 
 	-- flight controls
-	-- set busters work status
 	if power27L then
 		buster_1_ON = get(buster_on_1)
 		buster_2_ON = get(buster_on_2)
@@ -615,19 +625,19 @@ if MASTER then
 	
 	if acc_1 > 0 then
 		local flow = (ailerons_feed + elev_feed + rudder_feed+elevon_feed) * buster_1_ON + sbd_brk_inn_feed + sbd_brk_mid_feed +flaps_feed
-		acc_1 = acc_1 - flow -- take oil from HS1
-		hs1_qty = hs1_qty + flow -- return it to barrel		
+		acc_1 = acc_1 - flow
+		hs1_qty = hs1_qty + flow
 	end
 	
 	if acc_2 > 0 then
 		local flow = (ailerons_feed + elev_feed + rudder_feed+elevon_feed) * buster_2_ON + flaps_feed
-		acc_2 = acc_2 - flow -- take oil from HS2
-		hs2_qty = hs2_qty + flow -- return it to barrel
+		acc_2 = acc_2 - flow
+		hs2_qty = hs2_qty + flow
 	end		
 	if acc_3 > 0 then
 		local flow = (ailerons_feed + elev_feed + rudder_feed+elevon_feed) * buster_3_ON
-		acc_3 = acc_3 - flow -- take oil from HS3
-		hs3_qty = hs3_qty + flow -- return it to barrel
+		acc_3 = acc_3 - flow
+		hs3_qty = hs3_qty + flow
 	end		
 	
 	
@@ -649,18 +659,18 @@ if MASTER then
 	
 	if acc_1 > 0 then
 		local flow = absu_pitch_feed1 + absu_roll_feed1 + absu_yaw_feed1
-		acc_1 = acc_1 - flow -- take oil from HS1
-		hs1_qty = hs1_qty + flow -- return it to barrel		
+		acc_1 = acc_1 - flow
+		hs1_qty = hs1_qty + flow
 	end
 	if acc_2 > 0 then
 		local flow = absu_pitch_feed2 + absu_roll_feed2+ absu_yaw_feed2
-		acc_2 = acc_2 - flow -- take oil from HS2
-		hs2_qty = hs2_qty + flow -- return it to barrel
+		acc_2 = acc_2 - flow
+		hs2_qty = hs2_qty + flow
 	end		
 	if acc_3 > 0 then
 		local flow = absu_pitch_feed3 + absu_roll_feed3 + absu_yaw_feed3
-		acc_3 = acc_3 - flow -- take oil from HS3
-		hs3_qty = hs3_qty + flow -- return it to barrel
+		acc_3 = acc_3 - flow
+		hs3_qty = hs3_qty + flow
 	end		
 
 
@@ -684,27 +694,26 @@ if MASTER then
 	
 	-- normal operation
 	if acc_1 > 0 and get(gears_ext_3GS) == 0 and get(emerg_gear_ext) == 0 then
-		acc_1 = acc_1 - gear_feed_1 - gear_feed_2 - gear_feed_3 -- take oil from HS1
-		hs1_qty = hs1_qty + gear_feed_1 + gear_feed_2 + gear_feed_3 -- return it to barrel	
+		acc_1 = acc_1 - gear_feed_1 - gear_feed_2 - gear_feed_3
+		hs1_qty = hs1_qty + gear_feed_1 + gear_feed_2 + gear_feed_3
 	end
 	
 	-- emerg operation
 	if acc_2 > 0 and get(emerg_gear_ext) == 1 then
-		acc_2 = acc_2 - gear_feed_1 - gear_feed_2 - gear_feed_3 -- take oil from HS2
-		hs2_qty = hs2_qty + gear_feed_1 + gear_feed_2 + gear_feed_3 -- return it to barrel	
+		acc_2 = acc_2 - gear_feed_1 - gear_feed_2 - gear_feed_3
+		hs2_qty = hs2_qty + gear_feed_1 + gear_feed_2 + gear_feed_3
 	end
 	
-	-- 3'd HS operation
+	-- 3rd HS operation
 	if acc_3 > 0 and get(gears_ext_3GS) == 1 and get(emerg_gear_ext) == 0 then
-		acc_3 = acc_3 - gear_feed_1 - gear_feed_2 - gear_feed_3 -- take oil from HS3
-		hs3_qty = hs3_qty + gear_feed_1 + gear_feed_2 + gear_feed_3 -- return it to barrel	
+		acc_3 = acc_3 - gear_feed_1 - gear_feed_2 - gear_feed_3
+		hs3_qty = hs3_qty + gear_feed_1 + gear_feed_2 + gear_feed_3
 	end
 	
 	
 	
 	
 	
-	-- set results
 	set(gs_press_1, acc_1 * 50)
 	set(gs_press_2, acc_2 * 50)
 	set(gs_press_3, acc_3 * 50)
@@ -721,7 +730,20 @@ if MASTER then
 	
 
 	set(gs_qty_12_show, hs1_qty + hs2_qty)
-	set(gs_qty_3_show, hs3_qty)	
+	set(gs_qty_3_show, hs3_qty)
+
+	-- publish what is driving each system, and which cross-feed is open
+	set(eng_pump_11_out, eng_pump_1_1)
+	set(eng_pump_12_out, eng_pump_1_2)
+	set(eng_pump_2_out, eng_pump_2)
+	set(eng_pump_3_out, eng_pump_3)
+	set(elec_pump_2_out, elec_pump_2)
+	set(elec_pump_3_out, elec_pump_3)
+	set(booster_1_out, buster_1_ON)
+	set(booster_2_out, buster_2_ON)
+	set(booster_3_out, buster_3_ON)
+	set(connect_2to1_out, xfeed_2to1)
+	set(accum_charge_out, accum_charging)
 	
 	if elec_pump_2~=elec_pump_2_prev then
 		elec_pump_2_start=1.4*elec_pump_2

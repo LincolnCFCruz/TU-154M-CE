@@ -1,4 +1,3 @@
--- this is an APU panel
 -- gauges and controlls
 defineProperty("apu_main_switch", globalPropertyi("tu-154/switchers/eng/apu_main_switch")) -- APU switch
 defineProperty("apu_start_mode", globalPropertyi("tu-154/switchers/eng/apu_start_mode")) -- APU start mode
@@ -48,10 +47,10 @@ defineProperty("cockpit_window_left", globalPropertyf("tu-154/anim/cockpit_windo
 defineProperty("cockpit_window_right", globalPropertyf("tu-154/anim/cockpit_window_right")) -- side window opening
 
 -- other sources
-defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
-defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
+defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
+defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
-defineProperty("outside_air_temp", globalPropertyf("sim/cockpit2/temperature/outside_air_temp_degc")) -- 
+defineProperty("outside_air_temp", globalPropertyf("sim/cockpit2/temperature/outside_air_temp_degc"))
 
 -- lamp sources
 defineProperty("test_lamps", globalPropertyi("tu-154/buttons/lamp_test_apu")) -- APU panel lamp test button
@@ -62,7 +61,7 @@ defineProperty("gear_vent_set", globalPropertyi("tu-154/switchers/eng/gear_fan")
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external"))
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- The sim-side APU datarefs (APU_generator_on, APU_starter_switch, APU_N1_percent,
 -- APU_running, rel_APU_press, bleed_air_mode) are NOT bound here any more.
@@ -112,18 +111,18 @@ local passed = get(frame_time)
 
 local n1_table_start = {{ -5000, 0},    -- bugs workaround
 				  { 0, 0 },
-				  { 8, 0 },   --
-				  { 12, 15 },   --
-				  { 14, 5 },   --
-				  { 16, 18 },   --
-				  { 18, 15 },   --
-				  { 20, 20 },   --
-				  { 110, 110 },  -- 
+				  { 8, 0 },
+				  { 12, 15 },
+				  { 14, 5 },
+				  { 16, 18 },
+				  { 18, 15 },
+				  { 20, 20 },
+				  { 110, 110 },
           		  { 1000, 110 }}   -- bugs workaround
 
 local n1_table_off = {{ -5000, 0},    -- bugs workaround
 				  { 0, 0 },
-				  { 110, 110 },  -- 
+				  { 110, 110 },
           		  { 1000, 110 }}   -- bugs workaround
 
 local n1_actual = 0
@@ -151,12 +150,10 @@ local function gauges()
 	--EGT_angle = 300
 	--oil_t_angle = 100
 
-	-- set smooth movements
 	n1_actual = n1_actual + (n1_angle - n1_actual) * passed * 5
 	EGT_actual = EGT_actual + (EGT_angle - EGT_actual) * passed * 3
 	oil_t_actual = oil_t_actual + (oil_t_angle - oil_t_actual) * passed * 3
 	
-	-- set results
 	set(apu_rpm, n1_actual)
 	set(apu_egt_gau, EGT_actual)
 	set(apu_oil_temp, oil_t_actual)
@@ -208,7 +205,6 @@ local function lamps()
 	local day_night = 1 - get(day_night_set) * 0.25
 	local lamps_brt = math.max((math.max(get(bus27_volt_left), get(bus27_volt_right)) - 10) / 18.5, 0) * day_night
 	
-	-- local variables
 	local rpm = get(apu_n1)
 	local start_seq = get(apu_start_seq) == 1
 	local phase = get(apu_start_phase)

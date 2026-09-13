@@ -10,6 +10,9 @@ defineProperty("gs_press_2", globalPropertyf("tu-154/hydro/gs_press_2")) -- hydr
 
 defineProperty("have_pedals", globalPropertyi("tu-154/have_pedals"))
 
+-- published for the debug inspector: nws_power below was only ever a local
+defineProperty("nws_power_pub", globalPropertyi("tu-154/hydro/nosewheel_turn_power"))
+
 tiller_avail = globalProperty("sim/joystick/joy_mapped_axis_avail[37]") -- index 37 is nosewheel tiller
 tiller_val = globalProperty("sim/joystick/joy_mapped_axis_value[37]") -- "1 + because Lua tables start with 1"
 
@@ -18,6 +21,10 @@ joy_yaw = globalPropertyf("sim/cockpit2/controls/yoke_heading_ratio") -- yaw pos
 tire_steer_command_deg = globalProperty("sim/flightmodel2/gear/tire_steer_command_deg[0]")
 tire_steer_actual_deg = globalProperty("sim/flightmodel2/gear/tire_steer_actual_deg[0]")
 
+-- Drives the 3D tiller handle: ANIM_rotate 0 deg at 0, 65 deg at 1 in
+-- objects/cockpit_1.obj (and cockpit_1_RUS.obj). Created in
+-- core/dataref_creator_1.lua; nothing wrote it until now (2026-09-12 patch).
+defineProperty("tiller_handle_pos", globalPropertyf("tu-154/controlls/nosewheel_lever"))
 
 pushback = globalPropertyi("bp/connected")
 push_started=globalPropertyi("bp/started")
@@ -40,6 +47,7 @@ function update()
 	local press = math.min(get(gs_press_2) / 200, 1)
 	local nws_on=get(nosewheel_turn_enable)
 	local nws_power=(get(bus27_volt_left) > 13 or get(bus27_volt_right) > 13) and nws_on == 1 and press > 0.2
+	set(nws_power_pub, bool2int(nws_power))
 	if nws_power or pbStart>0 then
 		set(lock, 1) -- do not let nosewheel become free castor
 		if turn_mode == 0 then set(weel_angle1, 10 * press) set(weel_angle2, 10 * press)
@@ -57,16 +65,18 @@ function update()
 	if not pbConnect then
 		if turn_mode == 1 and pedals then -- use tiller
 			set(tire_steer_command_deg, get(tiller_val) * get(weel_angle1)*nws_on)
+			set(tiller_handle_pos, get(tiller_val)) -- follow the tiller axis
 		else -- use yaw
 			set(tire_steer_command_deg, get(joy_yaw) * get(weel_angle1)*nws_on)
+			if turn_mode == 1 then
+				set(tiller_handle_pos, get(joy_yaw)) -- tiller mode with no pedals mapped: follow yaw instead
+			else
+				set(tiller_handle_pos, 0)
+			end
 		end
-
+	else
+		set(tiller_handle_pos, 0) -- pushback in progress: handle stays centred
 	end
-	
-
-	
-	
-	
 end
 
 

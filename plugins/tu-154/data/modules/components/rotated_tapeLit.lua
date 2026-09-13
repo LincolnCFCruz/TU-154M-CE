@@ -1,7 +1,6 @@
 -- scrollable rotatable tape, drawn independent of the cockpit lighting
 -- Draw body is drawRotatedScrollTape (core/glbl_draw.lua) -- see tape.lua.
 
--- tape image
 defineProperty("image")
 
 -- size of visible area
@@ -16,7 +15,6 @@ defineProperty("scrollY", 0)
 -- rotation angle
 defineProperty("angle", 0)
 
--- draw tape
 function draw(self)
     drawRotatedScrollTape(get(image), get(angle), get(window), get(scrollX), get(scrollY),
         size[1], size[2], {1, 1, 1})

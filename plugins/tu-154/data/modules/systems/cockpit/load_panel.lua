@@ -1,4 +1,3 @@
--- this is payload panel
 -- Tu-154M load panel
 -- calc_CG uses the arms extracted from tu154m.acf
 -- MAC = 5.285 m, CG_empty_offset = 38.658% MAC
@@ -838,8 +837,6 @@ components = {
 
 	-- close
 	clickable{position={429,17,130,45},
-		onMouseDown=function() set(show_load_panel,0); return true end},
-	clickable{position={size[1]-15,size[2]-15,15,15},
 		onMouseDown=function() set(show_load_panel,0); return true end},
 
 }

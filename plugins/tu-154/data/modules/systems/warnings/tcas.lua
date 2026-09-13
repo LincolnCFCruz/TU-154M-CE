@@ -1,4 +1,3 @@
--- this is TCAS root
 size = {2048, 2048}
 
 

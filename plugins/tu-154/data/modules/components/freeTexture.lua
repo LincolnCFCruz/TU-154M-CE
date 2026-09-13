@@ -1,5 +1,4 @@
 
--- no default texture
 defineProperty("image")
 defineProperty("positionX")
 defineProperty("positionY")

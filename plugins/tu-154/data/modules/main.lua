@@ -27,7 +27,6 @@
 
 --]]
 
--- Project settings
 size          = { 2048, 2048 }
 panelWidth3d  = 2048
 panelHeight3d = 2048
@@ -64,7 +63,7 @@ set3DRendering(true)
 setRenderingMode2D(SASL_RENDER_2D_MULTIPASS)
 setPanelRenderingMode(SASL_RENDER_PANEL_DEFAULT)
 
-math.randomseed(os.time()) -- randomise random :)
+math.randomseed(os.time())
 
 -- ============================================================
 -- Search paths
@@ -86,7 +85,6 @@ addSearchPath(moduleDirectory .. "/fonts")
 addSearchPath(moduleDirectory .. "/images")
 addSearchPath(moduleDirectory .. "/panels")
 
--- Avionics -- by-system folders.
 addSearchPath(moduleDirectory .. "/systems/aero")
 addSearchPath(moduleDirectory .. "/systems/airframe")
 addSearchPath(moduleDirectory .. "/systems/anti_ice")
@@ -128,7 +126,7 @@ components = {
 
     -- internal logic
     --creator_script {}, -- script for converting custom DataRef file to creator code
-    dataref_creator_1 {}, -- main datarefs. controls and indicatios
+    dataref_creator_1 {}, -- main datarefs: controls and indications
     dataref_creator_2 {}, -- internal datarefs
     dataref_creator_3 {}, -- failures datarefs
 
@@ -138,7 +136,7 @@ components = {
     -- delta. save_state used to sit here and did exactly that.
     time_logic {},
 
-    save_state {}, -- safe current state
+    save_state {}, -- persists current state
 
     flap_aero {},
 
@@ -201,4 +199,7 @@ function update()
     updateAll(components)
     -- runs last, exactly where panels_2d {}'s update() sat in the SASL2 table
     updatePanels()
+    -- keeps the X-Plane top bar's checkboxes (panels/panel_windows.lua) in
+    -- sync with whichever side just changed a panel's visibility
+    updateTopBarMenu()
 end

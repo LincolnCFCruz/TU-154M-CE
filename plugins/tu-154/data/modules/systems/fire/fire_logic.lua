@@ -1,4 +1,3 @@
--- this is fire system's logic
 
 -- sim variables
 defineProperty("sim_engine_on_fire1", globalPropertyi("sim/operation/failures/rel_engfir0"))  -- left engine on fire
@@ -91,6 +90,12 @@ defineProperty("hs_hot_1", globalPropertyf("tu-154/engine/hotstart_1")) -- sever
 defineProperty("hs_hot_2", globalPropertyf("tu-154/engine/hotstart_2"))
 defineProperty("hs_hot_3", globalPropertyf("tu-154/engine/hotstart_3"))
 
+-- published for the Fire diagram; nothing else reads them and nothing here
+-- changes as a result (see CLAUDE.md 12, "prefer publishing over inferring")
+defineProperty("hs_clock_1", globalPropertyf("tu-154/fire/hotstart_timer_1"))
+defineProperty("hs_clock_2", globalPropertyf("tu-154/fire/hotstart_timer_2"))
+defineProperty("hs_clock_3", globalPropertyf("tu-154/fire/hotstart_timer_3"))
+
 
 
 
@@ -111,13 +116,28 @@ local valves_open = 0 -- open valves counter
 
 
 -- ---------------------------------------------------------------------------
--- Start hot-start protection (550 C / 4 s)
+-- Start hot-start protection (550 C / 15 s, sim-calibrated)
 --
--- Both manuals give this limit in almost the same words: during a start the gas
--- temperature behind the turbine must not be allowed to exceed 550 C, and
--- running at 550 C is permitted for no more than 4 s.
+-- Both manuals give a 550 C / 4 s limit in almost the same words: during a
+-- start the gas temperature behind the turbine must not be allowed to exceed
+-- 550 C, and running at 550 C is permitted for no more than 4 s.
 --   RLE Book 2, section 8.1.2, start checklist item (g), p.8.1.8.1
 --   D-30KU-154 RE 59-00-800RE, 072.00.00 p.32, VNIMANIE note
+--
+-- [CAL-HOTSTART] The 4 s figure is the real D-30KU-154's number, not
+-- X-Plane's. Evgeniy tested the 4 s version on 2026-09-09: even after the
+-- consecutive-time fix above, EVERY normal start still tripped overheat,
+-- meaning this add-on's simulated EGT genuinely sits continuously above
+-- 550 C for more than 4 s during an ordinary start -- X-Plane's simplified
+-- turbine model runs a hotter/longer light-off than the real engine (a raw
+-- EGT peak of ~1910 C was measured, vs. the 800 C ceiling the cockpit gauge
+-- itself is capped to), so the real engine's 4 s allowance is too tight for
+-- it. Raised to 15 s as a sim-side calibration, not a manual figure.
+-- Confirmed clean on 2026-09-09 with diagnostic prints: all three engines,
+-- longest continuous streak above 550 C was 7.7 s, none tripped -- good
+-- margin under 15 s. The diagnostic prints have been removed now that this
+-- is calibrated; re-add them (see fire_logic_changelog.txt for the snippet)
+-- if a false trip or a missed one ever needs re-diagnosing.
 --
 -- Why this lives in fire_logic.lua: engine_fire_state_N is written every frame
 -- further down (fire -> 2, otherwise -> 0), so a writer in any other module
@@ -131,8 +151,8 @@ local valves_open = 0 -- open valves counter
 -- dataref was created with the comment "No writer yet"; this is the writer.
 -- ---------------------------------------------------------------------------
 local HOT_EGT    = 550  -- C, the documented ceiling
-local HOT_ALLOW  = 4    -- s at or above it that both manuals permit
-local HOT_FULL   = 4    -- further s above it for severity to reach a full 1.0
+local HOT_ALLOW  = 15   -- s continuously at or above it (sim-calibrated, see CAL-HOTSTART above; manual figure is 4 s)
+local HOT_FULL   = 4    -- further s above HOT_ALLOW for severity to reach a full 1.0
 local HOT_IDLE   = 58   -- displayed N2 %; below this the start is still running
 local HOT_STOPPED = 5   -- displayed N2 %; below this the engine has stopped
 
@@ -176,9 +196,22 @@ if MASTER then
 		-- which the same RLE section applies the same limit to.
 		local starting = hs_apd[i] > 0 or (hs_burn[i] > 0 and hs_n2[i] < HOT_IDLE)
 
+		-- [FIX-HOTSTART] Both manuals limit CONSECUTIVE time above 550 C to 4 s
+		-- ("running at 550 C is permitted for no more than 4 s") -- a continuous
+		-- excursion, not a running total across the whole start. The raw sim EGT
+		-- is noisy during light-off and dips below 550 C between spikes; without
+		-- a reset here, those scattered sub-threshold gaps never cleared the
+		-- timer, so unrelated brief excursions kept adding up over a normal
+		-- 20-40 s start and tripped "overheat" on essentially every engine,
+		-- every time -- reported by Evgeniy Gimaev on 2026-09-08 as every start,
+		-- even all three, tripping overheat. The else-branch below is the fix:
+		-- dropping under 550 C now clears the timer, exactly like dropping out
+		-- of "starting" already did.
 		if starting then
 			if hs_egt[i] > HOT_EGT then
 				HS.timer[i] = HS.timer[i] + hs_passed
+			else
+				HS.timer[i] = 0
 			end
 		else
 			HS.timer[i] = 0
@@ -204,6 +237,9 @@ if MASTER then
 	set(hs_hot_1, HS.sev[1])
 	set(hs_hot_2, HS.sev[2])
 	set(hs_hot_3, HS.sev[3])
+	set(hs_clock_1, HS.timer[1])
+	set(hs_clock_2, HS.timer[2])
+	set(hs_clock_3, HS.timer[3])
 
 	if power27L and get(fire_main_switch) == 1 then
 		
@@ -379,7 +415,6 @@ if MASTER then
 
 
 
-	--set results
 	set(valve_open_1, valve_1)
 	set(valve_open_2, valve_2)
 	set(valve_open_3, valve_3)

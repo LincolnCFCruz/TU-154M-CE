@@ -1,4 +1,3 @@
--- this is overall electric system
 
 
 components = {

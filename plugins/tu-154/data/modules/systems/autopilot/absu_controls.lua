@@ -1,4 +1,3 @@
--- this is the improved ABSU logic
 -- createGlobalPropertyf("tu-154/controlls/absu_debug1", 0.2)
 
 -- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 

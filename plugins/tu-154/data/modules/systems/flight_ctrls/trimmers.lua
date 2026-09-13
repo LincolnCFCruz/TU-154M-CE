@@ -1,4 +1,3 @@
--- this is trimmers logic
 -- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
 -- defineProperty("absu_debug2", globalPropertyf("tu-154/controlls/absu_debug2")) 
 
@@ -9,7 +8,7 @@ defineProperty("ail_trimm_sw", globalPropertyi("tu-154/controll/ail_trimm_sw")) 
 defineProperty("rudd_trimm_sw", globalPropertyi("tu-154/controll/rudd_trimm_sw")) -- rudder trim switch
 
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external")) -- enviroment
-defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warning_volume_ratio")) -- 
+defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warning_volume_ratio"))
 
 defineProperty("emerg_elev_trimm", globalPropertyi("tu-154/switchers/console/emerg_elev_trimm")) -- emergency trim control
 
@@ -55,20 +54,20 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 -- failures
-defineProperty("rel_trim_rud", globalPropertyi("sim/operation/failures/rel_trim_rud")) -- 
-defineProperty("rel_trim_ail", globalPropertyi("sim/operation/failures/rel_trim_ail")) -- 
-defineProperty("rel_trim_elv", globalPropertyi("sim/operation/failures/rel_trim_elv")) -- 
-defineProperty("trim_emerg_elv_fail", globalPropertyi("tu-154/failures/trim_emerg_elv_fail")) --
+defineProperty("rel_trim_rud", globalPropertyi("sim/operation/failures/rel_trim_rud"))
+defineProperty("rel_trim_ail", globalPropertyi("sim/operation/failures/rel_trim_ail"))
+defineProperty("rel_trim_elv", globalPropertyi("sim/operation/failures/rel_trim_elv"))
+defineProperty("trim_emerg_elv_fail", globalPropertyi("tu-154/failures/trim_emerg_elv_fail"))
 
 -- other
-defineProperty("elev_trimm_1_pk", globalPropertyi("tu-154/b2/elev_trimm_1_pk")) -- 
-defineProperty("elev_trimm_2_pk", globalPropertyi("tu-154/b2/elev_trimm_2_pk")) -- 
+defineProperty("elev_trimm_1_pk", globalPropertyi("tu-154/b2/elev_trimm_1_pk"))
+defineProperty("elev_trimm_2_pk", globalPropertyi("tu-154/b2/elev_trimm_2_pk"))
 
 
-defineProperty("pedal_left_sw", globalPropertyi("tu-154/other/pedal_left_sw")) -- 
-defineProperty("pedal_right_sw", globalPropertyi("tu-154/other/pedal_right_sw")) -- 
-defineProperty("pedal_left_pos", globalPropertyf("tu-154/other/pedal_left_pos")) -- 
-defineProperty("pedal_right_pos", globalPropertyf("tu-154/other/pedal_right_pos")) -- 
+defineProperty("pedal_left_sw", globalPropertyi("tu-154/other/pedal_left_sw"))
+defineProperty("pedal_right_sw", globalPropertyi("tu-154/other/pedal_right_sw"))
+defineProperty("pedal_left_pos", globalPropertyf("tu-154/other/pedal_left_pos"))
+defineProperty("pedal_right_pos", globalPropertyf("tu-154/other/pedal_right_pos"))
 
 
 -- sound

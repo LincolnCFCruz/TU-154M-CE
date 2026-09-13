@@ -1,36 +1,30 @@
--- controls fails
-
-
--- failures logic
-
-
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 
 -- failures
-defineProperty("flap_fail_left", globalPropertyi("tu-154/failures/flap_fail_left")) -- 
-defineProperty("flap_fail_right", globalPropertyi("tu-154/failures/flap_fail_right")) -- 
+defineProperty("flap_fail_left", globalPropertyi("tu-154/failures/flap_fail_left"))
+defineProperty("flap_fail_right", globalPropertyi("tu-154/failures/flap_fail_right"))
 
-defineProperty("stab_eng_fail", globalPropertyi("tu-154/failures/stab_eng_fail")) -- 
-defineProperty("stab_automatic_fail", globalPropertyi("tu-154/failures/stab_automatic_fail")) -- 
-defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail")) -- 
+defineProperty("stab_eng_fail", globalPropertyi("tu-154/failures/stab_eng_fail"))
+defineProperty("stab_automatic_fail", globalPropertyi("tu-154/failures/stab_automatic_fail"))
+defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail"))
 
-defineProperty("ail_fail_left", globalPropertyi("tu-154/failures/ail_fail_left")) -- 
-defineProperty("ail_fail_right", globalPropertyi("tu-154/failures/ail_fail_right")) -- 
+defineProperty("ail_fail_left", globalPropertyi("tu-154/failures/ail_fail_left"))
+defineProperty("ail_fail_right", globalPropertyi("tu-154/failures/ail_fail_right"))
 
-defineProperty("fail_spoil_inn_left", globalPropertyi("tu-154/failures/fail_spoil_inn_left")) -- 
-defineProperty("fail_spoil_inn_right", globalPropertyi("tu-154/failures/fail_spoil_inn_right")) -- 
-defineProperty("fail_spoil_mid_left", globalPropertyi("tu-154/failures/fail_spoil_mid_left")) -- 
-defineProperty("fail_spoil_mid_right", globalPropertyi("tu-154/failures/fail_spoil_mid_right")) -- 
-defineProperty("fail_spoil_out_left", globalPropertyi("tu-154/failures/fail_spoil_out_left")) -- 
-defineProperty("fail_spoil_out_right", globalPropertyi("tu-154/failures/fail_spoil_out_right")) -- 
+defineProperty("fail_spoil_inn_left", globalPropertyi("tu-154/failures/fail_spoil_inn_left"))
+defineProperty("fail_spoil_inn_right", globalPropertyi("tu-154/failures/fail_spoil_inn_right"))
+defineProperty("fail_spoil_mid_left", globalPropertyi("tu-154/failures/fail_spoil_mid_left"))
+defineProperty("fail_spoil_mid_right", globalPropertyi("tu-154/failures/fail_spoil_mid_right"))
+defineProperty("fail_spoil_out_left", globalPropertyi("tu-154/failures/fail_spoil_out_left"))
+defineProperty("fail_spoil_out_right", globalPropertyi("tu-154/failures/fail_spoil_out_right"))
 
-defineProperty("rudder_fail", globalPropertyi("tu-154/failures/rudder_fail")) -- 
-defineProperty("elev_fail_left", globalPropertyi("tu-154/failures/elev_fail_left")) -- 
-defineProperty("elev_fail_right", globalPropertyi("tu-154/failures/elev_fail_right")) -- 
+defineProperty("rudder_fail", globalPropertyi("tu-154/failures/rudder_fail"))
+defineProperty("elev_fail_left", globalPropertyi("tu-154/failures/elev_fail_left"))
+defineProperty("elev_fail_right", globalPropertyi("tu-154/failures/elev_fail_right"))
 
 defineProperty("retract1_fail", globalPropertyi("sim/operation/failures/rel_lagear1")) -- fail of retract gear
 defineProperty("retract2_fail", globalPropertyi("sim/operation/failures/rel_lagear2")) -- fail of retract gear
@@ -41,10 +35,10 @@ defineProperty("rel_collapse1", globalPropertyi("sim/operation/failures/rel_coll
 defineProperty("rel_collapse2", globalPropertyi("sim/operation/failures/rel_collapse2"))
 defineProperty("rel_collapse3", globalPropertyi("sim/operation/failures/rel_collapse3"))
 
-defineProperty("rel_trim_rud", globalPropertyi("sim/operation/failures/rel_trim_rud")) -- 
-defineProperty("rel_trim_ail", globalPropertyi("sim/operation/failures/rel_trim_ail")) -- 
-defineProperty("rel_trim_elv", globalPropertyi("sim/operation/failures/rel_trim_elv")) -- 
-defineProperty("trim_emerg_elv_fail", globalPropertyi("tu-154/failures/trim_emerg_elv_fail")) --
+defineProperty("rel_trim_rud", globalPropertyi("sim/operation/failures/rel_trim_rud"))
+defineProperty("rel_trim_ail", globalPropertyi("sim/operation/failures/rel_trim_ail"))
+defineProperty("rel_trim_elv", globalPropertyi("sim/operation/failures/rel_trim_elv"))
+defineProperty("trim_emerg_elv_fail", globalPropertyi("tu-154/failures/trim_emerg_elv_fail"))
 
 defineProperty("rel_tire1", globalPropertyi("sim/operation/failures/rel_tire1")) -- Landing gear tire blowout
 defineProperty("rel_tire2", globalPropertyi("sim/operation/failures/rel_tire2")) -- Landing gear tire blowout
@@ -124,7 +118,6 @@ if get(ismaster) ~= 1 then
 	
 	FAIL = FAIL * 0.05 * 4 ^ (FAIL * 0.5)
 	
-	-- check failures
 	if FAIL > 0 then
 		
 		fail_counter = fail_counter + passed
@@ -197,9 +190,11 @@ if get(ismaster) ~= 1 then
 		-- flaps
 		if airspeed > interpolate(flap_lim_tbl, get(flap_inn_L)) + (3 - FAIL) * 20 and get(flap_fail_left) ~= 1 then set(flap_fail_left, bool2int(math.random() < 0.1 * FAIL * 0.3) * 1) end 
 		if airspeed > interpolate(flap_lim_tbl, get(flap_inn_R)) + (3 - FAIL) * 20 and get(flap_fail_right) ~= 1 then set(flap_fail_right, bool2int(math.random() < 0.1 * FAIL * 0.3) * 1) end 
-		-- slats
-		if airspeed > 430 + (3 - FAIL) * 20 and get(slats) > 0.5 and slat1 ~= 1 then slat1 = bool2int(math.random() < 0.1 * FAIL * 0.3) end  
-		if airspeed > 430 + (3 - FAIL) * 20 and get(slats) > 0.5 and slat2 ~= 1 then slat2 = bool2int(math.random() < 0.1 * FAIL * 0.3) end 
+		-- slats: 425 km/h with slats out, Flight Manual sec. 2.5.4.1 (7)
+		-- (the 450 km/h allowed during retraction is covered by the > 0.5 test:
+		--  once they are more than half in, this check no longer applies)
+		if airspeed > 425 + (3 - FAIL) * 20 and get(slats) > 0.5 and slat1 ~= 1 then slat1 = bool2int(math.random() < 0.1 * FAIL * 0.3) end  
+		if airspeed > 425 + (3 - FAIL) * 20 and get(slats) > 0.5 and slat2 ~= 1 then slat2 = bool2int(math.random() < 0.1 * FAIL * 0.3) end 
 		
 		slat_counter = slat_counter + (bool2int(slat_last ~= get(slats)) * FAIL * 0.5 - 0.7) * passed * 0.2
 		slat_last = get(slats)

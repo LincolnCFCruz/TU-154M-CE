@@ -1,4 +1,3 @@
--- this is engine's gauges logic
 -- FIXES (XP12 support):
 --   1. XP11 table override now only applies to XP11 (not XP12)
 --   2. Barometer dataref: sim/weather/barometer_sealevel_inhg replaced with
@@ -298,7 +297,6 @@ local function vibra_gau()
 	vibr_2_actual = vibr_2_actual + (vibr_2 - vibr_2_actual) * passed * 3
 	vibr_3_actual = vibr_3_actual + (vibr_3 - vibr_3_actual) * passed * 3
 
-	-- set results
 	set(vibra_1, vibr_1_actual)
 	set(vibra_2, vibr_2_actual)
 	set(vibra_3, vibr_3_actual)
@@ -389,7 +387,6 @@ local function emi3()
 	oilT_2_actual = oilT_2_actual + (oilT_2 - oilT_2_actual) * passed * 3
 	oilT_3_actual = oilT_3_actual + (oilT_3 - oilT_3_actual) * passed * 3
 	
-	-- set results
 	set(fuel_press_1, fuelP_1_actual)
 	set(fuel_press_2, fuelP_2_actual)
 	set(fuel_press_3, fuelP_3_actual)
@@ -438,16 +435,23 @@ local function egt_gauges()
 	
 	local test_button = get(control_ut) == 1
 	
+	-- [FIX-EGT] On a compressor stall/surge, EGT rises, but not by 2x -- by 30%
+	-- (a realistic overshoot). The 800 C cap is a DISPLAY CLAMP, not a manual
+	-- limit: it stops the needle flying past 1200 C when X-Plane's own start
+	-- EGT overshoots (raw peaks near 1910 C have been measured). Neither manual
+	-- has an 800 C figure. The documented limits are 550 C on a start (exactly
+	-- 550 C for no more than 4 s, RLE 8.1.2) and, by outside air temperature,
+	-- RLE Table 8.1.3 - takeoff 574 C at -60 C to 666 C at +50 C.
 	if power_L then
-		egt_1_need = get(sim_egt_1) * (1 + stall_1 * 1)
+		egt_1_need = math.min(800, get(sim_egt_1) * (1 + stall_1 * 0.3))
 		if test_button then egt_1_need = 120 end
 		EGT_gau_on_L = 1
 	else
 		EGT_gau_on_L = 0
 	end
 	if power_R then
-		egt_2_need = get(sim_egt_2) * (1 + stall_2 * 1)
-		egt_3_need = get(sim_egt_3) * (1 + stall_3 * 1)
+		egt_2_need = math.min(800, get(sim_egt_2) * (1 + stall_2 * 0.3))
+		egt_3_need = math.min(800, get(sim_egt_3) * (1 + stall_3 * 0.3))
 		if test_button then egt_2_need = 140 end
 		if test_button then egt_3_need = 130 end
 		EGT_gau_on_R = 1

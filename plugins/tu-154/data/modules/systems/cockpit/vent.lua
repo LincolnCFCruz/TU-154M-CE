@@ -1,4 +1,3 @@
--- this is cockpit ventilator angle calculations
 
 -- define property table
 
@@ -27,10 +26,10 @@ tu-154/switchers/ovhd/vent_3
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) 
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("cam_in_cockpit", globalPropertyi("sim/graphics/view/view_is_external"))
 
-defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio")) -- 
+defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio"))
 
 
 local vent1_sound = loadSample('sounds/cockpit_fan.wav')

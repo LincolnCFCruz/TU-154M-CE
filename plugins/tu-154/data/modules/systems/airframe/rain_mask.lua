@@ -1,17 +1,15 @@
--- this is rain logic
-
 -- dataRefs
 defineProperty("wiper_angle_left", globalPropertyf("tu-154/anim/wiper_angle_left"))
 defineProperty("wiper_angle_right", globalPropertyf("tu-154/anim/wiper_angle_right"))
 
--- enviroment
+-- environment
 defineProperty("actual_rain", globalPropertyf("sim/weather/aircraft/precipitation_on_aircraft_ratio"))
 
 defineProperty("net_rain_ratio", globalPropertyf("tu-154/anim/net_rain_ratio"))
 
 
 defineProperty("indicated_airspeed", globalPropertyf("sim/flightmodel/position/indicated_airspeed"))
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("thermo", globalPropertyf("sim/cockpit2/temperature/outside_air_temp_degc")) -- outside temperature
 
@@ -108,9 +106,7 @@ end
 			
 		set(mask[i], mask_tbl[i])
 
-		-- added sectors here
 		for y = 1, 5 do
-			-- make drops appear
 			wiper_mask_tbl_L[i][y] = wiper_mask_tbl_L[i][y] + passed * appear_spd[i]
 			if wiper_mask_tbl_L[i][y] > 1 then wiper_mask_tbl_L[i][y] = 1
 			elseif wiper_mask_tbl_L[i][y] < 0 then wiper_mask_tbl_L[i][y] = 0 end

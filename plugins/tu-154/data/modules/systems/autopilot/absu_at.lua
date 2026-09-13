@@ -1,4 +1,3 @@
--- this is auto-throttle logic
 
 -- sources
 defineProperty("ias_left", globalPropertyf("tu-154/gauges/speed/ias_left")) -- indicated airspeed, captain
@@ -86,6 +85,25 @@ defineProperty("absu_thro1_lit", globalPropertyf("tu-154/lights/button/absu_thro
 defineProperty("absu_thro2_lit", globalPropertyf("tu-154/lights/button/absu_thro2"))
 defineProperty("absu_thro3_lit", globalPropertyf("tu-154/lights/button/absu_thro3"))
 defineProperty("absu_spd_btn_lit", globalPropertyf("tu-154/lights/button/absu_stab_spd"))
+-- Longitudinal acceleration feedback, ported from the Tu-154B2 auto-throttle
+-- (2026-09-10). gforce_axil is read-only in v1243, which is all we need here.
+defineProperty("g_ax", globalPropertyf("sim/flightmodel2/misc/gforce_axil"))
+defineProperty("bkk_pitch", globalPropertyf("tu-154/bkk/bkk_pitch")) -- pitch from the BKK, set by warnings/bkk.lua
+-- Flight-path kinematics, the second acceleration source (documented, local OGL frame)
+defineProperty("loc_ax", globalPropertyf("sim/flightmodel/position/local_ax"))
+defineProperty("loc_ay", globalPropertyf("sim/flightmodel/position/local_ay"))
+defineProperty("loc_az", globalPropertyf("sim/flightmodel/position/local_az"))
+defineProperty("loc_vx", globalPropertyf("sim/flightmodel/position/local_vx"))
+defineProperty("loc_vy", globalPropertyf("sim/flightmodel/position/local_vy"))
+defineProperty("loc_vz", globalPropertyf("sim/flightmodel/position/local_vz"))
+-- published for the debug inspector's ABSU tab and the test cards
+defineProperty("at_gain", globalPropertyf("tu-154/absu/at_gain"))
+defineProperty("at_cmd", globalPropertyf("tu-154/absu/at_cmd"))
+defineProperty("at_accel_body", globalPropertyf("tu-154/absu/at_accel_body"))
+defineProperty("at_accel_path", globalPropertyf("tu-154/absu/at_accel_path"))
+-- test switches, set from DataRefTool (see core/dataref_creator_2.lua)
+defineProperty("tune_gain_table", globalPropertyi("tu-154/tune/at_gain_table"))
+defineProperty("tune_ax_mode", globalPropertyi("tu-154/tune/at_ax_mode"))
 
 
 
@@ -95,6 +113,13 @@ local AT_mode = 0 -- 0 = off, 1 = sync spd, 2 = prepare, 3 = work, 4 = TOGA
 -- sim/engines/throttle_down
 -- sim/engines/throttle_up
 
+-- Auto-throttle PD gain schedule, written in INDICATED AIRSPEED, KM/H.
+-- Caution: ias_left / ias_right do NOT carry a speed, they carry the airspeed
+-- NEEDLE ANGLE in degrees (mech_aneroid.lua:
+--   ang = (V - 150) * 260 / 650 + 10, so V[km/h] = ang * 2.5 + 125).
+-- The pre-patch code indexed it with ang * 1.885, which moved the
+-- 300/330/400 breakpoints to ~523/563/655 km/h. tu-154/tune/at_gain_table
+-- picks between that reading (0) and the km/h one (1) - see update().
 local PD_gain_tbl = {{ 0, 0.33},  -- bugs workaround
 				  { 300, 0.33 },  --
 				  { 330, 0.5 },  --				  
@@ -148,6 +173,10 @@ local marker_act_L = get(ias_left)
 local marker_act_R = get(ias_right)
 
 IAS_last = 0
+local T_FILT = 0.1       -- s, acceleration filter time constant (from the B2 script)
+local acc_smth = 0       -- low-passed forward acceleration, km/h/s
+local acc_last = 0
+local ax_mode_last = 0
 
 local stab_counter = 0
 local stab_unpr = 0
@@ -161,7 +190,37 @@ function update()
 	local MASTER = get(ismaster) ~= 1
 	
 	local passed = get(frame_time)
-	
+
+	-- Forward acceleration for the autothrottle, km/h/s, positive = speeding
+	-- up. Computed every frame, engaged or not, so test card T1 can compare the
+	-- two sources on a takeoff roll and the filter is settled on engagement.
+	--   source 1, body axis (the 2026-09-10 patch): gforce_axil corrected for
+	--     pitch. ASSUMES gforce_axil reads negative when accelerating forward -
+	--     DataRefs.txt does not document its sign - and goes wrong if the BKK
+	--     pitch freezes.
+	--   source 2, flight path: the local OGL acceleration projected on the
+	--     velocity vector. Documented units, no sign question, no BKK.
+	local accel_body = -(get(g_ax) + math.sin(get(bkk_pitch) * math.pi / 180)) * 9.81 * 3.6
+	local vx, vy, vz = get(loc_vx), get(loc_vy), get(loc_vz)
+	local v_path = math.sqrt(vx * vx + vy * vy + vz * vz)
+	local accel_path = 0
+	if v_path > 1 then
+		accel_path = (get(loc_ax) * vx + get(loc_ay) * vy + get(loc_az) * vz) / v_path * 3.6
+	end
+	set(at_accel_body, accel_body)
+	set(at_accel_path, accel_path)
+
+	local ax_mode = get(tune_ax_mode)
+	local accel = 0
+	if ax_mode == 1 then accel = accel_body elseif ax_mode == 2 then accel = accel_path end
+	if ax_mode ~= ax_mode_last then -- a source change must not read as a jerk
+		acc_smth, acc_last, ax_mode_last = accel, accel, ax_mode
+	end
+	acc_smth = accel * passed / (T_FILT + passed) + acc_smth * T_FILT / (T_FILT + passed)
+	local D_acc = 0
+	if passed > 0 then D_acc = (acc_smth - acc_last) / passed end
+	acc_last = acc_smth
+
 	local channel_off = get(absu_speed_off) -- 1 = 1, -1 = 2
 	
 	-- get(absu_speed_prepare) == 1
@@ -285,6 +344,16 @@ function update()
 	end
 	
 	IAS_smth = IAS_smth + (IAS - IAS_smth) * passed * 2
+
+	-- PD gain, from the schedule tu-154/tune/at_gain_table selects
+	local gain
+	if get(tune_gain_table) == 0 then
+		gain = interpolate(PD_gain_tbl, IAS * 1.885)       -- pre-patch indexing
+	else
+		gain = interpolate(PD_gain_tbl, IAS * 2.5 + 125)   -- needle angle -> km/h
+	end
+	set(at_gain, gain)
+	set(at_cmd, 0) -- overwritten below while the autothrottle stabilises
 	
 
 	
@@ -342,7 +411,26 @@ function update()
 	-- end
 -- end		
 		
-		local main_rud_spd = P * K_P*interpolate(PD_gain_tbl, IAS*1.885) + D * K_D *interpolate(PD_gain_tbl, IAS*1.885)
+		-- gain was taken from the selected schedule above, next to IAS_smth
+		
+		
+		-- Longitudinal acceleration feedback, ported from the Tu-154B2 script
+		-- (2026-09-10). acc_smth / D_acc are the forward acceleration (km/h/s,
+		-- positive = speeding up) and its rate, filtered at the top of update()
+		-- from the source tu-154/tune/at_ax_mode selects; 0 when the term is off.
+		-- Fed back NEGATIVELY, it lets the controller see a thrust/drag imbalance
+		-- before the speed moves - which is what makes the B2 hold speed through
+		-- climbs and descents.
+		
+		-- B2 gains rescaled to this script: the B2 divides the whole sum by 80 and
+		-- applies no channel multiplier, while here main_rud_spd is later multiplied
+		-- by (at_1_work + at_2_work) * 0.6 = 1.2 with both channels. So B2 K/80/1.2.
+		-- SET BOTH TO 0 TO DISABLE THIS TERM AND BISECT AGAINST THE GAIN-SCHEDULE FIX.
+		local K_AX   = 0.0167   -- B2 1.6 / 80 / 1.2
+		local K_D_AX = 0.0208   -- B2 2.0 / 80 / 1.2
+		
+		local main_rud_spd = P * K_P * gain + D * K_D * gain -
+		                     (acc_smth * K_AX + D_acc * K_D_AX) * gain
 		
 		if main_rud_spd > 0.3 then main_rud_spd = 0.3
 		elseif main_rud_spd < -0.3 then main_rud_spd = -0.3 end
@@ -350,6 +438,16 @@ function update()
 		local rud_current = (get(anim_rud1) + get(anim_rud2) + get(anim_rud3)) / 3
 		
 		if rud_current > 0.95 and main_rud_spd > 0 then main_rud_spd = 0 end -- limit upper edge of throttle usage
+		-- Lower stop, ported from the Tu-154B2 script: once any working throttle is
+		-- down at the idle end, stop commanding further reduction. Without this the
+		-- auto-throttle keeps integrating downwards against the idle stop and then
+		-- has to wind all the way back up before anything moves.
+		if main_rud_spd < 0 and ((get(anim_rud1) < 0.15 and rud_work_1 == 1)
+		                      or (get(anim_rud2) < 0.15 and rud_work_2 == 1)
+		                      or (get(anim_rud3) < 0.15 and rud_work_3 == 1)) then
+			main_rud_spd = 0
+		end
+		set(at_cmd, main_rud_spd)
 		
 		local rud_spd_1 = main_rud_spd * math.random(95, 105) * 0.01
 		local rud_spd_2 = main_rud_spd * math.random(95, 105) * 0.01
@@ -358,7 +456,6 @@ function update()
 		
 		if MASTER then
 		
-			-- set results
 			set(rud_1_spd, rud_spd_1 * rud_work_1 * (at_1_work + at_2_work) * 0.6)
 			set(rud_2_spd, rud_spd_2 * rud_work_2 * (at_1_work + at_2_work) * 0.6)
 			set(rud_3_spd, rud_spd_3 * rud_work_3 * (at_1_work + at_2_work) * 0.6)

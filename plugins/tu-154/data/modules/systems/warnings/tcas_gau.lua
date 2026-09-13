@@ -1,4 +1,3 @@
--- this is TCAS gauge
 
 size = {482, 530}
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
@@ -63,9 +62,8 @@ defineProperty("flt_id", globalPropertyi("tu-154/tcas/flt_id"))  -- 0 = cover, 1
 
 defineProperty("ra_scale_set", globalPropertyi("tu-154/tcas/ra_scale_set"))  -- RA mode scale set. 0 = none.
 
--- fail
 
-defineProperty("vvi_fail", globalPropertyi("sim/operation/failures/rel_ss_vvi")) -- fail
+defineProperty("vvi_fail", globalPropertyi("sim/operation/failures/rel_ss_vvi"))
 
 
 

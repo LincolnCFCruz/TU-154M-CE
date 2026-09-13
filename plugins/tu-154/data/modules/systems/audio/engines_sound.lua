@@ -1,6 +1,5 @@
--- this is engines sounds
 
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external")) -- enviroment
 

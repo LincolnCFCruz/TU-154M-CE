@@ -1,8 +1,7 @@
--- this is DME indicators
 size = {215, 70}
 
 -- DataRefs
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("vor_dme", globalPropertyf("tu-154/radio/vor_dme_1")) -- distance
 
@@ -18,8 +17,8 @@ defineProperty("dme_km_lit", globalPropertyf("tu-154/lights/small/dme_km_left"))
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus115_volt", globalPropertyf("tu-154/elec/bus115_1_volt"))
 
-defineProperty("fail", globalPropertyi("sim/operation/failures/rel_dme")) -- fail
-defineProperty("dme_fail", globalPropertyi("tu-154/failures/dme1_fail")) -- fail
+defineProperty("fail", globalPropertyi("sim/operation/failures/rel_dme"))
+defineProperty("dme_fail", globalPropertyi("tu-154/failures/dme1_fail"))
 
 local text_font = loadBitmapFont('digital7_it.fnt')
 

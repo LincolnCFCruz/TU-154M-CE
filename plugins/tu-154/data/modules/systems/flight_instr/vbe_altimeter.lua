@@ -1,4 +1,3 @@
--- this is an electronic altimeter
 size = {424, 424}
 
 defineProperty("gauge_num", 0)
@@ -29,15 +28,15 @@ defineProperty("vbe_on", globalPropertyi("tu-154/switchers/ovhd/vbe_1_on"))  -- 
 
 defineProperty("vbe_std", globalPropertyi("tu-154/gauges/alt/vbe_std_left"))  -- standard pressure selection
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- caps
 defineProperty("sensors_caps", globalPropertyi("tu-154/anim/sensors_caps"))  -- covers and caps
 
-defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warning_volume_ratio")) -- 
+defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warning_volume_ratio"))
 
 -- failures
-defineProperty("fail", globalPropertyi("sim/operation/failures/rel_ss_alt")) -- 
+defineProperty("fail", globalPropertyi("sim/operation/failures/rel_ss_alt"))
 
 
 

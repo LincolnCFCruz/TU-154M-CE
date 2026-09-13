@@ -1,4 +1,3 @@
--- this is starting logic
 -- FIXES (XP12 support):
 --   1. Fixed the swapped sim_starter1/sim_start1 and sim_starter2/sim_start2 indices
 --   2. starter_torq is now separate for XP11 (0.2) and XP12 (0.28)

@@ -1,5 +1,5 @@
 -- this AOA and G-force indicator
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 -- define property table
 defineProperty("ias", globalPropertyf("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")) -- ias variable
 defineProperty("mach", globalPropertyf("sim/flightmodel/misc/machno")) -- Mach number
@@ -10,7 +10,7 @@ defineProperty("alpha_fail", globalPropertyi("sim/operation/failures/rel_AOA")) 
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
 defineProperty("slats", globalPropertyf("sim/flightmodel2/controls/slat1_deploy_ratio")) -- slats position. this one works too
 defineProperty("rel_pitot", globalPropertyi("sim/operation/failures/rel_pitot")) -- Pitot 1 - Blockage
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]")) -- 
+defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
 
 
 -- controls
@@ -34,8 +34,8 @@ defineProperty("auasp_pow27_cc", globalPropertyf("tu-154/elec/auasp_pow27_cc"))
 defineProperty("auasp_pow115_cc", globalPropertyf("tu-154/elec/auasp_pow115_cc"))
 
 -- failures
-defineProperty("uap_fail", globalPropertyi("sim/operation/failures/rel_AOA")) -- fail
-defineProperty("warn_fail", globalPropertyi("sim/operation/failures/rel_stall_warn")) -- fail
+defineProperty("uap_fail", globalPropertyi("sim/operation/failures/rel_AOA"))
+defineProperty("warn_fail", globalPropertyi("sim/operation/failures/rel_stall_warn"))
 
 
 

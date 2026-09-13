@@ -1,9 +1,8 @@
--- this is CourseMP panels and logic
 
 size = {420, 90}
 
 -- sources
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("frequency", globalPropertyf("sim/cockpit2/radios/actuators/nav1_frequency_hz"))  -- set the frequency
 
@@ -12,10 +11,10 @@ defineProperty("h_plank", globalPropertyf("sim/cockpit2/radios/indicators/nav1_v
 defineProperty("cr_flag", globalPropertyf("sim/cockpit2/radios/indicators/nav1_flag_from_to_pilot")) -- Nav-To-From indication, nav1, pilot, 0 is flag, 1 is to, 2 is from.
 defineProperty("gs_flag", globalPropertyf("sim/cockpit/radios/nav1_CDI"))  -- glideslope flag. 0 - flag is shown
 defineProperty("nav_deg", globalPropertyf("sim/cockpit2/radios/indicators/nav1_relative_bearing_deg")) -- nav1 bearing
-defineProperty("sim_fail", globalPropertyi("sim/operation/failures/rel_nav1")) -- fail
+defineProperty("sim_fail", globalPropertyi("sim/operation/failures/rel_nav1"))
 
-defineProperty("nav_fail", globalPropertyi("tu-154/failures/nav1_fail")) -- fail
-defineProperty("dme_fail", globalPropertyi("tu-154/failures/dme1_fail")) -- fail
+defineProperty("nav_fail", globalPropertyi("tu-154/failures/nav1_fail"))
+defineProperty("dme_fail", globalPropertyi("tu-154/failures/dme1_fail"))
 
 defineProperty("distance", globalPropertyf("sim/cockpit2/radios/indicators/nav1_dme_distance_nm"))  -- distance in NM
 

@@ -1,4 +1,3 @@
--- this is flaps, slats and hor-stab logic 154m
 -- line 142 -- defolt spats_spd = 0.2 * 0.5  -- spats_spd = 0.087 * 0.381  ~15 sec up\down --
 
 defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external")) -- enviroment
@@ -56,17 +55,17 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 -- failures
-defineProperty("flap_fail_left", globalPropertyi("tu-154/failures/flap_fail_left")) -- 
-defineProperty("flap_fail_right", globalPropertyi("tu-154/failures/flap_fail_right")) -- 
+defineProperty("flap_fail_left", globalPropertyi("tu-154/failures/flap_fail_left"))
+defineProperty("flap_fail_right", globalPropertyi("tu-154/failures/flap_fail_right"))
 
-defineProperty("stab_eng_fail", globalPropertyi("tu-154/failures/stab_eng_fail")) -- 
-defineProperty("stab_automatic_fail", globalPropertyi("tu-154/failures/stab_automatic_fail")) -- 
-defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail")) -- 
+defineProperty("stab_eng_fail", globalPropertyi("tu-154/failures/stab_eng_fail"))
+defineProperty("stab_automatic_fail", globalPropertyi("tu-154/failures/stab_automatic_fail"))
+defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail"))
 
 
 -- spoilers sources
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 defineProperty("revers_L", globalPropertyf("tu-154/controlls/revers_L")) -- left reverser lever
 defineProperty("revers_R", globalPropertyf("tu-154/controlls/revers_R")) -- right reverser lever
 defineProperty("spd_brk_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_spo1def")) -- inner speedbrake left Degrees
@@ -133,7 +132,11 @@ local flaps_dirr_L = 0
 local flaps_dirr_R = 0
 local auto_retract = 0
 
-local flap_SPD = 1.8 -- deg per second --defolt flap_SPD = 1.8
+-- Flap travel rate. Flight Manual sec. 8.10.1 (3) gives max travel times of
+-- 7.5 / 14.5 / 18.5 / 23 s for 15 / 28 / 36 / 45 deg (45 deg also min 18 s).
+-- 2.0 deg/s satisfies all four: 7.5 / 14.0 / 18.0 / 22.5 s.
+-- 1.8 deg/s gave 8.3 / 15.6 / 20.0 / 25.0 s - over the max by 8...11 %.
+local flap_SPD = 2.0 -- deg per second --defolt flap_SPD = 1.8
 local flap_pos_L_last = flaps_pos_L_cmd
 local flap_pos_R_last = flaps_pos_R_cmd
 
@@ -270,7 +273,6 @@ if MASTER then
 	
 	
 	
-	-- set results	
 	set(flap_inn_L, flap_pos_L_last)
 	set(flap_inn_R, flap_pos_R_last)
 	

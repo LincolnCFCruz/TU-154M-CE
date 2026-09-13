@@ -1,4 +1,4 @@
--- this is DISS panel - B-57
+-- DISS panel (B-57)
 
 -- controls
 defineProperty("diss_on", globalPropertyi("tu-154/switchers/ovhd/diss_on")) -- DISS power
@@ -58,7 +58,7 @@ local switcher_sound = loadSample('sounds/metal_switch.wav')
 local button_sound = loadSample('sounds/plastic_btn.wav')
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- engines
 defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) -- engine 1 rpm

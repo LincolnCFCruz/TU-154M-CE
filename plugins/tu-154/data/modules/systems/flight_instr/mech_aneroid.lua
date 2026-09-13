@@ -1,4 +1,3 @@
--- this is some aneroid-mechanic gauges logic.
 
 -- sources
 defineProperty("vvi_L", globalPropertyf("sim/cockpit2/gauges/indicators/vvi_fpm_pilot")) -- vertical speed in ft/min
@@ -19,7 +18,7 @@ defineProperty("msl_press", globalPropertyf("sim/weather/region/sealevel_pressur
 defineProperty("static_fail_L", globalPropertyi("sim/operation/failures/rel_static"))  -- static fail
 defineProperty("static_fail_R", globalPropertyi("sim/operation/failures/rel_static2"))  -- static fail
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- caps
 defineProperty("sensors_caps", globalPropertyi("tu-154/anim/sensors_caps"))  -- covers and caps
@@ -277,7 +276,6 @@ local MASTER = get(ismaster) ~= 1
 	if press_diff < -0.03 then press_diff = -0.03
 	elseif press_diff > 0.95 then press_diff = 0.95 end
 	
-	-- set results
 	set(kus_ias_left, kus_ias_act_L)
 	set(kus_tas_left, kus_tas_act_L)
 	set(ias_left, ias_cpt_act)

@@ -1,9 +1,8 @@
--- this is ground service panel
 size = {655, 880}
 
 defineProperty("save_state", globalPropertyi("tu-154/save_state")) -- force-save the aircraft state
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 defineProperty("show_ground_panel",globalPropertyi("tu-154/panels/show_ground_panel")) -- show the ground services panel
 
@@ -30,29 +29,29 @@ defineProperty("slider_4", globalProperty("sim/cockpit2/switches/custom_slider_o
 defineProperty("slider_5", globalProperty("sim/cockpit2/switches/custom_slider_on[4]")) -- pax door 1
 defineProperty("slider_6", globalProperty("sim/cockpit2/switches/custom_slider_on[5]")) -- pax door 2
 defineProperty("slider_7", globalProperty("sim/cockpit2/switches/custom_slider_on[6]")) -- kitchen door
-defineProperty("slider_8", globalProperty("sim/cockpit2/switches/custom_slider_on[7]")) --
+defineProperty("slider_8", globalProperty("sim/cockpit2/switches/custom_slider_on[7]"))
 defineProperty("slider_9", globalProperty("sim/cockpit2/switches/custom_slider_on[8]")) -- yokes
-defineProperty("slider_10", globalProperty("sim/cockpit2/switches/custom_slider_on[9]")) -- 
-defineProperty("slider_11", globalProperty("sim/cockpit2/switches/custom_slider_on[10]")) -- 
-defineProperty("slider_12", globalProperty("sim/cockpit2/switches/custom_slider_on[11]")) -- 
+defineProperty("slider_10", globalProperty("sim/cockpit2/switches/custom_slider_on[9]"))
+defineProperty("slider_11", globalProperty("sim/cockpit2/switches/custom_slider_on[10]"))
+defineProperty("slider_12", globalProperty("sim/cockpit2/switches/custom_slider_on[11]"))
 
 
 defineProperty("gear_blocks", globalPropertyi("tu-154/anim/gear_blocks")) -- landing gear block setting
 defineProperty("sensors_caps", globalPropertyi("tu-154/anim/sensors_caps")) -- fitting the sensor covers
 defineProperty("engine_caps", globalPropertyi("tu-154/anim/engine_caps")) -- fitting the engine covers
 
-defineProperty("gpu_present", globalPropertyi("tu-154/anim/gpu_present")) -- 
+defineProperty("gpu_present", globalPropertyi("tu-154/anim/gpu_present"))
 
 defineProperty("ladder_1_call", globalPropertyi("tu-154/anim/ladder_1_call")) -- airstairs. 100 - hidden. +50..0 - driving up, 0 - standing next to the aircraft, 0..-50 - driving away
-defineProperty("ladder_2_call", globalPropertyi("tu-154/anim/ladder_2_call")) -- 
-defineProperty("catering_call", globalPropertyi("tu-154/anim/catering_call")) -- 
-defineProperty("fuel_tanker_call", globalPropertyi("tu-154/anim/fuel_tanker_call")) -- 
+defineProperty("ladder_2_call", globalPropertyi("tu-154/anim/ladder_2_call"))
+defineProperty("catering_call", globalPropertyi("tu-154/anim/catering_call"))
+defineProperty("fuel_tanker_call", globalPropertyi("tu-154/anim/fuel_tanker_call"))
 
 
 defineProperty("ladder_1", globalPropertyf("tu-154/anim/ladder_1")) -- - hidden. +50..0 - driving up, 0 - standing next to the aircraft, 0..-50 - driving away	100
-defineProperty("ladder_2", globalPropertyf("tu-154/anim/ladder_2")) -- 
-defineProperty("catering", globalPropertyf("tu-154/anim/catering")) -- 
-defineProperty("fuel_tanker", globalPropertyf("tu-154/anim/fuel_tanker")) -- 
+defineProperty("ladder_2", globalPropertyf("tu-154/anim/ladder_2"))
+defineProperty("catering", globalPropertyf("tu-154/anim/catering"))
+defineProperty("fuel_tanker", globalPropertyf("tu-154/anim/fuel_tanker"))
 
 defineProperty("GS", globalPropertyf("sim/flightmodel/position/groundspeed"))  -- ground speed
 
@@ -81,9 +80,9 @@ defineProperty("alpha_fail", globalPropertyi("sim/operation/failures/rel_AOA")) 
 --defineProperty("parkbrake", globalPropertyf("sim/flightmodel/controls/parkbrake")) -- Parking Brake
 --defineProperty("parkbrake", globalPropertyf("tu-154/SC/controls/parkbrake")) 
 
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]")) -- 
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]")) -- 
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]")) -- 
+defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
+defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
+defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
 
 defineProperty("enable_crew_vo", globalPropertyi("tu-154/sounds/enable_crew_vo")) -- crew callouts enabled
@@ -97,9 +96,9 @@ defineProperty("starter_torq", globalPropertyf("sim/aircraft/engine/acf_starter_
 -- custom fails
 defineProperty("pitot_fail1", globalPropertyi("tu-154/failures/pitot1")) -- Pitot 1 - Blockage
 defineProperty("pitot_fail2", globalPropertyi("tu-154/failures/pitot2")) -- Pitot 2 - Blockage
-defineProperty("static_fail_L", globalPropertyi("tu-154/failures/static1"))  -- static fail
-defineProperty("static_fail_R", globalPropertyi("tu-154/failures/static2"))  -- static fail
-defineProperty("uap_fail", globalPropertyi("tu-154/failures/AOA")) -- fail
+defineProperty("static_fail1", globalPropertyi("tu-154/failures/static1"))  -- static fail, crew-set
+defineProperty("static_fail2", globalPropertyi("tu-154/failures/static2"))  -- static fail, crew-set
+defineProperty("uap_fail", globalPropertyi("tu-154/failures/AOA"))
 
 
 local text_font = loadBitmapFont('basic_font.fnt')
@@ -329,8 +328,8 @@ function update()
 		set(rel_pitot2, 6)
 		set(alpha_fail, 6)
 	else -- set custom failures into sim
-		set(static_fail_L, get(static_fail_L) * 6)
-		set(static_fail_R, get(static_fail_R) * 6)
+		set(static_fail_L, get(static_fail1) * 6)
+		set(static_fail_R, get(static_fail2) * 6)
 		set(rel_pitot, get(pitot_fail1) * 6)
 		set(rel_pitot2, get(pitot_fail2) * 6)
 		set(alpha_fail, get(uap_fail) * 6)
@@ -1040,16 +1039,6 @@ components = {
 	
 	--------------------------------
 
-	-- close button
-	clickable {
-		position = {size[1] - 15, size[2] - 15, 15, 15 },
-      
-		onMouseDown = function() 
-			set(show_ground_panel, 0)
-			
-			return true
-		end,
-	}, 
 
 
 }

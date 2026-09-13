@@ -1,4 +1,3 @@
--- this is engines panel
 -- controls
 defineProperty("control_ut", globalPropertyi("tu-154/buttons/eng/control_ut")) -- UT test button
 defineProperty("control_vibro_1", globalPropertyi("tu-154/buttons/eng/control_vibro_1")) -- vibration check button
@@ -150,7 +149,7 @@ defineProperty("eng_filter_3", globalPropertyi("sim/operation/failures/rel_eng_l
 -- other sources
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- engines
 defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) -- engine 1 rpm

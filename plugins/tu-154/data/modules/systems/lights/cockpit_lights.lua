@@ -1,4 +1,3 @@
--- this is light controls
 
 -- electric system
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
@@ -28,13 +27,13 @@ defineProperty("default_cockpit_flood", globalProperty("sim/cockpit2/switches/pa
 defineProperty("default_eng_panel_flood", globalProperty("sim/cockpit2/switches/panel_brightness_ratio[1]")) -- eng panel flood
 defineProperty("default_pedestal_flood", globalProperty("sim/cockpit2/switches/panel_brightness_ratio[2]")) -- center panel flood
 
-defineProperty("cabin_2d_light", globalPropertyf("tu-154/lights/cabin_2d_light")) -- 
+defineProperty("cabin_2d_light", globalPropertyf("tu-154/lights/cabin_2d_light"))
 
-defineProperty("exit_lamp", globalPropertyf("tu-154/lights/exit_lamp")) -- 
-defineProperty("fasten_seatbelts_lamp", globalPropertyf("tu-154/lights/fasten_seatbelts_lamp")) -- 
-defineProperty("nosmoking_lamp", globalPropertyf("tu-154/lights/nosmoking_lamp")) -- 
-defineProperty("toilet_busy_lamp", globalPropertyf("tu-154/lights/toilet_busy_lamp")) -- 
-defineProperty("seats_leters_lamp", globalPropertyf("tu-154/lights/seats_leters_lamp")) -- 
+defineProperty("exit_lamp", globalPropertyf("tu-154/lights/exit_lamp"))
+defineProperty("fasten_seatbelts_lamp", globalPropertyf("tu-154/lights/fasten_seatbelts_lamp"))
+defineProperty("nosmoking_lamp", globalPropertyf("tu-154/lights/nosmoking_lamp"))
+defineProperty("toilet_busy_lamp", globalPropertyf("tu-154/lights/toilet_busy_lamp"))
+defineProperty("seats_leters_lamp", globalPropertyf("tu-154/lights/seats_leters_lamp"))
 
 defineProperty("HDR_on", globalPropertyf("sim/graphics/settings/HDR_on")) -- settings for HDR
 -- 1 flood lighting of the left side panel

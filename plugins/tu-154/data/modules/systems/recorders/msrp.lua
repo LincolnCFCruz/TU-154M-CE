@@ -1,4 +1,4 @@
--- this is the root of MSRP (black box) system
+-- MSRP: flight data recorder ("black box")
 components = {
 	msrp_panel{},
 	msrp_logic{},

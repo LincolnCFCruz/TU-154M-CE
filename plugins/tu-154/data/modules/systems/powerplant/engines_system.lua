@@ -1,4 +1,3 @@
--- this is main engines system
 
 components = {
 
