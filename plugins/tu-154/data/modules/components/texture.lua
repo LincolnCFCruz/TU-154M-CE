@@ -1,5 +1,4 @@
--- Draw body is drawTextureFill (core/glbl_draw.lua), shared with textureLit.
--- SASL3: the component extent is size[1] x size[2] (SASL2's implicit 100x100).
+-- Fills the component with `image` (drawTextureFill, core/glbl_draw.lua).
 
 defineProperty("image")
 

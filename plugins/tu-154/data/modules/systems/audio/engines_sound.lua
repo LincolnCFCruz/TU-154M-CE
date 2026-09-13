@@ -29,9 +29,6 @@ defineProperty("cam_Z", globalPropertyf("sim/graphics/view/view_z")) -- The loca
 
 
 -- pilot head
-defineProperty("pilot_hdg", globalPropertyf("sim/graphics/view/pilots_head_psi")) -- CW from forward in cockpit
-defineProperty("pilot_X", globalPropertyf("sim/aircraft/view/acf_peX")) -- Position of pilot's head relative to CG
-defineProperty("pilot_Y", globalPropertyf("sim/aircraft/view/acf_peY")) -- Position of pilot's head relative to CG
 defineProperty("pilot_Z", globalPropertyf("sim/aircraft/view/acf_peZ")) -- Position of pilot's head relative to CG
 
 
@@ -56,7 +53,6 @@ defineProperty("main_sound_on", globalPropertyi("sim/operation/sound/sound_on"))
 
 defineProperty("revers_flap_L", globalProperty("sim/flightmodel2/engines/thrust_reverser_deploy_ratio[0]")) -- reverse on left engine
 defineProperty("revers_flap_R", globalProperty("sim/flightmodel2/engines/thrust_reverser_deploy_ratio[2]")) -- reverse on right engine
-
 
 
 -- sounds files
@@ -127,9 +123,7 @@ playSample(inn_apu_right, true)
 playSample(out_apu_left, true)
 playSample(out_apu_right, true)
 
---playSample(inn_reverse, true)
 
-		
 setSampleGain(out_behind_left_1, 0)
 setSampleGain(out_behind_right_1, 0)
 setSampleGain(out_idle_left_1, 0)
@@ -241,7 +235,6 @@ local function out_balance (src_x, src_z, src_hdg, src_cone, fade_deg, fade_dist
 	local cone_angle = math.abs(angle2cam)
 	
 	while cone_angle > 180 do cone_angle = cone_angle - 360 end
-	--while cone_angle < 0 do cone_angle = cone_angle + 180 end
 	
 	local cone_coef = 1
 	
@@ -249,22 +242,15 @@ local function out_balance (src_x, src_z, src_hdg, src_cone, fade_deg, fade_dist
 		cone_coef = math.max(1 - (cone_angle - src_cone) / (fade_deg), 0)
 	end
 	
-	--print(cone_angle)
-	
-	
 	
 	if cone_coef > 1 then cone_coef = 1 end
 	
 	
-	
-
 	local ch_L = (0.05 + (1 + math.sin(math.rad(angle2source))) * 0.7) * dist_coef * cone_coef
 	local ch_R = (0.05 + (1 + math.sin(math.rad(-angle2source))) * 0.7) * dist_coef * cone_coef
 	
 	if ch_L > 1 then ch_L = 1 end
 	if ch_R > 1 then ch_R = 1 end
-	
-	
 	
 	
 	return ch_L, ch_R
@@ -287,9 +273,7 @@ local starter_2_last = get(apd_working_2)
 local starter_3_last = get(apd_working_3)
 
 
-
 local cam_dist_last = 0
-
 
 
 function update()
@@ -324,7 +308,6 @@ function update()
 	acf_z = get(acf_Z)
 	
 	
-	
 	-- set pitch for engines sounds
 	local inn_ptch_1 = interpolate(inn_pitch_tbl, rpm_1)
 	local inn_ptch_2 = interpolate(inn_pitch_tbl, rpm_2)
@@ -347,7 +330,6 @@ function update()
 	elseif dopp < -200 then dopp = -200 end
 	
 
-	
 	setSamplePitch(inn_middle_left_1, inn_ptch_1)
 	setSamplePitch(inn_middle_right_1, inn_ptch_1)
 	
@@ -380,7 +362,6 @@ function update()
 	setSamplePitch(out_behind_right_3, 1000 + (out_ptch_1 - 1000) * 0.4)
 
 	
-
 	setSamplePitch(inn_apu_left, apu_snd_pitch)
 	setSamplePitch(inn_apu_right, apu_snd_pitch)
 	setSamplePitch(out_apu_left, apu_snd_pitch + dopp)
@@ -485,13 +466,11 @@ function update()
 		setSampleGain(out_apu_right, holes * main_vol * rpm_gain_apu)
 		
 		
-		
 		-- calculate balance
 		
 		local view_head = acf_hd - cam_hd
 		while view_head > 180 do view_head = view_head - 360 end
 		while view_head < -180 do view_head = view_head + 360 end
-		
 		
 		
 		local bal_L, bal_R = inn_balance (view_head, dist)
@@ -581,12 +560,8 @@ function update()
 		setSampleGain(out_apu_right, 1000 * apu_R * rpm_gain_apu * main_vol)
 
 	
-	
 	end
 
-	
-	
-	
 	
 	-- mute all sounds
 	if passed == 0 or get(main_sound_on) == 0 then

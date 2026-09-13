@@ -190,7 +190,6 @@ defineProperty("test_lamps", globalPropertyi("tu-154/buttons/lamp_test_front")) 
 defineProperty("day_night_set", globalPropertyf("tu-154/lights/day_night_set")) -- day/night switch. 0 = day, 1 = night. dims the annunciator lamps.
 
 defineProperty("rsbn_distance", globalPropertyf("tu-154/rsbn/distance")) -- slant range from the beacon
-defineProperty("rsbn_azimuth", globalPropertyf("tu-154/rsbn/azimuth")) -- azimuth from the beacon
 
 
 defineProperty("compas_big_needle", globalPropertyf("tu-154/gauges/misc/compas_big_needle")) -- BDK

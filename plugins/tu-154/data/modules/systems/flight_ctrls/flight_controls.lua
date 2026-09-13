@@ -1,12 +1,4 @@
 
--- sources
---defineProperty("joy_pitch", globalPropertyf("sim/cockpit2/controls/yoke_pitch_ratio")) -- pitch position of joytick
---defineProperty("joy_roll", globalPropertyf("sim/cockpit2/controls/yoke_roll_ratio")) -- roll position of joystick
---defineProperty("joy_yaw", globalPropertyf("sim/cockpit2/controls/yoke_heading_ratio")) -- yaw position of joystick
-
-
--- defineProperty("elev_debug1", globalPropertyf("tu-154/controlls/elevator_debug1")) 
--- defineProperty("elev_debug2", globalPropertyf("tu-154/controlls/elevator_debug2")) 
 
 defineProperty("joy_pitch", globalPropertyf("tu-154/SC/yoke_pitch_ratio")) 
 defineProperty("joy_roll", globalPropertyf("tu-154/SC/yoke_roll_ratio")) 
@@ -20,7 +12,6 @@ defineProperty("overr", globalPropertyf("sim/operation/override/override_control
 -- controls
 defineProperty("speedbrake_ratio", globalPropertyf("sim/cockpit2/controls/speedbrake_ratio")) -- sim speedbrake lever
 
-defineProperty("elev_trimm_sw", globalPropertyi("tu-154/controll/elev_trimm_switcher")) -- elevator trim control. -1 = nose down, 0 = neutral, +1 = nose up
 defineProperty("ail_trimm_sw", globalPropertyi("tu-154/controll/ail_trimm_sw")) -- aileron trim switch
 defineProperty("rudd_trimm_sw", globalPropertyi("tu-154/controll/rudd_trimm_sw")) -- rudder trim switch
 
@@ -39,10 +30,7 @@ defineProperty("control_force_pos_rud", globalPropertyf("tu-154/controls/control
 defineProperty("contr_force_set", globalPropertyi("tu-154/controll/contr_force_set")) -- elevator/rudder feel unit selector. -1 = flight, 0 = auto, +1 = takeoff-landing
 
 
-defineProperty("deploy_ratio_2", globalProperty("sim/flightmodel2/gear/deploy_ratio[1]"))
-defineProperty("deploy_ratio_3", globalProperty("sim/flightmodel2/gear/deploy_ratio[2]"))
 
-defineProperty("gear1_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))  -- vertical deflection of front gear
 defineProperty("gear2_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))  -- vertical deflection of left gear
 defineProperty("gear3_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))  -- vertical deflection of right gear
 
@@ -70,10 +58,7 @@ defineProperty("roll_spoil_R", globalPropertyf("sim/flightmodel/controls/wing2r_
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
 defineProperty("flap_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_fla1def")) -- inner flaps right
 
-defineProperty("flap_mid_L", globalPropertyf("sim/flightmodel/controls/wing2l_fla2def")) -- middle flaps left
-defineProperty("flap_mid_R", globalPropertyf("sim/flightmodel/controls/wing2r_fla2def")) -- middle flaps right
 
---defineProperty("slats", globalPropertyf("sim/flightmodel/controls/slatrat")) -- slats position. this one works
 defineProperty("slats", globalPropertyf("sim/flightmodel2/controls/slat1_deploy_ratio")) -- slats position. this one works too
 
 
@@ -83,8 +68,6 @@ defineProperty("elevator_R", globalPropertyf("sim/flightmodel/controls/hstab2_el
 defineProperty("rudder", globalPropertyf("sim/flightmodel/controls/vstab2_rud1def")) -- degrees, positive is trailing-edge left
 defineProperty("stab_ratio", globalPropertyf("sim/cockpit2/controls/elevator_trim")) -- sim pitch trimmer
 
---defineProperty("stap_pos_real", globalProperty("sim/flightmodel2/wing/elevator2_deg[0]")) -- sim stab position
---defineProperty("elev_pos_real", globalProperty("sim/flightmodel2/wing/elevator1_deg[0]")) -- sim elevator position
 
 -- hydraulics
 defineProperty("gs_press_1", globalPropertyf("tu-154/hydro/gs_press_1")) -- hydraulic system 1 pressure
@@ -94,8 +77,8 @@ defineProperty("gs_press_3", globalPropertyf("tu-154/hydro/gs_press_3")) -- hydr
 
 -- animations
 defineProperty("yoke_pitch", globalPropertyf("tu-154/controlls/yoke_pitch")) -- control wheel pitch travel
-defineProperty("yoke_roll", globalPropertyf("tu-154/controlls/yoke_roll")) -- control wheel pitch travel
-defineProperty("pedals_turn", globalPropertyf("tu-154/controlls/pedals")) -- control wheel pitch travel
+defineProperty("yoke_roll", globalPropertyf("tu-154/controlls/yoke_roll")) -- control wheel roll travel
+defineProperty("pedals_turn", globalPropertyf("tu-154/controlls/pedals")) -- rudder pedal travel
 defineProperty("spoilers_lever", globalPropertyf("tu-154/controlls/spoilers_lever")) -- spoiler lever
 
 defineProperty("revers_flap_L", globalProperty("sim/flightmodel2/engines/thrust_reverser_deploy_ratio[0]")) -- reverse on left engine
@@ -121,9 +104,6 @@ defineProperty("anim_rud1", globalPropertyf("tu-154/controlls/throttle_1")) -- t
 defineProperty("anim_rud2", globalPropertyf("tu-154/controlls/throttle_2")) -- throttle 2
 defineProperty("anim_rud3", globalPropertyf("tu-154/controlls/throttle_3")) -- throttle 3
 
-defineProperty("anim_rud1_ENG", globalPropertyf("tu-154/controlls/throttle_1_ENG")) -- flight engineer's throttle 1
-defineProperty("anim_rud2_ENG", globalPropertyf("tu-154/controlls/throttle_2_ENG")) -- flight engineer's throttle 2
-defineProperty("anim_rud3_ENG", globalPropertyf("tu-154/controlls/throttle_3_ENG")) -- flight engineer's throttle 3
 
 -- spoilers sources
 defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
@@ -176,8 +156,6 @@ defineProperty("elev_coeff", globalPropertyf("tu-154/controlls/elev_coeff"))
 
 defineProperty("nosewheel_turn_sel", globalPropertyi("tu-154/switchers/nosewheel_turn_sel"))
 defineProperty("yoke_offset", globalPropertyf("tu-154/controlls/yoke_offset"))
---defineProperty("on_ground_L", globalProperty("sim/flightmodel2/gear/on_ground[1]"))
---defineProperty("on_ground_R", globalProperty("sim/flightmodel2/gear/on_ground[1]"))
 
 defineProperty("elev_L_ph", globalPropertyf("tu-154/controlls/elev_L_phys"))
 defineProperty("elev_R_ph", globalPropertyf("tu-154/controlls/elev_R_phys"))
@@ -185,7 +163,6 @@ defineProperty("elev_R_ph", globalPropertyf("tu-154/controlls/elev_R_phys"))
 -- below were only ever inline, so rudder_coeff sat at its creator default of 1
 defineProperty("rudder_coeff_pub", globalPropertyf("tu-154/controlls/rudder_coeff"))
 
---defineProperty("db1", globalPropertyf("tu-154/controlls/debug1"))
 
 set(overr, 1) -- initialise some datarefs
 
@@ -216,7 +193,6 @@ local pitch_joy=0
 local pitch_joy_prev=0
 
 local joy_pitch2=0
--- local joy_pitch2_prev=0
 
 local yoke_tbl = {
 {-2, -2},
@@ -246,7 +222,6 @@ function update()
 	
 	local MASTER = get(ismaster) ~= 1
 	
-	--print(MASTER)
 	
 	passed = get(frame_time)
 
@@ -278,8 +253,6 @@ function update()
 	local HS3 = math.min(get(gs_press_3) / 63, 1)
 
 
-
-	
 	--------------------------
 	-- ailerons and roll-spoilers --
 	local cockpit_yoke_roll = get(joy_roll) + get(int_roll_trim)
@@ -306,7 +279,6 @@ function update()
 	if right_ail_pos <= -1.5 then roll_sp_R = -((right_ail_pos + 1.5) / 18.5) * 45 end
 	
 	
-	
 if MASTER then
 	set(ail_L, left_ail_pos * (1 - get(ail_fail_left)))
 	set(ail_R, right_ail_pos * (1 - get(ail_fail_right)))
@@ -317,150 +289,15 @@ end
 
 --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --spoilers new logic Tu154B from Silver jeni backap \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
 	---------------------------------
-	-- spoilers logic --
---	local gears = get(deflection_mtr_2) > 0.01 and get(deflection_mtr_3) > 0.01
---	local ruds_iddle = get(anim_rud1) < 0.1 and get(anim_rud2) < 0.1 and get(anim_rud3) < 0.1
     
---   if gears and get(speedbrake_ratio) > 0.95 then
---       if spb_inn < 1 then
---            spb_inn=spb_inn + 0.7*passed
---        end
---    else
---       if spb_inn > 0 then
---            spb_inn=spb_inn - 0.7*passed
---       end
---   end
     
---    set(spb_inn_anim,spb_inn)
-       
-	
---   if get(kontur_on) > 0 then
-        
---       local flaps_to = (get(flap_inn_L)+get(flap_inn_R))/2 < 31
---       local revers = get(revers_L) > 0.1 and get(revers_R) > 0.1
---       if power_27_L and get(gs_press_1) > 50 and gears and ((get(speedbrake_ratio) > 0.95) or revers) and auto_deploy == 0 and auto_deploy_delay == 0 then
---            auto_deploy = 1
---       end
---      if auto_deploy == 1 then
---           if flaps_to then
---               if (get(speedbrake_ratio) < 0.05 or not ruds_iddle) and not revers then
---                    auto_deploy = 0
---               end
---           else
---                if (get(revers_L) > 0.6 and get(revers_R) > 0.6) or not ruds_iddle then
---                    auto_deploy = 0
---                    auto_deploy_delay = 1
---                end
---            end
---       end  
---        if auto_deploy_delay == 1 then
---            if not revers then
---                auto_deploy_delay = 0
---            end
---        end
---    else
---        local revers = get(revers_L) > 0.44 and get(revers_R) > 0.66
---        if power_27_L and get(gs_press_1) > 50 and gears and ((get(speedbrake_ratio) > 0.95) or revers) and auto_deploy < 1 then
---			auto_deploy = 1
-			-- if auto_deploy>1 then
-				-- auto_deploy=1
---			-- end
---        end
---        if auto_deploy == 1 and get(speedbrake_ratio) < 0.95 and (get(revers_L) < 0.05 and get(revers_R) < 0.05) then
---            auto_deploy = 0
---        end
---    end
-	
-	
 	---------------------------------
 	-- middle spoilers --
 
 	
---	local spd_brk_cmd = get(speedbrake_ratio) --  add automatic logic here, controlling the lever itself
-	
---	local spd_brk_L = spd_brk_cmd * 45 * bool2int(power_27_L)
---	local spd_brk_R = spd_brk_cmd * 45 * bool2int(power_27_L)
---	if HS1 > 0.01 then
---		if (spd_brk_L - left_mid_sp_act)<=0 then
---			if math.abs(spd_brk_L - left_mid_sp_act)>1 then
---				left_mid_sp_act = left_mid_sp_act - 31.5 * HS1 * passed 
---			else
---				left_mid_sp_act = left_mid_sp_act +(spd_brk_L - left_mid_sp_act) * HS1 * passed * 31.5
---			end
---		elseif (spd_brk_L - left_mid_sp_act)>0 then
---			if math.abs(spd_brk_L - left_mid_sp_act)>1 then
---				left_mid_sp_act = left_mid_sp_act + 31.5* HS1 * passed*math.max(1-get(ias_L)/500*math.min(left_mid_sp_act/20,1),0.7)*1.5
---			else
---				left_mid_sp_act = left_mid_sp_act + (spd_brk_L - left_mid_sp_act) * HS1 * passed * 31.5*math.max(1-get(ias_L)/500*math.min(left_mid_sp_act/20,1),0.7)*1.5
---			end
---		end
---		if (spd_brk_R - right_mid_sp_act)<=0 then
---			if math.abs(spd_brk_R - right_mid_sp_act)>1 then
---				right_mid_sp_act = right_mid_sp_act - 31.5 * HS1 * passed
---			else
---				right_mid_sp_act = right_mid_sp_act +(spd_brk_R - right_mid_sp_act) * HS1 * passed * 31.5
---			end
---		elseif (spd_brk_R - right_mid_sp_act)>0 then
---			if math.abs(spd_brk_R - right_mid_sp_act)>1 then
---				right_mid_sp_act = right_mid_sp_act + 31.5 * HS1 * passed*math.max(1-get(ias_L)/500*math.min(right_mid_sp_act/20,1),0.7)*1.5
---			else
---				right_mid_sp_act = right_mid_sp_act + (spd_brk_R - right_mid_sp_act) * HS1 * passed * 31.5*math.max(1-get(ias_L)/500*math.min(right_mid_sp_act/20,1),0.7)*1.5
---			end
---		end
---	end
-
---if MASTER then	
---	set(spd_brk_mid_L, left_mid_sp_act * (1 - get(fail_spoil_mid_left)))
---	set(spd_brk_mid_R, right_mid_sp_act * (1 - get(fail_spoil_mid_right)))
---end	
-	
 	---------------------------------
-	-- inner spoilers --
---	local spoilers_cmd = auto_deploy -- add automatic logic here
 	
---	local spoil_L = spoilers_cmd * 50 * bool2int(power_27_L)
---	local spoil_R = spoilers_cmd * 50 * bool2int(power_27_L)
---	if HS1 > 0.01 then
-		-- if spoilers_cmd == 1 then 
-			-- left_inn_sp_act = left_inn_sp_act + (spoil_L - left_inn_sp_act) * HS1 * passed * 1
-			-- right_inn_sp_act = right_inn_sp_act + (spoil_R - right_inn_sp_act) * HS1 * passed * 1
-		-- else
-			-- left_inn_sp_act = left_inn_sp_act + (spoil_L - left_inn_sp_act) * HS1 * passed * 0.7
-			-- right_inn_sp_act = right_inn_sp_act + (spoil_R - right_inn_sp_act) * HS1 * passed * 0.7
-		-- end
---		if (spoil_L - left_inn_sp_act)<=0 then
---			if math.abs(spoil_L - left_inn_sp_act)>1 then
---				left_inn_sp_act = left_inn_sp_act - 30 * HS1 * passed 
---			else
---				left_inn_sp_act = left_inn_sp_act +(spoil_L - left_inn_sp_act) * HS1 * passed * 30
---			end
---		elseif (spoil_L - left_inn_sp_act)>0 then
---			if math.abs(spoil_L - left_inn_sp_act)>1 then
---				left_inn_sp_act = left_inn_sp_act + 30 * HS1 * passed*math.max(1-get(ias_L)/500*math.min(left_inn_sp_act/20,1),0.1)*1.5
---			else
---				left_inn_sp_act = left_inn_sp_act + (spoil_L - left_inn_sp_act) * HS1 * passed * 30*math.max(1-get(ias_L)/500*math.min(left_inn_sp_act/20,1),0.1)*1.5
---			end
---		end
---		if (spoil_R - right_inn_sp_act)<=0 then
---			if math.abs(spoil_R - right_inn_sp_act)>1 then
---				right_inn_sp_act = right_inn_sp_act - 30* HS1 * passed
---			else
---				right_inn_sp_act = right_inn_sp_act +(spoil_R - right_inn_sp_act) * HS1 * passed * 30
---			end
---		elseif (spoil_R - right_inn_sp_act)>0 then
---			if math.abs(spoil_R - right_inn_sp_act)>1 then
---				right_inn_sp_act = right_inn_sp_act + 30 * HS1 * passed*math.max(1-get(ias_L)/500*math.max(right_inn_sp_act/20,1),0.1)*1.5
---			else
---				right_inn_sp_act = right_inn_sp_act + (spoil_R - right_inn_sp_act) * HS1 * passed * 30*math.max(1-get(ias_L)/500*math.min(right_inn_sp_act/20,1),0.1)*1.5
---			end
---		end
---	end
 
---if MASTER then	
---	set(spd_brk_inn_L, left_inn_sp_act * (1 - get(fail_spoil_inn_left)))
---	set(spd_brk_inn_R, right_inn_sp_act * (1 - get(fail_spoil_inn_right)))
---end
-	
 --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
 
 --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --spoilers logic Tu154M Felis to jeni original \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
@@ -585,7 +422,6 @@ end
 	
 	--------------------------------
 	-- elevator --
-	--cockpit_yoke_pitch = pitch_joy*(0.7+0.3*get(nosewheel_turn_sel)) + get(int_pitch_trim)
 	cockpit_yoke_pitch = pitch_joy + get(int_pitch_trim)
 	if cockpit_yoke_pitch <-0.5517 then
 		 cockpit_yoke_pitch =-0.5517
@@ -598,44 +434,8 @@ end
 	end
 	pitch_joy_prev=pitch_joy
 	
-	--if get(nosewheel_turn_sel)==0 then
-		-- if get(joy_pitch)>0.99 then
-			-- if joy_pitch2<1 then
-				-- joy_pitch2=joy_pitch2+passed/2
-			-- end
-		-- elseif get(joy_pitch)<0.99 and joy_pitch2>0.5 then
-			-- joy_pitch2=joy_pitch2-passed/2
-		-- -- elseif get(joy_pitch)<-0.99 then
-			-- -- if joy_pitch2>-1 then
-				-- -- joy_pitch2=joy_pitch2-passed/2
-			-- -- end
-		-- -- elseif get(joy_pitch)>-0.99 and joy_pitch2<-0.5 then
-			-- -- joy_pitch2=joy_pitch2+passed/2
-		-- else
-			-- if math.abs(joy_pitch2*2-get(joy_pitch)-0.15)>0.05 and joy_pitch2>0.5  then
-				-- joy_pitch2=joy_pitch2-passed*(joy_pitch2_prev*2-get(joy_pitch))*10
-			-- else
-				-- joy_pitch2=(get(joy_pitch)+0.15)*0.5
-			-- end
-		-- end
-		--joy_pitch2=(interpolate(yoke_tbl, get(joy_pitch))+get(yoke_offset))*0.5
-	--else
 		joy_pitch2=get(joy_pitch)+get(yoke_offset)
-	--end
-	--joy_pitch2_prev=joy_pitch2
-	-- overforce the limit mechanism
-	-- if pitch_joy > 0.9 and pitch_add < 2 then pitch_add = pitch_add + passed * 0.3 
-	-- elseif pitch_joy < -0.9 and pitch_add > -2 then pitch_add = pitch_add - passed * 0.3
-	-- elseif math.abs(pitch_joy) < 0.9 then pitch_add = 0 end
-	
-	-- -- limit joy pitch by forcing
-	-- if pitch_joy > (1 - force_pos * 0.5) then pitch_joy = (1 - force_pos * 0.5)
-	-- elseif pitch_joy < -(1 - force_pos * 0.4) then pitch_joy = -(1 - force_pos * 0.4) end
-	
-	
-	
-	
-	
+
 	
 	if cockpit_yoke_pitch > 1 then cockpit_yoke_pitch = 1
 	elseif cockpit_yoke_pitch < -1 then cockpit_yoke_pitch = -1 end
@@ -679,16 +479,12 @@ end
 		set(elev_R_ph,elev_right* (1 - get(elev_fail_right)))
 	-- calculate correction for elevator
 	
-	-- if mach < 1 then elev_coef = interpolate(mach_tbl, mach)
-	-- else elev_coef = 0.1 end
 
-	
 if MASTER then	
 	set(elevator_L, elev_left_aero * elev_coef * (1 - get(elev_fail_left)))
 	set(elevator_R, elev_right_aero * elev_coef * (1 - get(elev_fail_right)))
 end	
 	
-	--print(get(elevator_L), "  ", get(elevator_R))
 	
 	-------------------------------------
 	-- rudder -- 
@@ -711,9 +507,7 @@ end
 	elseif cockpit_yoke_yaw < -1 then cockpit_yoke_yaw = -1 end
 	
 	
-	
 	local rud_cmd = -cockpit_yoke_yaw - get(absu_contr_yaw)
-	
 	
 	
 	if rud_cmd > 1 then rud_cmd = 1
@@ -754,16 +548,8 @@ end
 end
 
 
-
-
 function onModuleDone()
 	set(overr, 0)
 	print("flight controls released")
 end
-
-
-
-
-
-
 

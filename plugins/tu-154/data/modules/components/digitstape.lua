@@ -24,10 +24,7 @@ defineProperty("showLeadingZeros", false)
 defineProperty("showSign", false)
 
 
--- Draw body is drawDigitStrip (core/glbl_draw.lua), shared by all three digit
--- strips. It carries the SASL2 -> SASL3 source-rect conversion (normalised,
--- top origin -> pixels, bottom-left) and the component extent (size[1]/size[2]
--- instead of SASL2's implicit 100x100).
+-- Draw body: drawDigitStrip (core/glbl_draw.lua), shared with digitstapeLit.
 function draw(self)
     drawDigitStrip(get(image), get(overlayImage), get(value), get(digits), get(fractional),
         get(allowNonRound), get(valueEnabler), get(showLeadingZeros), get(showSign),

@@ -37,11 +37,7 @@ defineProperty("absu_use_second_nav", globalPropertyi("tu-154/absu_use_second_na
 defineProperty("roll_sub_mode", globalPropertyi("tu-154/absu/roll_sub_mode")) -- ABSU roll mode. 0 - off, 1 - stab, 2 - ZK, 3 - NVU, 4 - AZ1, 5 - AZ2, 6 - approach
 defineProperty("pitch_sub_mode", globalPropertyi("tu-154/absu/pitch_sub_mode")) -- ABSU pitch mode. 0 - off, 1 - stab, 2 - V, 3 - M, 4 - H, 5 - glideslope, 6 - go-around
 
-defineProperty("nav_course_1", globalPropertyi("tu-154/rotary/console/nav_1_course")) -- heading set knob
-defineProperty("nav_course_2", globalPropertyi("tu-154/rotary/console/nav_2_course")) -- heading set knob
 
-defineProperty("obs1", globalPropertyf("sim/cockpit2/radios/actuators/nav1_obs_deg_mag_pilot")) -- OBS course
-defineProperty("obs2", globalPropertyf("sim/cockpit2/radios/actuators/nav2_obs_deg_mag_pilot")) -- OBS course
 
 -- NVU
 defineProperty("nvu_res_course", globalPropertyf("tu-154/nvu/nvu_res_course")) -- flight heading from the NVU
@@ -105,14 +101,9 @@ defineProperty("pnp_vor_lamp", globalPropertyf("tu-154/lights/small/pnp_vor_left
 defineProperty("pnp_nv_lamp", globalPropertyf("tu-154/lights/small/pnp_nv_left"))
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
-
-
 
 
 local main_scale_act = math.random(-180, 180)
@@ -143,8 +134,6 @@ function update()
 	
 	local nav_sel = get(nav_select) -- NVU-SNS toggle 0 - NVU, 1 - SNS
 	
-	
-	--local NVU = get(nvu_mode) > 1 -- temp. must change it to ABSU modes
 	
 	main_scale_act = get(pkp_gyro_course)
 	
@@ -190,8 +179,6 @@ function update()
 	set(pkp_slip_angle, slip_ang_act)
 	
 	
-	
-	
 	-- TKS flag logic
 	if not power or get(gyro_fail) == 1 then
 		set(pkp_main_flag, 1)
@@ -199,14 +186,11 @@ function update()
 	end
 	
 
-	
 	local course_flag = get(nav_cs_flag_1)
 	local gs_flag = get(nav_gs_flag_1)
 	
 	local course_pl = get(nav_cs_1)
 	local glidesl_pl = -get(nav_gs_1)
-	
-	
 	
 	
 	if mode == 2 and power then -- AZ-1 mode
@@ -219,7 +203,6 @@ function update()
 		elseif course_pl < -1.3 then course_pl = -1.3 end
 		
 		
-		--obs_course = get(obs1)
 		obs_course = get(obs)
 		set(pkp_obs_flag, 0)
 		
@@ -234,7 +217,6 @@ function update()
 		gs_flag = 1
 	
 		
-	
 	elseif mode == 3 and power then -- AZ-2 mode
 
 		-- set course and glideslope planks
@@ -246,7 +228,6 @@ function update()
 		elseif course_pl < -1.3 then course_pl = -1.3 end
 		
 		
-		--obs_course = get(obs2)
 		obs_course = get(obs)
 		set(pkp_obs_flag, 0)
 		
@@ -273,8 +254,6 @@ function update()
 			glidesl_pl = -get(nav_gs_2) 
 		end
 		
-		--if get(nav_cs_flag_1) == 1 and get(nav_cs_flag_2) == 0 then course_pl = get(nav_cs_2) end
-		--if get(nav_gs_flag_1) == 1 and get(nav_gs_flag_2) == 0 then glidesl_pl = -get(nav_gs_2) end
 		
 		if course_pl > 1.3 then course_pl = 1.3
 		elseif course_pl < -1.3 then course_pl = -1.3 end
@@ -293,7 +272,6 @@ function update()
 		course_flag = math.min(get(nav_cs_flag_1), get(nav_cs_flag_2))
 		gs_flag = math.min(get(nav_gs_flag_1), get(nav_gs_flag_2))
 	
-		--set(pkp_obs_flag, 0)
 		
 	elseif power and mode == 1 and nav_sel == 0 then -- NVU
 	
@@ -340,8 +318,6 @@ function update()
 			course_flag = bool2int(get(RXP_flag) == 0)
 		end
 		
-		
-		--print(get(kln_flag), course_flag)
 		
 		set(pkp_obs_flag, 1) 
 	
@@ -411,10 +387,8 @@ function update()
 	set(pkp_obs, obs_actual)
 	
 	
-	
 	-- set OBS
 	local obs_knob_now = get(pkp_obs_knob)
-	
 	
 	
 	while obs_knob_now > 360 do
@@ -448,10 +422,6 @@ function update()
 	end
 	
 	
-	
-	--if obs_now > 360 then obs_now = obs_now - 360 
-	--elseif obs_now < 0 then obs_now = obs_now + 360 end
-	
 	if MASTER then set(obs, math.floor(obs_now + 0.4)) end
 	
 	-- set numbers
@@ -477,8 +447,6 @@ function update()
 	set(pkp_helper_course, ZK_crs)
 	
 
-	
-	
 	-- lamps
 	if power then
 		set(pnp_sp_lamp, bool2int(mode == 4))
@@ -493,19 +461,5 @@ function update()
 	end
 	
 	
-	
-	
-	
-	
-	
-	
-	
 end
-
-
-
-
-
-
-
 

@@ -3,8 +3,6 @@ size = {2048, 2048}
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
-defineProperty("deg1", globalPropertyf("sim/flightmodel/position/psi")) -- acf mag heading
-defineProperty("deg2", globalPropertyf("sim/flightmodel/position/hpath")) -- real mag heading
 
 -- controls
 defineProperty("rls_on", globalPropertyi("tu-154/switchers/console/rls_on")) -- power switch
@@ -19,23 +17,6 @@ defineProperty("rls_signs", globalPropertyf("tu-154/switchers/console/rls_signs"
 defineProperty("rls_ready", globalPropertyf("tu-154/lights/small/rls_ready")) -- ready lamp
 defineProperty("rls_weather", globalPropertyf("tu-154/lights/small/rls_weather")) -- weather lamp
 
---[[
-
-tu-154/switchers/console/rls_on
-tu-154/switchers/console/rls_mode
-tu-154/switchers/console/rls_distance
-
-
-defineProperty("rls_power_sw", globalPropertyi("tu-154/xap/An24_rls/rls_power_sw")) -- power switch
-defineProperty("rls_power_cc", globalPropertyf("tu-154/xap/An24_rls/rls_power_cc")) -- power switch
-defineProperty("rls_scan_spd", globalPropertyi("tu-154/xap/An24_rls/rls_scan_spd")) -- power switch
-defineProperty("rls_mode", globalPropertyi("tu-154/xap/An24_rls/rls_mode")) -- power switch
-defineProperty("rls_mode_lamp", globalPropertyi("tu-154/xap/An24_rls/rls_mode_lamp")) -- power switch
-defineProperty("rls_bright", globalPropertyf("tu-154/xap/An24_rls/rls_bright")) -- power switch
-defineProperty("rls_contr", globalPropertyf("tu-154/xap/An24_rls/rls_contr")) -- power switch
-defineProperty("rls_signs", globalPropertyf("tu-154/xap/An24_rls/rls_signs")) -- power switch
---]]
-
 
 -- power
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
@@ -43,7 +24,6 @@ defineProperty("bus36_volt_pts250_1", globalPropertyf("tu-154/elec/bus36_volt_pt
 defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
 
 defineProperty("radar_cc", globalPropertyf("tu-154/radio/radar_cc")) -- current draw from the Groza radar
-
 
 
 -- EFIS controls
@@ -64,8 +44,6 @@ defineProperty("EFIS_fix_on", globalPropertyi("sim/cockpit2/EFIS/EFIS_fix_on"))
 -- SASL3: EFIS_page is an int ARRAY; scalar accessors return nil (see
 -- ext_lights.lua). SASL2 read element 0.
 defineProperty("EFIS_page", globalProperty("sim/cockpit2/EFIS/EFIS_page[0]"))
-defineProperty("EFIS_fail", globalPropertyi("sim/operation/failures/rel_efis_2"))
-
 
 
 -- images
@@ -74,11 +52,6 @@ defineProperty("mask2", loadImage("radar_mask2.png", 0, 0, 256, 256))
 
 defineProperty("scale", loadImage("radar_scale.png", 0, 167, 512, 345))
 
---[[
-defineProperty("needle_1", loadImage("radar_scale.png", 0, 318, 256, 4))
-defineProperty("needle_2", loadImage("radar_scale.png", 0, 308, 256, 4))
-defineProperty("needle_3", loadImage("radar_scale.png", 0, 298, 256, 4))
---]]
 
 defineProperty("scale_1", loadImage("radar_scale_marks.png", 0, 432, 130, 80))
 defineProperty("scale_3", loadImage("radar_scale_marks.png", 144, 356, 250, 156))
@@ -98,7 +71,6 @@ defineProperty("radar_fail", globalPropertyi("tu-154/failures/radar_fail"))
 
 
 -- sim/graphics/misc/kill_map_fms_line
-
 
 
 local notLoaded = true
@@ -189,7 +161,6 @@ function update()
 	local current = 0  -- current consumption
 	
 	
-	
 	power_el = get(bus27_volt_right) > 13 and (get(bus36_volt_pts250_1) > 30 or get(bus115_3_volt) > 110) and get(radar_fail) == 0
 	
 	-- power couner
@@ -211,8 +182,6 @@ function update()
 	end
 	
 	
-
-	
 	power = power_counter > 180
 	
 
@@ -229,10 +198,6 @@ function update()
 		mask_angle = -25
 		first_mask = false
 	
-	--[[elseif power and mode == 2 then -- slip angle mode
-		current = current + 3
-		slip_angle = get(deg2) - get(deg1)
-		needle_show = math.random(1, 3)--]]
 	end
 
 
@@ -256,36 +221,21 @@ function update()
 	end
 	
 	current = current + brightness * 0.5 + sign_brt * 0.5
-	--set(rls_power_cc, current)
-	
 	
 	
 	set(EFIS_weather_alpha, 1)
 	
 	 -- clear the stock FMS. no GPS is fitted to the aircraft
-	--local i = 0 
-	--[[
-	if countFMSEntries() > 0 then 
-		for i = 1, countFMSEntries() do 
-			clearFMSEntry(i) 
-		end 
-	end
-	--]]
 	
 	set(radar_cc, bool2int(power_el) * 0.2 + bool2int(power) * 0.1 + bool2int(mode > 0) * 0.7)
 	
 	
-
-	
 end
-
-
 
 
 components = {
 	
 
-	
 	-- brightness of signs background
 	rectangle_ctr {
 		position = {69, 1534, 484, 345},
@@ -298,7 +248,6 @@ components = {
 	},
 
 
-	
 	-- scales for range 3 - 27km
 	-- scale 25 KM
 	textureLit {
@@ -342,8 +291,6 @@ components = {
 	},
 	
 
-	
-
 	-- first mask
 	needleLit {
 		position = {32, 1320, 560, 560},
@@ -369,7 +316,6 @@ components = {
 	},
 	
 	
-	
 	-- black mask to divide modes
 	rectangle {
 		position = {69, 1534, 484, 345},
@@ -380,30 +326,6 @@ components = {
 	},
 
 	
---[[
-	-- slip beam
-	needleLit {
-		position = {-10, -10, 276, 276},
-		image = function()
-			local a
-			if needle_show == 1 then a = get(needle_1)
-			elseif needle_show == 2 then a = get(needle_2)
-			else a = get(needle_3) end
-			return a
-		end,
-		
-		angle = function()
-			return slip_angle - 90
-		end,
-		visible = function()
-			return mode == 2
-		end,
-	},	
---]]
-
-	
-
-
 	-- contrast
 	rectangle_ctr {
 		position = {69, 1532, 485, 347},
@@ -414,8 +336,6 @@ components = {
 			return math.max((0.5 + brightness/2 - contrast * 2) / 2, 0.1 * bool2int(power))
 		end,
 	},
-
-
 
 
 	-- scale LIT

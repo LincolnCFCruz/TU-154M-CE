@@ -7,7 +7,6 @@ defineProperty("audio_selection_nav1", globalPropertyi("sim/cockpit2/radios/actu
 defineProperty("audio_selection_nav2", globalPropertyi("sim/cockpit2/radios/actuators/audio_selection_nav2"))
 defineProperty("audio_selection_adf1", globalPropertyi("sim/cockpit2/radios/actuators/audio_selection_adf1"))
 defineProperty("audio_selection_adf2", globalPropertyi("sim/cockpit2/radios/actuators/audio_selection_adf2"))
---defineProperty("audio_dme_enabled", globalPropertyi("sim/cockpit2/radios/actuators/audio_dme_enabled"))
 
 defineProperty("com1_right_is_selected", globalPropertyi("sim/cockpit2/radios/actuators/com1_right_is_selected"))
 
@@ -15,7 +14,6 @@ defineProperty("VHF2Freq", globalPropertyf("sim/cockpit2/radios/actuators/com2_f
 defineProperty("VHF1Freq", globalPropertyf("sim/cockpit2/radios/actuators/com1_frequency_hz"))  -- set the frequency
 
 defineProperty("spu_power_sw", globalPropertyi("tu-154/switchers/spu_1_power"))
-defineProperty("spu_mode", globalPropertyi("tu-154/switchers/spu_1_mode"))
 defineProperty("spu_source", globalPropertyi("tu-154/switchers/spu_1_source"))
 defineProperty("bus27_L", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_R", globalPropertyf("tu-154/elec/bus27_volt_right"))
@@ -29,7 +27,6 @@ defineProperty("ark_mode_2", globalPropertyi("tu-154/switchers/ovhd/ark_2_mode")
 
 defineProperty("com1_power", globalPropertyi("sim/cockpit2/radios/actuators/com1_power"))
 defineProperty("com2_power", globalPropertyi("sim/cockpit2/radios/actuators/com2_power"))
-
 
 
 local switch_sound = loadSample('sounds/metal_switch.wav')
@@ -116,6 +113,4 @@ function update()
 
 
 end
-
-
 

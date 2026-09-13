@@ -1,4 +1,3 @@
---include("corr_tbl.lua")
 size = {1000, 770}
 
 defineProperty("mode_set", globalPropertyi("tu-154/taws/mode_set")) -- screen mode. 0 = off, 1 = terrain map, 2 = side view, 3 = clock, 4 = power-up sequence
@@ -19,10 +18,8 @@ defineProperty("course_fly", globalPropertyf("sim/flightmodel/position/hpath")) 
 defineProperty("elevation", globalPropertyf("sim/flightmodel/position/elevation"))
 
 
-
 defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[0]"))  -- deploy of front gear
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
-defineProperty("gear3_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[2]"))  -- deploy of left gear
 
 -- time
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
@@ -39,10 +36,6 @@ if low_qlty then
 	rows = 30
 end
 
-
-
--- colors of heights: 1 - black, 2 - dark green, 3 - light green, 4 - yellow, 5 - orange, 6 - red, 7 - blue, 8 - magenta
---local colorTable = {[1]={0.1,0.1,0.1}, [2]={0,0.5,0}, [3]={0,1,0}, [4]={1,1,0}, [5]={1,0.5,0}, [6]={1,0,0}, [7]={0,0,1}, [8] = {1,0,1}}
 
 -- declare and fill drawed table of heights coded in color
 local heightTable = {}
@@ -120,16 +113,7 @@ function update()
 	elseif dist == 6 then distance = 640 range_text = "640км"
 	end
 	
-		--[[
-		-- copy temp table to draw table and reset temp one
-		for i = 1, rows, 1 do
-			heightTable[i] = tempHeightTable[i]
-			tempHeightTable[i] = -660 + i * 1320 / 80
-		end		
-		--]]
 		
-	
-	
 	-- scan terrain and fill height table
 	if screen_work and time_counter > 1 then
 		
@@ -152,16 +136,12 @@ function update()
 		height = distance * 1000
 		
 		
-		
 		for row = 1, rows, 1 do
 			local p_x = plane_x + dir_x * height * row/rows
 			local p_z = plane_z + dir_z * height * row/rows
 			prob, locationX, locationY, locationZ, normalX, normalY, normalZ, velocityX, velocityY, vlocityZ, isWet = probeTerrain(p_x, plane_y, p_z)
 								
-			--local probe_dist = math.sqrt((p_x)^2 + (p_z)^2) / 1000
-			--local correct = interpolate(correct_tbl, probe_dist) - 130
 			
-			--heightTable[row] = locationY + correct - plane_y
 			-- [FIX-PROBE] probeTerrain returns nil location values outside loaded
 			-- scenery (same guard as scr_map_top.lua and taws_warn_logic.lua,
 			-- which both already have this check with the identical comment).
@@ -178,9 +158,6 @@ function update()
 		local elev_now = get(elevation)
 		vvi = (elev_now - elev_last)
 		elev_last = elev_now
-		
-		
-		
 		
 		
 		time_counter = 0
@@ -229,8 +206,6 @@ components = {
 	},
 	
 	
-	
-	
 	-- scale for side view
 	textureLit {
 		position = {0, 0, size[1], size[2]},
@@ -253,24 +228,5 @@ components = {
 		end,
 	},
 
-	--[[
-	-- brightness controll
-	rectangle_ctr {
-		R = 0,
-		G = 0,
-		B = 0,
-		A = function()
-			return 1 - brightness
-		end, -- controll via alpha
-		position_x = 0,
-		position_y = 0,
-		width = size[1],
-		height = size[2],
-		visible = function()
-			return screen_work
-		end,
-	},
-	--]]
 }
-
 

@@ -19,9 +19,6 @@ defineProperty("pitot_heat_2", globalPropertyi("tu-154/switchers/ovhd/pitot_heat
 defineProperty("pitot_heat_3", globalPropertyi("tu-154/switchers/ovhd/pitot_heat_3")) -- ABSU pitot heating
 
 
-
-
-
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
@@ -32,17 +29,12 @@ defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
 -- sources
 defineProperty("window_ice", globalPropertyf("sim/flightmodel/failures/window_ice")) -- ratio of icing on the windshield
 
---defineProperty("hot_tube_t", globalPropertyf("tu-154/bleed/hot_tube_t")) -- hot air temperature in the duct
 
 defineProperty("rpm_high_1", globalPropertyf("tu-154/gauges/engine/rpm_high_1")) -- engine 1 high-pressure spool rpm
 defineProperty("rpm_high_2", globalPropertyf("tu-154/gauges/engine/rpm_high_2")) -- engine 2 high-pressure spool rpm
 defineProperty("rpm_high_3", globalPropertyf("tu-154/gauges/engine/rpm_high_3")) -- engine 3 high-pressure spool rpm
 
---defineProperty("eng_airvalve_1", globalPropertyf("tu-154/bleed/eng_airvalve_1")) -- opening of the engine bleed air
---defineProperty("eng_airvalve_2", globalPropertyf("tu-154/bleed/eng_airvalve_2")) -- opening of the engine bleed air
---defineProperty("eng_airvalve_3", globalPropertyf("tu-154/bleed/eng_airvalve_3")) -- opening of the engine bleed air
 
---defineProperty("termo", globalPropertyf("sim/weather/temperature_ambient_c")) -- air temperature xp11
 defineProperty("termo", globalPropertyf("sim/weather/aircraft/temperature_ambient_deg_c")) -- air temperature xp12
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
@@ -113,7 +105,6 @@ defineProperty("eng_heat_open_2", globalPropertyi("tu-154/antiice/eng_heat_open_
 defineProperty("eng_heat_open_3", globalPropertyi("tu-154/antiice/eng_heat_open_3")) -- engine heating flap open
 
 
-
 -- gauges
 defineProperty("wing_heat_t", globalPropertyf("tu-154/antiice/wing_heat_t")) -- wing anti-ice temperature
 defineProperty("stab_heat_t", globalPropertyf("tu-154/antiice/stab_heat_t")) -- stabiliser anti-ice temperature
@@ -138,11 +129,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
-
-
-
 local ice_reseted = false
 local ice_ratio_last = get(window_ice)
 local ice_speed = 0
@@ -155,12 +141,6 @@ local ice_on_wings_R = 0
 local ice_on_slats_L = 0
 local ice_on_slats_R = 0
 
---[[
-set(window_ice_1, 1)
-set(window_ice_2, 1)
-set(window_ice_3, 1)
-set(window_ice_4, 1)
---]]
 
 function update()
 	
@@ -204,7 +184,6 @@ if MASTER then
 	set(ice_speed_out, ice_speed)
 
 
-	
 	-- SOI logic
 	ice_timer = ice_timer + passed
 	local ice_test = get(soi21_test) == 1
@@ -219,16 +198,6 @@ if MASTER then
 		
 		set(ice_detect_ok, bool2int(ice_work_timer > 30 and ice_work_timer < 55 and get(rio_fail) ~= 1))
 		
-		--[[
-		if ice_test then 
-			ice_work_timer = ice_work_timer + passed
-			if ice_work_timer > 1 then set(ice_detect_ok, bool2int(get(rio_fail) ~= 1)) else set(ice_detect_ok, 0) end
-		else
-			ice_work_timer = 0
-			set(ice_detect_ok, 0)
-		end
-		--]]
-		
 		
 		if ice_timer < 8 then set(ice_detected, 1) else set(ice_detected, 0) end
 	else
@@ -237,7 +206,6 @@ if MASTER then
 		
 		set(ice_detect_ok, 0)
 		set(ice_detected, 0)
-		--set(ice_window_heat_on, 0)
 	end
 
 	set(soi_ice_timer, ice_timer)
@@ -265,7 +233,6 @@ if MASTER then
 	set(window_heat_rate_3, window_heat_spd_3)
 	
 
-	
 	local win_ice_1 = get(window_ice_1) + ((ice_speed - window_heat_spd_1) - math.max(out_term * 1, 0)) * passed
 	if win_ice_1 < 0 then win_ice_1 = 0
 	elseif win_ice_1 > 1 then win_ice_1 = 1 end
@@ -285,7 +252,6 @@ if MASTER then
 	if win_ice_4 < 0 then win_ice_4 = 0
 	elseif win_ice_4 > 1 then win_ice_4 = 1 end
 	set(window_ice_4, win_ice_4)
-
 
 
 	set(ai_115_1_cc, window_heat_spd_1 * 250)
@@ -346,8 +312,6 @@ end
 	set(ai_115_2_cc, slat_heat * 70)
 	
 
-	
-	
 	-- heat tubes thermo
 	local wing_tube = get(wing_heat_t)
 	
@@ -363,7 +327,6 @@ end
 	
 	set(stab_heat_t, stab_tube)	
 	
-	--print(wing_tube, "  ", stab_tube)
 	
 	-- ice on wings and slats
 	ice_on_wings_L = ice_on_wings_L + (ice_speed * math.random() * 2 - math.max(0, wing_tube) * 0.0005) * passed
@@ -393,11 +356,7 @@ end
 	end
 
 
-
-	
-	
 	set(ice_window_heat_on, 0)
 
 end
-
 

@@ -4,15 +4,10 @@ defineProperty("mode_set", globalPropertyi("tu-154/taws/mode_set")) -- screen mo
 defineProperty("brt_handle", globalPropertyf("tu-154/rotary/srpbz/brightness")) -- brightness knob
 defineProperty("distance_set", globalPropertyi("tu-154/taws/distance_set")) -- map drawing range, km. 0 = 10, 1 = 20, 2 = 40, 3 = 80, 4 = 160, 5 = 320, 6 = 640
 
-defineProperty("course_fly", globalPropertyf("sim/flightmodel/position/hpath")) -- course, where aircraft actually flies
 
 defineProperty("latitude", globalPropertyf("sim/flightmodel/position/latitude")) -- degrees	The latitude of the aircraft
 defineProperty("longitude", globalPropertyf("sim/flightmodel/position/longitude")) -- degrees The longitude of the aircraft
-defineProperty("speed", globalPropertyf("sim/flightmodel/position/groundspeed"))
 
-
-
-defineProperty("sim_time", globalPropertyf("sim/time/zulu_time_sec"))  -- zulu time
 
 
 
@@ -69,8 +64,6 @@ function update()
 	
 		if current_mode == 0 then time_counter = 0 end -- reset counter when power off
 		
-		-- test
-		--time_counter = 50
 		
 		if time_counter < 1 then 
 			sequence_phase = 0 -- power off
@@ -96,15 +89,12 @@ function update()
 		counter_text = "0  1  "..count
 		
 		
-		--print(sequence_phase)
-	
 	end
 	
 	
 	last_mode = current_mode
 
 end
-
 
 
 components = {
@@ -276,9 +266,6 @@ components = {
 			return screen_work
 		end,
 	},
-
-
-
 
 
 }

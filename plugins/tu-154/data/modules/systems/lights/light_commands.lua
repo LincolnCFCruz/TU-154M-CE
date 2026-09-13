@@ -55,13 +55,10 @@ local function setup_toggle_command(off_value, on_value, cmd_name, property_ref)
 end
 
 
-
 -- setup_command(<value in the inactive state (button released)>, <value in the active state (button pressed)>, <command name>, <dataref>)
 setup_toggle_command(0, 1, "sim/lights/nav_lights_toggle",   globalPropertyi("tu-154/lights/nav_lights_set"))   -- NAV lights
 setup_toggle_command(0, 1, "sim/lights/strobe_lights_toggle",   globalPropertyi("tu-154/lights/strobe_set"))   -- Red becaon lights
 setup_toggle_command(0, 1, "sim/lights/spot_lights_toggle",   globalPropertyi("tu-154/lights/tail_light_set"))   -- tail logo
-
-
 
 
 local landing_light_open = findCommand("sim/lights/landing_lights_toggle")
@@ -116,10 +113,6 @@ end
 registerCommandHandler(landing_light_down, 0, landing_light_down_hnd)
 
 
-
-
---setup_toggle_command(0, 1, "sasl/test_command",   globalPropertyi("tu-154/lights/nav_lights_set"))   -- NAV lights
-
 --[[
 sim/lights/nav_lights_toggle                       Nav lights toggle.
 sim/lights/strobe_lights_toggle                    Strobe lights toggle.
@@ -129,34 +122,5 @@ sim/lights/landing_lights_on                       Landing lights on.
 sim/lights/landing_lights_off                      Landing lights off.
 
 
-
 --]]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

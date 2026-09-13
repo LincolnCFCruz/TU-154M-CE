@@ -1,5 +1,3 @@
--- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
--- defineProperty("absu_debug2", globalPropertyf("tu-154/controlls/absu_debug2")) 
 
 
 -- controls
@@ -25,8 +23,6 @@ defineProperty("int_yaw_trim", globalPropertyf("tu-154/trimmers/int_yaw_trim")) 
 
 defineProperty("absu_roll_mode", globalPropertyi("tu-154/gauges/console/absu_roll_mode")) -- ABSU operating mode. 0 = off, 1 = control-wheel steering, 2 = stabilisation
 defineProperty("absu_pitch_mode", globalPropertyi("tu-154/gauges/console/absu_pitch_mode")) -- ABSU operating mode. 0 = off, 1 = control-wheel steering, 2 = stabilisation
-
-
 
 
 -- power
@@ -149,8 +145,6 @@ end
 	elseif roll_trim_pos < -0.24 then roll_trim_pos = -0.24 end
     
     
-    
-    
 	local dist = -get(pilot_Z) + 9 
     
 	setSampleGain(trimm_sound, 5*math.max(dist*3 - 25, 0))
@@ -208,7 +202,6 @@ end
 	end
     
     
-
 if MASTER then	
 	set(int_yaw_trim, yaw_trim_pos)
 end
@@ -221,7 +214,6 @@ end
 
 
 end
-
 
 
 -- turn pitch trimmer UP
@@ -263,8 +255,6 @@ end
 registerCommandHandler(pitch_TO_comm, 0, pitch_TO_hnd)
 
 
-
-
 -- turn roll trimmer LEFT
 roll_LEFT_comm = findCommand("sim/flight_controls/aileron_trim_left")
 function roll_LEFT_hnd(phase)  -- for all commands phase equals: 0 on press; 1 while holding; 2 on release
@@ -298,8 +288,6 @@ function roll_CTR_hnd(phase)  -- for all commands phase equals: 0 on press; 1 wh
 return 0
 end
 registerCommandHandler(roll_CTR_comm, 0, roll_CTR_hnd)
-
-
 
 
 -- turn yaw trimmer LEFT

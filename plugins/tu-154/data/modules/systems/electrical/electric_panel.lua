@@ -184,7 +184,6 @@ local function reset_switchers()
 end
 
 
-
 local k1 = 50 -- needle acceleration koef
 local k2 = 200 -- needle friction coef
 local vlim = 20 -- needle speed limit
@@ -279,7 +278,6 @@ local function voltmetr115()
 	set(bus115_freq, freq115_actual)
 	
 	
-
 end
 
 -- convert amps to angle
@@ -340,7 +338,6 @@ local function ampermeter115()
 	set(bus115_amp, amp115_actual)
 	
 
-
 end
 
 -- bus 36 gauge
@@ -398,8 +395,6 @@ local function voltmeter36()
 end
 				  
 				  
-
-
 -- bus 27 gauges
 local volSel_27_last = get(bus27_volt_sel)
 local ampSel_27_1_last = get(bus27_amp1_sel)
@@ -598,7 +593,6 @@ local function swichers_check()
 	bus_con_last = bus_con
 	
 	
-
 end
 
 -- caps
@@ -723,7 +717,6 @@ local sim_start_timer = 0
 
 function update()
 	
-	--print(get(eng1_N1), "  ", get(eng2_N1), "  ", get(eng3_N1))
 	
 	passed = get(frame_time)
 	

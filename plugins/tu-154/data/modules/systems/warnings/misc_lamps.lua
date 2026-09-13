@@ -10,9 +10,6 @@ defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 
-
-
-
 -- lamps
 defineProperty("dh_lamp", globalPropertyf("tu-154/lights/decision_height")) -- decision height H
 defineProperty("to_not_ready", globalPropertyf("tu-154/lights/to_not_ready")) -- not ready for takeoff
@@ -39,14 +36,9 @@ defineProperty("sns_lamp", globalPropertyf("tu-154/lights/sns_lamp")) -- SNS
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 
 -- DH
-defineProperty("dh_set_L", globalPropertyf("tu-154/gauges/alt/radioalt_dh_left"))  -- DH angle
-defineProperty("rv_angle_L", globalPropertyf("tu-154/gauges/alt/radioalt_needle_left"))  -- RV needle
-defineProperty("dh_set_R", globalPropertyf("tu-154/gauges/alt/radioalt_dh_right"))  -- DH angle
-defineProperty("rv_angle_R", globalPropertyf("tu-154/gauges/alt/radioalt_needle_right"))  -- RV needle
 
 defineProperty("rv5_dh_signal_left", globalPropertyi("tu-154/misc/rv5_dh_signal_left"))
 defineProperty("rv5_dh_signal_right", globalPropertyi("tu-154/misc/rv5_dh_signal_right"))
-
 
 
 -- TakeOff ready
@@ -103,8 +95,6 @@ defineProperty("pitch_main_mode", globalPropertyi("tu-154/absu/pitch_main_mode")
 
 
 -- CourseMP
-defineProperty("nav_cs_flag", globalPropertyi("tu-154/radio/nav1_cs_flag"))
-defineProperty("nav_gs_flag", globalPropertyi("tu-154/radio/nav1_gs_flag"))
 
 defineProperty("nav1_pow_cc", globalPropertyf("tu-154/radio/nav1_pow_cc")) -- Kurs-MP current draw
 defineProperty("nav2_pow_cc", globalPropertyf("tu-154/radio/nav2_pow_cc")) -- Kurs-MP current draw
@@ -113,12 +103,6 @@ defineProperty("nav2_fail", globalPropertyi("tu-154/failures/nav2_fail"))
 
 -- ready
 defineProperty("to_ready", globalPropertyi("tu-154/checklist/to_ready")) -- lamp lit
-
-
-
-
-
-
 
 
 local button_sound = loadSample('sounds/plastic_btn.wav')
@@ -154,7 +138,6 @@ function update()
 	test_btn = test_btn * math.max((get(bus27_volt_right) - 10) / 18.5, 0)
 	
 	
-	
 	local day_night = 1 - get(day_night_set) * 0.25
 	local lamps_brt = math.max((math.max(get(bus27_volt_left), get(bus27_volt_right)) - 10) / 18.5, 0) * day_night
 	
@@ -162,8 +145,6 @@ function update()
 	-- DH lamp
 	DH = math.max(get(rv5_dh_signal_left), get(rv5_dh_signal_right))
 	
-	
-	--if dh_L < 1 and dh_R < 1 then DH = 0 end
 	
 	local dh_lamp_brt = math.max(DH * lamps_brt, test_btn)
 	set(dh_lamp, dh_lamp_brt)
@@ -263,7 +244,6 @@ function update()
 	end	
 	
 	
-	
 	local wpt_lamp_brt = math.max(WPT_lit * lamps_brt, test_btn)
 	set(wpt_lamp, wpt_lamp_brt)
 	
@@ -285,17 +265,6 @@ function update()
 	set(no_reserve_g, no_reserve_g_brt)
 	
 	
-	
-	--[[
-	local no_reserve_c_brt = math.max(get(nav_cs_flag) * bool2int(get(roll_main_mode) > 0 and get(pitch_main_mode) > 0 and get(absu_landing_on) == 1) * lamps_brt, test_btn)
-	set(no_reserve_c, no_reserve_c_brt)
-	
-	local no_reserve_g_brt = math.max(get(nav_gs_flag) * bool2int(get(roll_main_mode) > 0 and get(pitch_main_mode) > 0 and get(absu_landing_on) == 1) * lamps_brt, test_btn)
-	set(no_reserve_g, no_reserve_g_brt)
-	--]]
-	
-	
-	
 	--------------------------
 	-- fake lamps --
 	--------------------------
@@ -309,10 +278,5 @@ function update()
 	local stuard_call_brt = math.max(0 * lamps_brt, test_btn)
 	set(stuard_call, stuard_call_brt)
 	
-	--local sns_lamp_brt = math.max(0 * lamps_brt, test_btn)
-	--set(sns_lamp, sns_lamp_brt)
 	
-	
-	
-
 end

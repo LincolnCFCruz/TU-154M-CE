@@ -138,13 +138,10 @@ local function sw_reset()
 		set(pkp_left_cap, 1)
 		set(pkp_right_cap, 1)
 		set(mgv_contr_cap, 1)
-		--set(emerg_light_cap, 1)
 		set(arm406, 0)
 	end	
 	notLoaded = false
 end
-
-
 
 
 local var_left_last = get(var_left)
@@ -197,7 +194,6 @@ local vent_3_last = get(vent_3)
 local arm406_last = get(arm406)
 local ushdb_mode_1_last = get(ushdb_mode_1)
 local ushdb_mode_2_last = get(ushdb_mode_2)
-
 
 
 local function switchers()
@@ -273,7 +269,6 @@ local function switchers()
 	if changes ~= 0 then playSample(switcher_sound, false) end
 	
 	
-	
 	var_left_last = var_left_sw
 	var_right_last = var_right_sw
 	auasp_on_last = auasp_on_sw
@@ -326,7 +321,6 @@ local function switchers()
 	ushdb_mode_2_last = ushdb_mode_2_sw
 	
 	
-	
 end
 
 
@@ -374,7 +368,6 @@ local function caps ()
 end
 
 
-
 local tks_signal_off_last = get(tks_signal_off)
 local svs_contr_last = get(svs_contr)
 
@@ -393,15 +386,6 @@ local function buttons()
 end
 
 
-
-
-
-
-
-
-
-
-
 function update()
 	
 	local passed = get(frame_time)
@@ -413,15 +397,10 @@ function update()
 	end
 	
 	
-	
 	switchers()
 	caps ()
 	buttons()
 
 
-
-
 end
-
-
 

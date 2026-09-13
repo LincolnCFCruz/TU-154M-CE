@@ -42,8 +42,6 @@ defineProperty("map_angle", globalPropertyf("tu-154/gauges/console/map_angle")) 
 
 defineProperty("obs_1", globalPropertyf("sim/cockpit2/radios/actuators/nav1_obs_deg_mag_pilot")) -- OBS course
 defineProperty("obs_2", globalPropertyf("sim/cockpit2/radios/actuators/nav2_obs_deg_mag_pilot")) -- OBS course
-defineProperty("nav_course_1", globalPropertyf("tu-154/rotary/console/nav_1_course")) -- heading set knob
-defineProperty("nav_course_2", globalPropertyf("tu-154/rotary/console/nav_2_course")) -- heading set knob
 
 -- lamps
 defineProperty("nvu_on_lit", globalPropertyf("tu-154/lights/small/nvu_on")) -- NVU healthy
@@ -139,6 +137,22 @@ function update()
 end
 
 
+
+-- a two-position switch toggling one 0/1 dataref
+local function toggle_switch(pos, prop, img_on, img_off)
+	return switch_lit {
+		position = pos,
+		btnOn = img_on,
+		btnOff = img_off,
+		state = function()
+			return get(prop) == 1
+		end,
+		onMouseDown = function()
+			set(prop, 1 - get(prop))
+			return true
+		end,
+	}
+end
 
 components = {
 
@@ -1232,46 +1246,13 @@ components = {
 	-------------------
 	
 	-- nvu_power_on
-	switch_lit {
-		position = {486, 193, 16, 52},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(nvu_power_on) == 1
-		end,
-		onMouseDown = function()
-			set(nvu_power_on, 1 - get(nvu_power_on))
-			return true
-		end,
-	},
+	toggle_switch({486, 193, 16, 52}, nvu_power_on, get(sw_up_img), get(sw_dn_img)),
 	
 	-- nvu_calc_on
-	switch_lit {
-		position = {531, 193, 16, 52},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(nvu_calc_on) == 1
-		end,
-		onMouseDown = function()
-			set(nvu_calc_on, 1 - get(nvu_calc_on))
-			return true
-		end,
-	},	
+	toggle_switch({531, 193, 16, 52}, nvu_calc_on, get(sw_up_img), get(sw_dn_img)),	
 	
 	-- nvu_corr_on
-	switch_lit {
-		position = {578, 193, 16, 52},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(nvu_corr_on) == 1
-		end,
-		onMouseDown = function()
-			set(nvu_corr_on, 1 - get(nvu_corr_on))
-			return true
-		end,
-	},	
+	toggle_switch({578, 193, 16, 52}, nvu_corr_on, get(sw_up_img), get(sw_dn_img)),	
 	
 	--------------------
 	-- buttons --

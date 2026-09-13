@@ -1,7 +1,6 @@
 size = {205, 305}
 
 defineProperty("bg", loadImage("UTurn.png", 0, 207, 205, 305))
---defineProperty("selection", loadImage("UConvert.png", 5, 177, 48, 20))
 defineProperty("digitsImage", loadImage("UPhone.png", 473, 232, 14, 280))
 
 local course1 = 0
@@ -98,7 +97,6 @@ components = {
 		digits = 3;
 		allowNonRound = true;
 		showLeadingZeros = false;
-		--		fractional = 1;
 		value = function()
 		return course1
 		end;
@@ -172,7 +170,6 @@ components = {
 		digits = 3;
 		allowNonRound = true;
 		showLeadingZeros = false;
-		--		fractional = 1;
 		value = function()
 		return course2
 		end;
@@ -246,7 +243,6 @@ components = {
 		digits = 3;
 		allowNonRound = true;
 		showLeadingZeros = false;
-		--		fractional = 1;
 		value = function()
 		return bank
 
@@ -362,7 +358,6 @@ components = {
 		digits = 5;
 		allowNonRound = true;
 		showLeadingZeros = false;
-		--		fractional = 1;
 		value = function()
 		return start
 		end;
@@ -374,7 +369,6 @@ components = {
 		allowNonRound = true;
 		showLeadingZeros = false;
 		showSign = true;
-		--		fractional = 1;
 		value = function()
 		return nas_c
 		end;
@@ -386,7 +380,6 @@ components = {
 		allowNonRound = true;
 		showLeadingZeros = false;
 		showSign = true;
-		--		fractional = 1;
 		value = function()
 		return nas_b
 		end;

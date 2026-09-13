@@ -17,7 +17,6 @@ defineProperty("fail_right", globalPropertyi("tu-154/tks/fail_right")) -- failur
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
-defineProperty("mgv_flag", globalPropertyf("tu-154/gyro/mgv_contr_flag")) -- MGV failure
 defineProperty("mgv_contr_fail", globalPropertyi("tu-154/bkk/mgv_contr_fail")) -- signal from the BKK: control MGV failure
 
 -- lamps
@@ -70,8 +69,6 @@ local function lamps()
 	
 	local lamps_brt = math.max((math.max(get(bus27_volt_left), get(bus27_volt_right)) - 10) / 18.5, 0)
 	
-	-- lamp main
-	--local mgv = get(mgv_contr_fail) == 1 or get(mgv_flag) == 1
 	
 	local fail_main = bool2int(get(fail_left) == 1) --bool2int(get(fail_left) == 1 or (get(stabil_ga_main) == 1 and mgv))
 	
@@ -96,11 +93,7 @@ local function lamps()
 	set(ga_reserve_fail, ga_reserve_fail_brt)
 	
 	
-	
 end
-
-
-
 
 
 function update()
@@ -108,7 +101,6 @@ function update()
 	switchers_check()
 	
 	lamps()	
-	
 	
 	
 end

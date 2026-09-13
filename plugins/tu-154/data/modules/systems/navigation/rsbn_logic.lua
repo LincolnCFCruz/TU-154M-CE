@@ -1,6 +1,5 @@
 
 
-
 -- controls
 defineProperty("rsbn_control_strobe", globalPropertyi("tu-154/buttons/ovhd/rsbn_control_strobe")) -- RSBN strobe test
 defineProperty("rsbn_control_azimuth", globalPropertyi("tu-154/buttons/ovhd/rsbn_control_azimuth")) -- RSBN azimuth zero test
@@ -28,8 +27,6 @@ defineProperty("rsbn_cc", globalPropertyf("tu-154/radio/rsbn_cc")) -- current dr
 defineProperty("rsbn_fail", globalPropertyi("tu-154/failures/rsbn_fail")) -- RSBN failure
 
 
-
-
 -- results
 defineProperty("distance", globalPropertyf("tu-154/rsbn/distance")) -- slant range from the beacon
 defineProperty("azimuth", globalPropertyf("tu-154/rsbn/azimuth")) -- azimuth from the beacon
@@ -38,46 +35,12 @@ defineProperty("azimuth", globalPropertyf("tu-154/rsbn/azimuth")) -- azimuth fro
 include("nav_funcs.lua")
 
 
-
 local nav_table = {}
 local work_table = {}
 local channel_set = 0
 
 local table_read_timer = 0
 
---[[
-function calc_range(lat1, lon1, lat2, lon2)
-	local d = math.acos(math.sin(math.rad(lat1)) * math.sin(math.rad(lat2)) + math.cos(math.rad(lat1)) * math.cos(math.rad(lat2)) * math.cos(math.rad(lon1-lon2)))
-	return math.deg(d) * 60, d -- in nm and radians
-end
-
-
-function calc_true_course(lat1, lon1, lat2, lon2, dist)
-	-- dist must be in miles
-	local tc = 0
-	local foo, d = 0, 0
-	
-	if dist == nil then 
-		foo, d = calc_range(lat1, lon1, lat2, lon2) 
-	else d = math.rad(dist / 60) 
-	end
-	
-	if d == 0 then return 0 end
-	
-	--if d <= 0.00001 and d >= 0.00001 then return 0 end
-	
-	if lat1 > 89.9999 then tc = math.pi
-	elseif lat1 < -89.9999 then tc = 0
-	elseif math.sin(math.rad(lon2-lon1)) > 0 then
-		tc = math.acos((math.sin(math.rad(lat2)) - math.sin(math.rad(lat1)) * math.cos(d)) / (math.sin(d) * math.cos(math.rad(lat1))))
-	else
-		tc = 2 * math.pi - math.acos((math.sin(math.rad(lat2)) - math.sin(math.rad(lat1)) * math.cos(d)) / (math.sin(d) * math.cos(math.rad(lat1))))  
-	end
-	return math.deg(tc) -- return degrees
-	-- need to add cases when lat1 and lat2 are at different sides from 180/-180 line
-end
-
---]]
 
 function read_nav_dat()
 	-- RSBN beacon database. Lives with the plugin, not at the aircraft root:
@@ -89,7 +52,6 @@ function read_nav_dat()
 	
 	local file = io.open(file_name, "r")
 	
-	--print(panelDir, file_name)
 	
 	if file then
 		nav_table = {}
@@ -128,7 +90,6 @@ function read_nav_dat()
 				
 				local elev = tonumber(string.sub(line, a))
 				
-				--print(channel, name_full, name_short, freq, lat, long, elev)
 				
 				table.insert(nav_table, {["chan"] = channel, ["lat"] = lat, ["lon"] = long, ["elev"] = elev, ["icao"] = code, ["name"] = name})
 				
@@ -142,12 +103,6 @@ function read_nav_dat()
 	else print("can't read rsbn.dat")
 	end
 	
-	--[[
-	print("RSBN Nav table saved like this:")
-	for k, m in pairs (nav_table) do
-		print (m["name"].." | ".. m["chan"].." | ".. m["lat"].." | ".. m["lon"].." | "..  m["elev"].." | "..  m["icao"])
-	end
-	--]]
 end
 
 read_nav_dat() -- read the nav base once
@@ -164,11 +119,6 @@ local function chan_select()
 				table.insert(work_table, {["chan"] = m["chan"], ["name"] = m["name"], ["lat"] = m["lat"], ["lon"] = m["lon"], ["elev"] = m["elev"]})
 			end
 		end
-	--[[
-		for k, m in pairs (work_table) do
-			print (m["chan"], m["name"], m["lat"], m["lon"], m["elev"])
-		end
-	--]]
 	end
 	
 	chan_last = channel_set
@@ -209,7 +159,6 @@ local function get_nearest()
 end
 
 
-
 local beacon_dist = 0 -- nm
 local beacon_lat = 0
 local beacon_lon = 0
@@ -233,11 +182,9 @@ function update()
 	if power then chan_select() end -- select beacons with given channel
 	
 	
-	
 	if table_read_timer == 0 and table.maxn(work_table) > 0 and power then -- get parameters of the nearest beacon
 		beacon_dist, beacon_lat, beacon_lon, beacon_elevation, beacon_name = get_nearest()	
 		
-		--if beacon_dist ~= 0 then print(beacon_dist, "  ", beacon_lat, "  ", beacon_lon, "  ", beacon_name) end
 	elseif table.maxn(work_table) == 0 or not power then
 		beacon_dist, beacon_lat, beacon_lon, beacon_elevation, beacon_name = 0, 0, 0, 0, "none"
 	end
@@ -272,13 +219,6 @@ function update()
 	end
 	
 	
-	
-	
-	
-	
-	
-	--print(dist_limit)
-	
 	table_read_timer = table_read_timer + passed
 	
 	if table_read_timer > 1 then table_read_timer = 0 end
@@ -291,13 +231,5 @@ function update()
 	set(azimuth, azimuth_show)
 	
 	
-
-	
-	
-	
-
 end
-
-
-
 

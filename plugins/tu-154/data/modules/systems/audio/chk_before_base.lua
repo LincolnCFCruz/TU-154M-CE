@@ -35,12 +35,6 @@ defineProperty("stab_setting", globalPropertyi("tu-154/controll/stab_setting")) 
 defineProperty("radioalt_dh_left", globalPropertyf("tu-154/gauges/alt/radioalt_dh_left")) -- captain's radio altimeter DH pointer
 
 
-
-
-
-
-
-
 local angle2alt = {
 {-100000, 0},
 {0, 0},
@@ -53,8 +47,6 @@ local angle2alt = {
 }
 
 
-
-
 local checklist_started = false
 local stage = 0
 local stage_status = 0 -- 0 question, 1+ - answers. 1 usually is false.
@@ -63,9 +55,6 @@ local speak_timer = 0
 
 function checklist_8()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 8 then 
@@ -96,7 +85,6 @@ function checklist_8()
 			phrases_tbl[num] = {nav_tbl["checklist_completed"][lang], 2}
 		end -- end checklist
 	end
-	--print(stage)
 	
 	---------------------------------
 	-- question 1. Spoilers --
@@ -138,7 +126,6 @@ function checklist_8()
 	if stage == 1 and stage_status == 10 and speak_timer < 0.1 then set(fishka_1, 1) end
 
 
-
 	---------------------------------
 	-- question 2. Stab setting --
 	---------------------------------
@@ -152,13 +139,6 @@ function checklist_8()
 			stage_status = 1 -- question asked
 			speak_timer = 2 -- set up time before answer
 		end
-		--[[
-		-- false answer
-		if stage_status == 1 and (get(spoilers_mid_left) > 0 or get(spoilers_mid_right) > 0) then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) then
@@ -180,8 +160,6 @@ function checklist_8()
 	
 	-- move fishka 2
 	if stage == 2 and stage_status == 10 and speak_timer < 0.1 then set(fishka_2, 1) end
-
-
 
 
 	---------------------------------
@@ -220,7 +198,6 @@ function checklist_8()
 			phrases_tbl[num+4] = {cpt_tbl["meters"][lang], 1}
 			
 			
-			
 			speak_timer = 5
 			stage_status = 10 -- finish
 		end
@@ -232,10 +209,6 @@ function checklist_8()
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_3, 1) end
 
 
-
-
-
-	
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -244,7 +217,6 @@ function checklist_8()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -257,10 +229,6 @@ function checklist_8()
 	
 	end
 	
-	--print(checklist_started)
-
-
-
 
 end
 

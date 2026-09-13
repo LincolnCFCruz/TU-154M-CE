@@ -1,9 +1,5 @@
 -- Flight-controls override for SmartCopilot sync.
 
--- Sim Datarefs
---defineProperty("yoke_pitch_ratio", globalPropertyf("sim/joystick/yoke_pitch_ratio")) 
---defineProperty("yoke_roll_ratio", globalPropertyf("sim/joystick/yoke_roll_ratio")) 
---defineProperty("yoke_heading_ratio", globalPropertyf("sim/joystick/yoke_heading_ratio")) 
 
 defineProperty("yoke_pitch_ratio", globalPropertyf("sim/cockpit2/controls/yoke_pitch_ratio")) -- pitch position of joytick
 defineProperty("yoke_roll_ratio", globalPropertyf("sim/cockpit2/controls/yoke_roll_ratio")) -- roll position of joystick
@@ -35,18 +31,9 @@ defineProperty("SC_ENGN_thro_0", globalPropertyf("tu-154/SC/engine/ENGN_thro_0")
 defineProperty("SC_ENGN_thro_1", globalPropertyf("tu-154/SC/engine/ENGN_thro_1")) 
 defineProperty("SC_ENGN_thro_2", globalPropertyf("tu-154/SC/engine/ENGN_thro_2")) 
 
-defineProperty("SC_ENGN_propmode_0", globalPropertyf("tu-154/SC/engine/ENGN_propmode_0")) 
-defineProperty("SC_ENGN_propmode_2", globalPropertyf("tu-154/SC/engine/ENGN_propmode_2")) 
 
 defineProperty("SC_tire_steer", globalPropertyf("tu-154/SC/gear/tire_steer_command_deg")) 
 
-defineProperty("SC_l_brake_add", globalPropertyf("tu-154/SC/controls/l_brake_add")) 
-defineProperty("SC_r_brake_add", globalPropertyf("tu-154/SC/controls/r_brake_add")) 
-
-defineProperty("SC_int_brakes_L", globalPropertyf("tu-154/SC/brakes/int_brakes_L")) 
-defineProperty("SC_int_brakes_R", globalPropertyf("tu-154/SC/brakes/int_brakes_R")) 
-
-defineProperty("SC_parkbrake", globalPropertyf("tu-154/SC/controls/parkbrake")) 
 
 
 
@@ -80,7 +67,6 @@ function update()
 	end
 	
 	
-	
 	-- let this client control the acf, if SC plugin gives this ability or no plugin connection at all
 	if has_contr then
 		
@@ -91,24 +77,12 @@ function update()
 		
 		set(SC_tire_steer, get(tire_steer_command_deg))
 		
-		--set(SC_l_brake_add, get(l_brake_add))
-		--set(SC_r_brake_add, get(r_brake_add))
 		
-		--set(SC_int_brakes_L, get(int_brakes_L))
-		--set(SC_int_brakes_R, get(int_brakes_R))
-	
-		--set(SC_parkbrake, get(parkbrake))
 	else
 		
 		set(tire_steer_command_deg, get(SC_tire_steer))
 		
-		--set(l_brake_add, get(SC_l_brake_add))
-		--set(r_brake_add, get(SC_r_brake_add))
 		
-		--set(int_brakes_L, get(SC_int_brakes_L))
-		--set(int_brakes_R, get(SC_int_brakes_R))
-	
-		--set(parkbrake, get(SC_parkbrake))
 	end
 	
 	conr_last = has_contr
@@ -119,8 +93,6 @@ function update()
 		set(SC_ENGN_thro_1, get(ENGN_thro_1))
 		set(SC_ENGN_thro_2, get(ENGN_thro_2))
 		
-		--set(SC_ENGN_propmode_0, get(ENGN_propmode_0))
-		--set(SC_ENGN_propmode_2, get(ENGN_propmode_2))
 		
 	end
 

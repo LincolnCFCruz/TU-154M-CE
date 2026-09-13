@@ -17,8 +17,6 @@ defineProperty("pitch_c", globalPropertyf("tu-154/gyro/mgv_contr_pitch")) -- AGR
 defineProperty("bkk_fail", globalPropertyi("tu-154/failures/bkk_fail"))
 
 
-
-
 -- results
 defineProperty("left_roll_big", globalPropertyi("tu-154/bkk/left_roll_big")) -- signal from the BKK - left bank excessive
 defineProperty("right_roll_big", globalPropertyi("tu-154/bkk/right_roll_big")) -- signal from the BKK - right bank excessive
@@ -41,11 +39,9 @@ defineProperty("ias", globalPropertyf("sim/cockpit2/gauges/indicators/airspeed_k
 defineProperty("radio_alt", globalPropertyf("sim/cockpit2/gauges/indicators/radio_altimeter_height_ft_pilot")) -- altitude in feet
 
 
-
 defineProperty("bkk_pitch", globalPropertyf("tu-154/bkk/bkk_pitch")) -- resulting pitch from the BKK
 defineProperty("bkk_roll", globalPropertyf("tu-154/bkk/bkk_roll")) -- resulting pitch from the BKK
 
---defineProperty("pitch_sub_mode", globalPropertyi("tu-154/absu/pitch_sub_mode")) -- ABSU pitch mode. 0 - off, 1 - stab, 2 - V, 3 - M, 4 - H, 5 - glideslope, 6 - go-around
 defineProperty("absu_landing_on", globalPropertyi("tu-154/switchers/console/absu_landing_on")) -- landing needles
 
 
@@ -127,7 +123,6 @@ function update()
 		pkp_fail_r = bool2int(fail_b or test)
 		mgv_fail = bool2int(fail_c or get(mgv_flag) == 1 or test)
 		bkk_test_ok = bool2int(test)
-		--bkk_fail = bool2int(fail_a) + bool2int(fail_b) + bool2int(fail_c) > 1
 		
 		if test then
 			fail_a = false
@@ -147,9 +142,6 @@ function update()
 	
 	end
 	
-	--print(fail_a, "  ", fail_b, "  ", fail_c)
-	
-	
 	
 	if pkp_fail_l + pkp_fail_r + mgv_fail < 3 then
 		roll_res = (a * (1 - pkp_fail_l) + b * (1 - pkp_fail_r) + c * (1 - mgv_fail)) / ((1 - pkp_fail_l) + (1 - pkp_fail_r) + (1 - mgv_fail))
@@ -160,14 +152,11 @@ function update()
 		
 		pitch_res = (ap * (1 - pkp_fail_l) + bp * (1 - pkp_fail_r) + cp * (1 - mgv_fail)) / ((1 - pkp_fail_l) + (1 - pkp_fail_r) + (1 - mgv_fail))
 		
-		--print(ap, "  ", bp, "  ", cp, "  ", pitch_res)
 	end
 	
---	print(get(pitch_a), "  ", get(pitch_b), "  ", get(pitch_c), "  ", pitch_res)
 	
 	set(bkk_pitch, pitch_res)
 	set(bkk_roll, roll_res)
-	
 	
 	
 	set(left_roll_big, roll_left)
@@ -178,12 +167,10 @@ function update()
 	set(pkp_fail_right, pkp_fail_r)
 	
 	
-	
 	-- set lamps
 	local test_btn = get(test_lamps) * math.max((get(bus27_volt_right) - 10) / 18.5, 0)
 	local day_night = 1 - get(day_night_set) * 0.25
 	local lamps_brt = math.max((math.max(get(bus27_volt_left), get(bus27_volt_right)) - 10) / 18.5, 0) * day_night
-	
 	
 	
 	local roll_left_high_brt = math.max(roll_left * lamps_brt, test_btn)
@@ -201,9 +188,5 @@ function update()
 	set(bkk_ok, bkk_test_ok)
 	
 	
-	
-
 end
-
-
 

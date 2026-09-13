@@ -3,8 +3,6 @@ size = {241, 446}
 defineProperty("bg", loadImage("UPhone.png", 0, 66, 241, 446))
 defineProperty("APPS", loadImage("UPhone.png", 260, 207, 205, 305))
 defineProperty("digitsImage", loadImage("UPhone.png", 493, 232, 14, 280))
---defineProperty("uphone_subpanel", globalPropertyi("tu-154/xap/An24_panels/uphone_subpanel"))
-defineProperty("uphone_subpanel",globalPropertyi("tu-154/panels/show_phone")) -- show the telephone panel
 
 program = 0
 

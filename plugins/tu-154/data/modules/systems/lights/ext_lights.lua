@@ -28,10 +28,8 @@ defineProperty("sim_cargo_2", globalProperty("sim/cockpit2/switches/generic_ligh
 
 
 
-defineProperty("sim_lan_brt", globalProperty("sim/flightmodel2/lights/landing_lights_brightness_ratio[1]")) -- front left landing light
 
 
-defineProperty("sim_landing", globalPropertyi("sim/cockpit/electrical/landing_lights_on")) -- logo light
 
 -- animation
 defineProperty("light_open_left", globalPropertyf("tu-154/anim/light_open_left")) -- light open

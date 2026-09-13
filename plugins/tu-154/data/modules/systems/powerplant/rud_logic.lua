@@ -1,16 +1,6 @@
--- RUD (throttle) logic for the Tu-154M, XP12
--- The lever lag filter that the old "No Delay" edit deleted has been restored -
--- see the virtual_rud_*_act block, which integrates rud_T_tbl / outside_air_temp again.
--- The three idle stops (ground, flight idle MG, configuration stop PMG) are
--- scheduled here as well - see the idle-stop block below the tables.
--- UPDATED for X-Plane 12: the obsolete barometer_sealevel_inhg dataref was replaced
--- A commented-out copy of forward_table used to sit here, marked "FIX prm
--- engine !!!". It was value-for-value identical to the live table further down,
--- so it recorded no alternative and only made the live one ambiguous to search
--- for. Removed; the live table and its sources are below.
-
--- sim/version/xplane_internal_version
-defineProperty("xp_version", globalPropertyi("sim/version/xplane_internal_version"))
+-- Throttle (RUD) logic: lever-to-thrust tables, the lever lag filter
+-- (virtual_rud_*_act) and the three idle stops (ground, flight idle MG,
+-- configuration stop PMG).
 
 -- controls
 defineProperty("tro_comm_1", globalPropertyf("tu-154/SC/engine/ENGN_thro_0")) 
@@ -21,8 +11,6 @@ defineProperty("sim_rud_1", globalProperty("sim/flightmodel/engine/ENGN_thro_use
 defineProperty("sim_rud_2", globalProperty("sim/flightmodel/engine/ENGN_thro_use[1]"))
 defineProperty("sim_rud_3", globalProperty("sim/flightmodel/engine/ENGN_thro_use[2]"))
 
-defineProperty("revers_flap_L", globalProperty("sim/flightmodel2/engines/thrust_reverser_deploy_ratio[0]")) 
-defineProperty("revers_flap_R", globalProperty("sim/flightmodel2/engines/thrust_reverser_deploy_ratio[2]")) 
 
 defineProperty("eng_modL", globalProperty("sim/flightmodel/engine/ENGN_propmode[0]")) 
 defineProperty("eng_modR", globalProperty("sim/flightmodel/engine/ENGN_propmode[2]")) 
@@ -42,9 +30,6 @@ defineProperty("throttle_lock", globalPropertyf("tu-154/controlls/throttle_lock"
 
 defineProperty("msl_alt", globalPropertyf("sim/flightmodel/position/elevation"))  
 
--- CHANGED for XP12: the old sim/weather/barometer_sealevel_inhg (REPLACED) has been replaced
--- with the new sim/weather/region/sealevel_pressure_pas (in Pascals).
--- Conversion: 1 inHg = 3386.389 Pa, so the code below adds a conversion to inHg.
 defineProperty("baro_press_pas", globalPropertyf("sim/weather/region/sealevel_pressure_pas"))  
 
 defineProperty("rud_1_spd", globalPropertyf("tu-154/absu/rud_1_spd")) 
@@ -87,20 +72,10 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1"))
 
 set(override, 1) 
 
-local xp_ver = get(xp_version)
-local IS_XP12 = xp_ver >= 120000
-local XP11 = xp_ver >= 110000 and xp_ver < 120000  -- XP11 only, not XP12
-
-if XP11 then
-	set(sim_rud_1, 0.45)
-	set(sim_rud_2, 0.45)
-	set(sim_rud_3, 0.45)
-else
-	-- the initial value corresponds to idle (0.42 nominal)
-	set(sim_rud_1, 0.38)
-	set(sim_rud_2, 0.38)
-	set(sim_rud_3, 0.38)
-end
+-- the initial value corresponds to idle (0.42 nominal)
+set(sim_rud_1, 0.38)
+set(sim_rud_2, 0.38)
+set(sim_rud_3, 0.38)
 
 -- reference tables
 -- forward_table: throttle position (0-1) -> thrust (0-1)
@@ -332,18 +307,11 @@ function update()
 	local joy_rud_MAX_2, joy_rud_MIN_2 = 1, 0.02
 	local joy_rud_MAX_3, joy_rud_MIN_3 = 1, 0.02
 
-	if XP11 then
-		joy_rud_MIN_1, joy_rud_MIN_2, joy_rud_MIN_3 = 0.175, 0.175, 0.175
-	end
-
-
-	-- Thrust-with-altitude coefficient for the D-30KU-154
-	-- Per Flight Manual Table 8.1.2 (H=11 km M=0.8): takeoff setting, HP 95.5-97.5%
-	-- Thrust at 11 km is roughly 35-40% of the sea level value - XP12 handles it itself
-	-- The coefficient here is only for scaling acf_tmax
-	-- XP11: needs a ~1.07 correction in the cruise
-	-- XP12: the altitude thrust physics is built in, a small ~1.05 correction is enough
-	local height_coef = XP11 and line(alt_blend, 0, 1, 11000, 1.07) or line(alt_blend, 0, 1, 11000, 1.05)
+	-- Thrust-with-altitude coefficient for the D-30KU-154, used only to scale
+	-- acf_tmax. Flight Manual Table 8.1.2 (H=11 km M=0.8): takeoff setting,
+	-- HP 95.5-97.5%. X-Plane models the ~35-40% thrust lapse to 11 km itself,
+	-- so only a small cruise correction is left.
+	local height_coef = line(alt_blend, 0, 1, 11000, 1.05)
 
 	if get(comsta0) == 6 then joy_rud_MAX_1, joy_rud_MIN_1 = 0.05, 0 end
 	if get(comsta1) == 6 then joy_rud_MAX_2, joy_rud_MIN_2 = 0.05, 0 end
@@ -427,15 +395,14 @@ function update()
 	-- to X-Plane at 6 km and 0.665 at 11 km - over half travel, at the idle stop.
 	-- That is why idle thrust barely lapsed with altitude. The 1.1 slope is kept:
 	-- takeoff N2 does rise slightly with height (94.5...96.0 -> 95.5...97.5).
-	-- XP11 is left untouched - it was never re-measured and XP11 lapses harder.
 	-- The offset moves EVERY lever position at altitude, not only idle: at
 	-- 11 km the nominal detent sent 0.954 with 0.35 and sends 0.886 with 0.
 	-- It is read from tu-154/tune/thro_alt_offset so test card T4 can fly both
 	-- against Table 8.1.2 (nominal N2 93.0...95.0 %).
-	local thro_offset = XP11 and 0.525 or get(tune_offset)
-	local thro_high_1 = line(virtual_rud_1_act, 0, thro_offset, 1, XP11 and 1.07 or 1.1)
-	local thro_high_2 = line(virtual_rud_2_act, 0, thro_offset, 1, XP11 and 1.07 or 1.1)
-	local thro_high_3 = line(virtual_rud_3_act, 0, thro_offset, 1, XP11 and 1.07 or 1.1)
+	local thro_offset = get(tune_offset)
+	local thro_high_1 = line(virtual_rud_1_act, 0, thro_offset, 1, 1.1)
+	local thro_high_2 = line(virtual_rud_2_act, 0, thro_offset, 1, 1.1)
+	local thro_high_3 = line(virtual_rud_3_act, 0, thro_offset, 1, 1.1)
 	
 	local thro_1 = line(alt_blend, 0, virtual_rud_1_act, 11000, thro_high_1)
 	local thro_2 = line(alt_blend, 0, virtual_rud_2_act, 11000, thro_high_2)

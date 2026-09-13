@@ -417,6 +417,22 @@ end
 
 
 
+-- a two-position switch toggling one 0/1 dataref
+local function toggle_switch(pos, prop, img_on, img_off)
+	return switch_lit {
+		position = pos,
+		btnOn = img_on,
+		btnOff = img_off,
+		state = function()
+			return get(prop) == 1
+		end,
+		onMouseDown = function()
+			set(prop, 1 - get(prop))
+			return true
+		end,
+	}
+end
+
 components = {
 
 	--------------------
@@ -588,116 +604,28 @@ components = {
 	-- BIG ones --
 	
 	-- auasp_on
-	switch_lit {
-		position = {75, 902, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(auasp_on) == 1
-		end,
-		onMouseDown = function()
-			set(auasp_on, 1 - get(auasp_on))
-			return true
-		end,
-	},
+	toggle_switch({75, 902, 40, 100}, auasp_on, get(big_sw_up_img), get(big_sw_dn_img)),
 
 	-- agr_on
-	switch_lit {
-		position = {303, 902, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(agr_on) == 1
-		end,
-		onMouseDown = function()
-			set(agr_on, 1 - get(agr_on))
-			return true
-		end,
-	},
+	toggle_switch({303, 902, 40, 100}, agr_on, get(big_sw_up_img), get(big_sw_dn_img)),
 	
 	-- kln_on
-	switch_lit {
-		position = {1350, 902, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(kln_on) == 1
-		end,
-		onMouseDown = function()
-			set(kln_on, 1 - get(kln_on))
-			return true
-		end,
-	},
+	toggle_switch({1350, 902, 40, 100}, kln_on, get(big_sw_up_img), get(big_sw_dn_img)),
 
 	-- rv5_1_on
-	switch_lit {
-		position = {623, 808, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(rv5_1_on) == 1
-		end,
-		onMouseDown = function()
-			set(rv5_1_on, 1 - get(rv5_1_on))
-			return true
-		end,
-	},
+	toggle_switch({623, 808, 40, 100}, rv5_1_on, get(big_sw_up_img), get(big_sw_dn_img)),
 	
 	-- rv5_2_on
-	switch_lit {
-		position = {682, 808, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(rv5_2_on) == 1
-		end,
-		onMouseDown = function()
-			set(rv5_2_on, 1 - get(rv5_2_on))
-			return true
-		end,
-	},
+	toggle_switch({682, 808, 40, 100}, rv5_2_on, get(big_sw_up_img), get(big_sw_dn_img)),
 
 	-- vhf_1_on
-	switch_lit {
-		position = {739, 808, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(vhf_1_on) == 1
-		end,
-		onMouseDown = function()
-			set(vhf_1_on, 1 - get(vhf_1_on))
-			return true
-		end,
-	},
+	toggle_switch({739, 808, 40, 100}, vhf_1_on, get(big_sw_up_img), get(big_sw_dn_img)),
 
 	-- vhf_2_on
-	switch_lit {
-		position = {795, 808, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(vhf_2_on) == 1
-		end,
-		onMouseDown = function()
-			set(vhf_2_on, 1 - get(vhf_2_on))
-			return true
-		end,
-	},
+	toggle_switch({795, 808, 40, 100}, vhf_2_on, get(big_sw_up_img), get(big_sw_dn_img)),
 	
 	-- vbe_2_on
-	switch_lit {
-		position = {1399, 808, 40, 100},
-		btnOn = get(big_sw_up_img),
-		btnOff = get(big_sw_dn_img),
-		state = function()
-			return get(vbe_2_on) == 1
-		end,
-		onMouseDown = function()
-			set(vbe_2_on, 1 - get(vbe_2_on))
-			return true
-		end,
-	},	
+	toggle_switch({1399, 808, 40, 100}, vbe_2_on, get(big_sw_up_img), get(big_sw_dn_img)),	
 	
 
 	
@@ -719,32 +647,10 @@ components = {
 	},	
 	
 	-- uvid_on
-	switch_lit {
-		position = {189, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(uvid_on) == 1
-		end,
-		onMouseDown = function()
-			set(uvid_on, 1 - get(uvid_on))
-			return true
-		end,
-	},	
+	toggle_switch({189, 917, 25, 65}, uvid_on, get(sw_up_img), get(sw_dn_img)),	
 
 	-- eup_on
-	switch_lit {
-		position = {256, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(eup_on) == 1
-		end,
-		onMouseDown = function()
-			set(eup_on, 1 - get(eup_on))
-			return true
-		end,
-	},
+	toggle_switch({256, 917, 25, 65}, eup_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- bkk_on
 	switch_lit {
@@ -832,158 +738,37 @@ components = {
 	},
 
 	-- tks_on_1
-	switch_lit {
-		position = {797, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tks_on_1) == 1
-		end,
-		onMouseDown = function()
-			set(tks_on_1, 1 - get(tks_on_1))
-			return true
-		end,
-	},
+	toggle_switch({797, 917, 25, 65}, tks_on_1, get(sw_up_img), get(sw_dn_img)),
 	
 	-- tks_on_2
-	switch_lit {
-		position = {841, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tks_on_2) == 1
-		end,
-		onMouseDown = function()
-			set(tks_on_2, 1 - get(tks_on_2))
-			return true
-		end,
-	},	
+	toggle_switch({841, 917, 25, 65}, tks_on_2, get(sw_up_img), get(sw_dn_img)),	
 	
 	-- tks_heat
-	switch_lit {
-		position = {901, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tks_heat) == 1
-		end,
-		onMouseDown = function()
-			set(tks_heat, 1 - get(tks_heat))
-			return true
-		end,
-	},		
+	toggle_switch({901, 917, 25, 65}, tks_heat, get(sw_up_img), get(sw_dn_img)),		
 
 	-- tks_corr_1
-	switch_lit {
-		position = {1039, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tks_corr_1) == 1
-		end,
-		onMouseDown = function()
-			set(tks_corr_1, 1 - get(tks_corr_1))
-			return true
-		end,
-	},
+	toggle_switch({1039, 917, 25, 65}, tks_corr_1, get(sw_up_img), get(sw_dn_img)),
 
 	-- tks_corr_2
-	switch_lit {
-		position = {1085, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tks_corr_2) == 1
-		end,
-		onMouseDown = function()
-			set(tks_corr_2, 1 - get(tks_corr_2))
-			return true
-		end,
-	},
+	toggle_switch({1085, 917, 25, 65}, tks_corr_2, get(sw_up_img), get(sw_dn_img)),
 
 	-- curs_pnp_mode_1
-	switch_lit {
-		position = {1130, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(curs_pnp_mode_1) == 1
-		end,
-		onMouseDown = function()
-			set(curs_pnp_mode_1, 1 - get(curs_pnp_mode_1))
-			return true
-		end,
-	},
+	toggle_switch({1130, 917, 25, 65}, curs_pnp_mode_1, get(sw_up_img), get(sw_dn_img)),
 
 	-- curs_pnp_mode_2
-	switch_lit {
-		position = {1173, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(curs_pnp_mode_2) == 1
-		end,
-		onMouseDown = function()
-			set(curs_pnp_mode_2, 1 - get(curs_pnp_mode_2))
-			return true
-		end,
-	},
+	toggle_switch({1173, 917, 25, 65}, curs_pnp_mode_2, get(sw_up_img), get(sw_dn_img)),
 
 	-- svs_on
-	switch_lit {
-		position = {1266, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(svs_on) == 1
-		end,
-		onMouseDown = function()
-			set(svs_on, 1 - get(svs_on))
-			return true
-		end,
-	},
+	toggle_switch({1266, 917, 25, 65}, svs_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- svs_heat
-	switch_lit {
-		position = {1311, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(svs_heat) == 1
-		end,
-		onMouseDown = function()
-			set(svs_heat, 1 - get(svs_heat))
-			return true
-		end,
-	},
+	toggle_switch({1311, 917, 25, 65}, svs_heat, get(sw_up_img), get(sw_dn_img)),
 
 	-- var_right
-	switch_lit {
-		position = {1401, 917, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(var_right) == 1
-		end,
-		onMouseDown = function()
-			set(var_right, 1 - get(var_right))
-			return true
-		end,
-	},
+	toggle_switch({1401, 917, 25, 65}, var_right, get(sw_up_img), get(sw_dn_img)),
 
 	-- tcas_on
-	switch_lit {
-		position = {31, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tcas_on) == 1
-		end,
-		onMouseDown = function()
-			set(tcas_on, 1 - get(tcas_on))
-			return true
-		end,
-	},
+	toggle_switch({31, 823, 25, 65}, tcas_on, get(sw_up_img), get(sw_dn_img)),
 
 
 	-- emerg_light_on
@@ -1004,363 +789,88 @@ components = {
 	},
 
 	-- vbe_1_on
-	switch_lit {
-		position = {191, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(vbe_1_on) == 1
-		end,
-		onMouseDown = function()
-			set(vbe_1_on, 1 - get(vbe_1_on))
-			return true
-		end,
-	},
+	toggle_switch({191, 823, 25, 65}, vbe_1_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- curs_np_on_1
-	switch_lit {
-		position = {268, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(curs_np_on_1) == 1
-		end,
-		onMouseDown = function()
-			set(curs_np_on_1, 1 - get(curs_np_on_1))
-			return true
-		end,
-	},
+	toggle_switch({268, 823, 25, 65}, curs_np_on_1, get(sw_up_img), get(sw_dn_img)),
 	
 	-- curs_np_on_2
-	switch_lit {
-		position = {342, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(curs_np_on_2) == 1
-		end,
-		onMouseDown = function()
-			set(curs_np_on_2, 1 - get(curs_np_on_2))
-			return true
-		end,
-	},
+	toggle_switch({342, 823, 25, 65}, curs_np_on_2, get(sw_up_img), get(sw_dn_img)),
 
 	-- tra_67_on
-	switch_lit {
-		position = {404, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(tra_67_on) == 1
-		end,
-		onMouseDown = function()
-			set(tra_67_on, 1 - get(tra_67_on))
-			return true
-		end,
-	},
+	toggle_switch({404, 823, 25, 65}, tra_67_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- rsbn_on
-	switch_lit {
-		position = {522, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(rsbn_on) == 1
-		end,
-		onMouseDown = function()
-			set(rsbn_on, 1 - get(rsbn_on))
-			return true
-		end,
-	},
+	toggle_switch({522, 823, 25, 65}, rsbn_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- rsbn_recon
-	switch_lit {
-		position = {567, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(rsbn_recon) == 1
-		end,
-		onMouseDown = function()
-			set(rsbn_recon, 1 - get(rsbn_recon))
-			return true
-		end,
-	},
+	toggle_switch({567, 823, 25, 65}, rsbn_recon, get(sw_up_img), get(sw_dn_img)),
 
 	-- stabil_ga_main
-	switch_lit {
-		position = {941, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(stabil_ga_main) == 1
-		end,
-		onMouseDown = function()
-			set(stabil_ga_main, 1 - get(stabil_ga_main))
-			return true
-		end,
-	},
+	toggle_switch({941, 823, 25, 65}, stabil_ga_main, get(sw_up_img), get(sw_dn_img)),
 
 	-- stabil_ga_reserv
-	switch_lit {
-		position = {1040, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(stabil_ga_reserv) == 1
-		end,
-		onMouseDown = function()
-			set(stabil_ga_reserv, 1 - get(stabil_ga_reserv))
-			return true
-		end,
-	},
+	toggle_switch({1040, 823, 25, 65}, stabil_ga_reserv, get(sw_up_img), get(sw_dn_img)),
 
 	-- micron_1_on
-	switch_lit {
-		position = {1084, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(micron_1_on) == 1
-		end,
-		onMouseDown = function()
-			set(micron_1_on, 1 - get(micron_1_on))
-			return true
-		end,
-	},
+	toggle_switch({1084, 823, 25, 65}, micron_1_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- micron_2_on
-	switch_lit {
-		position = {1130, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(micron_2_on) == 1
-		end,
-		onMouseDown = function()
-			set(micron_2_on, 1 - get(micron_2_on))
-			return true
-		end,
-	},
+	toggle_switch({1130, 823, 25, 65}, micron_2_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- spu_on
-	switch_lit {
-		position = {1177, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(spu_on) == 1
-		end,
-		onMouseDown = function()
-			set(spu_on, 1 - get(spu_on))
-			return true
-		end,
-	},
+	toggle_switch({1177, 823, 25, 65}, spu_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- sgs_on
-	switch_lit {
-		position = {1221, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(sgs_on) == 1
-		end,
-		onMouseDown = function()
-			set(sgs_on, 1 - get(sgs_on))
-			return true
-		end,
-	},
+	toggle_switch({1221, 823, 25, 65}, sgs_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- sd75_1_on
-	switch_lit {
-		position = {1266, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(sd75_1_on) == 1
-		end,
-		onMouseDown = function()
-			set(sd75_1_on, 1 - get(sd75_1_on))
-			return true
-		end,
-	},
+	toggle_switch({1266, 823, 25, 65}, sd75_1_on, get(sw_up_img), get(sw_dn_img)),
 
 	-- sd75_2_on
-	switch_lit {
-		position = {1310, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(sd75_2_on) == 1
-		end,
-		onMouseDown = function()
-			set(sd75_2_on, 1 - get(sd75_2_on))
-			return true
-		end,
-	},	
+	toggle_switch({1310, 823, 25, 65}, sd75_2_on, get(sw_up_img), get(sw_dn_img)),	
 	
 	-- mars_on
-	switch_lit {
-		position = {1359, 823, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(mars_on) == 1
-		end,
-		onMouseDown = function()
-			set(mars_on, 1 - get(mars_on))
-			return true
-		end,
-	},	
+	toggle_switch({1359, 823, 25, 65}, mars_on, get(sw_up_img), get(sw_dn_img)),	
 	
 
 
 
 	
 	-- diss_on
-	switch_lit {
-		position = {27, 587, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(diss_on) == 1
-		end,
-		onMouseDown = function()
-			set(diss_on, 1 - get(diss_on))
-			return true
-		end,
-	},	
+	toggle_switch({27, 587, 25, 65}, diss_on, get(sw_up_img), get(sw_dn_img)),	
 	
 	-- diss_mode
-	switch_lit {
-		position = {70, 587, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(diss_mode) == 1
-		end,
-		onMouseDown = function()
-			set(diss_mode, 1 - get(diss_mode))
-			return true
-		end,
-	},		
+	toggle_switch({70, 587, 25, 65}, diss_mode, get(sw_up_img), get(sw_dn_img)),		
 	
 	
 	-- vent_1
-	switch_lit {
-		position = {25, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(vent_1) == 1
-		end,
-		onMouseDown = function()
-			set(vent_1, 1 - get(vent_1))
-			return true
-		end,
-	},	
+	toggle_switch({25, 471, 25, 65}, vent_1, get(sw_up_img), get(sw_dn_img)),	
 	
 	
 	-- vent_2
-	switch_lit {
-		position = {1295, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(vent_2) == 1
-		end,
-		onMouseDown = function()
-			set(vent_2, 1 - get(vent_2))
-			return true
-		end,
-	},		
+	toggle_switch({1295, 471, 25, 65}, vent_2, get(sw_up_img), get(sw_dn_img)),		
 	
 	
 	-- sign_belts
-	switch_lit {
-		position = {71, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(sign_belts) == 1
-		end,
-		onMouseDown = function()
-			set(sign_belts, 1 - get(sign_belts))
-			return true
-		end,
-	},		
+	toggle_switch({71, 471, 25, 65}, sign_belts, get(sw_up_img), get(sw_dn_img)),		
 	
 	-- sign_nosmoke
-	switch_lit {
-		position = {114, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(sign_nosmoke) == 1
-		end,
-		onMouseDown = function()
-			set(sign_nosmoke, 1 - get(sign_nosmoke))
-			return true
-		end,
-	},	
+	toggle_switch({114, 471, 25, 65}, sign_nosmoke, get(sw_up_img), get(sw_dn_img)),	
 	
 	-- sign_exit
-	switch_lit {
-		position = {171, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(sign_exit) == 1
-		end,
-		onMouseDown = function()
-			set(sign_exit, 1 - get(sign_exit))
-			return true
-		end,
-	},	
+	toggle_switch({171, 471, 25, 65}, sign_exit, get(sw_up_img), get(sw_dn_img)),	
 
 
 	-- arm406
-	switch_lit {
-		position = {1248, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(arm406) == 1
-		end,
-		onMouseDown = function()
-			set(arm406, 1 - get(arm406))
-			return true
-		end,
-	},	
+	toggle_switch({1248, 471, 25, 65}, arm406, get(sw_up_img), get(sw_dn_img)),	
 
 
 	-- ushdb_mode_1
-	switch_lit {
-		position = {1340, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(ushdb_mode_1) == 1
-		end,
-		onMouseDown = function()
-			set(ushdb_mode_1, 1 - get(ushdb_mode_1))
-			return true
-		end,
-	},
+	toggle_switch({1340, 471, 25, 65}, ushdb_mode_1, get(sw_up_img), get(sw_dn_img)),
 
 	-- ushdb_mode_2
-	switch_lit {
-		position = {1399, 471, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(ushdb_mode_2) == 1
-		end,
-		onMouseDown = function()
-			set(ushdb_mode_2, 1 - get(ushdb_mode_2))
-			return true
-		end,
-	},
+	toggle_switch({1399, 471, 25, 65}, ushdb_mode_2, get(sw_up_img), get(sw_dn_img)),
 
 
 	-- egpws_alarm_1
@@ -1393,18 +903,7 @@ components = {
 
 
 	-- egpws_relief
-	switch_lit {
-		position = {1339, 407, 25, 65},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(egpws_relief) == 1
-		end,
-		onMouseDown = function()
-			set(egpws_relief, 1 - get(egpws_relief))
-			return true
-		end,
-	},
+	toggle_switch({1339, 407, 25, 65}, egpws_relief, get(sw_up_img), get(sw_dn_img)),
 
 
 	-- egpws_mode
@@ -2447,32 +1946,10 @@ components = {
 	},	
 
 	-- nav_1_mile_km
-	switch_lit {
-		position = {306, 89, 62, 20},
-		btnOn = get(sw_right_img),
-		btnOff = get(sw_left_img),
-		state = function()
-			return get(nav_1_mile_km) == 1
-		end,
-		onMouseDown = function()
-			set(nav_1_mile_km, 1 - get(nav_1_mile_km))
-			return true
-		end,
-	},
+	toggle_switch({306, 89, 62, 20}, nav_1_mile_km, get(sw_right_img), get(sw_left_img)),
 
 	-- nav_2_mile_km
-	switch_lit {
-		position = {1090, 89, 62, 20},
-		btnOn = get(sw_right_img),
-		btnOff = get(sw_left_img),
-		state = function()
-			return get(nav_2_mile_km) == 1
-		end,
-		onMouseDown = function()
-			set(nav_2_mile_km, 1 - get(nav_2_mile_km))
-			return true
-		end,
-	},
+	toggle_switch({1090, 89, 62, 20}, nav_2_mile_km, get(sw_right_img), get(sw_left_img)),
 
 	-- button 1
 	clickable {
@@ -2769,18 +2246,7 @@ components = {
 	},		
 	
 	-- ark_1_channel
-	switch_lit {
-		position = {371, 392, 53, 20},
-		btnOn = get(sw_right_img),
-		btnOff = get(sw_left_img),
-		state = function()
-			return get(ark_1_channel) == 1
-		end,
-		onMouseDown = function()
-			set(ark_1_channel, 1 - get(ark_1_channel))
-			return true
-		end,
-	},
+	toggle_switch({371, 392, 53, 20}, ark_1_channel, get(sw_right_img), get(sw_left_img)),
 	
 	clickable {
 		position = {293, 402, 30, 30},
@@ -2946,18 +2412,7 @@ components = {
 	},		
 		
 	-- ark_2_channel
-	switch_lit {
-		position = {371+655, 392, 53, 20},
-		btnOn = get(sw_right_img),
-		btnOff = get(sw_left_img),
-		state = function()
-			return get(ark_2_channel) == 1
-		end,
-		onMouseDown = function()
-			set(ark_2_channel, 1 - get(ark_2_channel))
-			return true
-		end,
-	},	
+	toggle_switch({371+655, 392, 53, 20}, ark_2_channel, get(sw_right_img), get(sw_left_img)),	
 	
 	clickable {
 		position = {293 + 655, 402, 30, 30},

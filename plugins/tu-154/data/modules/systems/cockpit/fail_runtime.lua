@@ -23,16 +23,5 @@ function draw()
 	end
 	
 	
-	
-	--[[
-	for i = 1, #runtime do
-		
-		drawBitmapText(text_font, 0, i * 10, runtime[i], TEXT_ALIGN_LEFT, {1, 0, 0, 1})
-	
-	end
-	--]]
-	
-
 end
-
 

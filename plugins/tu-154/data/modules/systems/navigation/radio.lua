@@ -96,7 +96,6 @@ components = {
 		active = globalPropertyf("sim/cockpit2/radios/actuators/adf2_right_is_selected"),  -- selector of active disk. 0 - left, 1 - right 
 		fail = globalPropertyf("sim/operation/failures/rel_adf2"),
 		adf = globalPropertyf("sim/cockpit2/radios/indicators/adf2_relative_bearing_deg"),
-		audio_selection = globalPropertyi("sim/cockpit2/radios/actuators/audio_selection_adf2"),
 
 		-- controls
 		ark_mode = globalPropertyi("tu-154/switchers/ovhd/ark_2_mode"), -- ARK 1 mode. 0 = off, 1 = compass, 2 = antenna, 3 = loop

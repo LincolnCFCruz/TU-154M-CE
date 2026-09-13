@@ -5,7 +5,6 @@ defineProperty("gen1_volt_bus", globalPropertyf("tu-154/elec/gen1_volt"))  -- ge
 defineProperty("gen2_volt_bus", globalPropertyf("tu-154/elec/gen2_volt"))
 defineProperty("gen3_volt_bus", globalPropertyf("tu-154/elec/gen3_volt"))
 defineProperty("gen4_volt_bus", globalPropertyf("tu-154/elec/gen4_volt"))
-defineProperty("gpu_volt_bus", globalPropertyf("tu-154/elec/gpu_volt"))
 
 
 defineProperty("gen1_amp_bus", globalPropertyf("tu-154/elec/gen1_amp")) -- generator current load from bus, initial 0A
@@ -26,13 +25,11 @@ defineProperty("gen_1_on", globalPropertyi("tu-154/switchers/eng/gen_1_on")) -- 
 defineProperty("gen_2_on", globalPropertyi("tu-154/switchers/eng/gen_2_on")) -- generator 1 switch. -1 = test, 0 = off, +1 = on
 defineProperty("gen_3_on", globalPropertyi("tu-154/switchers/eng/gen_3_on")) -- generator 1 switch. -1 = test, 0 = off, +1 = on
 defineProperty("apu_gen_on", globalPropertyi("tu-154/switchers/eng/apu_gen_on")) -- APU generator switch
-defineProperty("gpu_on_sw", globalPropertyi("tu-154/switchers/eng/gpu_on")) -- RAP switch
 
 defineProperty("gen1_work", globalPropertyf("tu-154/elec/gen1_work"))  -- generators connected to the busses and working
 defineProperty("gen2_work", globalPropertyf("tu-154/elec/gen2_work"))
 defineProperty("gen3_work", globalPropertyf("tu-154/elec/gen3_work"))
 defineProperty("gen4_work", globalPropertyf("tu-154/elec/gen4_work"))
-defineProperty("gpu_work_bus", globalPropertyi("tu-154/elec/gpu_work"))
 
 
 -- bus 27v
@@ -66,8 +63,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
 local apu_gen_counter = 0
 local gen_1_counter = 1
 local gen_2_counter = 1
@@ -87,7 +82,6 @@ function update() -- every frame calculations are here
 	
 	local passed = get(frame_time)
 local MASTER = get(ismaster) ~= 1	
-
 
 
 	if passed > 0 and MASTER then
@@ -148,7 +142,6 @@ local MASTER = get(ismaster) ~= 1
 			gen_work_1 = 1
 		end
 		
-		--print(gen_work_1, gen_on1, DC, eng1_work, gen_1_counter)
 		
 		local gen1_volt = (119 - gen1_amp / 100) * math.abs(gen_on1) * gen_work_1   -- calculate voltage of generator depending on it's load and engine work
 		if gen1_fail then gen1_volt = 0 end -- check failure
@@ -204,7 +197,6 @@ local MASTER = get(ismaster) ~= 1
 		if gen4_volt > 110 and gen_on4 == 1 then set(gen4_work, 1) else set(gen4_work, 0) end
 		
 
-		
 		-- check load on generators
 		if gen1_amp > 145 then ovrld_count_1 = ovrld_count_1 + passed
 		else ovrld_count_1 = 0 end
@@ -233,7 +225,6 @@ local MASTER = get(ismaster) ~= 1
 		if ovrld_count_4 > 5 then set(gen4_overload, 1)
 		elseif gen_on4 == 0 then set(gen4_overload, 0) end
 		
-		--print(ovrld_count_1, "  ", ovrld_count_2, "  ", ovrld_count_3)
 		
 		-- set simulator's generators status
 		if gen1_volt * gen_on1 > 0 then 

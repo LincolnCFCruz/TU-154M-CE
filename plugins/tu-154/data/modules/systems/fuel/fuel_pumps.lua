@@ -86,7 +86,6 @@ defineProperty("fuel_pumps_115_3_cc",    globalPropertyf("tu-154/elec/fuel_pumps
 
 -- time
 defineProperty("frame_time",         globalPropertyf("tu-154/time/frame_time"))
-defineProperty("frame_rate_period",  globalPropertyf("sim/operation/misc/frame_rate_period"))
 
 
 -- fuel press after pumps
@@ -104,12 +103,7 @@ local pump_4_P  = 1
 
 function update()
 
-	-- frame_time is 0 while the sim is paused - that is how time_logic.lua signals
-	-- it - so a legitimate 0 is passed through rather than replaced by the
-	-- still-running frame_rate_period. See the note in fuel_tanks.lua.
 	local passed = get(frame_time)
-	if passed == nil then passed = get(frame_rate_period) end
-	if passed == nil or passed < 0 then passed = 0 end
 
 	-- check power
 	local power_27L = get(bus27_volt_left) > 13

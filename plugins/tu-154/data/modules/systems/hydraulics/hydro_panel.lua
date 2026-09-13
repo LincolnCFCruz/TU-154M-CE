@@ -57,22 +57,11 @@ defineProperty("gs_qty_12_show", globalPropertyf("tu-154/hydro/gs_qty_12_show"))
 defineProperty("gs_qty_3_show", globalPropertyf("tu-154/hydro/gs_qty_3_show")) -- fluid remaining in the hydraulic tank
 
 
---defineProperty("l_brake_add", globalPropertyf("sim/flightmodel/controls/l_brake_add")) -- Left Brake
---defineProperty("r_brake_add", globalPropertyf("sim/flightmodel/controls/r_brake_add")) -- Right Brake
-
 defineProperty("l_brake_add", globalPropertyf("tu-154/brakes/int_brakes_L")) -- actual brake position
 defineProperty("r_brake_add", globalPropertyf("tu-154/brakes/int_brakes_R")) -- actual brake position
 
---defineProperty("l_brake_add", globalPropertyf("tu-154/SC/brakes/int_brakes_L")) 
---defineProperty("r_brake_add", globalPropertyf("tu-154/SC/brakes/int_brakes_R")) 
-
-
-
---defineProperty("l_brake_add", globalPropertyf("tu-154/controlls/brake_L"))
---defineProperty("r_brake_add", globalPropertyf("tu-154/controlls/brake_R"))
 
 defineProperty("parkbrake", globalPropertyf("sim/flightmodel/controls/parkbrake")) -- Parking Brake
---defineProperty("parkbrake", globalPropertyf("tu-154/SC/controls/parkbrake")) 
 
 
 defineProperty("brake_emerg", globalPropertyf("tu-154/controlls/brake_emerg")) -- emergency brake
@@ -80,8 +69,6 @@ defineProperty("brake_emerg", globalPropertyf("tu-154/controlls/brake_emerg")) -
 -- failures
 defineProperty("rel_lbrakes", globalPropertyi("sim/operation/failures/rel_lbrakes"))
 defineProperty("rel_rbrakes", globalPropertyi("sim/operation/failures/rel_rbrakes"))
-
-
 
 
 -- sounds
@@ -195,8 +182,6 @@ local function buttons_check ()
 	local qty_test_12_sw = get(qty_test_12)
 	local qty_test_3_sw = get(qty_test_3)
 	local accum_fill_sw = get(accum_fill)
-	
-	--print(qty_test_12_sw, qty_test_3_sw, accum_fill_last_sw)
 	
 	
 	local sw_changes = lamp_test_hydro_sw + qty_test_12_sw + qty_test_3_sw + accum_fill_sw - lamp_test_hydro_last - qty_test_12_last - qty_test_3_last - accum_fill_last

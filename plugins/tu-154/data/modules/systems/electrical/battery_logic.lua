@@ -27,7 +27,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 local current_table = {{ -5000, 0},    -- bugs workaround
 				  { 0, 0 },   -- 
 				  { 600, 100 },   -- 
@@ -88,7 +87,6 @@ if MASTER then
 
 			-- calculate bat capacity and current consumption
 			if get(bat_source) == 1 then
-				--print("bat source")
 				
 				bat_capacity = bat_capacity - bat_amp * passed / 3600
 				bat_volt = 17 + ((bat_capacity - kz_loss) / 2.5) - 1.5 * bat_amp / 100 -- battery drops 2 volts for each 100 amp
@@ -98,7 +96,6 @@ if MASTER then
 				set(bat_amp_cc, 0)
 				
 			else
-				--print("bat not source")
 				if fail then -- generic fail
 					bat_capacity = 0
 					bat_volt = 3
@@ -111,8 +108,6 @@ if MASTER then
 				end
 				
 				
-				
-				
 				bat_capacity = bat_capacity + passed * 0.01
 				set(bat_amp_cc, (MAX_BAT_CAPACITY - bat_capacity) * BAT_CURRENT_COEF + interpolate(current_table, kz_timer))   -- bat current depends on their charge
 			end
@@ -123,8 +118,6 @@ if MASTER then
 
 
 			MAX_BAT_CAPACITY = MAX_BAT_CAPACITY - kz_loss
-
-
 
 
 			-- set volts. A battery cannot source a negative voltage, and this
@@ -146,7 +139,6 @@ if MASTER then
 			set(bat_thermo, thermo)
 			
 			
-
 		else 
 			-- set failures
 			if fail then -- generic fail
@@ -157,7 +149,6 @@ if MASTER then
 			
 			
 			-- set current
-			--set(bat_amp_bus, 0) 
 			set(bat_amp_cc, 0)
 			-- set volts
 			if bat_volt < 0 then bat_volt = 0 end

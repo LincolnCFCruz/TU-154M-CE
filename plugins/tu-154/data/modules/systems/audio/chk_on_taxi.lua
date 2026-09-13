@@ -31,9 +31,6 @@ defineProperty("antiice_eng_3", globalPropertyi("tu-154/switchers/eng/antiice_en
 defineProperty("antiice_wing", globalPropertyi("tu-154/switchers/eng/antiice_wing")) -- anti-icers
 
 
-
-
-
 local checklist_started = false
 local stage = 0
 local stage_status = 0 -- 0 question, 1+ - answers. 1 usually is false.
@@ -42,9 +39,6 @@ local speak_timer = 0
 
 function checklist_3()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 3 then 
@@ -77,7 +71,6 @@ function checklist_3()
 	end
 
 
-	
 	---------------------------------
 	-- question 1. Brakes --
 	---------------------------------
@@ -117,7 +110,6 @@ function checklist_3()
 	if stage == 1 and stage_status == 10 and speak_timer < 0.1 then set(fishka_1, 1) end	
 	
 		
-	
 	---------------------------------
 	-- question 2. Deicers --
 	---------------------------------
@@ -132,13 +124,6 @@ function checklist_3()
 			speak_timer = 2 -- set up time before answer
 		end
 		
-		--[[
-		-- false answer
-		if stage_status == 1 and get(window_heat_1) + get(window_heat_2) + get(window_heat_3) > -3 and get(window_heat_1) + get(window_heat_2) + get(window_heat_3) < 3 then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		-- true answer
 	if (stage_status == 1 or stage_status == 2) then
 			local num = find_empty()
@@ -161,7 +146,6 @@ function checklist_3()
 	
 	-- move fishka 2
 	if stage == 2 and stage_status == 10 and speak_timer < 0.1 then set(fishka_2, 1) end		
-	
 	
 	
 	---------------------------------
@@ -203,18 +187,6 @@ function checklist_3()
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_3, 1) end	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -223,7 +195,6 @@ function checklist_3()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -235,7 +206,6 @@ function checklist_3()
 	
 	
 	end
-	
 	
 	
 end

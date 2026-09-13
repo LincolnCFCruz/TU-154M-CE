@@ -41,7 +41,6 @@ defineProperty("arrest_btn", globalPropertyi("tu-154/buttons/console/absu_arrest
 
 -- power
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left"))
---defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 defineProperty("bus36_volt", globalPropertyf("tu-154/elec/bus36_volt_left"))
 
@@ -52,7 +51,6 @@ defineProperty("fail", globalPropertyi("sim/operation/failures/rel_ss_ahz"))
 
 
 defineProperty("absu_use_second_nav", globalPropertyi("tu-154/absu_use_second_nav")) -- the ABSU uses the second Kurs-MP
-
 
 
 -- results
@@ -79,16 +77,9 @@ defineProperty("dir_pitch_flag", globalPropertyf("tu-154/gauges/ahz/dir_pitch_fl
 defineProperty("ahz_flag", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L"))
 
 
-
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
-
-
-
 
 
 local initial_roll_err = 0 --math.random(-20, 20) * real_num -- initial error, ehich will be decreased to 0 after connecting power
@@ -241,8 +232,6 @@ function update()
 	local flag = bool2int(not power or arrest or math.abs(initial_roll_err) + math.abs(initial_pitch_err) + math.abs(power_roll) + math.abs(power_pitch) > 5 or get(pkp_fail) == 1)
 	
 	
-	
-	
 	-- ABSU planks and flags
 	local roll_diff = get(absu_roll_ind) / 25
 	
@@ -250,7 +239,6 @@ function update()
 	elseif roll_diff < -1 then roll_diff = -1 end
 	
 	absu_v_act = absu_v_act + (roll_diff - absu_v_act) * passed * 5
-	
 	
 	
 	local pitch_diff = get(absu_pitch_ind) / 10
@@ -265,10 +253,6 @@ function update()
 	local flag_pitch = bool2int(get(absu_pitch_flag) == 1 or not power)
 	
 
-	
-	
-	
-	
 	local mode = get(absu_pnp_mode) -- 0 = off, 1 = NVU, 2 = VOR1, 3 = VOR2, 4 = PS
 	
 
@@ -324,16 +308,12 @@ function update()
 	h_plank_act = h_plank_act + (glidesl_pl - h_plank_act) * passed * 5
 	
 	
-	
-	
 	-- speed indicator
 	
 	local spd_dif = get(absu_at_dif) / 20
 	
 	if spd_dif > 1 then spd_dif = 1
 	elseif spd_dif < -1 then spd_dif = -1 end
-	
-	
 	
 	
 local MASTER = get(ismaster) ~= 1	

@@ -7,7 +7,6 @@ defineProperty("show_palette", globalPropertyi("tu-154/panels/show_palette"))
 
 defineProperty("payload",  globalPropertyf("sim/flightmodel/weight/m_fixed"))
 defineProperty("CG_load",  globalPropertyf("sim/flightmodel/misc/cgz_ref_to_default")) -- xp11 (as in B2)
---defineProperty("CG_load", globalPropertyf("sim/flightmodel2/misc/cg_offset_z"))       -- xp12
 
 defineProperty("fuel_q_1",  globalProperty("sim/flightmodel/weight/m_fuel[0]"))
 defineProperty("fuel_q_4",  globalProperty("sim/flightmodel/weight/m_fuel[1]"))
@@ -147,7 +146,6 @@ local Vapp_f45_tbl = {
 	{60, 240}, {65, 248}, {70, 257}, {75, 266},
 	{80, 275}, {85, 283}, {90, 292}, {120, 292}
 }
-
 
 
 -- ============================================================

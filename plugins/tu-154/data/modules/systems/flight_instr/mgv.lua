@@ -1,7 +1,5 @@
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
---defineProperty("pitch_sim", globalPropertyf("sim/cockpit2/gauges/indicators/pitch_electric_deg_pilot"))
---defineProperty("roll_sim", globalPropertyf("sim/cockpit2/gauges/indicators/roll_electric_deg_pilot"))
 
 defineProperty("pitch_sim", globalPropertyf("sim/flightmodel/position/theta"))
 defineProperty("roll_sim", globalPropertyf("sim/flightmodel/position/phi"))
@@ -13,48 +11,26 @@ defineProperty("N3", globalProperty("sim/flightmodel/engine/ENGN_N2_[2]"))
 
 
 -- controls
---defineProperty("pitch_corr_hdl", globalPropertyf("tu-154/gauges/ahz/pitch_corr_L")) -- pitch correction on the AGR + to the right
 defineProperty("mgv_contr", globalPropertyi("tu-154/switchers/ovhd/mgv_contr")) -- switch
 
 defineProperty("arrest_btn", globalPropertyi("tu-154/buttons/console/absu_arrest")) -- caging buttons
---defineProperty("mgv_contr", globalPropertyi("tu-154/switchers/ovhd/mgv_contr")) -- MGV switch
-
--- power
---defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left"))
 
 
 defineProperty("bus36_volt", globalPropertyf("tu-154/elec/bus36_volt_left"))
 defineProperty("mgv_ctr_power_cc", globalPropertyf("tu-154/bkk/mgv_ctr_power_cc")) -- PKP current draw
---[[
-defineProperty("bus36_volt_left", globalPropertyf("tu-154/elec/bus36_volt_left")) -- left 36 V bus voltage
-defineProperty("bus36_volt_right", globalPropertyf("tu-154/elec/bus36_volt_right")) -- right 36 V bus voltage
-defineProperty("bus36_volt_pts250_1", globalPropertyf("tu-154/elec/bus36_volt_pts250_1")) -- 36 V bus voltage, PTS 1
-defineProperty("bus36_volt_pts250_2", globalPropertyf("tu-154/elec/bus36_volt_pts250_2")) -- 36 V bus voltage, PTS 2
-
-
-defineProperty("bus115_1_volt", globalPropertyf("tu-154/elec/bus115_1_volt"))
-defineProperty("bus115_2_volt", globalPropertyf("tu-154/elec/bus115_2_volt"))
-defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
---]]
 -- results
 defineProperty("res_pitch", globalPropertyf("tu-154/gyro/mgv_contr_pitch")) -- AGR pitch, + nose up
 defineProperty("res_roll", globalPropertyf("tu-154/gyro/mgv_contr_roll")) -- AGR roll, + right
 
 defineProperty("ahz_flag", globalPropertyi("tu-154/gyro/mgv_contr_flag")) -- MGV failure
---defineProperty("mgv_contr_fail", globalPropertyi("tu-154/bkk/mgv_contr_fail")) -- signal from the BKK - MGV monitor failure
 
 
 defineProperty("mgv_fail", globalPropertyi("tu-154/failures/mgv_fail")) -- MGV failure
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
-
-
 
 
 local initial_roll_err = 0 --math.random(-20, 20) * real_num -- initial error, ehich will be decreased to 0 after connecting power
@@ -196,18 +172,7 @@ if MASTER then
 	
 	set(mgv_ctr_power_cc, bool2int(power))
 	
-	--print(power, initial_roll_err, initial_pitch_err, power_roll, power_pitch, flag)
 end
 
 	
---[[
-if math.abs (a - b) > 7 then flag_ab = true else flag_ab = false end
-if math.abs (a - c) > 7 then flag_ac = true else flag_ac = false end
-if math.abs (b - c) > 7 then flag_bc = true else flag_bc = false end
-
-fail_a = flag_ab and flag_ac
-fail_b = flag_ab and flag_bc
-fail_c = flag_ac and flag_bc
---]]
-
 end

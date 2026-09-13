@@ -14,7 +14,6 @@ defineProperty("roll", globalPropertyf("sim/flightmodel/position/phi"))
 defineProperty("speed", globalPropertyf("sim/flightmodel/position/groundspeed"))
 defineProperty("altitude", globalPropertyf("sim/flightmodel/position/elevation"))
 defineProperty("heading", globalPropertyf("sim/flightmodel/position/hpath"))
-defineProperty("vert", globalPropertyf("sim/flightmodel/position/vh_ind_fpm"))
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 
@@ -56,7 +55,6 @@ GS = get(speed) * 1.94 + math.random(-2, 2)
 Alt = get(altitude) * 3.2808 + math.random(-5, 5) 
 verts = ( Alt - Alt2 ) * 30
 Alt2 = Alt
---verts = get(vert) + math.random(-50, 50) 
 
 if get(speed) > 5 then
 head = 0 - get(heading) + math.random(-2, 2) 

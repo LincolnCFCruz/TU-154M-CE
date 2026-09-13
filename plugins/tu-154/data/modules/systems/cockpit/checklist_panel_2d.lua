@@ -44,9 +44,6 @@ defineProperty("fishka_left", loadImage("checklist_tex.png", 0, 140, 166, 25))
 defineProperty("fishka_right", loadImage("checklist_tex.png", 0, 112, 166, 25))
 
 
-
-
-
 components = {
 
 	
@@ -116,7 +113,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		
@@ -145,7 +141,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -165,7 +160,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -191,7 +185,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -216,7 +209,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -242,7 +234,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -265,7 +256,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -291,7 +281,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -319,7 +308,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(checklist_selected, 0)
 			return true
 		end,
 		visible = function()
@@ -614,16 +602,8 @@ components = {
 	},
 
 	
-
-
-
-
-	
-	
 	--------------------------------
 
 
 }
-
-
 

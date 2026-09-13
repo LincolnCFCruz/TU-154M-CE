@@ -12,7 +12,6 @@ defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_ena
 
 defineProperty("have_pedals", globalPropertyi("tu-154/have_pedals"))
 
---defineProperty("save_state_enabled",globalPropertyi("tu-154/save_state_enabled")) -- whether saving the aircraft state is enabled
 defineProperty("reset_state",globalPropertyi("tu-154/reset_state")) -- reset the aircraft state
 
 -- datarefs
@@ -29,11 +28,7 @@ defineProperty("slider_4", globalProperty("sim/cockpit2/switches/custom_slider_o
 defineProperty("slider_5", globalProperty("sim/cockpit2/switches/custom_slider_on[4]")) -- pax door 1
 defineProperty("slider_6", globalProperty("sim/cockpit2/switches/custom_slider_on[5]")) -- pax door 2
 defineProperty("slider_7", globalProperty("sim/cockpit2/switches/custom_slider_on[6]")) -- kitchen door
-defineProperty("slider_8", globalProperty("sim/cockpit2/switches/custom_slider_on[7]"))
 defineProperty("slider_9", globalProperty("sim/cockpit2/switches/custom_slider_on[8]")) -- yokes
-defineProperty("slider_10", globalProperty("sim/cockpit2/switches/custom_slider_on[9]"))
-defineProperty("slider_11", globalProperty("sim/cockpit2/switches/custom_slider_on[10]"))
-defineProperty("slider_12", globalProperty("sim/cockpit2/switches/custom_slider_on[11]"))
 
 
 defineProperty("gear_blocks", globalPropertyi("tu-154/anim/gear_blocks")) -- landing gear block setting
@@ -77,8 +72,6 @@ defineProperty("rel_pitot", globalPropertyi("sim/operation/failures/rel_pitot"))
 defineProperty("rel_pitot2", globalPropertyi("sim/operation/failures/rel_pitot2")) -- Pitot 2 - Blockage
 defineProperty("alpha_fail", globalPropertyi("sim/operation/failures/rel_AOA"))  -- angle of attack fail
 
---defineProperty("parkbrake", globalPropertyf("sim/flightmodel/controls/parkbrake")) -- Parking Brake
---defineProperty("parkbrake", globalPropertyf("tu-154/SC/controls/parkbrake")) 
 
 defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
 defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
@@ -89,7 +82,6 @@ defineProperty("enable_crew_vo", globalPropertyi("tu-154/sounds/enable_crew_vo")
 defineProperty("show_fail_panel",globalPropertyi("tu-154/panels/show_fail_panel")) -- show the failures panel
 defineProperty("show_gns", globalPropertyi("tu-154/anim/show_gns"))
 defineProperty("show_RXP",globalPropertyi("tu-154/anim/RXP"))
---defineProperty("RXP_ID",globalPropertyi("RXP/radios/indicators/gps_nav_id"))
 
 defineProperty("starter_torq", globalPropertyf("sim/aircraft/engine/acf_starter_torque_ratio")) -- starter power. 0.18 for a normal start
 
@@ -115,8 +107,6 @@ defineProperty("yellow_lamp", loadImage("overhead_tex.png", 1825, 672, 19, 19))
 defineProperty("lev_img", loadImage("absu_ess.png", 432, 323, 30, 29))
 
 
-
-
 -- sim/operation/toggle_yoke
 
 yokes_cmd = findCommand("sim/operation/toggle_yoke")
@@ -130,13 +120,6 @@ function yokes_hnd(phase)
 end
 
 registerCommandHandler(yokes_cmd, 0, yokes_hnd)
-
-
-
-
-
-
-
 
 
 local ladder_1_pos = get(ladder_1)
@@ -175,13 +158,10 @@ local function coldDarkReset()
 end
 
 
-
-
 local load_counter = 0
 
 function update()
 	local passed = get(frame_time)
-	--local groundspeed = get(GS)
 	
 	load_counter = load_counter + passed
 	
@@ -191,7 +171,6 @@ function update()
 	
 	-- main sound volume
 	setMasterGain(get(sounds_volume))
-	
 	
 	
 	ladder_1_pos = get(ladder_1)
@@ -301,9 +280,6 @@ function update()
 		set(fuel_tanker_call, 0)
 		
 		
-		--set(gear_blocks, 0)
-		
-		--print(get(GS), "  ", get(gear_blocks), "  ", get(deflection_mtr_1), "  ", get(deflection_mtr_2), "  ", get(deflection_mtr_3))
 	end
 	
 	-- make block disappear
@@ -317,7 +293,6 @@ function update()
 	set(ladder_2, ladder_2_pos)
 	set(catering, catering_pos)
 	set(fuel_tanker, fuel_tanker_pos)
-	
 	
 	
 	-- set failures for Pitot tubes if blocked
@@ -337,7 +312,6 @@ function update()
 	
 	
 	-- hide repair panel if not on ground
-	--if get(gear_blocks) == 0 then set(show_fail_panel, 0) end
 	if math.abs(get(GS)) > 1 or get(deflection_mtr_1) < 0.001 or get(deflection_mtr_2) < 0.001 or get(deflection_mtr_3) < 0.001 then -- 
 		failPanelShow = false
 		set(show_fail_panel, 0)
@@ -347,7 +321,6 @@ function update()
 	end
 
 end
-
 
 
 components = {
@@ -552,11 +525,6 @@ components = {
 	},
 
 
-
-
-	
-	
-	
 	---------------------
 	-- clickables --
 	---------------------
@@ -827,7 +795,6 @@ components = {
 	},	
 	
 	
-	
 	-- enable crew voices
 	text_draw {
 		position = {32, 200, 55, 60},
@@ -851,7 +818,6 @@ components = {
 	},
 
 
-
 	-- Enable failures
 	text_draw {
 		position = {32, 158, 55, 60},
@@ -861,8 +827,6 @@ components = {
 			elseif get(failures_enabled) == 2 then return "FAILURES MEDIUM"
 			elseif get(failures_enabled) == 3 then return "FAILURES HIGH"
 			end
-			--if get(failures_enabled) == 1 then return "FAILURES ENABLED"
-			--else return	"FAILURES DISABLED" end
 		end,
 		font = text_font,
 		color = {0,0,0,1},
@@ -903,24 +867,6 @@ components = {
 		end,
 	},
 
---[[
-	
-	text_draw {
-		position = {32, 50, 55, 60},
-		text = "WARNING, HOLD FOR 5 SEC",
-		font = text_font,
-		color = {0,0,0,1},
-		visible = true,
-	},
-	text_draw {
-		position = {32, 30, 55, 60},
-		text = "TO RESET ALL JOYSTICKS",
-		font = text_font,
-		color = {0,0,0,1},
-		visible = true,
-	},
-
---]]
 	
 	clickable {
 		position = {23, 70, 200, 35},
@@ -931,8 +877,6 @@ components = {
 			return true
 		end,
 		onMouseUp = function() 
-			--set(have_pedals, 0)
-			--set(save_state, 1)
 			return true
 		end,
 	},	
@@ -967,7 +911,6 @@ components = {
 				set(show_gns, 1)
 				set(show_RXP, 1)
 			end
-			
 			
 			
 			set(save_state, 1)
@@ -1022,23 +965,7 @@ components = {
 	},	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	--------------------------------
-
 
 
 }

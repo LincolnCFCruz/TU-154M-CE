@@ -1,6 +1,5 @@
 -- RV-5 radio altimeter
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
-defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external"))
 
 -- radio altitude
 defineProperty("altitude", globalPropertyf("sim/cockpit2/gauges/indicators/radio_altimeter_height_ft_pilot"))  -- altitude, measured by gauge
@@ -25,12 +24,9 @@ defineProperty("rv5_alt", globalPropertyf("tu-154/misc/rv5_alt_left"))  -- altit
 defineProperty("rv5_dh_signal", globalPropertyi("tu-154/misc/rv5_dh_signal_left"))
 
 
-
-
 defineProperty("rv_lamp", globalPropertyf("tu-154/lights/small/rv5_left_dh"))  -- RV lamp
 
 defineProperty("rv_cc", globalPropertyf("tu-154/elec/rv5_left_cc"))  -- Current consumption
-
 
 
 local alt2angle = {
@@ -43,7 +39,6 @@ local alt2angle = {
 {800, 340},
 {8000000, 340}
 }
-
 
 
 local alt_angle = 0
@@ -60,7 +55,6 @@ function update()
 	local test = power and get(test_btn) == 1
 	
 
-	
 	if power then
 		start_timer = start_timer + passed
 		
@@ -92,12 +86,10 @@ function update()
 		end
 		
 
-		
 		set(rv_cc, 1)
 	else
 		start_timer = start_timer - passed
 		if start_timer < 20 then start_timer = 0 end
-		--if start_timer < 0 then start_timer = 0 end
 		set(rv_cc, 0)
 	end
 	
@@ -112,7 +104,6 @@ function update()
 	local lamp_lit = bool2int(alt_angle < get(dh_set) - 1 and power)
 	
 	
-	
 	local lamp_coef = math.max((get(bus27_volt) - 10) / 18.5, 0)
 	
 	set(rv_lamp, lamp_lit * lamp_coef)
@@ -123,5 +114,4 @@ function update()
 
 
 end
-
 

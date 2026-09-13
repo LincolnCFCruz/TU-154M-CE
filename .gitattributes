@@ -1,0 +1,4 @@
+# Text files are LF in the working tree on every machine, whatever a
+# contributor's core.autocrlf says (CLAUDE.md Hard Rule 3). Git detects
+# binaries (textures, sounds, the .xpl plugins) by content.
+* text=auto eol=lf

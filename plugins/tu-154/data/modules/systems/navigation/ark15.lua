@@ -5,7 +5,6 @@ defineProperty("right_freq", globalPropertyf("sim/cockpit2/radios/actuators/adf1
 defineProperty("active", globalPropertyf("sim/cockpit2/radios/actuators/adf1_right_is_selected"))  -- selector of active disk. 0 - left, 1 - right 
 defineProperty("fail", globalPropertyf("sim/operation/failures/rel_adf1"))
 defineProperty("adf", globalPropertyf("sim/cockpit2/radios/indicators/adf1_relative_bearing_deg"))
-defineProperty("audio_selection", globalPropertyi("sim/cockpit2/radios/actuators/audio_selection_adf1"))
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
@@ -35,8 +34,6 @@ defineProperty("ark15_cc", globalPropertyf("tu-154/radio/ark15_L_cc")) -- ARK cu
 -- failures
 
 
-
-
 -- results
 defineProperty("adf_bear", globalPropertyf("tu-154/radio/adf_bear_1"))
 
@@ -48,8 +45,6 @@ defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) 
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local notLoaded = true
@@ -67,16 +62,12 @@ local function sw_reset()
 end
 
 
-
-
 local rot_small_sound = loadSample('sounds/ark_inn.wav')
 local rot_mid_sound = loadSample('sounds/ark_mid.wav')
 local rotary_big_sound = loadSample('sounds/ark_out.wav')
 
 local button_sound = loadSample('sounds/plastic_btn.wav')
 local switcher_sound = loadSample('sounds/plastic_switch.wav')
-
---setSampleGain(rotary_big_sound, 200)
 
 
 local rot_big_last = 0
@@ -108,7 +99,6 @@ local function rotary()
 	rot_inn_last = inn_summ
 	
 
-
 end
 
 local but_summ_last = 0
@@ -139,7 +129,6 @@ local function switchers()
 
 
 end
-
 
 
 local ones_left = 0
@@ -328,9 +317,6 @@ function update()
 		end
 		if mode == 1 and signal > 0.5 then -- compas
 			angle = source_angle + (math.random() - 0.49999) * 30 * passed
-		--elseif mode == 3 then -- ramka
-			--angle = angle + get(ant_sw) * passed * 20
-			--signal = signal * math.abs(math.cos(math.rad(source_angle - angle)))
 		elseif mode == 1 then -- no signal
 			angle = angle + (math.random() - 0.2) * 30 * passed * (dir_ran * 2 - 1)
 		end	
@@ -341,16 +327,7 @@ function update()
 	-- change dirrection of random movement
 	if math.random() > 0.99 then dir_ran = (1 - dir_ran) end
 	
-	--set(res_signal, signal)
 	if MASTER then set(adf_bear, angle)	end
 
 	
-	
-	
-	
-	
-	
-	
-
-
 end

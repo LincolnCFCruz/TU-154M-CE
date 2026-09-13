@@ -18,9 +18,6 @@ defineProperty("anim_rud1", globalPropertyf("tu-154/controlls/throttle_1")) -- t
 defineProperty("anim_rud2", globalPropertyf("tu-154/controlls/throttle_2")) -- throttle 2
 defineProperty("anim_rud3", globalPropertyf("tu-154/controlls/throttle_3")) -- throttle 3
 
---defineProperty("tro_comm_1", globalProperty("sim/flightmodel/engine/ENGN_thro[0]"))
---defineProperty("tro_comm_2", globalProperty("sim/flightmodel/engine/ENGN_thro[1]"))
---defineProperty("tro_comm_3", globalProperty("sim/flightmodel/engine/ENGN_thro[2]"))
 
 defineProperty("tro_comm_1", globalPropertyf("tu-154/SC/engine/ENGN_thro_0")) 
 defineProperty("tro_comm_2", globalPropertyf("tu-154/SC/engine/ENGN_thro_1")) 
@@ -45,8 +42,6 @@ defineProperty("bus36_volt_left", globalPropertyf("tu-154/elec/bus36_volt_left")
 defineProperty("bus115_1_volt", globalPropertyf("tu-154/elec/bus115_1_volt"))
 
 defineProperty("absu_at_power_cc", globalPropertyf("tu-154/absu_at_power_cc")) -- ABSU current draw
-
-
 
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
@@ -77,8 +72,6 @@ defineProperty("absu_at1_fail", globalPropertyi("tu-154/failures/absu_at1_fail")
 defineProperty("absu_at2_fail", globalPropertyi("tu-154/failures/absu_at2_fail")) -- autothrottle failure
 
 
--- XP 11.10 fix
-defineProperty("sim_vers", globalPropertyi("sim/version/xplane_internal_version")) -- sim version
 
 
 defineProperty("absu_thro1_lit", globalPropertyf("tu-154/lights/button/absu_thro1"))
@@ -104,8 +97,6 @@ defineProperty("at_accel_path", globalPropertyf("tu-154/absu/at_accel_path"))
 -- test switches, set from DataRefTool (see core/dataref_creator_2.lua)
 defineProperty("tune_gain_table", globalPropertyi("tu-154/tune/at_gain_table"))
 defineProperty("tune_ax_mode", globalPropertyi("tu-154/tune/at_ax_mode"))
-
-
 
 
 local AT_mode = 0 -- 0 = off, 1 = sync spd, 2 = prepare, 3 = work, 4 = TOGA
@@ -151,14 +142,8 @@ end
 registerCommandHandler(THR_up, 0, THR_up_hnd)
 
 
-
-
-
 local spd_hold = 0
 local IAS_smth = 0
-
-
-
 
 
 local prepare_counter = 0
@@ -309,7 +294,6 @@ function update()
 	if MASTER then set(stu_mode, AT_mode) end
 	
 	
-	
 	-- additional calculations
 	if power and prepare then prepare_counter = prepare_counter + passed 
 	else prepare_counter = 0
@@ -356,8 +340,6 @@ function update()
 	set(at_cmd, 0) -- overwritten below while the autothrottle stabilises
 	
 
-	
-	
 	-- throttles and speed calculations
 	if AT_mode == 1 or AT_mode == 2 then -- sync markers
 		
@@ -393,7 +375,6 @@ function update()
 		end
 		
 		
-		
 		-- calculate the speed
 		local P = work_spd - IAS_smth
 		
@@ -404,12 +385,6 @@ function update()
 		local K_P = 0.003
 		local K_D = -0.05
 		
--- if get(sim_vers) then
-	-- if get(sim_vers) >= 111000 then
-		-- K_P = 0.008
-		-- K_D = -0.05
-	-- end
--- end		
 		
 		-- gain was taken from the selected schedule above, next to IAS_smth
 		
@@ -463,7 +438,6 @@ function update()
 		end
 		
 		
-	
 	elseif AT_mode == 4 then -- TOGA
 		
 		marker_act_L = marker_act_L + (IAS_smth - marker_act_L) * passed * 2
@@ -492,9 +466,6 @@ function update()
 	end
 	
 	
-	
-	
-	
 	if marker_act_L > 350 then marker_act_L = 350
 	elseif marker_act_L < 0 then marker_act_L = 0 end
 	
@@ -515,7 +486,6 @@ if MASTER then
 	end
 	
 	
-	
 end
 	
 	set(absu_at_dif_left, spd_diff_ind_L)
@@ -524,12 +494,5 @@ end
 	set(absu_at_power_cc, bool2int(power and channel_off ~= 1) + bool2int(power and channel_off ~= -1)*get(absu_speed_prepare))
 	
 	
-	
-	
-	
-	
-
-
-
 end
 

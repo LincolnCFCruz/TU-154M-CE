@@ -6,10 +6,6 @@ defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_exter
 -- logic sources
 
 -- RV
-defineProperty("dh_set_L", globalPropertyf("tu-154/gauges/alt/radioalt_dh_left"))  -- DH angle
-defineProperty("dh_set_R", globalPropertyf("tu-154/gauges/alt/radioalt_dh_right"))  -- DH angle
-defineProperty("rv_angle_L", globalPropertyf("tu-154/gauges/alt/radioalt_needle_left"))  -- RV needle
-defineProperty("rv_angle_R", globalPropertyf("tu-154/gauges/alt/radioalt_needle_right"))  -- RV needle
 
 defineProperty("rv5_dh_signal_left", globalPropertyi("tu-154/misc/rv5_dh_signal_left"))
 defineProperty("rv5_dh_signal_right", globalPropertyi("tu-154/misc/rv5_dh_signal_right"))
@@ -97,10 +93,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
-
-
 -- sound sources
 local absu_sound = loadSample('sounds/short_speaker.wav') --
 local long_speaker = loadSample('sounds/long_speaker.wav')
@@ -114,8 +106,6 @@ local air_cond_noise = loadSample('sounds/air_noise.wav') --
 local taxi_noise = loadSample('sounds/roll_inn.wav') --
 
 local flaps_sound = loadSample('sounds/flaps_hnd.wav') --
-
-
 
 
 local RV_counter = 0
@@ -186,16 +176,6 @@ function update()
 	buttons_last = buttons	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	----------------------
 	-- RadioAltimeter --
 	----------------------
@@ -225,7 +205,6 @@ function update()
 	
 	if (get(main_gear_flaps) == 1 or get(fire_siren) == 1) and power and get(srd_buzzer) == 1 and external == 0 and get(main_alarm_fail) == 0 then -- continous buzz
 		if not isSamplePlaying(long_sirena) then playSample(long_sirena, true) end
-		--stopSample(short_sirena)
 	elseif get(srd_buzzer) == 1 and get(main_pressure) == 1 and power and external == 0 and get(main_alarm_fail) == 0 then
 		short_siren_timer = short_siren_timer + passed
 		
@@ -236,10 +215,8 @@ function update()
 			stopSample(long_sirena)
 		end
 		
-		--stopSample(long_sirena)
 	else
 		stopSample(long_sirena)
-		--stopSample(short_sirena)
 	end
 
 	if passed == 0 or external == 1 then
@@ -282,7 +259,6 @@ function update()
 		stopSample(long_speaker)
 	else
 		stopSample(long_speaker)
-		--stopSample(absu_sound)
 	end
 	
 	absu_last = absu_now
@@ -304,7 +280,6 @@ function update()
 	if (inner or middle or outer) and mrp_power and external == 0 then 
 		if not isSamplePlaying(bell) then playSample(bell, false) end
 	else 
-		--stopSample(bell) 
 	end
 
 	setSampleGain(bell, 1000 * warn_vl)
@@ -357,8 +332,6 @@ function update()
 	
 	setSampleGain(taxi_noise, taxi_gain * 10 * get(ground_volume_ratio))
 	setSamplePitch(taxi_noise, taxi_pitch)
-	
-	
 	
 	
 	--------------------
@@ -419,5 +392,4 @@ if MASTER then
 end	
 	
 	
-
 end

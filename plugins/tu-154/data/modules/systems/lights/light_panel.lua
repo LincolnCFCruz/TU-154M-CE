@@ -7,7 +7,6 @@ defineProperty("left_panel_fld_set", globalPropertyf("tu-154/lights/left_panel_f
 defineProperty("right_panel_fld_set", globalPropertyf("tu-154/lights/right_panel_flood_set")) --  left panel integral lighting control
 
 
-
 defineProperty("right_panel_int_set", globalPropertyf("tu-154/lights/right_panel_int_set")) -- right panel integral lighting control
 defineProperty("mid_right_panel_int_set", globalPropertyf("tu-154/lights/mid_right_panel_int_set")) -- copilot's front panel integral lighting control
 defineProperty("ovhd_panel_int_set", globalPropertyf("tu-154/lights/ovhd_panel_int_set")) -- overhead panel integral lighting control
@@ -42,8 +41,6 @@ defineProperty("sign_exit", globalPropertyi("tu-154/switchers/ovhd/sign_exit")) 
 
 defineProperty("landing_light_off", globalPropertyi("tu-154/lights/landing_light_off")) -- landing light switch
 defineProperty("landing_light_off_cap", globalPropertyi("tu-154/lights/landing_light_off_cap")) -- landing light switch
-
-
 
 
 -- engines
@@ -95,7 +92,6 @@ local lights_off_last = get(landing_light_off)
 local lights_cap_last = get(landing_light_off_cap)
 
 
-
 -- sound files
 local switcher_sound = loadSample('sounds/metal_switch.wav')
 local rotary_sound = loadSample('sounds/rot_click_big.wav')
@@ -114,7 +110,6 @@ local function reset_switchers()
 		set(sign_nosmoke, 0)
 		set(sign_exit, 0)
 	end
-	--print("works")
 	notLoaded = false
 end
 
@@ -166,7 +161,6 @@ function update()
 	local lights_cap = get(landing_light_off_cap)
 	
 	
-	
 	-- check changes and play sounds
 	if left_panel + right_panel + mid_right_panel+ left_panel_fld + right_panel_fld- left_panel_last - right_panel_last - mid_right_panel_last - left_panel_fld_last -right_panel_fld_last ~= 0 then
 		playSample(rotary_sound, false)
@@ -188,7 +182,6 @@ function update()
 	end
 	
 	if lights_cap == 0 then set(landing_light_off, 0) end
-	
 	
 	
 	-- save current state

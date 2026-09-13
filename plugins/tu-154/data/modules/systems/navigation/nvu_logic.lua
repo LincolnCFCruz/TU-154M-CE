@@ -73,7 +73,6 @@ defineProperty("zpu1", globalPropertyf("tu-154/nvu/zpu1")) -- ZPU1
 defineProperty("zpu2", globalPropertyf("tu-154/nvu/zpu2")) -- ZPU2
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
@@ -81,11 +80,6 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 -- failures
 defineProperty("nvu_fail", globalPropertyi("tu-154/failures/nvu_fail"))
-
-
-
-
-
 
 
 local nvu_switched = false
@@ -97,7 +91,6 @@ function update()
 
 	local MASTER = get(ismaster) ~= 1	
 
-	
 	
 	local passed = get(frame_time)
 	
@@ -129,7 +122,6 @@ function update()
 	end
 	
 	
-
 	-- all counters are in KM
 	local cur_Z1 = get(current_Z1) -- upper line
 	local cur_S1 = get(current_S1)
@@ -180,7 +172,6 @@ function update()
 	end
 	
 	
-	
 	-- changing orthodromy lamp logic
 	change_cho_timer = change_cho_timer + passed
 	
@@ -190,9 +181,6 @@ if MASTER then
 	else set(nvu_changing_ort, 0) end
 	
 end	
-	
-	
-	
 	
 	
 	-- set up ZPU
@@ -317,7 +305,6 @@ end
 		local S_rsbn = dist * math.cos(alpha)
 		local Z_rsbn = dist * math.sin(alpha)
 		
-		--print(S_rsbn, "  ", Z_rsbn)
 		
 		if active == 1 then
 			-- S_sm = D cos(A - MA);  Z_sm = D sin(A - MA)
@@ -345,7 +332,6 @@ end
 			cur_Z1 = nxt_Z1 + cur_S2 * math.sin(delta_zpu) + cur_Z2 * math.cos(delta_zpu)
 			
 		end	
-	
 	
 	
 	end
@@ -378,7 +364,6 @@ end
 	elseif nxt_Z2 < -500 then nxt_Z2 = -500 end	
 	
 	
-	
 if MASTER then	
 	
 	-- set results for ABSU
@@ -408,7 +393,6 @@ if MASTER then
 	set(next_S2, nxt_S2)	
 
 end
-
 
 
 end

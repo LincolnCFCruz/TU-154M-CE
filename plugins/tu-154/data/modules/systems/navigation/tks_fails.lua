@@ -21,6 +21,17 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ gyro_fail_1, 0.0001, 0.3, 6 },
+	{ gyro_fail_2, 0.0001, 0.3, 6 },
+
+	{ tks_km1_fail, 0.0001, 0.3, 1 },
+	{ tks_km2_fail, 0.0001, 0.3, 1 },
+	{ tks_bgmk1_fail, 0.0001, 0.3, 1 },
+	{ tks_bgmk2_fail, 0.0001, 0.3, 1 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -48,13 +59,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(gyro_fail_1) ~= 6 then set(gyro_fail_1, bool2int(math.random() < 0.0001 * FAIL * 0.3) * 6) end
-			if get(gyro_fail_2) ~= 6 then set(gyro_fail_2, bool2int(math.random() < 0.0001 * FAIL * 0.3) * 6) end
-			
-			if get(tks_km1_fail) ~= 1 then set(tks_km1_fail, bool2int(math.random() < 0.0001 * FAIL * 0.3) * 1) end
-			if get(tks_km2_fail) ~= 1 then set(tks_km2_fail, bool2int(math.random() < 0.0001 * FAIL * 0.3) * 1) end
-			if get(tks_bgmk1_fail) ~= 1 then set(tks_bgmk1_fail, bool2int(math.random() < 0.0001 * FAIL * 0.3) * 1) end
-			if get(tks_bgmk2_fail) ~= 1 then set(tks_bgmk2_fail, bool2int(math.random() < 0.0001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS, FAIL)
 
 					
 
@@ -73,12 +78,7 @@ if MASTER then
 		-- no failures enabled
 		fail_counter = 0
 		
-		set(gyro_fail_1, 0)
-		set(gyro_fail_2, 0)
-		set(tks_km1_fail, 0)
-		set(tks_km2_fail, 0)
-		set(tks_bgmk1_fail, 0)
-		set(tks_bgmk2_fail, 0)
+		clearFailures(RANDOM_FAILS)
 
 
 	

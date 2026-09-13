@@ -24,7 +24,6 @@ defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deplo
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
 defineProperty("gear3_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[2]"))  -- deploy of left gear
 
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
 defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
 defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 
@@ -35,10 +34,8 @@ defineProperty("rpm_high_1", globalPropertyf("tu-154/gauges/engine/rpm_high_1"))
 defineProperty("rpm_high_2", globalPropertyf("tu-154/gauges/engine/rpm_high_2")) -- engine 2 high-pressure spool rpm
 defineProperty("rpm_high_3", globalPropertyf("tu-154/gauges/engine/rpm_high_3")) -- engine 3 high-pressure spool rpm
 
-defineProperty("nav_cs", globalPropertyf("tu-154/radio/nav1_cs"))
 defineProperty("nav_gs", globalPropertyf("tu-154/radio/nav1_gs"))
 
-defineProperty("nav_cs_flag", globalPropertyi("tu-154/radio/nav1_cs_flag"))
 defineProperty("nav_gs_flag", globalPropertyi("tu-154/radio/nav1_gs_flag"))
 
 -- time
@@ -69,7 +66,6 @@ defineProperty("taws_alt_left", globalPropertyi("tu-154/taws/taws_alt_left")) --
 defineProperty("taws_alt_right", globalPropertyi("tu-154/taws/taws_alt_right")) -- compare the altitude on the right altimeter
 
 
-
 defineProperty("gs_msg_int", globalPropertyf("tu-154/taws/gs_msg_int")) -- GLIDESLOPE alert interval
 defineProperty("gs_msg_vol", globalPropertyf("tu-154/taws/gs_msg_vol")) -- GLIDESLOPE alert volume
 
@@ -77,7 +73,6 @@ defineProperty("gs_msg_vol", globalPropertyf("tu-154/taws/gs_msg_vol")) -- GLIDE
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
 
 
 local rv_last = get(rv5_alt)
@@ -151,8 +146,6 @@ function update()
 		local GSflag = get(nav_gs_flag)
 		
 		
-		--print(sm_rv_vvi)
-		
 		-- calculate flight phase
 		local gear_touch = get(deflection_mtr_2) > 0.05 or get(deflection_mtr_3) > 0.05
 		local eng_TO = get(rpm_high_1) > 90 and get(rpm_high_2) > 90 and get(rpm_high_3) > 90
@@ -191,7 +184,6 @@ function update()
 		if (gears and flaps and rv_alt < 130) or get(egpws_relief) == 0 or gear_touch or (math.abs(GSlope) < 0.7 and GSflag == 0) then mode_7_active = false end
 		
 		
-		
 		-- mode 1 - sink rate
 		local mode_1_res = 0
 		
@@ -226,8 +218,6 @@ function update()
 		end
 		
 
-		
-		
 		-- mode 2B - sink rate with flaps full
 		local mode_2B_res = 0
 		
@@ -235,7 +225,6 @@ function update()
 		if -baro_vvi >= 5 then mode_2B_edge = 180
 		elseif -baro_vvi > 2 then mode_2B_edge = line(-baro_vvi, 2, 60, 5, 180)
 		end
-		
 		
 		
 		if rv_alt <= 250 and rv_alt >= mode_2B_edge and flaps and mode_1_2_active then
@@ -246,8 +235,6 @@ function update()
 		end
 		
 
-		
-		
 		-- mode 3A - sink rate after take off
 		local mode_3A_res = 0
 		
@@ -256,8 +243,6 @@ function update()
 		end
 		
 
-		
-		
 		-- mode 3B - altitude loss after take off
 		local mode_3B_res = 0
 		
@@ -270,8 +255,6 @@ function update()
 		end
 		
 
-		
-		
 		-- mode 4A - to low with not landing config
 		local mode_4A_res = 0
 		
@@ -283,8 +266,6 @@ function update()
 		end
 		
 
-		
-		
 		-- mode 4B - too low with not landing config
 		local mode_4B_res = 0
 		
@@ -296,17 +277,7 @@ function update()
 		end
 		
 
-		
 		-- mode 4C - too low with not full flaps
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		-- mode 5 - too low from glideslope
@@ -330,13 +301,9 @@ function update()
 		end
 		
 		gs_interval = math.max(gs_interval, 0.8)
-		--set(gs_msg_int, math.max(gs_interval, 0.8))
 		set(gs_msg_vol, gs_vol)
 		
 
-		
-	
-	
 		-- mode 6 - altitude diference
 		local mode_6_res = 0
 		local qfe = get(egpws_mode) == 1
@@ -357,12 +324,6 @@ function update()
 		end
 		
 
-		
-		
-		
-		
-		
-		
 		-- mode 7 - terrain ahead
 		local mode_7_res = 0
 		local rows = 30 -- amount of probes
@@ -415,21 +376,16 @@ function update()
 		local x_6 = GS * 45
 		local x_7 = GS * 60
 		
-	--	test_counter = test_counter + 1
-	--	print(mode7_counter, "  ", mode7_left_done, "  ", mode7_center_done, "  ", mode7_right_done)
 			
 		if mode7_counter < 0.3 and mode7_counter > 0.25 and not mode7_left_done and mode_7_active then -- left vector
 			
-			--mode7_left_done = false
 			mode7_center_done = false
 			mode7_right_done = false
-			
 			
 			
 			dir = math.rad(get(course) - 3)
 			
 			if GS > 11 then dir = math.rad(get(course_fly) - 3) end
-			
 			
 			
 			local dir_x = math.sin(dir); -- direct vector
@@ -442,12 +398,9 @@ function update()
 			for row = 1, rows, 1 do
 
 				
-				
-				
 				local dist = max_dist * row/rows
 				
 
-				
 				local p_x = plane_x + dir_x * dist - right_x * 250
 				local p_z = plane_z + dir_z * dist - right_z * 250
 				
@@ -480,20 +433,17 @@ function update()
 			end	
 			
 
-			
 			mode7_left_done = true
 			
 		elseif mode7_counter < 0.6 and mode7_counter > 0.55 and not mode7_center_done and mode_7_active then
 
 			
 			mode7_left_done = false
-			--mode7_center_done = false
 			mode7_right_done = false
 			
 			dir = math.rad(get(course))
 			
 			if GS > 11 then dir = math.rad(get(course_fly)) end
-			
 			
 			
 			local dir_x = math.sin(dir); -- direct vector
@@ -506,12 +456,9 @@ function update()
 			for row = 1, rows, 1 do
 
 				
-				
-				
 				local dist = max_dist * row/rows
 				
 
-				
 				local p_x = plane_x + dir_x * dist
 				local p_z = plane_z + dir_z * dist
 				
@@ -540,8 +487,6 @@ function update()
 				else res_ctr = 0 
 				
 				end
-				--print("mode 7  ", res_ctr, "  ")
-				
 				
 				
 			end				
@@ -553,12 +498,10 @@ function update()
 			
 			mode7_left_done = false
 			mode7_center_done = false
-			--mode7_right_done = false
 			
 			dir = math.rad(get(course) + 3)
 			
 			if GS > 11 then dir = math.rad(get(course_fly) + 3) end
-			
 			
 			
 			local dir_x = math.sin(dir); -- direct vector
@@ -571,12 +514,9 @@ function update()
 			for row = 1, rows, 1 do
 
 				
-				
-				
 				local dist = max_dist * row/rows
 				
 
-				
 				local p_x = plane_x + dir_x * dist + right_x * 250
 				local p_z = plane_z + dir_z * dist + right_z * 250
 				
@@ -624,11 +564,6 @@ function update()
 		mode_7_res = math.max(res_left, res_ctr, res_right)
 		
 		
-
-		
-		--set(taws_english, 0)
-		
-		
 		-- set final message according to priorities
 		local eng = get(taws_english)
 		local alarm = get(egpws_alarm_1)
@@ -641,43 +576,33 @@ function update()
 			sound_counter = 1.5
 		elseif baro_vvi < 0 and rv_alt > 4.8 and rv_alt < 5.2 and sound_counter < 0 and MASTER then -- altitude callout 5m
 			set(taws_rus_phrase, 1 * (1 - eng))
-			--set(taws_eng_phrase, 1 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 9.8 and rv_alt < 10.2 and sound_counter < 0 and MASTER then -- altitude callout 10m
 			set(taws_rus_phrase, 2 * (1 - eng))
-			--set(taws_eng_phrase, 2 * eng)	
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 14.8 and rv_alt < 15.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 15m
 			set(taws_rus_phrase, 3 * (1 - eng))
-			--set(taws_eng_phrase, 3 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 19.8 and rv_alt < 20.2 and sound_counter < 0 and MASTER then -- altitude callout 20m
 			set(taws_rus_phrase, 4 * (1 - eng))
-			--set(taws_eng_phrase, 4 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 24.8 and rv_alt < 25.2 and sound_counter < 0 and sound_counter < 0 and MASTER then -- altitude callout 25m
 			set(taws_rus_phrase, 5 * (1 - eng))
-			--set(taws_eng_phrase, 5 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 29.8 and rv_alt < 30.2 and sound_counter < 0 and MASTER then -- altitude callout 30m
 			set(taws_rus_phrase, 6 * (1 - eng))
-			--set(taws_eng_phrase, 6 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 39.8 and rv_alt < 40.2 and sound_counter < 0 and MASTER then -- altitude callout 40m
 			set(taws_rus_phrase, 7 * (1 - eng))
-			--set(taws_eng_phrase, 7 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 49.8 and rv_alt < 50.2 and sound_counter < 0 and MASTER then -- altitude callout 50m
 			set(taws_rus_phrase, 8 * (1 - eng))
-			--set(taws_eng_phrase, 8 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 59.8 and rv_alt < 60.2 and eng == 0 and sound_counter < 0 and MASTER then -- altitude callout 60m
 			set(taws_rus_phrase, 9 * (1 - eng))
-			--set(taws_eng_phrase, 9 * eng)
 			sound_counter = 1
 			
 		elseif baro_vvi < 0 and rv_alt > 15 and rv_alt < 15.45 and sound_counter < 0 and MASTER then -- altitude callout 50ft
-			--set(taws_rus_phrase, 9 * (1 - eng))
 			set(taws_eng_phrase, 1 * eng)
 			sound_counter = 1	
 					
@@ -698,18 +623,14 @@ function update()
 			sound_counter = 2
 		elseif baro_vvi < 0 and rv_alt > 149.8 and rv_alt < 150.2 and eng == 0 and sound_counter <= 0 and MASTER then -- altitude callout 150m
 			set(taws_rus_phrase, 10 * (1 - eng))
-			--set(taws_eng_phrase, 10 * eng)
 			sound_counter = 2
 		elseif baro_vvi < 0 and rv_alt > 60.7 and rv_alt < 61.1 and sound_counter <= 0 and MASTER then -- altitude callout 200ft
-			--set(taws_rus_phrase, 10 * (1 - eng))
 			set(taws_eng_phrase, 2 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 152 and rv_alt < 153 and sound_counter <= 0 and MASTER then -- altitude callout 500ft
-			--set(taws_rus_phrase, 10 * (1 - eng))
 			set(taws_eng_phrase, 3 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 304 and rv_alt < 306 and sound_counter <= 0 and MASTER then -- altitude callout 1000ft
-			--set(taws_rus_phrase, 10 * (1 - eng))
 			set(taws_eng_phrase, 4 * eng)
 			sound_counter = 2
 		elseif mode_4A_res == 1 and sound_counter <= 0 and MASTER then -- too low gear

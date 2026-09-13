@@ -95,7 +95,6 @@ function AP_wing_level_hnd(phase)
 	if 1 == phase then
 		set(absu_turn_handle, 0)
 	else 
-		--set(absu_zk, 0)
 	end
 	return 0
 end
@@ -112,7 +111,6 @@ function AP_turn_left_hnd(phase)
 		if a < -50 then a = -50 end
 		set(absu_turn_handle, a)
 	else 
-		--set(absu_zk, 0)
 	end
 	return 0
 end
@@ -128,7 +126,6 @@ function AP_turn_right_hnd(phase)
 		if a > 50 then a = 50 end
 		set(absu_turn_handle, a)
 	else 
-		--set(absu_zk, 0)
 	end
 	return 0
 end
@@ -176,20 +173,6 @@ function AP_stab_M_hnd(phase)
 end
 
 registerCommandHandler(AP_stab_M, 0, AP_stab_M_hnd)
-
-
-local AP_stab_H = findCommand("sim/autopilot/altitude_hold")
-
-function AP_stab_H_hnd(phase)
-	if 1 == phase then
-		set(absu_stab_h, 1)
-	else 
-		set(absu_stab_h, 0)
-	end
-	return 0
-end
-
-registerCommandHandler(AP_stab_H, 0, AP_stab_H_hnd)
 
 
 local AP_stab_H = findCommand("sim/autopilot/altitude_hold")
@@ -296,7 +279,6 @@ function PNP_head_left_L_hnd(phase)
 	if 1 == phase then
 		set(pkp_course_L, get(pkp_course_L) - 1)
 	else 
-		--set(absu_speed_change, 0)
 	end
 	return 0
 end
@@ -309,13 +291,11 @@ function PNP_head_right_L_hnd(phase)
 	if 1 == phase then
 		set(pkp_course_L, get(pkp_course_L) + 1)
 	else 
-		--set(absu_speed_change, 0)
 	end
 	return 0
 end
 
 registerCommandHandler(PNP_head_right_L, 0, PNP_head_right_L_hnd)
-
 
 
 local PNP_head_left_R = findCommand("sim/autopilot/heading_copilot_down")
@@ -324,13 +304,11 @@ function PNP_head_left_R_hnd(phase)
 	if 1 == phase then
 		set(pkp_course_R, get(pkp_course_R) - 1)
 	else 
-		--set(absu_speed_change, 0)
 	end
 	return 0
 end
 
 registerCommandHandler(PNP_head_left_R, 0, PNP_head_left_R_hnd)
-
 
 
 local PNP_head_right_R = findCommand("sim/autopilot/heading_copilot_up")
@@ -339,19 +317,9 @@ function PNP_head_right_R_hnd(phase)
 	if 1 == phase then
 		set(pkp_course_R, get(pkp_course_R) + 1)
 	else 
-		--set(absu_speed_change, 0)
 	end
 	return 0
 end
 
 registerCommandHandler(PNP_head_right_R, 0, PNP_head_right_R_hnd)
-
-
-
-
-
-
-
-
-
 

@@ -31,14 +31,10 @@ defineProperty("hydro_ra56_elev_3", globalPropertyi("tu-154/switchers/eng/hydro_
 
 defineProperty("sau_stu_on", globalPropertyi("tu-154/switchers/ovhd/sau_stu_on"))  -- SAU/STU switch
 
---defineProperty("tro_comm_1", globalProperty("sim/flightmodel/engine/ENGN_thro[0]"))
---defineProperty("tro_comm_2", globalProperty("sim/flightmodel/engine/ENGN_thro[1]"))
---defineProperty("tro_comm_3", globalProperty("sim/flightmodel/engine/ENGN_thro[2]"))
 
 defineProperty("tro_comm_1", globalPropertyf("tu-154/SC/engine/ENGN_thro_0")) 
 defineProperty("tro_comm_2", globalPropertyf("tu-154/SC/engine/ENGN_thro_1")) 
 defineProperty("tro_comm_3", globalPropertyf("tu-154/SC/engine/ENGN_thro_2"))
-
 
 
 -- buttons
@@ -115,22 +111,15 @@ defineProperty("anim_rud3", globalPropertyf("tu-154/controlls/throttle_3")) -- t
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
 defineProperty("flap_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_fla1def")) -- inner flaps right
 
--- joystick
---defineProperty("joy_pitch", globalPropertyf("sim/cockpit2/controls/yoke_pitch_ratio")) -- pitch position of joytick
---defineProperty("joy_roll", globalPropertyf("sim/cockpit2/controls/yoke_roll_ratio")) -- roll position of joystick
---defineProperty("joy_yaw", globalPropertyf("sim/cockpit2/controls/yoke_heading_ratio")) -- yaw position of joystick
 
 defineProperty("joy_pitch", globalPropertyf("tu-154/SC/yoke_pitch_ratio")) 
 defineProperty("joy_roll", globalPropertyf("tu-154/SC/yoke_roll_ratio")) 
-defineProperty("joy_yaw", globalPropertyf("tu-154/SC/yoke_heading_ratio")) 
 
 
 defineProperty("manip_pitch", globalPropertyf("sim/cockpit2/controls/yoke_pitch_ratio")) 
 defineProperty("manip_roll", globalPropertyf("sim/cockpit2/controls/yoke_roll_ratio")) 
 
 --sim/cockpit2/controls/yoke_roll_ratio	sim/cockpit2/controls/yoke_pitch_ratio
-
-
 
 
 defineProperty("pkp_fail_left", globalPropertyf("tu-154/gauges/ahz/ahz_flag_L"))
@@ -171,7 +160,6 @@ defineProperty("toga_command", globalPropertyi("tu-154/absu/toga_comm")) -- 	GO-
 defineProperty("absu_use_second_nav", globalPropertyi("tu-154/absu_use_second_nav")) -- the ABSU uses the second Kurs-MP
 
 
-
 defineProperty("damp_roll_lamp", globalPropertyi("tu-154/absu/damp_roll_lamp"))
 defineProperty("damp_pitch_lamp", globalPropertyi("tu-154/absu/damp_pitch_lamp"))
 defineProperty("damp_yaw_lamp", globalPropertyi("tu-154/absu/damp_yaw_lamp"))
@@ -183,14 +171,9 @@ defineProperty("man_toga_lamp", globalPropertyi("tu-154/absu/man_toga_lamp"))
 defineProperty("triangle_lamp_signal", globalPropertyi("tu-154/absu/triangle_lamp_signal"))
 
 
-
-
-
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
 
 
 -- failures
@@ -232,7 +215,7 @@ local pitch_mode_main = 1
 
 local signal_timer = 0
 
-TOGA_COMM = findCommand("sim/engines/TOGA_power")
+local TOGA_COMM = findCommand("sim/engines/TOGA_power")
 
 local thro_last_1 = get(tro_comm_1)
 local thro_last_2 = get(tro_comm_2)
@@ -251,9 +234,6 @@ function TOGA_comm_hnd(phase)
 	else
 		set(toga_command, 0)
 		TOGA_button = false
-		--set(tro_comm_1, thro_last_1)
-		--set(tro_comm_2, thro_last_2)
-		--set(tro_comm_3, thro_last_3)
 	end
 	
 	return 0
@@ -272,15 +252,11 @@ function AP_toggle_hnd(phase)
 		AP_button = true
 	else 
 		AP_button = false
-		--TOGA_mode = false
 	end
 	return 0
 end
 
 registerCommandHandler(AP_toggle, 0, AP_toggle_hnd)
-
-
-
 
 
 local roll_submode = 1
@@ -322,7 +298,6 @@ if MASTER then
 	
 	roll_submode = get(roll_sub_mode)
 	pitch_submode = get(pitch_sub_mode)
-	
 	
 	
 	local sau_sw = get(sau_stu_on) == 1
@@ -405,8 +380,6 @@ if MASTER then
 		
 	-- conditions, when ABSU can work
 	local absu_work_logic = true-- get(pkp_fail_left) + get(pkp_fail_right) + get(mgv_contr_fail) < 2
-	--absu_work_logic = absu_work_logic --and bool2int(get(gs_press_1) > 100) + bool2int(get(gs_press_2) > 100) + bool2int(get(gs_press_3) > 100) >= 2
-	--absu_work_logic = absu_work_logic -- and sau_sw and get(tks_fail_left) + get(tks_fail_right) == 0
 	
 	local ahz_work = get(pkp_fail_left) + get(pkp_fail_right) + get(mgv_contr_fail) < 2
 	
@@ -414,11 +387,9 @@ if MASTER then
 	if sau_sw ~= sau_sw_last and sau_sw then -- need to extend conditions
 		if ail_hyd_sw and rud_hyd_sw and absu_work_logic then 
 			roll_mode_main = 1 
-			--roll_submode = 1
 		end
 		if elev_hyd_sw and absu_work_logic then 
 			pitch_mode_main = 1 
-			--pitch_submode = 1
 		end
 	end
 	--reactivate roll
@@ -436,18 +407,14 @@ if MASTER then
 	-- set stab mode
 	if roll_mode_main == 1 and stab_btn and roll_sw then
 		roll_mode_main = 2
-		--roll_submode = 1
 	end
 	
 	-- set yoke mode
 
-	--if roll_mode_main == 2 and (math.abs(get(joy_roll)) > 0.2 or math.abs(get(joy_yaw)) > 0.2 or math.abs(get(joy_pitch)) > 0.2) then
 	if roll_mode_main == 2 and math.abs(get(joy_roll)) > 0.2 then --or get(absu_contr_roll_fail) == 1) then
 		roll_mode_main = 1
-		--pitch_mode_main = 1
 	end
 	if pitch_mode_main == 2 and math.abs(get(joy_pitch)+get(yoke_offset)) > 0.2 then --or get(absu_contr_pitch_fail) == 1) then
-		--roll_mode_main = 1
 		pitch_mode_main = 1
 		if pitch_submode >= 2 and pitch_submode <= 4 then pitch_submode = 1 end
 	end
@@ -455,7 +422,6 @@ if MASTER then
 	
 	if roll_mode_main == 2 and (not roll_sw or not ahz_work) then
 		roll_mode_main = 1
-		--pitch_mode_main = 1
 	end
 	
 	-- check mode for once, after loading the acf
@@ -479,18 +445,9 @@ if MASTER then
 		pitch_mode_main = 0
 	end
 	
-		-- if not power or not ail_hyd_sw or not rud_hyd_sw or not absu_work_logic then
-		-- roll_mode_main = 0
-	-- end
 
-	-- if not power or not elev_hyd_sw or not absu_work_logic then
-		-- pitch_mode_main = 0
-	-- end
-	
-	
 	-- check if ABSU should use second NAV
 	set(absu_use_second_nav, bool2int(get(nav_cs_flag_1) == 1 and isILS(get(freq_2)) and get(nav_cs_flag_2) == 0))
-	
 	
 	
 	-- submodes
@@ -541,50 +498,39 @@ if MASTER then
 	end
 	
 	
-	
 	-- reset cases for ROLL modes
 	if roll_submode == 4 and roll_mode_main == 2 and (isILS(get(freq_1)) or get(nav_cs_flag_1) == 1) then -- AZ1
 		roll_submode = 1
-		--TOGA_mode = false
 	elseif roll_submode == 5 and roll_mode_main == 2 and (isILS(get(freq_2)) or get(nav_cs_flag_2) == 1) then -- AZ2
 		roll_submode = 1
-		--TOGA_mode = false
 	elseif roll_submode == 6 and (not isILS(get(freq_1)) or get(nav_cs_flag_1) == 1 or not land_prep) and pitch_submode == 5 and roll_mode_main == 2 then -- APP and GS
 		roll_submode = 1
 		roll_mode_main = 1
-		--print("OOPS")
 		if get(nav_cs_flag_1) == 1 or not isILS(get(freq_1)) then
 			set(man_roll_lamp, 1)
 			set(absu_fail_signal, 1)
 		end
-		--TOGA_mode = false
 	elseif roll_submode == 6 and (not isILS(get(freq_1)) or get(nav_cs_flag_1) == 1 or not land_prep) and roll_mode_main == 2 then -- APP
 		roll_submode = 1
 		if get(nav_cs_flag_1) == 1 or not isILS(get(freq_1)) then
 			set(man_roll_lamp, 1)
 			set(absu_fail_signal, 1)
 		end
-		--TOGA_mode = false
 		
 	end
-	
-	
 	
 	
 	-- pitch part
 	-- set stab mode
 	if pitch_mode_main == 1 and stab_btn and pitch_sw then
 		pitch_mode_main = 2
-		--pitch_submode = 1
 	end
 	
 	-- set yoke mode
 	if pitch_mode_main == 2 and (not pitch_sw or not ahz_work) then
-		--roll_mode_main = 1
 		pitch_mode_main = 1
 		if pitch_submode >= 2 and pitch_submode <= 4 then
 			pitch_submode = 1
-			--roll_submode = 1
 		end
 	end
 	
@@ -643,9 +589,7 @@ if MASTER then
 		TOGA_mode = false
 	end
 	
-	--print(TOGA_mode, "  ", pitch_submode, "  ", roll_submode)
 	
-
 	pitch_wheel_last = putch_wheel
 	
 	-- reset some modes
@@ -661,18 +605,12 @@ if MASTER then
 	end
 	
 	
-	
-	
-	
-	
-	
 	-- lamp signals
 	set(damp_roll_lamp, bool2int(power27 and (roll_mode_main == 0 or ail_fail_timer==fail_time)))
 	set(damp_pitch_lamp, bool2int(power27 and (pitch_mode_main == 0 or elev_fail_timer==fail_time)))
 	set(damp_yaw_lamp, bool2int(power27 and (roll_mode_main == 0 or rud_fail_timer==fail_time)))
 	set(roll_contr_lamp, bool2int(power and get(absu_contr_roll_fail) == 1))
 	set(pitch_contr_lamp, bool2int(power and get(absu_contr_pitch_fail) == 1))
-	
 	
 	
 	-- roll lamp
@@ -693,7 +631,6 @@ if MASTER then
 			set(absu_fail_signal, 1)
 		end
 	end
-	
 	
 	
 	-- pitch lamp
@@ -721,8 +658,6 @@ if MASTER then
 			set(absu_fail_signal, 1)
 		end
 	end
-	
-	
 	
 	
 	-- roll and pitch lamps on RV fail
@@ -755,9 +690,6 @@ if MASTER then
 	end
 	
 	
-	
-
-	
 	-- end alarm
 	if (get(absu_fail_signal) == 1 and signal_timer > 8) then
 		set(absu_fail_signal, 0)
@@ -776,7 +708,6 @@ if MASTER then
 		set(man_toga_lamp, 0)
 		set(triangle_lamp_signal, 0)
 		signal_timer = 0
-		--print("reset" .. passed)
 	end
 	
 	-- fail alarm logic
@@ -786,10 +717,6 @@ if MASTER then
 	end
 	
 
-	
-
-	
-	
 	-- reset modes on failures or turned off sources
 	if get(absu_damp_roll_fail) == 1 then roll_mode_main = 0 end -- roll damper fail
 	if get(absu_damp_pitch_fail) == 1 then pitch_mode_main = 0 end -- roll damper fail
@@ -798,16 +725,6 @@ if MASTER then
 	if get(absu_calc_toga_fail) == 1 and roll_mode_main >=1 and pitch_mode_main >= 1 and pitch_submode == 6 then roll_mode_main = 1 pitch_mode_main = 1 end -- TOGA calc fail
 	if get(absu_calc_roll_fail) == 1 and roll_mode_main >= 1 then roll_submode = 1 end -- STU roll fail
 	if get(absu_calc_pitch_fail) == 1 and pitch_mode_main >= 1 then pitch_submode = 1 end -- STU pitch fail
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	-----------------------
@@ -826,7 +743,6 @@ if MASTER then
 	-- indication modes
 
 
-	
 	set(absu_pnp_mode_2, get(absu_speed_mode) * bool2int(power)) -- set Co-Pilot PNP right away.
 	
 	-- Captain PNP
@@ -860,21 +776,13 @@ if MASTER then
 	land_sw_last = land_prep
 	
 	
-	
-	
-	
-
-
 	set(roll_main_mode, roll_mode_main)
 	set(pitch_main_mode, pitch_mode_main)
 
 	set(roll_sub_mode, roll_submode)
 	set(pitch_sub_mode, pitch_submode)
 	
-	--set(toga_command, bool2int(TOGA_mode))
 
-
-	
 	set(absu_power_cc, bool2int(power))
 	set(absu_power_27, bool2int(power27))
 	set(absu_nvu_arm,NVU_mode_arm)
@@ -884,6 +792,4 @@ if MASTER then
 end
 
 end
-
-
 

@@ -41,9 +41,6 @@ defineProperty("xpdr_mode", globalPropertyf("sim/cockpit/radios/transponder_mode
 defineProperty("to_ready", globalPropertyi("tu-154/checklist/to_ready")) -- lamp lit
 
 
-
-
-
 local checklist_started = false
 local stage = 0
 local stage_status = 0 -- 0 question, 1+ - answers. 1 usually is false.
@@ -52,9 +49,6 @@ local speak_timer = 0
 
 function checklist_5()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 5 then 
@@ -84,7 +78,6 @@ function checklist_5()
 			phrases_tbl[num] = {nav_tbl["checklist_completed"][lang], 2}
 		end -- end checklist
 	end
-	
 	
 	
 	------------------------------
@@ -166,17 +159,11 @@ function checklist_5()
 		end		
 		
 		
-		
-		
-	
 	end
 	
 	-- move fishka 13
 	if stage == 1 and stage_status == 10 and speak_timer < 0.1 then set(fishka_13, 1) end
 
-	
-	
-	
 	
 	speak_timer = speak_timer - passed_time
 	
@@ -186,7 +173,6 @@ function checklist_5()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -198,17 +184,6 @@ function checklist_5()
 	
 	
 	end
-	
-	--print(checklist_started)	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 end

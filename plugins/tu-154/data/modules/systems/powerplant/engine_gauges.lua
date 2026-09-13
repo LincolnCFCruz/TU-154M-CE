@@ -1,20 +1,6 @@
--- FIXES (XP12 support):
---   1. XP11 table override now only applies to XP11 (not XP12)
---   2. Barometer dataref: sim/weather/barometer_sealevel_inhg replaced with
---      sim/weather/region/sealevel_pressure_pas for XP12 compatibility
---   3. frame_time fallback to sim/operation/misc/frame_rate_period if custom returns 0
---   4. Removed unused hascontrol_1 dataref
--- An abandoned alternative n1_scale/n2_scale experiment used to sit here,
--- commented out and marked "FIX prm engine scale N1 N2!!! 1\05\26". It differed
--- from the live tables further down only in the ground-idle knee (sim 67 -> 60.5
--- instead of the live sim 62 -> 59.7); both land inside the documented
--- 59.5...61.5 % idle band, so the live table stands and the dead copy is gone.
--- The live tables, and the sources behind every number in them, are below.
+-- Engine instruments: the sim's spools, temperatures, pressures and flows
+-- mapped onto the Tu-154's gauge scales (the source of each table is beside it).
 
-defineProperty("xp_version", globalPropertyi("sim/version/xplane_internal_version"))
--- the simulator version is determined right away, to be used below when declaring the datarefs
-local _xp_ver_early = get(globalPropertyi("sim/version/xplane_internal_version"))
-IS_XP12 = _xp_ver_early >= 120000
 -- controls
 defineProperty("control_ut", globalPropertyi("tu-154/buttons/eng/control_ut")) -- UT test button
 defineProperty("control_vibro_1", globalPropertyi("tu-154/buttons/eng/control_vibro_1")) -- vibration check button
@@ -71,11 +57,6 @@ defineProperty("fuel_temp_1", globalPropertyf("tu-154/gauges/eng/fuel_temp_1")) 
 defineProperty("fuel_temp_2", globalPropertyf("tu-154/gauges/eng/fuel_temp_2")) -- fuel temperature
 
 
--- sources xp11 
---defineProperty("sim_egt_1", globalProperty("sim/cockpit2/engine/indicators/EGT_deg_C[0]")) -- EGT from sim
---defineProperty("sim_egt_2", globalProperty("sim/cockpit2/engine/indicators/EGT_deg_C[1]")) -- EGT from sim
---defineProperty("sim_egt_3", globalProperty("sim/cockpit2/engine/indicators/EGT_deg_C[2]")) -- EGT from sim
-
 -- sources xp12 
 defineProperty("sim_egt_1", globalProperty("sim/cockpit2/engine/indicators/EGT_deg_cel[0]")) -- EGT from sim
 defineProperty("sim_egt_2", globalProperty("sim/cockpit2/engine/indicators/EGT_deg_cel[1]")) -- EGT from sim
@@ -108,12 +89,7 @@ defineProperty("engn_oil_qty_2", globalPropertyf("tu-154/failures/engn_oil_qty_2
 defineProperty("engn_oil_qty_3", globalPropertyf("tu-154/failures/engn_oil_qty_3")) -- oil remaining
 
 
-
-
 -- engines
-defineProperty("eng1_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[0]")) -- engine 1 rpm
-defineProperty("eng2_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[1]")) -- engine 2 rpm
-defineProperty("eng3_N1", globalProperty("sim/flightmodel/engine/ENGN_N1_[2]")) -- engine 3 rpm
 
 defineProperty("eng1_N2", globalProperty("sim/flightmodel/engine/ENGN_N2_[0]")) -- engine 1 rpm
 defineProperty("eng2_N2", globalProperty("sim/flightmodel/engine/ENGN_N2_[1]")) -- engine 2 rpm
@@ -139,17 +115,7 @@ defineProperty("thermo", globalPropertyf("sim/cockpit2/temperature/outside_air_t
 
 defineProperty("msl_alt", globalPropertyf("sim/flightmodel/position/elevation"))  -- MSL alt in meters
 
--- FIX: barometer - XP12 uses sim/weather/region/sealevel_pressure_pas (Pascals)
--- XP10/11 used sim/weather/barometer_sealevel_inhg (inHg)
--- Determine the simulator version to pick the right dataref
-local xp_ver_init = globalPropertyi("sim/version/xplane_internal_version")
-local _xp_ver_val = globalPropertyi("sim/version/xplane_internal_version")
-
-defineProperty("baro_press_pas",  globalPropertyf("sim/weather/region/sealevel_pressure_pas"))   -- XP12: pressure in Pascals
--- XP11: the old dataref is declared only when not XP12, to avoid warnings in the log
-if not IS_XP12 then
-	defineProperty("baro_press_inhg", globalPropertyf("sim/weather/barometer_sealevel_inhg"))
-end
+defineProperty("baro_press_pas",  globalPropertyf("sim/weather/region/sealevel_pressure_pas"))   -- sea-level pressure, Pa
 
 -- failures
 defineProperty("fuel_flowmeter_1_fail", globalPropertyi("tu-154/failures/fuel_flowmeter_1_fail"))
@@ -161,28 +127,12 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 -- hascontrol_1 removed - it was not used in the code
 
 -- time
-defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- flight time (custom)
-defineProperty("frame_rate_period", globalPropertyf("sim/operation/misc/frame_rate_period")) -- standard fallback
+defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- s of sim time this frame, 0 while paused
 
 
-MASTER = get(ismaster) ~= 1  -- not local: updated in update() every frame
+local MASTER = get(ismaster) ~= 1  -- refreshed at the top of update()
 
--- frame_time is 0 while the sim is paused - that is how systems/cockpit/time_logic.lua
--- signals it - so a legitimate 0 must be passed through rather than replaced.
--- This module used to substitute frame_rate_period, which keeps ticking on the pause
--- screen: all 106 integrators below - the N2 spool-down physics included - kept running
--- while the sim was stopped, and disagreed with fuel_tanks.lua, fuel_panel.lua and
--- fuel_pumps.lua, which already honour the 0. The fallback now covers only a genuinely
--- absent read, which cannot happen while core/dataref_creator_1.lua creates
--- tu-154/time/frame_time. See the note in fuel_tanks.lua.
-local function get_passed()
-	local ft = get(frame_time)
-	if ft == nil then ft = get(frame_rate_period) end
-	if ft == nil or ft < 0 then ft = 0 end
-	return ft
-end
-
-local passed = get_passed()
+local passed = get(frame_time)
 
 -- [DT] Needle noise on a fixed timebase.
 --
@@ -212,30 +162,13 @@ local function noise(key, dt)
 end
 
 
--- FIX: the version is determined once at startup
-local xp_version_val = get(xp_version)
-local IS_XP12 = xp_version_val >= 120000  -- XP12 internal version >= 120000
-local IS_XP11 = xp_version_val >= 110000 and xp_version_val < 120000
-
--- FIX: universal function for getting the sea level pressure in inHg
+-- sea-level pressure in inHg; the standard atmosphere until the sim reports one
 local function get_baro_inhg()
-	if IS_XP12 then
-		-- XP12: pressure in Pascals, converted to inHg (1 inHg = 3386.39 Pa)
-		local pas = get(baro_press_pas)
-		if pas and pas > 0 then
-			return pas / 3386.39
-		else
-			return 29.92 -- fallback to the standard atmosphere
-		end
-	else
-		-- XP10/11: the dataref is already in inHg
-		local inhg = get(baro_press_inhg)
-		if inhg and inhg > 0 then
-			return inhg
-		else
-			return 29.92
-		end
+	local pas = get(baro_press_pas)
+	if pas and pas > 0 then
+		return pas / 3386.39
 	end
+	return 29.92
 end
 
 local power_27_L = get(bus27_volt_left) > 13
@@ -303,7 +236,6 @@ local function vibra_gau()
 
 
 end
-
 
 
 -- 3 needle gauges
@@ -401,8 +333,6 @@ local function emi3()
 
 
 end
-
-
 
 
 -- EGT
@@ -1576,7 +1506,6 @@ end
 end
 
 
-
 ------------------------
 -- fake gauges --
 ------------------------
@@ -1584,8 +1513,6 @@ end
 local oil_qty_act_1 = 4
 local oil_qty_act_2 = 4
 local oil_qty_act_3 = 4
-
-
 
 
 local function oil_qty_gau()
@@ -1624,7 +1551,6 @@ local function oil_qty_gau()
 	set(oil_qty_3, math.max(4, oil_qty_act_3))
 	
 
-
 end
 
 
@@ -1657,11 +1583,8 @@ local function fuel_temp_gau()
 end
 
 
-
-
 function update()
-	-- FIX: frame_time with a fallback to the standard dataref
-	passed = get_passed()
+	passed = get(frame_time)
 	
 	MASTER = get(ismaster) ~= 1	
 	

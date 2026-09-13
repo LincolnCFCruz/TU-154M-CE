@@ -47,8 +47,6 @@ defineProperty("landing_ext_set_L", globalPropertyi("tu-154/lights/landing_ext_s
 defineProperty("landing_ext_set_R", globalPropertyi("tu-154/lights/landing_ext_set_R")) -- right landing light extension
 
 
-
-
 local checklist_started = false
 local stage = 0
 local stage_status = 0 -- 0 question, 1+ - answers. 1 usually is false.
@@ -57,9 +55,6 @@ local speak_timer = 0
 
 function checklist_9()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 9 then 
@@ -92,7 +87,6 @@ function checklist_9()
 			phrases_tbl[num] = {nav_tbl["checklist_completed"][lang], 2}
 		end -- end checklist
 	end
-	--print(stage)
 	
 	---------------------------------
 	-- question 1. Flaps and slats --
@@ -211,7 +205,6 @@ function checklist_9()
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_12, 1) end
 
 
-	
 	---------------------------------
 	-- question 4. Contr force --
 	---------------------------------
@@ -251,8 +244,6 @@ function checklist_9()
 	if stage == 4 and stage_status == 10 and speak_timer < 0.1 then set(fishka_13, 1) end
 
 
-	
-	
 	---------------------------------
 	-- question 5. Lights --
 	---------------------------------
@@ -292,16 +283,6 @@ function checklist_9()
 	if stage == 5 and stage_status == 10 and speak_timer < 0.1 then set(fishka_14, 1) end
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -310,7 +291,6 @@ function checklist_9()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -323,13 +303,6 @@ function checklist_9()
 	
 	end
 	
-	--print(checklist_started)
-
-
-
 
 end
-
-
-
 

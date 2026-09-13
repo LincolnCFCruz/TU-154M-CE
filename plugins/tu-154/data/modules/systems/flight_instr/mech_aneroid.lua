@@ -63,8 +63,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
 local alt_kus_tbl = {{ -50000000, 0.5},    -- bugs workaround
 				  { 0, 1 },    -- on standard pressure zero level
           		  {  2000, 1.0288 },
@@ -112,9 +110,6 @@ local var75_tbl = {
 { 10000000, 180 }} 
 
 
-
-
-
 local kus_ias_act_L = 0
 local kus_tas_act_L = 0
 
@@ -146,7 +141,6 @@ local MASTER = get(ismaster) ~= 1
 	local airspeed_L = get(ias_L) * 1.852
 	local airspeed_R = get(ias_R) * 1.852
 	
-	--local blocked = get(sensors_caps) == 1
 	
 	-- KUS 750/1100 Captain
 	-- IAS

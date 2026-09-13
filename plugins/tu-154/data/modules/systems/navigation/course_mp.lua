@@ -69,12 +69,9 @@ defineProperty("nav_to_lit", globalPropertyf("tu-154/lights/small/nav_1_to"))
 defineProperty("nav_from_lit", globalPropertyf("tu-154/lights/small/nav_1_from"))
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local rot_small_sound = loadSample('sounds/cursmp.wav')
@@ -87,7 +84,6 @@ setSampleGain(rot_small_sound, 700)
 
 -- returns true if current beacon is ILS
 function isIls(freq)
-    --local freq = get(frequency)
     if (10810 > freq) or (11195 < freq) then
         return false
     end
@@ -146,7 +142,6 @@ end
 local function lamps(flag)
 	
 	local test_btn = get(test_lamps) * math.max(get(bus27_volt_right) - 10 / 18.5, 0)
-	--local day_night = 1 - get(day_night_set) * 0.25
 	local lamps_brt = math.max((math.max(get(bus27_volt_left), get(bus27_volt_right)) - 10) / 18.5, 0)
 
 	local nav_to_lit_brt = math.max(bool2int(flag == 1) * lamps_brt, test_btn)
@@ -327,7 +322,6 @@ end
 	lamps(nav_flag)
 	
 	
-	
 	-- set course and glide planks
 	if power and not FAIL then 
 		course = get(v_plank) / 2.5
@@ -407,17 +401,11 @@ if MASTER then
 	
 	obs_now = math.floor(obs_now)
 	
-	--if obs_now > 360 then obs_now = obs_now - 360 
-	--elseif obs_now < 0 then obs_now = obs_now + 360 end
 	
 	set(obs, obs_now)
 
 end
 	
-	-- set numbers
-	--local obs_1 = obs_now % 10
-	--local obs_10 = math.floor((obs_now % 100) * 0.1) + math.max(math.max((obs_1  - 9), 0), 0)
-	--local obs_100 = math.floor((obs_now % 1000) * 0.01) + math.max(math.max((obs_10 - 9), 0), 0)
 
 	local obs_1 = math.floor(obs_now % 10)
 	local obs_10 = math.floor((obs_now % 100) * 0.1)
@@ -429,19 +417,7 @@ end
 	set(nav_course_1, obs_1)	
 
 	
-	
-	--print(get(obs).."  "..obs_100..obs_10..obs_1)
-
-	
-	
-	
-	
-	
-	
-	
-
 end
-
 
 
 components = {
@@ -462,8 +438,4 @@ components = {
 
 
 }
-
-
-
-
 

@@ -2,7 +2,6 @@
 
 -- controls
 defineProperty("wing_light", globalPropertyi("tu-154/switchers/eng/wing_light")) -- wing ground marker lights
---defineProperty("door_heat", globalPropertyi("tu-154/switchers/eng/door_heat")) -- door heating
 defineProperty("gear_fan", globalPropertyi("tu-154/switchers/eng/gear_fan")) -- landing gear bay ventilation
 defineProperty("galley_heat", globalPropertyi("tu-154/switchers/eng/galley_heat")) -- galley drain heating
 defineProperty("lavatory_heat", globalPropertyi("tu-154/switchers/eng/lavatory_heat")) -- toilet drain heating
@@ -17,7 +16,6 @@ defineProperty("tail_temp_signal_control_2", globalPropertyi("tu-154/buttons/eng
 
 defineProperty("lamp_test_eng_up_1", globalPropertyi("tu-154/buttons/lamp_test_eng_up_1"))
 defineProperty("lamp_test_eng_up_2", globalPropertyi("tu-154/buttons/lamp_test_eng_up_2"))
-
 
 
 defineProperty("water_pressure", globalPropertyf("tu-154/gauges/eng/water_pressure")) -- water pressure
@@ -55,7 +53,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 local switch_sound = loadSample('sounds/metal_switch.wav')
 local cap_sound = loadSample('sounds/cap.wav')
 local btn_click = loadSample('sounds/plastic_btn.wav')
@@ -82,7 +79,6 @@ local function controls()
 	if buttons ~= buttons_last then playSample(btn_click, false) end
 	
 	buttons_last = buttons
-
 
 
 end
@@ -142,8 +138,6 @@ local function lamps()
 	set(galley_heat_lamp, galley_heat_brt)
 	
 	
-	
-	
 end
 
 local press_act = 0
@@ -165,7 +159,6 @@ function update()
 	press_act = press_act + (press - press_act) * passed
 
 	set(water_pressure, press_act)
-
 
 
 end

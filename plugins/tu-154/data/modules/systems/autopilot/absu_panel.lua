@@ -1,5 +1,3 @@
--- createGlobalPropertyf("tu-154/controlls/absu_debug1", 0)
--- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 
@@ -112,8 +110,6 @@ defineProperty("course_lim", globalPropertyf("tu-154/lights/course_lim")) -- cou
 defineProperty("gs_lim", globalPropertyf("tu-154/lights/gs_lim")) -- glideslope deviation beyond limits
 
 
-
-
 -- forward panel lamps
 defineProperty("wrong_trimm", globalPropertyf("tu-154/lights/wrong_trimm")) -- false trim
 defineProperty("controll_roll", globalPropertyf("tu-154/lights/controll_roll")) -- control the roll
@@ -145,7 +141,6 @@ defineProperty("absu_work", globalPropertyf("tu-154/lights/absu_work")) -- ABSU 
 defineProperty("sns_lamp", globalPropertyf("tu-154/lights/sns_lamp")) -- SNS lamp
 
 
-
 -- eng panel lamps
 defineProperty("ra56_roll_fail_1", globalPropertyf("tu-154/lights/ra56_roll_fail_1")) -- RA-56 roll failure
 defineProperty("ra56_roll_fail_2", globalPropertyf("tu-154/lights/ra56_roll_fail_2")) -- RA-56 roll failure
@@ -159,7 +154,6 @@ defineProperty("ra56_course_fail_1", globalPropertyf("tu-154/lights/ra56_course_
 defineProperty("ra56_course_fail_2", globalPropertyf("tu-154/lights/ra56_course_fail_2")) -- RA-56 yaw failure
 defineProperty("ra56_course_fail_3", globalPropertyf("tu-154/lights/ra56_course_fail_3")) -- RA-56 yaw failure
 
-defineProperty("eng_at_on_lamp", globalPropertyf("tu-154/lights/engines/eng_at_on")) -- AT engaged
 
 -- other sources
 defineProperty("lamp_test", globalPropertyi("tu-154/buttons/lamp_test_front")) -- front panel lamp test button	0
@@ -270,9 +264,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
-
 local passed = get(frame_time)
 local notLoaded = true
 local start_timer = 0
@@ -287,27 +278,12 @@ local function sw_reset()
 		set(absu_roll_ch_on, 0)
 		set(absu_pitch_ch_on, 0)
 		
-		--[[
-		set(hydro_ra56_rud_1, 0)
-		set(hydro_ra56_rud_2, 0)
-		set(hydro_ra56_rud_3, 0)
-		
-		set(hydro_ra56_ail_1, 0)
-		set(hydro_ra56_ail_2, 0)
-		set(hydro_ra56_ail_3, 0)
-		
-		set(hydro_ra56_elev_1, 0)
-		set(hydro_ra56_elev_2, 0)
-		set(hydro_ra56_elev_3, 0)
-		--]]
 		
 	end
 	
 	notLoaded = false
 
 end
-
-
 
 
 -- sounds
@@ -365,7 +341,6 @@ local function switchers()
 	if math.abs(get(absu_turn_handle)) <= 1 then set(absu_turn_handle, 0) end
 	
 	
-	
 end
 
 
@@ -384,7 +359,6 @@ local function caps()
 	if get(hydro_long_control_cap) == 0 then set(hydro_long_control, 1) end
 	
 
-
 end
 
 
@@ -392,7 +366,6 @@ local function gauges()
 
 	set(absu_roll_mode, get(roll_main_mode))
 	set(absu_pitch_mode, get(pitch_main_mode))
-
 
 
 end
@@ -449,7 +422,6 @@ local function lamps()
 	local absu_stab_h_lamp_brt = math.max(bool2int(pitch_mode > 0 and pitch_submode == 4) * lamps_brt * day_night, 0) 
 	set(absu_stab_h_lamp, absu_stab_h_lamp_brt)
 	
-	--local absu_stab_lamp_brt = math.max(bool2int(pitch_mode == 2 or roll_mode == 2) * lamps_brt * day_night, test_btn)
 	set(absu_stab_lamp, 0)
 	
 	local AT_mode = get(stu_mode)
@@ -506,8 +478,6 @@ local function lamps()
 	set(at_2_lamp, at_2_lamp_brt)
 	
 	
-	
-	
 	-- panel lamps
 	
 	local elev_tr_now = get(int_pitch_trim)
@@ -543,9 +513,6 @@ local function lamps()
 	end
 	
 	
-	
-	
-	
 	local triangle_brt = math.max(triangle_lit * lamps_brt * day_night, test_btn)
 	set(triangle, triangle_brt)
 	
@@ -561,7 +528,6 @@ local function lamps()
 	
 	local gs_lim_brt = math.max(get(absu_gs_out) * lamps_brt * day_night, test_btn)
 	set(gs_lim, gs_lim_brt)
-	
 	
 	
 	local course_brt = math.max(bool2int(roll_mode == 2 and roll_submode == 6) * lamps_brt * day_night, test_btn)
@@ -608,7 +574,6 @@ local function lamps()
 	set(roll_control_fail, roll_control_fail_brt)
 	
 	
-	
 	local absu_work_logic = get(pkp_fail_left) + get(pkp_fail_right) + get(mgv_contr_fail) < 2
 	absu_work_logic = absu_work_logic and bool2int(get(pressure_ind_1) < 100) + bool2int(get(pressure_ind_2) < 100) + bool2int(get(pressure_ind_3) < 100) < 2
 	
@@ -630,7 +595,6 @@ local function lamps()
 	absu_work_logic = absu_work_logic and get(absu_contr_roll_fail) == 0 and get(absu_contr_pitch_fail) == 0
 	
 	local absu_work_brt = bool2int(absu_work_logic)
-	
 	
 	
 	absu_work_brt = math.max(absu_work_brt * lamps_brt * day_night, 0) 
@@ -670,11 +634,7 @@ local function lamps()
 	set(ra56_course_fail_3, ra56_course_fail_3_brt)
 	
 	
-	
-
 end
-
-
 
 
 function update()
@@ -697,11 +657,4 @@ function update()
 	end
 
 end
-
-
-
-
-
-
-
 

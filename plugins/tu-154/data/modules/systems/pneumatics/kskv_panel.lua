@@ -71,8 +71,6 @@ defineProperty("srd_overpress", globalPropertyf("tu-154/lights/small/srd_overpre
 defineProperty("cockpit_p_low", globalPropertyf("tu-154/lights/cockpit_p_low")) -- Cabin P low
 
 
-
-
 -- gauges
 defineProperty("cockpit_temp_gau", globalPropertyf("tu-154/gauges/airbleed/cockpit_temp")) -- cabin temperature
 defineProperty("cabin_temp_gau", globalPropertyf("tu-154/gauges/airbleed/cabin_temp")) -- cabin temperature
@@ -196,7 +194,6 @@ local function lamps()
 	set(skv_tail_temp, skv_tail_temp_brt)	
 
 	
-	
 	local skv_bleed_fail_1_brt = 0
 	if get(eng_valve_1) == 1 and get(airbleed_1) == 1 and power27_L > 10 then skv_bleed_fail_1_brt = 1 end
 	skv_bleed_fail_1_brt = math.max(skv_bleed_fail_1_brt * lamps_brt , test_btn)
@@ -213,7 +210,6 @@ local function lamps()
 	skv_bleed_fail_3_brt = math.max(skv_bleed_fail_3_brt * lamps_brt, test_btn)
 	set(skv_bleed_fail_3, skv_bleed_fail_3_brt)		
 
-	
 	
 	local skv_bleed_closed_1_brt = 0
 	if get(eng_airvalve_1) < 0.5 and power27_L > 10 then skv_bleed_closed_1_brt = 1 end
@@ -263,7 +259,6 @@ local function lamps()
 	set(main_pressure, bool2int(low_cab_P or high_cab_P))
 	
 	
-	
 	local srd_low_press_brt = math.max(cab_P_lit * lamps_brt, 0)
 	set(srd_low_press, srd_low_press_brt)
 	
@@ -272,7 +267,6 @@ local function lamps()
 	
 	local cockpit_p_low_brt = math.max(cab_P_lit * lamps_brt * day_night, test_btn_frnt)
 	set(cockpit_p_low, cockpit_p_low_brt)
-	
 	
 	
 end
@@ -540,7 +534,6 @@ local function caps_check()
 	local sard_disable_cap_sw = get(sard_disable_cap)
 	
 	
-	
 	local change = heat_close_cap_sw + ground_cond_on_cap_sw + skv_faster_work_cap_sw + psvp_left_on_cap_sw + psvp_right_on_cap_sw
 	change = change + emerg_decompress_cap_sw + dubler_on_cap_sw + sard_disable_cap_sw
 	
@@ -560,7 +553,6 @@ local function caps_check()
 	
 	
 	-- check switchers position under their caps
-	--if skv_faster_work_cap_sw == 0 then set(skv_faster_work, 0) end
 	if dubler_on_cap_sw == 0 then set(dubler_on, 0) end
 	-- SASL3: set() needs the value; SASL2 silently accepted set(prop) and this
 	-- line raised ~900 errors a second. 0 matches the three sibling lines --
@@ -570,14 +562,7 @@ local function caps_check()
 	if sard_disable_cap_sw == 0 then set(sard_disable, 0) end
 	
 	
-
 end
-
-
-
-
-
-
 
 
 local sim_start_timer = 0

@@ -87,10 +87,6 @@ defineProperty("window_heat_2", globalPropertyi("tu-154/switchers/ovhd/window_he
 defineProperty("window_heat_3", globalPropertyi("tu-154/switchers/ovhd/window_heat_3")) -- window heating. -1 = low, 0 = off, 1 = high
 
 
-
-
-
-
 local checklist_started = false
 local stage = 0
 local stage_status = 0 -- 0 question, 1+ - answers. 1 usually is false.
@@ -99,9 +95,6 @@ local speak_timer = 0
 
 function checklist_2()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 2 then 
@@ -141,8 +134,6 @@ function checklist_2()
 	end
 
 
-	
-	
 	------------------------------
 	-- question 1. Electric system --
 	---------------------------------
@@ -182,7 +173,6 @@ function checklist_2()
 	
 	-- move fishka 11
 	if stage == 1 and stage_status == 10 and speak_timer < 0.1 then set(fishka_11, 0) end	
-	
 	
 	
 	------------------------------
@@ -265,8 +255,6 @@ function checklist_2()
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_13, 0) end	
 	
 	
-	
-	
 	------------------------------
 	-- question 4. CoursMP, NDB --
 	---------------------------------
@@ -304,8 +292,6 @@ function checklist_2()
 	
 	-- move fishka 14
 	if stage == 4 and stage_status == 10 and speak_timer < 0.1 then set(fishka_14, 0) end		
-	
-	
 	
 	
 	------------------------------
@@ -347,7 +333,6 @@ function checklist_2()
 	if stage == 5 and stage_status == 10 and speak_timer < 0.1 then set(fishka_15, 0) end	
 	
 	
-	
 	---------------------------------
 	-- question 6. Busters --
 	---------------------------------
@@ -385,7 +370,6 @@ function checklist_2()
 	
 	-- move fishka 16
 	if stage == 6 and stage_status == 10 and speak_timer < 0.1 then set(fishka_16, 0) end		
-	
 	
 	
 	---------------------------------
@@ -430,7 +414,6 @@ function checklist_2()
 	if stage == 7 and stage_status == 10 and speak_timer < 0.1 then set(fishka_17, 0) end	
 
 
-
 	---------------------------------
 	-- question 8. TKS --
 	---------------------------------
@@ -468,8 +451,6 @@ function checklist_2()
 	
 	-- move fishka 18
 	if stage == 8 and stage_status == 10 and speak_timer < 0.1 then set(fishka_18, 0) end
-
-
 
 
 	---------------------------------
@@ -550,14 +531,6 @@ function checklist_2()
 	if stage == 10 and stage_status == 10 and speak_timer < 0.1 then set(fishka_20, 0) end	
 	
 	
-	
-	
-	
-	
-	
-	
-
-
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -566,7 +539,6 @@ function checklist_2()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -578,9 +550,6 @@ function checklist_2()
 	
 	
 	end
-
-
-
 
 
 end

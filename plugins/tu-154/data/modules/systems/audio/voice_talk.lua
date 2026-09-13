@@ -119,7 +119,6 @@ defineProperty("groundspeed", globalPropertyf("sim/flightmodel/position/groundsp
 defineProperty("rv5_alt", globalPropertyf("tu-154/misc/rv5_alt_left"))
 defineProperty("pressure_L", globalPropertyf("tu-154/gauges/alt/vbe_press_left"))
 defineProperty("pressure_R", globalPropertyf("tu-154/gauges/alt/vbe_press_right"))
-defineProperty("alt_mtr", globalPropertyf("tu-154/gauges/alt/vbe_alt_left"))  -- indicated altitude in meters
 
 defineProperty("dh_set", globalPropertyf("tu-154/gauges/alt/radioalt_dh_left"))  -- DH angle
 defineProperty("rv_test_btn", globalPropertyf("tu-154/gauges/alt/radioalt_button_left"))  -- Test button
@@ -232,12 +231,7 @@ local flight_status_last = 10
 --]]
 
 
-
-
 local reset_timer = 0
-
-
-
 
 
 function regular_talk()
@@ -266,7 +260,6 @@ function regular_talk()
 	if math.abs(get(ail_L) - get(ail_R)) > 20 then v_var["ail_chk"] = true end
 	if math.abs(get(elevator_L) + get(elevator_R)) > 20 then v_var["elev_chk"] = true end
 	
-	--if get(reset_crew) == 1 then flight_status = 0 end -- reset crew voices
 	
 	-- preparing for flight
 	if v_var["on_ground"] -- on ground
@@ -406,7 +399,6 @@ function regular_talk()
 		
 		v_var["press1013_said"] = false
 		
-		--v_var["engine_TO_said"] = false
 		
 		v_var["v_rise_said"] = false
 		v_var["v_160_said"] = false
@@ -414,8 +406,6 @@ function regular_talk()
 		v_var["v_220_said"] = false
 		v_var["v_240_said"] = false	
 		
-		--v_var["v1_said"] = false
-		--v_var["vr_said"] = false
 		
 		v_var["set_gear_up_said"] = false
 		v_var["gear_up_said"] = false
@@ -603,7 +593,6 @@ function regular_talk()
 	if not v_var["slats_ext_said"] and v_var["slats_diff"] > 0.0001 and (v_var["flaps_ext_said"] or get(slat_man) == 1) then
 		v_var["slats_ext_said"] = true
 		v_var["slats_retr_said"] = false
-		--v_var["slats_out_said"] = false
 		local num = find_empty()
 		phrases_tbl[num] = {nav_tbl["slats_extending"][lang], 2}
 
@@ -620,7 +609,6 @@ function regular_talk()
 	end	
 	
 
-	
 	-- stab move
 	if v_var["trim_diff"] ~= 0 or get(stab_man_cap) == 1 then v_var["trim_count"] = 0 end
 	v_var["trim_count"] = v_var["trim_count"] + passed_time
@@ -717,7 +705,6 @@ function regular_talk()
 		end
 		
 		
-		
 		-- slats extended
 		if not v_var["slats_out_said"] and v_var["slats_last"] > 0.9 and v_var["slats_diff"] == 0 then
 			v_var["slats_out_said"] = true
@@ -727,14 +714,11 @@ function regular_talk()
 		end
 		
 		
-		
 		-- reset stab
 		if v_var["stab_count"] > 1 then
 			v_var["stab_move_said"] = false
 		end
 		
-		--find_remove(nav_tbl["flaps_extending"][lang])
-		--find_remove(nav_tbl["flaps_retracting"][lang])
 	
 	else
 		v_var["flaps_0_said"] = false
@@ -751,12 +735,6 @@ function regular_talk()
 	end
 
 
-
-
-
-
-
-	
 	-----------------------------------------------
 	-- preparing for flight -- 0
 	-----------------------------------------------
@@ -895,7 +873,6 @@ if flight_status == 0 then
 		find_remove(gnd_tbl["engines_run"][lang])
 		
 		
-		
 	end	
 	
 	
@@ -957,11 +934,6 @@ elseif flight_status == 1 then
 	end	
 	
 	
-	
-	
-	
-	
-	
 	-- engines take-off mode
 	v_var["eng_TO_mode"] = get(rpm_high_1) > 90 and get(rpm_high_2) > 90 and get(rpm_high_3) > 90
 	
@@ -971,7 +943,6 @@ elseif flight_status == 1 then
 		phrases_tbl[num] = {cpt_tbl["takeoff_mode"][lang], 3}
 		phrases_tbl[num+1] = {eng_tbl["takeoff_mode"][lang], 3}
 	end
-	
 	
 	
 	-----------------------------------------------
@@ -1032,7 +1003,6 @@ elseif flight_status == 2 then
 		end
 		
 		
-			
 		if not v_var["v_240_said"] and v_var["ias_now"] > 235 and not v_var["v1_said"] and v_var["on_ground"] then
 			v_var["v_240_said"] = true
 			v_var["v_220_said"] = true
@@ -1062,9 +1032,7 @@ elseif flight_status == 2 then
 		end
 		
 		
-	
 	end	
-	
 	
 	
 	-- initial climb
@@ -1132,7 +1100,6 @@ elseif flight_status == 2 then
 	end
 	
 	
-	
 	----------------------------------------------
 	-- climb -- 3
 	----------------------------------------------
@@ -1194,9 +1161,6 @@ elseif flight_status == 3 then
 	end	
 	
 	
-	
-	
-	
 	-----------------------------------------------
 	-- en-route -- 4
 	-----------------------------------------------
@@ -1214,7 +1178,6 @@ elseif flight_status == 4 then
 	-- TKS sync
 	if get(tks_course_set) ~= 0 and v_var["tks_set_counter"] > 600 then
 		v_var["tks_set_counter"] = 0
-		--v_var["setting_tks_said"] = true
 		
 		local num = find_empty()
 		phrases_tbl[num] = {nav_tbl["set_ort_course"][lang], 2}
@@ -1223,9 +1186,6 @@ elseif flight_status == 4 then
 	end
 	
 	if get(tks_course_set) == 0 then v_var["tks_set_counter"] = v_var["tks_set_counter"] + passed_time end
-	
-	
-	
 	
 	
 	----------------------------------------------
@@ -1240,7 +1200,6 @@ elseif flight_status == 5 or flight_status == 6 then
 	-- TKS sync
 	if get(tks_course_set) ~= 0 and v_var["tks_set_counter"] > 600 then
 		v_var["tks_set_counter"] = 0
-		--v_var["setting_tks_said"] = true
 		
 		local num = find_empty()
 		phrases_tbl[num] = {nav_tbl["set_ort_course"][lang], 2}
@@ -1313,9 +1272,6 @@ elseif flight_status == 5 or flight_status == 6 then
 	end		
 	
 	
-	
-	
-	
 	-- navigator's altitude callouts -- 
 	if v_var["vvi_now"] < 0.5 then
 	
@@ -1374,7 +1330,6 @@ elseif flight_status == 5 or flight_status == 6 then
 		end
 		
 		
-
 	else
 		v_var["call_10_said"] = false
 		v_var["call_5_said"] = false
@@ -1409,11 +1364,6 @@ elseif flight_status == 5 or flight_status == 6 then
 	end	
 	
 	
-	
-	
-	
-	
-	
 	----------------------------------------------
 	-- TOGA -- 7
 	----------------------------------------------
@@ -1421,9 +1371,6 @@ elseif flight_status == 5 or flight_status == 6 then
 elseif flight_status == 7 then		
 	
 	flight_status = 2 -- switch to Take-off state
-	
-	
-
 	
 	
 	----------------------------------------------
@@ -1465,12 +1412,6 @@ elseif flight_status == 8 then
 	end	
 	
 
-		
-	
-	
-	
-	
-	
 	----------------------------------------------
 	-- on ramp -- 9
 	----------------------------------------------
@@ -1486,38 +1427,7 @@ elseif flight_status == 9 then
 	end
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
 end	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	reset_timer = reset_timer + passed_time

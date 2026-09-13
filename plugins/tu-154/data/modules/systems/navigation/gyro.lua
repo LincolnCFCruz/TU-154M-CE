@@ -6,7 +6,6 @@ defineProperty("mag_psi", globalPropertyf("sim/flightmodel/position/mag_psi")) -
 
 defineProperty("course_mk", globalPropertyf("tu-154/tks/course_mk_1")) -- heading on MK5
 
-defineProperty("cur", globalPropertyf("sim/cockpit/gyros/psi_ind_degm4"))
 
 defineProperty("roll", globalPropertyf("sim/flightmodel/position/phi"))
 defineProperty("pitch", globalPropertyf("sim/flightmodel/position/true_theta"))
@@ -19,7 +18,6 @@ defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- controls
 defineProperty("tks_mode", globalPropertyi("tu-154/switchers/ovhd/tks_mode")) -- TKS mode. 0 = MK, 1 = GPK, 2 = AK
-defineProperty("tks_user", globalPropertyi("tu-154/switchers/ovhd/tks_mode_left")) -- consumers. 0 = control, 1 = main
 defineProperty("tks_source", globalPropertyi("tu-154/switchers/ovhd/tks_mode_right")) --  correction 0 - control, 1 - main
 defineProperty("tks_course_set", globalPropertyi("tu-154/switchers/ovhd/tks_course_set")) -- heading selector
 defineProperty("tks_corrr_button", globalPropertyi("tu-154/buttons/ovhd/tks_corrr_button")) -- slaving button

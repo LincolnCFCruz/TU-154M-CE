@@ -10,7 +10,6 @@ defineProperty("sim_engine_ext2", globalProperty("sim/cockpit2/engine/actuators/
 defineProperty("sim_engine_ext3", globalProperty("sim/cockpit2/engine/actuators/fire_extinguisher_on[2]"))  -- right engine fire extinguiher
 
 -- controls
-defineProperty("lamp_test", globalPropertyi("tu-154/buttons/lamp_test_fire_panel")) -- lamp test button on the fire panel	0
 defineProperty("smoke_test", globalPropertyi("tu-154/buttons/eng/smoke_test")) -- smoke detector test
 defineProperty("ext_test", globalPropertyi("tu-154/buttons/eng/ext_test")) -- fire extinguisher test
 
@@ -37,7 +36,6 @@ defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right
 defineProperty("fire_sys_cc", globalPropertyf("tu-154/fire/fire_sys_cc")) -- fire system current draw
 
 
-
 -- results
 defineProperty("ext_used_1", globalPropertyi("tu-154/fire/ext_used_1")) -- extinguisher used
 defineProperty("ext_used_2", globalPropertyi("tu-154/fire/ext_used_2")) -- extinguisher used
@@ -58,7 +56,6 @@ defineProperty("engine_fire_state_4", globalPropertyi("tu-154/fire/engine_fire_s
 defineProperty("fire_detected", globalPropertyi("tu-154/fire/fire_detected")) -- fire detected
 
 defineProperty("fire_siren", globalPropertyi("tu-154/fire/fire_siren")) -- siren running
-
 
 
 defineProperty("fire_vlv_open_1", globalPropertyf("tu-154/fuel/fire_vlv_open_1")) -- fire shutoff valve open
@@ -97,14 +94,9 @@ defineProperty("hs_clock_2", globalPropertyf("tu-154/fire/hotstart_timer_2"))
 defineProperty("hs_clock_3", globalPropertyf("tu-154/fire/hotstart_timer_3"))
 
 
-
-
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local valve_1 = get(valve_open_1)
@@ -174,7 +166,6 @@ local MASTER = get(ismaster) ~= 1
 	
 
 if MASTER then	
-
 
 
 	local power27L = get(bus27_volt_left) > 13
@@ -361,7 +352,6 @@ if MASTER then
 		-- same way for APU
 		
 		
-		
 		-- fire siren
 		if fire_1 or fire_2 or fire_3 or get(smoke_test) == 1 then
 			set(fire_detected, 1)
@@ -387,8 +377,6 @@ if MASTER then
 		elseif HS.trip[3] then set(engine_fire_state_3, 1)
 		else set(engine_fire_state_3, 0) end
 		
-		--[[if fire_4 then set(engine_fire_state_4, 2)
-		else set(engine_fire_state_4, 0) end--]]
 		
 		set(fire_sys_cc, 0.8)
 	else
@@ -412,9 +400,6 @@ if MASTER then
 	end
 	
 	
-
-
-
 	set(valve_open_1, valve_1)
 	set(valve_open_2, valve_2)
 	set(valve_open_3, valve_3)

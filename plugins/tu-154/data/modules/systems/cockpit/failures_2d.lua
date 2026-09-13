@@ -17,7 +17,6 @@ defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled")) -- failures enabled
 
 
-
 local runtime_tbl = {}
 
 
@@ -48,7 +47,6 @@ local hydro_tbl = {}
 hydro_tbl[1] = {"Hydro Sys #1", globalPropertyf("tu-154/hydro/gs_qty_1")} -- oil remaining in the system
 hydro_tbl[2] = {"Hydro Sys #2", globalPropertyf("tu-154/hydro/gs_qty_2")} -- oil remaining in the system
 hydro_tbl[3] = {"Hydro Sys #3", globalPropertyf("tu-154/hydro/gs_qty_3")} -- oil remaining in the system
-
 
 
 local customFails = {}
@@ -207,7 +205,6 @@ customFails["!!!Electric hydraulic pump #2"] = globalPropertyi("tu-154/failures/
 customFails["!!!Electric hydraulic pump #3"] = globalPropertyi("tu-154/failures/hydro_elec_fail_3")
 
 
-
 customFails["Left turbo cooler"] = globalPropertyi("tu-154/failures/tth_left_fail") -- turbo-cooler failure
 customFails["Right turbo cooler"] = globalPropertyi("tu-154/failures/tth_right_fail") -- turbo-cooler failure
 
@@ -296,14 +293,6 @@ simFails["Left VVI"] = globalPropertyi("sim/operation/failures/rel_ss_vvi") -- f
 simFails["Right VVI"] = globalPropertyi("sim/operation/failures/rel_cop_vvi") -- fail
 
 
-
-
---[[
-defineProperty("system_qty_1", globalPropertyf("tu-154/hydro/gs_qty_1")) -- oil remaining in the system
-defineProperty("system_qty_2", globalPropertyf("tu-154/hydro/gs_qty_2")) -- oil remaining in the system
-defineProperty("system_qty_3", globalPropertyf("tu-154/hydro/gs_qty_3")) -- oil remaining in the system
---]]
-
 local runTimeDrawTbl = {}
 local brakesShowTbl = {}
 local liqd_show_tbl = {}
@@ -350,7 +339,6 @@ local function readAll()
 end
 
 
-
 local function fixAll()
 	
 	for k,v in pairs(customFails) do -- scan custom failures
@@ -388,9 +376,7 @@ function update()
 	end
 	
 
-
 end
-
 
 
 components = {
@@ -400,9 +386,6 @@ components = {
 		position = {0, 0, size[1], size[2]},
 		image = get(bg_img),
 	},
-	
-	
-	
 	
 	
 	text_draw {
@@ -449,7 +432,6 @@ components = {
 	}, 
 	
 	
-	
 	text_draw {
 		position = {20, 510, 50, 50},
 		text = "--------------------- BRAKES STATUS ---------------------",
@@ -463,7 +445,6 @@ components = {
 	},
 
 
-	
 	-- REPLACE BRAKES button
 	rectangle {
 		position = {290, 465, 170, 30},
@@ -491,11 +472,6 @@ components = {
 		end
 	},	
 	
-	
-
-	
-
-
 	
 	text_draw {
 		position = {20, 440, 50, 50},
@@ -539,9 +515,6 @@ components = {
 	},
 
 
-
-
-	
 	text_draw {
 		position = {20, 350, 50, 50},
 		text = "------------------------- FAILURES ------------------------",
@@ -578,45 +551,6 @@ components = {
 	}, 
 	
 
-
-
-	
-
-	
-	--[[
-	
-	-- REFIL HYDRO button
-	rectangle {
-		position = {290, 420, 170, 30},
-		color = {0, 0, 0, 1},
-	},
-
-	rectangle {
-		position = {290+1, 420+1, 170-2, 30-2},
-		color = {1, 1, 1, 1},
-	},
-	
-	text_draw {
-		position = {300, 430, 50, 50},
-		text = "REFIL HYDRO",
-	},
-	
-	
-	clickable {
-		position = {290, 420, 170, 30},
-      
-		onMouseDown = function()
-			set(liqd_tbl[1][2], 58)
-			set(liqd_tbl[2][2], 58)
-			set(liqd_tbl[3][2], 45)
-		end
-	}, 
-	
-	
-		
-
-	--]]
-	
 	--------------------------------
 
 

@@ -17,7 +17,6 @@ defineProperty("flight_start_3", globalPropertyi("tu-154/buttons/eng/flight_star
 defineProperty("reserv_pump_test", globalPropertyi("tu-154/buttons/eng/reserv_pump_test")) -- standby fuel pump test
 
 
-
 -- lamps
 defineProperty("apd_work_1", globalPropertyf("tu-154/lights/small/apd_work_1")) -- APD start unit running
 defineProperty("apd_work_2", globalPropertyf("tu-154/lights/small/apd_work_2")) -- APD start unit running
@@ -37,7 +36,6 @@ defineProperty("starter_pressure", globalPropertyf("tu-154/start/starter_pressur
 defineProperty("apd_working_1", globalPropertyf("tu-154/start/apd_working_1")) -- start system running
 defineProperty("apd_working_2", globalPropertyf("tu-154/start/apd_working_2")) -- start system running
 defineProperty("apd_working_3", globalPropertyf("tu-154/start/apd_working_3")) -- start system running
-
 
 
 -- sounds
@@ -75,7 +73,6 @@ local function check_controls()
 	if starter_cap_sw == 0 then
 		set(starter_switch, 0)
 		set(starter_eng_select, 0)
-		--set(starter_mode, 0)
 	
 	end
 	----------------
@@ -115,7 +112,6 @@ local function check_controls()
 end
 
 local function lamps()
-	--local test_btn = get(test_lamps)
 	local lamps_brt = math.max((math.max(get(bus27_volt_left), get(bus27_volt_right)) - 10) / 18.5, 0)
 	
 	local apd_work_1_brt = get(apd_working_1) * lamps_brt 
@@ -146,6 +142,4 @@ function update()
 	
 
 end
-
-
 

@@ -23,7 +23,6 @@ defineProperty("AOA", globalPropertyi("tu-154/failures/AOA"))
 defineProperty("uvid15_fail", globalPropertyi("tu-154/failures/uvid15_fail"))
 
 
-
 -- sim fails
 
 defineProperty("rel_ss_alt", globalPropertyi("sim/operation/failures/rel_ss_alt"))
@@ -37,9 +36,6 @@ defineProperty("rel_stall_warn", globalPropertyi("sim/operation/failures/rel_sta
 defineProperty("rel_ss_vvi", globalPropertyi("sim/operation/failures/rel_ss_vvi"))
 defineProperty("rel_cop_vvi", globalPropertyi("sim/operation/failures/rel_cop_vvi"))
 
---defineProperty("rel_bird_strike", globalPropertyi("sim/operation/failures/rel_bird_strike"))
-
-
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
@@ -49,14 +45,46 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ diss_fail, 0.00001, 0.3, 1 },
+	{ nvu_fail, 0.00001, 0.3, 1 },
+	{ radar_fail, 0.00001, 0.3, 1 },
+	{ rsbn_fail, 0.00001, 0.3, 1 },
+	{ taws_fail, 0.00001, 0.3, 1 },
 
+	{ acs1_fail, 0.00001, 0.3, 1 },
+	{ acs2_fail, 0.00001, 0.3, 1 },
+	{ acs3_fail, 0.00001, 0.3, 1 },
 
+	{ agr_fail, 0.00001, 0.3, 1 },
+	{ bkk_fail, 0.00001, 0.3, 1 },
+
+	{ pitot1, 0.00001, 0.3, 1 },
+	{ pitot2, 0.00001, 0.3, 1 },
+	{ static1, 0.00001, 0.3, 1 },
+	{ static2, 0.00001, 0.3, 1 },
+
+	{ mgv_fail, 0.00001, 0.3, 1 },
+	{ rv1_fail, 0.00001, 0.3, 1 },
+	{ rv2_fail, 0.00001, 0.3, 1 },
+	{ AOA, 0.00001, 0.3, 1 },
+	{ uvid15_fail, 0.00001, 0.3, 1 },
+
+	{ rel_ss_alt, 0.00001, 0.3, 6 },
+	{ rel_cop_alt, 0.00001, 0.3, 6 },
+	{ rel_ss_tsi, 0.00001, 0.3, 6 },
+
+	{ rel_adc_comp, 0.00001, 0.3, 6 },
+	{ rel_ss_ahz, 0.00001, 0.3, 6 },
+	{ rel_cop_ahz, 0.00001, 0.3, 6 },
+	{ rel_stall_warn, 0.00001, 0.3, 6 },
+	{ rel_ss_vvi, 0.00001, 0.3, 6 },
+	{ rel_cop_vvi, 0.00001, 0.3, 6 },
+}
 
 local fail_counter = 0
 local check_time = math.random(15, 30)
-
-
-
 
 
 function update()
@@ -80,43 +108,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(diss_fail) ~= 1 then set(diss_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(nvu_fail) ~= 1 then set(nvu_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(radar_fail) ~= 1 then set(radar_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(rsbn_fail) ~= 1 then set(rsbn_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(taws_fail) ~= 1 then set(taws_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(acs1_fail) ~= 1 then set(acs1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(acs2_fail) ~= 1 then set(acs2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(acs3_fail) ~= 1 then set(acs3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(agr_fail) ~= 1 then set(agr_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bkk_fail) ~= 1 then set(bkk_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(pitot1) ~= 1 then set(pitot1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(pitot2) ~= 1 then set(pitot2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(static1) ~= 1 then set(static1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(static2) ~= 1 then set(static2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(mgv_fail) ~= 1 then set(mgv_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(rv1_fail) ~= 1 then set(rv1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(rv2_fail) ~= 1 then set(rv2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(AOA) ~= 1 then set(AOA, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(uvid15_fail) ~= 1 then set(uvid15_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			
-			
-			
-			if get(rel_ss_alt) ~= 6 then set(rel_ss_alt, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_cop_alt) ~= 6 then set(rel_cop_alt, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ss_tsi) ~= 6 then set(rel_ss_tsi, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			if get(rel_adc_comp) ~= 6 then set(rel_adc_comp, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ss_ahz) ~= 6 then set(rel_ss_ahz, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_cop_ahz) ~= 6 then set(rel_cop_ahz, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_stall_warn) ~= 6 then set(rel_stall_warn, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ss_vvi) ~= 6 then set(rel_ss_vvi, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_cop_vvi) ~= 6 then set(rel_cop_vvi, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
+			rollFailures(RANDOM_FAILS, FAIL)
 			
 	
 		end
@@ -124,52 +116,14 @@ if MASTER then
 		-- dependent failures
 		
 
-		
-		
-	
-	
 	else
 		-- no failures enabled
 		fail_counter = 0
 		
-		set(diss_fail, 0)
-		set(nvu_fail, 0)
-		set(radar_fail, 0)
-		set(rsbn_fail, 0)
-		set(taws_fail, 0)
-		
-		set(acs1_fail, 0)
-		set(acs2_fail, 0)
-		set(acs3_fail, 0)
-		
-		set(agr_fail, 0)
-		set(bkk_fail, 0)
-		
-		set(pitot1, 0)
-		set(pitot2, 0)
-		set(static1, 0)
-		set(static2, 0)
-		
-		set(mgv_fail, 0)
-		set(rv1_fail, 0)
-		set(rv2_fail, 0)
-		set(AOA, 0)
-		set(uvid15_fail, 0)
-
-		set(rel_ss_alt, 0)
-		set(rel_cop_alt, 0)
-		set(rel_ss_tsi, 0)
-		
-		set(rel_adc_comp, 0)
-		set(rel_ss_ahz, 0)
-		set(rel_cop_ahz, 0)
-		set(rel_stall_warn, 0)
-		set(rel_ss_vvi, 0)
-		set(rel_cop_vvi, 0)
+		clearFailures(RANDOM_FAILS)
 
 	
 	end
-	
 	
 	
 end

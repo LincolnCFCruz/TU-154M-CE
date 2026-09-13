@@ -1,33 +1,14 @@
 --[[
-
-  File: panel_logic.lua
-  -----
-  Floating-panel visibility logic (port of the update() half of the former
-  "Custom Avionics/panels_2d/panels_2d.lua").
-
-  SASL2 -> SASL3
-  --------------
-  Under SASL2 the popups were subpanel{} components living in the `popups`
-  layer, and panels_2d's update() simply assigned `<panel>.visible = <dataref>`
-  every frame. SASL3 renders that layer only for 2D-panel aircraft, so the
-  popups became contextWindows (see panels/panel_windows.lua).
-
-  A contextWindow's visibility is not a plain property -- it is owned by
-  X-Plane and changed with win:setIsVisible(). The sync below is therefore
-  bidirectional, so that the X-Plane window decoration's own close button
-  writes the dataref back instead of being overridden on the next frame:
+  Floating-panel visibility. A contextWindow's visibility belongs to X-Plane,
+  so each window is kept in step with its tu-154/panels/show_* dataref in both
+  directions, and X-Plane's own close button writes the dataref back instead
+  of being overridden on the next frame:
 
     - dataref changed (menu button, 3D hotspot) -> the window follows
     - window changed  (decoration close button) -> the dataref follows
     - first frame: the window state (saved geometry/visibility) wins
 
-  The visible *value* seen by the rest of the aircraft is unchanged: the same
-  tu-154/panels/* datarefs drive the same panels.
-
-  drf_panels / cw_panels are filled by panels/panel_windows.lua, which runs
-  AFTER the components table in main.lua -- the datarefs it binds are created
-  by dataref_creator_2 {} and by KLN90 {}.
-
+  drf_panels / cw_panels are filled by panels/panel_windows.lua.
 --]]
 
 -- panel key -> visibility dataref handle (filled by panel_windows.lua)
@@ -36,19 +17,9 @@ drf_panels = {}
 -- panel key -> contextWindow handle (filled by panel_windows.lua)
 cw_panels = {}
 
--- The menu strip window has no tu-154/panels/* dataref of its own -- it used
--- to be forced permanently visible here. It is now driven by the X-Plane top
--- bar's "MENU Panel" checkbox instead (see panel_windows.lua's topbar_items),
--- defaulting to shown so nothing changes unless that checkbox is unticked.
---
--- A TABLE, like drf_panels/cw_panels above, not a bare boolean: each SASL3
--- component runs in its own private environment (see glbl_func.lua's note on
--- contextWindow children), so a bare `menu_strip_visible = x` written from
--- panel_windows.lua would only ever land in ITS OWN table, never in this
--- one -- updatePanels() below would keep reading the value set at load time
--- and the toggle would silently do nothing. Mutating a field on a table both
--- sides already read (exactly how drf_panels/cw_panels cross this same
--- boundary) sidesteps that entirely.
+-- The menu strip window has no dataref; the top bar's "MENU Panel" checkbox
+-- drives it. A table, not a boolean: panel_windows.lua runs in its own
+-- component environment, so it can only share state by mutating a field.
 menu_strip = { visible = true }
 
 -- last seen dataref state per panel, used to tell which side changed
@@ -80,8 +51,7 @@ function updatePanels()
         end
     end
 
-    -- the menu strip window: forced to menu_strip.visible (see above), the
-    -- same way it was forced permanently true in panels_2d.lua's update()
+    -- the menu strip window follows menu_strip.visible (see above)
     if cw_panels.menu and cw_panels.menu:isVisible() ~= menu_strip.visible then
         cw_panels.menu:setIsVisible(menu_strip.visible)
     end

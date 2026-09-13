@@ -17,7 +17,6 @@ defineProperty("dme_km_lit", globalPropertyf("tu-154/lights/small/dme_km_left"))
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus115_volt", globalPropertyf("tu-154/elec/bus115_1_volt"))
 
-defineProperty("fail", globalPropertyi("sim/operation/failures/rel_dme"))
 defineProperty("dme_fail", globalPropertyi("tu-154/failures/dme1_fail"))
 
 local text_font = loadBitmapFont('digital7_it.fnt')
@@ -69,24 +68,10 @@ function update()
 	end
 	
 	
-	
-	
-	
-	
-	
 end
 
 
-
-
-
 components = {
-	--[[
-	rectangle {
-		position = {0, 0, 215, 70},
-		color = {0,0,1,1},
-	},
-	--]]
 
 	text_draw {
 		position = {16, 12, 130, 130},

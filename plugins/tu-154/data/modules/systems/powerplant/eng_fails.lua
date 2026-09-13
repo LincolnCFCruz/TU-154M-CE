@@ -128,6 +128,42 @@ local minusTimer2 = 0
 local minusTimer3 = 0
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS_A = {
+	{ engn_oil_leak_1, 0.00001, 0.3, 1 },
+	{ engn_oil_leak_2, 0.00001, 0.3, 1 },
+	{ engn_oil_leak_3, 0.00001, 0.3, 1 },
+
+	{ oil_pump_fail_1, 0.00001, 0.3, 6 },
+	{ oil_pump_fail_2, 0.00001, 0.3, 6 },
+	{ oil_pump_fail_3, 0.00001, 0.3, 6 },
+
+	{ fuel_flowmeter_1_fail, 0.00001, 0.3, 1 },
+	{ fuel_flowmeter_2_fail, 0.00001, 0.3, 1 },
+	{ fuel_flowmeter_3_fail, 0.00001, 0.3, 1 },
+}
+
+local RANDOM_FAILS_B = {
+	{ eng_fuel_pmp_fail_1, 0.00001, 0.3, 1 },
+	{ eng_fuel_pmp_fail_2, 0.00001, 0.3, 1 },
+	{ eng_fuel_pmp_fail_3, 0.00001, 0.3, 1 },
+
+	{ eng_filter_1, 0.00001, 0.3, 6 },
+	{ eng_filter_2, 0.00001, 0.3, 6 },
+	{ eng_filter_3, 0.00001, 0.3, 6 },
+
+	{ eng_start_1, 0.00001, 0.3, 6 },
+	{ eng_start_2, 0.00001, 0.3, 6 },
+	{ eng_start_3, 0.00001, 0.3, 6 },
+
+	{ eng_ign_1, 0.00001, 0.3, 6 },
+	{ eng_ign_2, 0.00001, 0.3, 6 },
+	{ eng_ign_3, 0.00001, 0.3, 6 },
+
+	{ eng_revrs_1, 0.00001, 0.3, 6 },
+	{ eng_revrs_3, 0.00001, 0.3, 6 },
+}
+
 local fail_counter = 0
 local stall_counter = 0
 local check_time = math.random(15, 30)
@@ -214,17 +250,7 @@ if get(ismaster) ~= 1 then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(engn_oil_leak_1) ~= 1 then set(engn_oil_leak_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(engn_oil_leak_2) ~= 1 then set(engn_oil_leak_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(engn_oil_leak_3) ~= 1 then set(engn_oil_leak_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(oil_pump_fail_1) ~= 6 then set(oil_pump_fail_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(oil_pump_fail_2) ~= 6 then set(oil_pump_fail_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(oil_pump_fail_3) ~= 6 then set(oil_pump_fail_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			if get(fuel_flowmeter_1_fail) ~= 1 then set(fuel_flowmeter_1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_flowmeter_2_fail) ~= 1 then set(fuel_flowmeter_2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_flowmeter_3_fail) ~= 1 then set(fuel_flowmeter_3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_A, FAIL)
 			
 			-- engToCounter > 300 s = the 5 min takeoff-power limit (RLE 8.1.1 row 10)
 			-- engRevCounter > 60 s = the 1 min continuous-reverse limit (row 15)
@@ -249,24 +275,7 @@ if get(ismaster) ~= 1 then
 			
 
 			
-			if get(eng_fuel_pmp_fail_1) ~= 1 then set(eng_fuel_pmp_fail_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(eng_fuel_pmp_fail_2) ~= 1 then set(eng_fuel_pmp_fail_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(eng_fuel_pmp_fail_3) ~= 1 then set(eng_fuel_pmp_fail_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(eng_filter_1) ~= 6 then set(eng_filter_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_filter_2) ~= 6 then set(eng_filter_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_filter_3) ~= 6 then set(eng_filter_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			if get(eng_start_1) ~= 6 then set(eng_start_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_start_2) ~= 6 then set(eng_start_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_start_3) ~= 6 then set(eng_start_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			if get(eng_ign_1) ~= 6 then set(eng_ign_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_ign_2) ~= 6 then set(eng_ign_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_ign_3) ~= 6 then set(eng_ign_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			if get(eng_revrs_1) ~= 6 then set(eng_revrs_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(eng_revrs_3) ~= 6 then set(eng_revrs_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
+			rollFailures(RANDOM_FAILS_B, FAIL)
 			
 			
 		

@@ -1,24 +1,12 @@
 --[[
+  Shared helpers, published on _G. A contextWindow's root component has no
+  parent, so lookups from inside a popup end at _G, not at main.lua.
 
-  File: glbl_func.lua
-  -----
-  Shared value helpers, published on _G so every component can call them
-  without include/defineProperty.
-
-  SASL2 -> SASL3 note
-  -------------------
-  These helpers used to live at the top of "Custom Avionics/avionics.lua", i.e.
-  in the *panel* component's environment. Under SASL2 every popup was a child of
-  that panel component (popups = createComponent("popups", panel)), so the
-  parent-chain lookup in compIndex reached them from anywhere.
-
-  Under SASL3 the popups are contextWindows, whose root component has no parent
-  (initContextWindows.lua: private.createComponent(cName) -- no parent arg), so
-  the chain terminates at the window and falls through to _G. Publishing the
-  helpers on _G therefore restores the SASL2 visibility exactly.
-
-  The bodies are unchanged from avionics.lua -- behaviour is identical.
-
+  Scope rule: anything shared between components is assigned explicitly as
+  _G.name (as here and in panels/panel_windows.lua); everything else is local.
+  A module-level global lands in that component's own environment, where only
+  its children can see it -- and reading one that is nil hands the name to
+  SASL's component loader (CLAUDE.md, SASL3 API traps).
 --]]
 
 -- Piecewise-linear interpolation over a sorted {{x1,y1},{x2,y2},...} table.
@@ -83,29 +71,34 @@ function _G.lagCoef(dt, rate)
     return k
 end
 
+-- Random failures. Each *_fails.lua lists its flags as { prop, k1, k2, failed }
+-- and rolls them in that order every check period; the chance of a roll is
+-- k1 * FAIL * k2, evaluated in that order. `failed` is the flag's failed value:
+-- 1 for tu-154/ flags, 6 for X-Plane's own. A flag that has not failed is
+-- rewritten on every roll (0 or `failed`).
+function _G.rollFailures(list, FAIL)
+    for _, f in ipairs(list) do
+        if get(f[1]) ~= f[4] then
+            set(f[1], bool2int(math.random() < f[2] * FAIL * f[3]) * f[4])
+        end
+    end
+end
+
+function _G.clearFailures(list)
+    for _, f in ipairs(list) do
+        set(f[1], 0)
+    end
+end
+
 -- ---------------------------------------------------------------------------
 -- Sound pause
 -- ---------------------------------------------------------------------------
 --
--- Neither X-Plane nor SASL3 stops this plugin's samples when the sim is paused.
--- Every system module freezes correctly once frame_time is 0, so the audio was
--- the only thing in the aircraft still running: the engine and cabin loops
--- carried on at whatever pitch and gain they were frozen at.
---
--- Only LOOPING samples are affected -- 39 call sites: the engine loops, cabin
--- ambience, inverters, air conditioning, the sirens and cabin speaker, taxi and
--- landing-light noise, the vents and the GPU. Those represent world state. The
--- 177 one-shots are switch clicks, crew callouts and single events; a switch
--- clicked on the pause screen should still click, so they are left alone.
---
--- The wrappers live here rather than in a module because glbl_func.lua is
--- included before any component is created, so they are in place before the
--- first module body runs -- and several of those bodies call playSample() at
--- load time. Same technique, and the same reason, as the globalProperty*
--- wrappers below.
---
--- Driven by systems/audio/sound_pause.lua, which is registered last in
--- main.lua's components table and calls setSoundPaused() once a frame.
+-- Neither X-Plane nor SASL3 stops this plugin's samples on pause. Looping
+-- samples (world state: engines, ambience, fans) are tracked here so that
+-- systems/audio/sound_pause.lua can hold them; one-shots still play, so a
+-- switch clicked on the pause screen still clicks. The wrappers must exist
+-- before any component body runs, because some call playSample at load time.
 
 if playSample ~= nil and stopSample ~= nil then
 
@@ -205,28 +198,14 @@ function _G.holdToRepeat(stepFn, delay, period)
 end
 
 -- ---------------------------------------------------------------------------
--- Late-binding datarefs (SASL2 compatibility)
+-- Late-binding datarefs
 -- ---------------------------------------------------------------------------
 --
--- SASL2's globalProperty*() always returned a usable property handle: findProp()
--- registered the name and getProp*() returned the default (0 / "") until the
--- dataref actually showed up, so a dataref published later -- or never -- was
--- harmless.
---
--- SASL3's globalProperty*() returns nil when the dataref does not exist YET, and
--- get(nil) returns nil, so `get(x) > 0` raises "attempt to compare nil with
--- number". The Tu-154 depends on the SASL2 behaviour in three places:
---
---   * SmartCopilot (scp/api/ismaster, scp/api/hascontrol_1) -- 143 reads, and
---     the plugin is optional,
---   * RealityXP GNS / BetterPushback (RXP/..., bp/...) -- optional plugins,
---   * a few tu-154/xap/An24_* names inherited from the shared An-24 radar
---     and MRP modules, which nothing in this aircraft ever creates.
---
--- The wrappers below restore exactly that: an unresolved name yields a property
--- that reads the type's zero value and re-tries the lookup periodically, so a
--- plugin loaded after the aircraft still binds. Resolved names are handed
--- straight through to SASL3 with no wrapper and no overhead.
+-- SASL3's globalProperty*() returns nil for a dataref that does not exist yet,
+-- and `get(nil) > 0` then throws. Optional plugins (SmartCopilot, RealityXP,
+-- BetterPushback, the KLN90B) may load after the aircraft or not at all, so an
+-- unresolved name yields a property that reads the type's zero and retries the
+-- lookup every RETRY_PERIOD. Resolved names go straight to SASL3, unwrapped.
 
 local _sasl3_gpf = globalPropertyf
 local _sasl3_gpi = globalPropertyi

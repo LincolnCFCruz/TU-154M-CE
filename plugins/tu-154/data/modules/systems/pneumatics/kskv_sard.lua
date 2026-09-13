@@ -1,7 +1,6 @@
 -- SARD: cabin pressure control
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
-defineProperty("xp_version", globalPropertyi("sim/version/xplane_internal_version"))
 
 
 -- internal
@@ -35,16 +34,12 @@ defineProperty("pax_door_2", globalPropertyf("tu-154/anim/pax_door_2")) -- middl
 defineProperty("pax_door_3", globalPropertyf("tu-154/anim/pax_door_3")) -- right emergency door position
 
 
-
-
 -- failures
 defineProperty("sard_valve_fail", globalPropertyi("tu-154/failures/sard_valve_fail")) -- outflow valve failure
 
 
 -- current altitude
 defineProperty("msl_alt", globalPropertyf("sim/flightmodel/position/elevation"))  -- phisical altitude MSL. meters
--- CHANGED for XP12: the old sim/weather/barometer_sealevel_inhg (REPLACED) has been replaced
--- with sim/weather/region/sealevel_pressure_pas (in Pascals). The conversion to inHg is below.
 defineProperty("msl_press_pas", globalPropertyf("sim/weather/region/sealevel_pressure_pas"))  -- pressure at sea level, pascals
 
 -- results
@@ -69,9 +64,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
-
 local press_alt_tbl = {{ -100000, 1000000 },    -- bugs walkaround
 {  525, 3000 }, -- 0.0
 { 560, 2500 },   --
@@ -84,21 +76,17 @@ local press_alt_tbl = {{ -100000, 1000000 },    -- bugs walkaround
 {  10000000, -100000 }}    -- bugs walkaround
 
 				  
-				  
 local press_reg = 0 -- pressure valve position. 0 - closed, 1 - fully open
 local cab_alt_need = -200
---local sys_alt = get(cabin_alt_now_ft) * 0.3048 -- calculated cabin alt meters
 local decomp_last = 0
 
 function update()
 	local passed = get(frame_time)
-	local XP11 = get(xp_version) > 11000	
 	
 	
 	local power_L = get(bus27_volt_left) > 13
 	local power_R = get(bus27_volt_right) > 13
 	
-	-- CHANGED for XP12: the pressure arrives in Pascals, converted to inHg
 	-- 1 inHg = 3386.389 Pa
 	local msl_press_inhg = get(msl_press_pas) / 3386.389
 	
@@ -111,8 +99,6 @@ function update()
 	local alt_set = interpolate(press_alt_tbl, get(sard_cabin_press_set))
 	local diff_set = get(sard_diff_set)
 	
-	-- calculate change speed
-	--local change_spd = math.abs(current_alt - sys_alt) * 0.05 + 1 -- 50 m/s per 1000m of differense
 	
 	-- calculate slow decompress of the cabin
 	local slow_decomp_coef = 1--(acf_alt / 12000) * (-7) + 8
@@ -130,9 +116,6 @@ function update()
 	elseif current_diff < diff_set then
 		if current_alt < alt_set then press_reg = 1
 		else press_reg = 0  end
-	--[[else
-		if current_diff > diff_set then press_reg = 1
-		else press_reg = 0 end--]]
 	end
 	if current_diff > diff_set then press_reg = 1 end
 	
@@ -145,7 +128,6 @@ function update()
 	if (get(emerg_decompress) == 1 or press_reg == 1) and get(sard_valve_fail) == 0 and get(sard_disable) == 0 and power_R and not start_sys then 
 		fast_decomp = current_alt + (acf_alt - current_alt) * passed * fast_decomp_coef
 		dumpall = dumpall + 1
-		--set(dump_all_on, 1)
 	end	
 	
 	-- windows open
@@ -154,7 +136,6 @@ function update()
 	if get(cockpit_window_left) + get(cockpit_window_right) + get(pax_door_1) + get(pax_door_2) + get(pax_door_3) > 0.2 then
 		windows_decomp = current_alt + (acf_alt - current_alt) * passed * 1000
 		cabin_vvi = 100000
-		--set(dump_all_on, 1)
 		dumpall = dumpall + 1
 	end
 	
@@ -162,21 +143,14 @@ function update()
 	-- calculate result alt
 	local sys_alt = current_alt + airflow_comp + slow_decomp + fast_decomp + windows_decomp
 	
-	--print(acf_alt, "  ", alt_set, "  ", current_diff, "  ", sys_alt)
 
 local MASTER = get(ismaster) ~= 1	
 	
 
---if MASTER then	
-
-	--set(cabin_vvi_fpm, change_spd * 196.8504)
 	set(cabin_vvi_fpm, cabin_vvi)	
 	set(cabin_altitude_ft, sys_alt / 0.3048)
 	
 	if dumpall > 0 then set(dump_all_on, 1) else set(dump_all_on, 0) end
-	--set(cabin_altitude_ft, 420)
-	--print(get(emerg_decompress))
---end
 
 	set(sard_panel_lit, get(bus115_1_volt) / 115)
 	

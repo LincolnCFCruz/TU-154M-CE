@@ -4,7 +4,7 @@ createGlobalPropertyi("tu-154/save_state", 0) -- force-save the aircraft state
 createGlobalPropertyi("tu-154/hardware_cockpit", 0) -- The aircraft is prepared for the iron cockpit
 -- Seconds of SIM time since the previous frame, clamped to 0.1 s, and exactly
 -- 0 while the sim is paused. Written only by systems/cockpit/time_logic.lua;
--- read by 131 modules. See CLAUDE.md "Time base" for the full contract.
+-- see CLAUDE.md "Time base" for the contract.
 createGlobalPropertyf("tu-154/time/frame_time", 0)
 createGlobalPropertyf("tu-154/anim/cargo_1", 0) -- cargo door 1 position. 0 = closed, 1 = open
 createGlobalPropertyf("tu-154/anim/cargo_2", 0) -- baggage door 2 position. 0 - closed, 1 - open

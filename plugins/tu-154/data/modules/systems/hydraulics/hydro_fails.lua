@@ -27,6 +27,22 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ hs_leak_1, 0.00001, 0.3, 1 },
+	{ hs_leak_2, 0.00001, 0.3, 1 },
+	{ hs_leak_3, 0.00001, 0.3, 1 },
+	{ hs_leak_4, 0.00001, 0.3, 1 },
+
+	{ hydro_pump_fail_11, 0.00001, 0.3, 1 },
+	{ hydro_pump_fail_12, 0.00001, 0.3, 1 },
+	{ hydro_pump_fail_2, 0.00001, 0.3, 1 },
+	{ hydro_pump_fail_3, 0.00001, 0.3, 1 },
+
+	{ hydro_elec_fail_2, 0.00001, 0.3, 1 },
+	{ hydro_elec_fail_3, 0.00001, 0.3, 1 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -51,18 +67,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(hs_leak_1) ~= 1 then set(hs_leak_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hs_leak_2) ~= 1 then set(hs_leak_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hs_leak_3) ~= 1 then set(hs_leak_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hs_leak_4) ~= 1 then set(hs_leak_4, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(hydro_pump_fail_11) ~= 1 then set(hydro_pump_fail_11, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hydro_pump_fail_12) ~= 1 then set(hydro_pump_fail_12, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hydro_pump_fail_2) ~= 1 then set(hydro_pump_fail_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hydro_pump_fail_3) ~= 1 then set(hydro_pump_fail_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(hydro_elec_fail_2) ~= 1 then set(hydro_elec_fail_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(hydro_elec_fail_3) ~= 1 then set(hydro_elec_fail_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS, FAIL)
 			
 			
 		
@@ -79,18 +84,7 @@ if MASTER then
 		-- no failures enabled
 		fail_counter = 0
 		
-		set(hs_leak_1, 0)
-		set(hs_leak_2, 0)
-		set(hs_leak_3, 0)
-		set(hs_leak_4, 0)
-		
-		set(hydro_pump_fail_11, 0)
-		set(hydro_pump_fail_12, 0)
-		set(hydro_pump_fail_2, 0)
-		set(hydro_pump_fail_3, 0)
-		
-		set(hydro_elec_fail_2, 0)
-		set(hydro_elec_fail_3, 0)
+		clearFailures(RANDOM_FAILS)
 		
 		set(system_qty_1, 58)
 		set(system_qty_2, 58)

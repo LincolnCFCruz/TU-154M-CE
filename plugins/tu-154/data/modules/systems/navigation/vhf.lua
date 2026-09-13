@@ -1,10 +1,20 @@
-include("functions.lua")
 size = {420, 90}
+
+-- wrap a knob or frequency value back into [minVal, maxVal], `round` at a time
+local function around(value, minVal, maxVal, round)
+	while value < minVal do value = value + round end
+	while value > maxVal do value = value - round end
+	return value
+end
+
+local function limit(value, vmin, vmax)
+	if value < vmin then return vmin end
+	if value > vmax then return vmax end
+	return value
+end
 
 defineProperty("num", 0)
 
---defineProperty("frequency", globalPropertyf("sim/cockpit2/radios/actuators/com1_frequency_hz"))  -- set the frequency
---defineProperty("freq_sby", globalPropertyf("sim/cockpit2/radios/actuators/com1_standby_frequency_hz"))  -- set the frequency
 
 defineProperty("frequency", globalPropertyf("sim/cockpit2/radios/actuators/com1_frequency_hz_833"))  -- set the frequency
 defineProperty("freq_sby", globalPropertyf("sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833"))  -- set the frequency
@@ -29,8 +39,6 @@ defineProperty("vhf_cc", globalPropertyf("tu-154/radio/vhf1_cc"))
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local rot_small_sound = loadSample('sounds/com.wav')
@@ -77,8 +85,6 @@ function update()
 	local MASTER = get(ismaster) ~= 1	
 	
 
-	
-	
 	-- knobs cycle
 	local left_knob = get(vhf_left)
 	local right_knob = get(vhf_right)
@@ -96,7 +102,6 @@ function update()
 	if (get(num) == 0 and get(spu_source) == 1) or (get(num) == 1 and get(spu_source) == 0) then freq = get(freq_sby) end
 	
 	
-	
 	power = get(vhf_on) == 1 and get(bus27_volt) > 13 -- temp
 
 
@@ -112,8 +117,6 @@ function update()
 	kHz = limit(kHz, 0, 995)
 		
 	freq = MHz * 1000 + kHz
-
-	
 
 	
 if MASTER then
@@ -161,10 +164,6 @@ function onModuleDone()
 end
 
 
-
-
-
-
 components = {
 
 
@@ -184,13 +183,3 @@ components = {
 
 }
 
-
---[[
-function draw()
-	
-	local c = get(color)
-	
-	drawBitmapText(text_font, 0, 0, "000.000", TEXT_ALIGN_LEFT, {c[1], c[2], c[3], c[4]})
-
-end
---]]

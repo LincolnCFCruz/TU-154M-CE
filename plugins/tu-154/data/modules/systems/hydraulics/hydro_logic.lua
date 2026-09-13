@@ -1,9 +1,3 @@
--- createGlobalPropertyf("tu-154/controlls/absu_debug1", 0)
--- createGlobalPropertyf("tu-154/controlls/absu_debug2", 0)
--- createGlobalPropertyf("tu-154/controlls/absu_debug3", 0)
--- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
--- defineProperty("absu_debug2", globalPropertyf("tu-154/controlls/absu_debug2")) 
--- defineProperty("absu_debug3", globalPropertyf("tu-154/controlls/absu_debug3")) 
 
 -- controls
 defineProperty("accum_fill", globalPropertyi("tu-154/buttons/hydro/accum_fill")) -- battery charging
@@ -58,7 +52,6 @@ defineProperty("hydro_elec_fail_2", globalPropertyi("tu-154/failures/hydro_elec_
 defineProperty("hydro_elec_fail_3", globalPropertyi("tu-154/failures/hydro_elec_fail_3"))
 
 
-
 -- time
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
@@ -88,18 +81,6 @@ defineProperty("brake_emerg_R", globalPropertyf("tu-154/controlls/brake_emerg_R"
 defineProperty("absu_contr_pitch", globalPropertyf("tu-154/absu/contr_pitch")) -- RA-56 pitch actuator rod travel
 defineProperty("absu_contr_roll", globalPropertyf("tu-154/absu/contr_roll")) -- RA-56 roll actuator rod travel
 defineProperty("absu_contr_yaw", globalPropertyf("tu-154/absu/contr_yaw")) -- RA-56 yaw actuator rod travel
-
--- defineProperty("absu_ra1_roll_fail", globalPropertyi("tu-154/failures/absu_ra1_roll_fail"))
--- defineProperty("absu_ra2_roll_fail", globalPropertyi("tu-154/failures/absu_ra2_roll_fail"))
--- defineProperty("absu_ra3_roll_fail", globalPropertyi("tu-154/failures/absu_ra3_roll_fail"))
-
--- defineProperty("absu_ra1_pitch_fail", globalPropertyi("tu-154/failures/absu_ra1_pitch_fail"))
--- defineProperty("absu_ra2_pitch_fail", globalPropertyi("tu-154/failures/absu_ra2_pitch_fail"))
--- defineProperty("absu_ra3_pitch_fail", globalPropertyi("tu-154/failures/absu_ra3_pitch_fail"))
-
--- defineProperty("absu_ra1_yaw_fail", globalPropertyi("tu-154/failures/absu_ra1_yaw_fail"))
--- defineProperty("absu_ra2_yaw_fail", globalPropertyi("tu-154/failures/absu_ra2_yaw_fail"))
--- defineProperty("absu_ra3_yaw_fail", globalPropertyi("tu-154/failures/absu_ra3_yaw_fail"))
 
 
 -- ailerons
@@ -131,9 +112,6 @@ defineProperty("gear_lever", globalPropertyi("tu-154/controll/gear_lever")) -- l
 defineProperty("nws", globalProperty("sim/flightmodel/parts/tire_steer_act[0]")) -- engine 1 rpm
 defineProperty("elevon_L", globalPropertyf("sim/flightmodel/controls/wing2l_spo1def"))
 defineProperty("elevon_R", globalPropertyf("sim/flightmodel/controls/wing2r_spo1def"))
-
-
-
 
 
 -- busters
@@ -172,9 +150,7 @@ defineProperty("hod2_y", globalPropertyf("tu-154/absu/d_ra2_y"))
 defineProperty("hod3_y", globalPropertyf("tu-154/absu/d_ra3_y"))
 
 
-
 pushback = globalPropertyi("bp/connected")
-
 
 
 -- Smart Copilot
@@ -194,13 +170,6 @@ set(gs_press_3, 210)
 set(gs_press_4, 210)
 
 
-
-
-
-
-
-
-
 --[[
 with the gear down, flaps retracted, the hydraulic accumulators discharged, the brake on
 first tank 48 +-1
@@ -210,11 +179,6 @@ landing gear oil consumption: 17 litres for each main strut. 8 litres for the no
 
 
 --]]
-
-
-
-
-
 
 
 local notLoaded = true
@@ -231,7 +195,6 @@ local function reset_switchers()
 	end
 	notLoaded = false
 end
-
 
 
 local engine_pumps_t = { 
@@ -253,7 +216,6 @@ local electric_pumps_t = {
 
 local brakes_L_last = get(l_brake_add)
 local brakes_R_last = get(r_brake_add)
---local brakes_last = get(parkbrake)
 local nws_last=get(nws)
 
 local brakes_EM_L_last = get(brake_emerg_L)
@@ -314,7 +276,6 @@ if MASTER then
 	end
 	
 	
-	
 	local sys_qty_1 = get(system_qty_1)
 	local sys_qty_2 = get(system_qty_2)
 	local sys_qty_3 = get(system_qty_3)
@@ -352,7 +313,6 @@ if MASTER then
 	local power115_3 = get(bus115_3_volt) > 110
 
 
-	
 	-- gain pressure from engine pumps
 	local RPM_1 = get(rpm_high_1)
 	local RPM_2 = get(rpm_high_2)
@@ -431,13 +391,6 @@ if MASTER then
 	end
 
 	
-
-
-
-
-	
-	
-	
 	-- internal leak
 	-- HS1 leaks down to 120 (2.4) for one hour
 	-- HS2 leaks down to 130 (2.6) for one hour
@@ -469,8 +422,6 @@ if MASTER then
 	end		
 
 
-
-	
 	local high_leak_1 = get(hs_leak_1)
 	local high_leak_2 = get(hs_leak_2)
 	local high_leak_3 = get(hs_leak_3)
@@ -489,7 +440,6 @@ if MASTER then
 	-- brakes: 0.04 l for full brake application, per gear
 	local brakes_L = get(l_brake_add)
 	local brakes_R = get(r_brake_add)
-	--local brakes = get(parkbrake)
 	
 	local main_brakes_feed = (math.max(brakes_L - brakes_L_last, 0) + math.max(brakes_R - brakes_R_last, 0)) * 0.04
 	-- BetterPushback connects long after the aircraft loads, so bp/connected has
@@ -500,7 +450,6 @@ if MASTER then
 	
 	brakes_L_last = brakes_L
 	brakes_R_last = brakes_R
-	--brakes_last = brakes
 	
 	if acc_1 > 0 and main_brakes_feed > 0 then 
 		acc_1 = acc_1 - main_brakes_feed
@@ -517,7 +466,6 @@ if MASTER then
 	local brakes_EM_R = get(brake_emerg_R)
 	local brakes_EM = get(brake_emerg)
 	
-	--local EM_brakes_feed = (brakes_EM_L - brakes_EM_L_last + brakes_EM_R - brakes_EM_R_last + brakes_EM - brakes_EM_last) * 0.04 * passed
 	local EM_brakes_feed = (brakes_EM - brakes_EM_last) * 0.04
 	
 	brakes_EM_L_last = brakes_EM_L
@@ -528,8 +476,6 @@ if MASTER then
 		acc_4 = acc_4 - EM_brakes_feed
 		hs1_qty = hs1_qty + EM_brakes_feed
 	end	
-	
-	
 	
 	
 	-- flaps
@@ -554,7 +500,6 @@ if MASTER then
 	end
 
 
-
 	local ail_L_now = get(ail_L)/20
 	local ail_R_now = get(ail_R)/20
 
@@ -571,18 +516,6 @@ if MASTER then
 	local elev_R_now = get(elevator_R)/get(elev_coeff)/22.5
 
 	local rudder_now = get(rudder)/25	
-	
-	-- local ailerons_feed = (math.abs(ail_L_now - ail_L_last) + math.abs(ail_R_now - ail_R_last)) * 0.05 * 0.027*0.75
-	
-	-- local elev_feed = math.abs(elev_now/get(elev_coeff) - elev_last/get(elev_coeff)) * 0.05 * 0.07*0.75
-	
-	-- local rudder_feed = math.abs(rudder_now - rudder_last) * 0.05 * 0.035*0.75
-	
-	-- local sbd_brk_inn_feed = math.abs(spd_brk_inn_L_now - spd_brk_inn_L_last + spd_brk_inn_R_now - spd_brk_inn_R_last) * 0.05 * 0.084*0.75
-	
-	-- local sbd_brk_mid_feed = math.abs(spd_brk_mid_L_now - spd_brk_mid_L_last + spd_brk_mid_R_now - spd_brk_mid_R_last) * 0.05 * 0.097*0.75
-	
-	-- local elevon_feed = math.abs(elevon_L_now - elevon_L_last + elevon_R_now - elevon_R_last) * 0.05 * 0.026*0.75
 	
 	
 	local ailerons_feed = (math.abs(ail_L_now - ail_L_last) + math.abs(ail_R_now - ail_R_last)) * base_feed * 0.49
@@ -641,7 +574,6 @@ if MASTER then
 	end		
 	
 	
-
 	-- ABSU
 	local absu_pitch_feed1 = math.abs(get(hod1_p)) * 0.0025
 	local absu_pitch_feed2 = math.abs(get(hod2_p)) * 0.0025
@@ -653,9 +585,6 @@ if MASTER then
 	local absu_yaw_feed2 = math.abs(get(hod2_y)) * 0.0025
 	local absu_yaw_feed3 = math.abs(get(hod3_y)) * 0.0025
 	
-	-- absu_pitch_last = get(absu_contr_pitch)
-	-- absu_roll_last = get(absu_contr_roll)
-	-- absu_yaw_last = get(absu_contr_yaw)
 	
 	if acc_1 > 0 then
 		local flow = absu_pitch_feed1 + absu_roll_feed1 + absu_yaw_feed1
@@ -709,9 +638,6 @@ if MASTER then
 		acc_3 = acc_3 - gear_feed_1 - gear_feed_2 - gear_feed_3
 		hs3_qty = hs3_qty + gear_feed_1 + gear_feed_2 + gear_feed_3
 	end
-	
-	
-	
 	
 	
 	set(gs_press_1, acc_1 * 50)
@@ -785,7 +711,6 @@ if MASTER then
 	set(gs_pump_2_cc, pump2_current*elec_pump_2_start)
 	set(gs_pump_3_cc, pump3_current*elec_pump_3_start)	
 	
-	--print(get(system_qty_1) + get(system_qty_2))
 
 end
 end

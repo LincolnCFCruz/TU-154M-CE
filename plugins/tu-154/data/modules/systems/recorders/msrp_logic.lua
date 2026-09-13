@@ -20,7 +20,6 @@ defineProperty("msrp_night_day", globalPropertyf("tu-154/switchers/eng/msrp_nigh
 defineProperty("msrp_main_switch", globalPropertyf("tu-154/switchers/eng/msrp_main_switch")) -- master switch
 
 
-
 -- new sources
 
 
@@ -34,7 +33,6 @@ defineProperty("latitude", globalPropertyf("sim/flightmodel/position/latitude"))
 defineProperty("longitude", globalPropertyf("sim/flightmodel/position/longitude")) -- degrees The longitude of the aircraft
 defineProperty("true_crs", globalPropertyf("sim/flightmodel/position/true_psi")) -- degrees True course of the aircraft
 defineProperty("MSL", globalPropertyf("sim/flightmodel/position/elevation")) -- altitude MSL
-
 
 
 defineProperty("mgv_pitch", globalPropertyf("tu-154/gyro/mgv_contr_pitch")) -- AGR pitch, + nose up
@@ -62,7 +60,6 @@ defineProperty("elevator_R", globalPropertyf("sim/flightmodel/controls/hstab2_el
 
 defineProperty("rudder", globalPropertyf("sim/flightmodel/controls/vstab2_rud1def")) -- degrees, positive is trailing-edge left
 
---defineProperty("speedbrake_ratio", globalPropertyf("sim/cockpit2/controls/speedbrake_ratio")) -- sim speedbrake lever
 
 -- spoilers
 defineProperty("spd_brk_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_spo1def")) -- inner speedbrake left Degrees
@@ -125,7 +122,6 @@ defineProperty("nav_cs", globalPropertyf("tu-154/radio/nav1_cs"))
 defineProperty("nav_gs", globalPropertyf("tu-154/radio/nav1_gs"))
 
 
---defineProperty("wind_direction_degt", globalPropertyf("sim/weather/wind_direction_degt"))   --xp11
 -- SASL3: the XP12 region wind datarefs are float ARRAYS (one entry per
 -- altitude layer); a scalar accessor returns nil. SASL2 read element 0.
 defineProperty("wind_direction_degt", globalProperty("sim/weather/region/wind_direction_degt[0]"))   --xp12
@@ -137,16 +133,11 @@ defineProperty("msrp_27_L_cc", globalPropertyf("tu-154/msrp/msrp_27_L_cc")) -- b
 defineProperty("msrp_27_R_cc", globalPropertyf("tu-154/msrp/msrp_27_R_cc")) -- bus load
 
 
-
-
-
-
 defineProperty("msrp_power", globalPropertyi("tu-154/msrp/msrp_power"))  -- MSRP power
 
 
 -- time
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
-
 
 
 -- MSRP recordings live with the plugin, not at the aircraft root:
@@ -155,7 +146,6 @@ defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 local blackBoxDir = pluginDataDir.."/output/black_box"
 local filename = blackBoxDir.."/default_file.bbox" -- current name of file
 local panel_numbers = "0"
-
 
 
 local function createFileName()
@@ -174,7 +164,6 @@ local function createFileName()
 	
 	filename = blackBoxDir.."/".. panel_numbers .. ".bbox"
 	
-
 
 end
 
@@ -221,7 +210,6 @@ function create_file()
 			savefile:write("Elevator L\t") -- 20
 			savefile:write("Elevator R\t") -- 21
 			savefile:write("Rudder\t") -- 22
-			--savefile:write("Spoiler hnd\t") -- 23
 			
 			savefile:write("Spoiler OUT L\t") -- 23
 			savefile:write("Spoiler MID L\t") -- 23
@@ -264,7 +252,6 @@ function create_file()
 			savefile:write("ABSU Pitch mode\t") -- 45
 			savefile:write("ABSU AT mode\t") -- 46
 			savefile:write("Marker\t") -- 47 off, inn, mid, out
-			--savefile:write("ILS est\t") -- 48
 
 			savefile:write("\n") -- end of line
 		
@@ -293,7 +280,6 @@ function create_file()
 			savefile:write("deg\t") -- Elevator L
 			savefile:write("deg\t") -- Elevator R
 			savefile:write("deg\t") -- Rudder
-			--savefile:write("ratio\t") -- Spoiler hnd
 			
 			savefile:write("ratio\t") -- Spoiler hnd
 			savefile:write("ratio\t") -- Spoiler hnd
@@ -336,7 +322,6 @@ function create_file()
 			savefile:write("mode\t") -- ABSU Pitch mode
 			savefile:write("mode\t") -- ABSU AT mode
 			savefile:write("mode\t") -- Marker
-			--savefile:write("bool\t") -- ILS est
 			
 			savefile:write("\n") -- end of line
 
@@ -365,7 +350,6 @@ function create_file()
 			savefile:write("-20/25\t") -- Elevator L
 			savefile:write("-20/25\t") -- Elevator R
 			savefile:write("-25/25\t") -- Rudder
-			--savefile:write("0/1\t") -- Spoiler hnd
 			
 			savefile:write("0/1\t") -- Spoiler hnd
 			savefile:write("0/1\t") -- Spoiler hnd
@@ -407,7 +391,6 @@ function create_file()
 			savefile:write("0/0\t") -- ABSU Pitch mode
 			savefile:write("0/0\t") -- ABSU AT mode 
 			savefile:write("0/0\t") -- Marker
-			--savefile:write("0/0\t") -- ILS est
 
 			savefile:write("\n") -- end of line
 		
@@ -437,7 +420,6 @@ function create_file()
 			savefile:write("controls\t") -- Elevator L
 			savefile:write("controls\t") -- Elevator R
 			savefile:write("controls\t") -- Rudder
-			--savefile:write("spoilers\t") -- Spoiler hnd
 			
 			savefile:write("spoilers\t") -- Spoiler hnd
 			savefile:write("spoilers\t") -- Spoiler hnd
@@ -479,18 +461,14 @@ function create_file()
 			savefile:write("event\t") -- ABSU Pitch mode
 			savefile:write("event\t") -- ABSU AT mode 
 			savefile:write("event\t") -- Marker
-			--savefile:write("event\t") -- ILS est
 
 			savefile:write("\n") -- end of line
 		
-		--savefile:write("#(sek)\tHH:MM:SS\t(deg)\t(deg)\t(deg)\t(m)\t(m)\t(km/h)\t(m/sek)\t(deg)\t(g)\t(mm)\t(deg)\t(mm)\t(deg)\t(deg)\t(deg)\t(deg)\t(deg)\t(rpm)\t(rpm)\t(t/hour)\t(deg)\t(deg)\n\n")
 		
-
-		--savefile:write("\n\n")
 		savefile:close()
 		return true
 	else
-		print("error saving file. check if there is a \"black_box\" folder here: "..blackBoxDir.. " and permissions for it")
+		logWarning("cannot create a recording in " .. blackBoxDir .. ": check that the folder exists and is writable")
 		return false
 	end
 	
@@ -709,28 +687,16 @@ function write_file() -- write parameters to file
 			end
 			savefile:write(mark.."\t")
 			
-			-- ILS
-			--local ILS = bool2int(get(nav_cs_flag) == 0 and get(nav_gs_flag) == 0)
-			
-			--savefile:write(ILS.."\t") -- 46
-			
-			
 			
 			-- finish line
 			
 			savefile:write("\n") -- end of line
 		
 		
-		
-		
-		
-		
-		
-		--savefile:write("\n")
 		savefile:close()
 		return true
 	else
-		print("cannot write into file")
+		logWarning("cannot append to the flight recording " .. tostring(filename))
 		return false
 	end
 
@@ -777,11 +743,8 @@ function update()
 	end
 	
 	
-	
 	set(msrp_power, bool2int(power))
 	
 
-
 end
-
 

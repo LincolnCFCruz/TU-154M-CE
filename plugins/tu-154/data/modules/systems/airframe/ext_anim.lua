@@ -9,10 +9,6 @@ defineProperty("revers_R", globalPropertyf("tu-154/controlls/revers_R"))
 defineProperty("reverse_mid", globalPropertyf("tu-154/anim/reverse_mid"))
 
 
-
-
-
-
 -- gear
 defineProperty("front_pos", globalPropertyf("tu-154/anim/lg/front_pos")) -- nose gear position
 defineProperty("front_defl", globalPropertyf("tu-154/anim/lg/front_defl")) -- nose strut damper compression
@@ -65,7 +61,6 @@ defineProperty("slider_6", globalProperty("sim/cockpit2/switches/custom_slider_o
 defineProperty("slider_7", globalProperty("sim/cockpit2/switches/custom_slider_on[6]"))
 defineProperty("slider_8", globalProperty("sim/cockpit2/switches/custom_slider_on[7]"))
 defineProperty("slider_9", globalProperty("sim/cockpit2/switches/custom_slider_on[8]"))
-defineProperty("slider_10", globalProperty("sim/cockpit2/switches/custom_slider_on[9]"))
 defineProperty("slider_11", globalProperty("sim/cockpit2/switches/custom_slider_on[10]"))
 defineProperty("slider_12", globalProperty("sim/cockpit2/switches/custom_slider_on[11]"))
 
@@ -108,12 +103,6 @@ defineProperty("weel_angle1", globalPropertyf("sim/aircraft/gear/acf_nw_steerdeg
 defineProperty("weel_angle2", globalPropertyf("sim/aircraft/gear/acf_nw_steerdeg2"))
 
 
-
-defineProperty("brake_L", globalPropertyf("sim/flightmodel/controls/l_brake_add"))
-defineProperty("brake_R", globalPropertyf("sim/flightmodel/controls/r_brake_add"))
-
---defineProperty("brake_L", globalPropertyf("tu-154/SC/controls/l_brake_add")) 
---defineProperty("brake_R", globalPropertyf("tu-154/SC/controls/r_brake_add")) 
 
 
 defineProperty("EC_L", globalProperty("sim/flightmodel2/gear/eagle_claw_angle_deg[1]"))
@@ -160,9 +149,6 @@ local gear_turn_pos = 0
 local MAX_TURN_SPD = 40
 local turn_need = 0
 
--- test
---set(weel_angle1, 65)
---set(weel_angle2, 10)
 
 local wing_flx_act_L = 0
 local wing_flx_act_R = 0
@@ -174,7 +160,6 @@ local window_L_last = get(cockpit_window_left)
 local window_R_last = get(cockpit_window_right)
 
 
-
 function update()
 	local passed = get(frame_time)
 	
@@ -182,7 +167,6 @@ function update()
 	local G_force = get(gforce)
 
 
-	
 	----------------------------------------
 	-- front gear --
 	-- turns
@@ -216,7 +200,6 @@ function update()
 	set(front_turn, gear_turn_pos)
 
 
-	
 	-- deploy and deflection
 	set(front_pos, get(deploy_ratio_1))
 	set(front_defl, defl_F * 10)
@@ -263,24 +246,12 @@ function update()
 	if pos_L < 0.9 then rot_L = -11 end
 	if pos_R < 0.9 then rot_R = -11 end
 	
-	--[[
-	if get(replay_mode) ~= 0 then
-		if pos_L < 0.9 or defl_L < 0.001 then rot_L = -11 end
-		if pos_R < 0.9 or defl_R < 0.001 then rot_R = -11 end
-		
-		if defl_L >= 0.001 then rot_L = -stuff_angle end
-		if defl_R >= 0.001 then rot_R = -stuff_angle end
-		
-	end
-	--]]
-	--print(pos_L, "  ", pos_R)
 	
 	-- using Eagle Claw
 	set(main_rot_left, rot_L)
 	set(main_rot_right, rot_R)
 	
 
-	
 	-- rudder --
 	local rudder_L = 1 - math.max(get(revers_flap_L) - 0.5, 0) * get(rpm_high_1) * 0.015
 	local rudder_R = 1 - math.max(get(revers_flap_R) - 0.5, 0) * get(rpm_high_3) * 0.015
@@ -309,7 +280,6 @@ function update()
 	local left_flx = wing_flx - G_force * get(tank3L_w) * tank_coef + get(ail_L) * IAS * ail_coef
 	local right_flx = wing_flx - G_force * get(tank3R_w) * tank_coef + get(ail_R) * IAS * ail_coef
 	
-	--print(G_force * get(tank3L_w) * tank_coef, "  ", wing_flx, "  ", left_flx)
 	
 	wing_flx_act_L = wing_flx_act_L + (left_flx - wing_flx_act_L) * passed * 10
 	wing_flx_act_R = wing_flx_act_R + (right_flx - wing_flx_act_R) * passed * 10
@@ -318,8 +288,6 @@ function update()
 	set(wing_flx_right, wing_flx_act_R)
 
 
-
-	
 	--------------------------
 	-- windows and doors --
 	--------------------------
@@ -544,13 +512,4 @@ function update()
 	set(reverse_mid, (get(revers_L) + get(revers_R))/2)
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-
 end

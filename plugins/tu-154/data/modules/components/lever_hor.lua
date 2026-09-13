@@ -17,10 +17,7 @@ local Range = Max - Min
 
 local mouse_stat = false
 
--- Width of the clickable strip below. SASL2 always handed mouse coordinates in
--- a component's implicit 100x100 space, so the handlers normalised by 100 even
--- though the strip is 109 wide; SASL3 hands them in the component's own pixel
--- space, so they normalise by the real width. The resulting value is identical.
+-- width of the clickable strip below; mouse x arrives in its pixels
 local CLICK_W = 109
 
 components = {
@@ -42,18 +39,7 @@ components = {
     -- clickable area for the lever
     clickable {
        position = { 15, 0, CLICK_W, 29 },
-       --[[ 
-       cursor = { 
-            x = 0, 
-            y = 0, 
-            width = 16, 
-            height = 16, 
-            shape = loadImage("clickable.png")
-        },  
-        --]]
-        -- SASL3: onMouseDown fires once per press (SASL2's repeating
-        -- onMouseDown needed a was_click guard here; no longer required).
-        -- Dragging is handled by onMouseMove while mouse_stat is true.
+        -- dragging is handled by onMouseMove while mouse_stat is true
         onMouseDown = function(comp, x, y, button)
            mouse_stat = true
            if x < 0 then x = 0 elseif x > CLICK_W then x = CLICK_W end

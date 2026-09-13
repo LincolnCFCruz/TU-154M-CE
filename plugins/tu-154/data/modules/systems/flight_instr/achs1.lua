@@ -1,7 +1,6 @@
 
 -- source datarefs
 defineProperty("utc_time", globalPropertyf("sim/time/zulu_time_sec"))
---defineProperty("world_green", globalPropertyf("sim/graphics/misc/cockpit_light_level_g"))  -- green component of natural light in cockpit
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- clock 1 - captain
@@ -46,8 +45,6 @@ defineProperty("LK3", globalPropertyi("tu-154/gauges/acs3/left_knob_press"))
 defineProperty("RK3", globalPropertyi("tu-154/gauges/acs3/right_knob_press"))
 defineProperty("flag_pos_3", globalPropertyi("tu-154/gauges/acs3/flag_pos"))
 
---defineProperty("fan_volume_ratio", globalPropertyf("sim/operation/sound/fan_volume_ratio"))
-
 
 -- failures
 defineProperty("failures_enabled", globalPropertyi("tu-154/failures/failures_enabled"))
@@ -62,16 +59,8 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 -- sounds
 local btn_click = loadSample('sounds/acs_btn.wav')
---local tik_tak = loadSample('sounds/acs_tik_tik.wav')
-
---playSample(tik_tak, true)  -- clock now ticks :)
---setSampleGain(tik_tak, 0)
-
-
-
 
 
 -- local variables
@@ -126,16 +115,6 @@ local start_flight_3 = 0
 local run_clock = 0
 
 
---[[
--- create handlers for knobs --
--- returns curent pressed button, if need.
-local knobNum = 0 -- number of pressed knob
-local function getKnobState()
-	return knobNum
-end
-
---]]
-
 local knob_last = 0
 
 -- works with dataref, when it being changed
@@ -163,7 +142,6 @@ if knob_summ ~= knob_last then playSample(btn_click, false)
 		flight_mode_1 = flight_mode_1 + 1
 		if flight_mode_1 > 2 then flight_mode_1 = 0 end
 		start_flight_1 = sim_time
-		--print(flight_mode_1)
 	elseif get(RK1) == 1 then 
 		sec_mode_1 = sec_mode_1 + 1
 		if sec_mode_1 > 2 then sec_mode_1 = 0 end
@@ -191,8 +169,6 @@ end
 end
 
 
-
-
 function update()
 	
 	run_clock = run_clock + get(frame_time)
@@ -206,17 +182,10 @@ function update()
 	local fail_2 = get(acs2_fail)
 	local fail_3 = get(acs3_fail)
 	
-	-- mute sound when sim is paused
-	--if get(frame_time) == 0 then setSampleGain(tik_tak, 0) end
 	
-
 local MASTER = get(ismaster) ~= 1	
 	
 
-	
-
-
-	
 	-- set main time angles
 	local main_sec_angle = main_time * 360 / 60
 	local main_min_angle = main_sec_angle / 60
@@ -372,9 +341,7 @@ if MASTER then
 	end	
 	
 	
-	--setSampleGain(tik_tak, 100 * get(fan_volume_ratio))
 end	
 	
 end
-
 

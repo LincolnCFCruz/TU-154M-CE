@@ -1,13 +1,4 @@
--- FIXES (XP12 support):
---   1. Fixed the swapped sim_starter1/sim_start1 and sim_starter2/sim_start2 indices
---   2. starter_torq is now separate for XP11 (0.2) and XP12 (0.28)
---   3. set(APU_N1, 100) moved into an XP11-only block
---   4. The APU air pressure is guarded by a check - a minimum apu_n1 threshold was added
---   5. Removed the fuel_flow_mode condition from fuel_system - the dataref is empty in XP12
---   6. MAIN XP12 FIX: added control of the left and right isolation valves
---      In XP12 the APU supplies air only to the CENTER duct (engine 2)
---      For engines 1 and 3, isol_valve_left and isol_valve_right must be opened
---      Otherwise the starter physically gets no air and produces no torque
+-- Engine start system: starter air supply, the start sequence and its gates.
 
 -- controls
 defineProperty("starter_cap",        globalPropertyi("tu-154/switchers/eng/starter_cap"))
@@ -31,24 +22,14 @@ defineProperty("sim_ignition1", globalProperty("sim/cockpit2/engine/actuators/ig
 defineProperty("sim_ignition2", globalProperty("sim/cockpit2/engine/actuators/ignition_on[1]"))
 defineProperty("sim_ignition3", globalProperty("sim/cockpit2/engine/actuators/ignition_on[2]"))
 
--- FIX: indices corrected - engine 1=[0], engine 2=[1], engine 3=[2]
---defineProperty("sim_starter1", globalProperty("sim/cockpit/engine/starter_duration[0]"))
---defineProperty("sim_starter2", globalProperty("sim/cockpit/engine/starter_duration[1]"))
---defineProperty("sim_starter3", globalProperty("sim/cockpit/engine/starter_duration[2]"))
 
-defineProperty("sim_starter1", globalProperty("sim/cockpit2/engine/actuators/starter_hit[0]"))
-defineProperty("sim_starter2", globalProperty("sim/cockpit2/engine/actuators/starter_hit[1]"))
-defineProperty("sim_starter3", globalProperty("sim/cockpit2/engine/actuators/starter_hit[2]"))
 
 --sim/cockpit2/engine/actuators/starter_hit
 
-defineProperty("sim_start1", globalProperty("sim/flightmodel2/engines/starter_making_torque[0]"))
-defineProperty("sim_start2", globalProperty("sim/flightmodel2/engines/starter_making_torque[1]"))
-defineProperty("sim_start3", globalProperty("sim/flightmodel2/engines/starter_making_torque[2]"))
 
-starter_1 = findCommand("sim/starters/engage_starter_1")
-starter_2 = findCommand("sim/starters/engage_starter_2")
-starter_3 = findCommand("sim/starters/engage_starter_3")
+local starter_1 = findCommand("sim/starters/engage_starter_1")
+local starter_2 = findCommand("sim/starters/engage_starter_2")
+local starter_3 = findCommand("sim/starters/engage_starter_3")
 
 -- sources
 defineProperty("bus27_volt_left",  globalPropertyf("tu-154/elec/bus27_volt_left"))
@@ -101,13 +82,9 @@ defineProperty("fuel_in_3", globalPropertyi("tu-154/start/fuel_in_3"))
 -- starter
 defineProperty("starter_torq",     globalPropertyf("sim/aircraft/engine/acf_starter_torque_ratio"))
 defineProperty("starter_rpm",      globalPropertyf("sim/aircraft/engine/acf_starter_max_rpm_ratio"))
-defineProperty("jet_spoolup_time", globalPropertyf("sim/aircraft/engine/acf_spooltime_jet"))
 
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster"))
-
--- XP version
-defineProperty("sim_vers", globalPropertyi("sim/version/xplane_internal_version"))
 
 -- APU
 defineProperty("APU_switch",  globalPropertyf("sim/cockpit/engine/APU_switch"))
@@ -115,17 +92,10 @@ defineProperty("APU_running", globalPropertyf("sim/cockpit/engine/APU_running"))
 defineProperty("APU_N1",      globalPropertyf("sim/cockpit/engine/APU_N1"))
 defineProperty("apu_bleed",   globalPropertyf("sim/cockpit2/bleedair/actuators/apu_bleed"))
 
--- XP12 FIX: isolation valves - the left and right bleed air circuit isolation valves
--- In XP12 the APU supplies air only to the CENTER duct (engine 2 / the tail engine)
--- To start engines 1 and 3 (the wing engines) these valves must be opened
--- so that air from the APU reaches the left and right circuits
+-- bleed isolation valves: XP12 feeds APU air to the centre duct only, so these
+-- are opened for the wing engines' starters (see update())
 defineProperty("isol_valve_left",  globalPropertyi("sim/cockpit2/bleedair/actuators/isol_valve_left"))
 defineProperty("isol_valve_right", globalPropertyi("sim/cockpit2/bleedair/actuators/isol_valve_right"))
-
--- indicators of air presence in the circuits (for diagnostics)
-defineProperty("bleed_avail_left",   globalPropertyf("sim/cockpit2/bleedair/indicators/bleed_available_left"))
-defineProperty("bleed_avail_center", globalPropertyf("sim/cockpit2/bleedair/indicators/bleed_available_center"))
-defineProperty("bleed_avail_right",  globalPropertyf("sim/cockpit2/bleedair/indicators/bleed_available_right"))
 
 -- engine bleed SOV - the engine bleed air valves
 defineProperty("eng_bleed_sov_1", globalProperty("sim/cockpit2/bleedair/actuators/engine_bleed_sov[0]"))
@@ -133,16 +103,8 @@ defineProperty("eng_bleed_sov_2", globalProperty("sim/cockpit2/bleedair/actuator
 defineProperty("eng_bleed_sov_3", globalProperty("sim/cockpit2/bleedair/actuators/engine_bleed_sov[2]"))
 
 
-local xp_ver = get(sim_vers)
-local IS_XP12 = xp_ver ~= nil and xp_ver >= 120000
-local IS_XP11 = xp_ver ~= nil and xp_ver >= 111000 and xp_ver < 120000
-
-if IS_XP11 then
-	set(starter_torq, 0.2)
-elseif IS_XP12 then
-	set(starter_torq, 0.28)
-	set(starter_rpm,  0.28)
-end
+set(starter_torq, 0.28)
+set(starter_rpm,  0.28)
 
 -- The sequence timeline. Advanced by frame_time in update(), so it stops when
 -- the sim is paused. Only differences against it are ever used, so the origin
@@ -190,30 +152,18 @@ local eng_start_press_t = {{ -100000, 0.0 },
 
 function update()
 
-	-- XP11 workaround, XP11 only
-	if IS_XP11 then
-		set(APU_N1, 100)
+	-- XP12 feeds APU air to the centre duct only. Open the APU bleed, both
+	-- isolation valves and every engine bleed SOV so that APU air, and air
+	-- from a running engine, reaches the starters of engines 1 and 3.
+	local apu_n1_val = get(apu_n1)
+	if apu_n1_val ~= nil and apu_n1_val > 50 then
+		set(apu_bleed, 1)
 	end
-
-	-- XP12 FIX: control of the isolation valves and the bleed SOV
-	-- Open the isolation valves and the engine bleed air valves
-	-- This lets air from the APU and the running engines
-	-- to reach the starters of engines 1 and 3
-	if IS_XP12 then
-		-- APU bleed is always open while the APU is running
-		local apu_n1_val = get(apu_n1)
-		if apu_n1_val ~= nil and apu_n1_val > 50 then
-			set(apu_bleed, 1)
-		end
-		-- the isolation valves are open - air goes to all three circuits
-		set(isol_valve_left,  1)
-		set(isol_valve_right, 1)
-		-- the engine bleed air valves are open
-		-- this lets running engine 2 supply air for starting 1 and 3
-		set(eng_bleed_sov_1, 1)
-		set(eng_bleed_sov_2, 1)
-		set(eng_bleed_sov_3, 1)
-	end
+	set(isol_valve_left,  1)
+	set(isol_valve_right, 1)
+	set(eng_bleed_sov_1, 1)
+	set(eng_bleed_sov_2, 1)
+	set(eng_bleed_sov_3, 1)
 
 	starter_press = get(starter_pressure)
 

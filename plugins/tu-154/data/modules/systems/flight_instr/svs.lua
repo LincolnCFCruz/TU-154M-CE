@@ -44,37 +44,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
---[[
-
-local alt_kus_tbl = {{ -50000000, 0.5},    -- bugs workaround
-				  { 0, 1 },    -- on standard pressure zero level
-          		  {  2000, 1.0288 },
-				  {  4000, 1.0571 },
-				  {  6000, 1.0879 },
-				  {  8000, 1.1205 },
-				  {  10000, 1.1549 },
-				  {  12000, 1.1901 },
-				  {  14000, 1.2223 },
-				  {  16000, 1.2558 },  
-          		  {  18000, 1.2924 },   
-          		  {  20000, 1.3341 },
-				  {  22000, 1.3708 },
-				  {  24000, 1.4154 },
-				  {  26000, 1.4558 },
-				  {  28000, 1.5005 },
-				  {  30000, 1.5500 },
-				  {  32000, 1.6039 },
-				  {  34000, 1.6597 },
-				  {  36000, 1.7164 },
-				  {  38000, 1.7920 },
-				  {  40000, 1.8762 },
-				  {  42000, 1.9653 },
-          		  {  10000000, 10 }}   -- linear above
-				  
---]]
-
 local mach = 0
 local tas = 0
 local altitude = 0
@@ -88,7 +57,6 @@ function update()
 	
 	local heat = power and get(svs_heat) == 1
 	
-	--local blocked = get(sensors_caps) == 1
 	
 	-- current consumption
 	local cc_27 = bool2int(power) * 10 + bool2int(test) * 4 + bool2int(heat) * 17
@@ -105,7 +73,6 @@ function update()
 	if test then mach = 0.8 end -- svs control check
 
 	
-	
 	-- altitude
 	local msl_press_inhg = get(msl_press) / 3386.389  -- XP12: convert Pa -> inHg
 	local alt_QNE = get(msl_alt) * 3.28083 + (29.92 - msl_press_inhg) * 1000  -- calculate altitude in feet above standart pressure
@@ -115,11 +82,6 @@ function update()
 	
 	if test then altitude = 12000 end
 	
-	
-	
-		
-	-- TAS
-	-- local alt_tas_coef = interpolate(alt_kus_tbl, alt_QNE)	
 	
 	if power and not pitot_fail then tas = get(true_airspeed) * 3.6 end --get(airspeed) * alt_tas_coef * 1.852 end
 	
@@ -141,7 +103,5 @@ if MASTER then
 end
 
 
-
 end
-
 

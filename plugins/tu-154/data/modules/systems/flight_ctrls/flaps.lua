@@ -8,7 +8,6 @@ defineProperty("flap_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_fl
 defineProperty("flap_mid_L", globalPropertyf("sim/flightmodel/controls/wing2l_fla2def")) -- middle flaps left
 defineProperty("flap_mid_R", globalPropertyf("sim/flightmodel/controls/wing2r_fla2def")) -- middle flaps right
 
---defineProperty("slats", globalPropertyf("sim/flightmodel/controls/slatrat")) -- slats position. this one works
 defineProperty("slats", globalPropertyf("sim/flightmodel2/controls/slat1_deploy_ratio")) -- slats position. this one works too
 
 defineProperty("stab_ratio", globalPropertyf("sim/cockpit2/controls/elevator_trim")) -- sim pitch trimmer
@@ -64,16 +63,9 @@ defineProperty("slats_fail", globalPropertyi("tu-154/failures/slats_fail"))
 
 
 -- spoilers sources
-defineProperty("deflection_mtr_2", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))
-defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))
 defineProperty("revers_L", globalPropertyf("tu-154/controlls/revers_L")) -- left reverser lever
 defineProperty("revers_R", globalPropertyf("tu-154/controlls/revers_R")) -- right reverser lever
-defineProperty("spd_brk_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_spo1def")) -- inner speedbrake left Degrees
-defineProperty("spd_brk_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_spo1def")) -- inner speedbrake right Degrees
 defineProperty("kontur_on", globalPropertyf("tu-154/b2/kontur_on")) -- inner speedbrake right Degrees
-
-
-
 
 
 flaps_cmd_up = findCommand("sim/flight_controls/flaps_up")
@@ -97,8 +89,6 @@ end
 
 registerCommandHandler(flaps_cmd_up, 0, flaps_up_handler)
 registerCommandHandler(flaps_cmd_down, 0, flaps_down_handler)
-
-
 
 
 flap_lever_tbl = {
@@ -181,8 +171,6 @@ if MASTER then
 	local CC_115_3 = 0
 	
 	
-	
-	
 	--------------------------------------
 	-- flaps --
 
@@ -254,8 +242,6 @@ if MASTER then
 	elseif flap_pos_now_R < 0 then flap_pos_now_R = 0 end	
 	
         
-        
-
 	-- brake unsynced flaps
 	if math.abs(flap_pos_now_L - flap_pos_now_R) < 3 then 
 		flap_pos_L_last = flap_pos_now_L
@@ -270,7 +256,6 @@ if MASTER then
 	end
 	
 	flaps_lever_last = flap_lever_pos
-	
 	
 	
 	set(flap_inn_L, flap_pos_L_last)
@@ -351,7 +336,6 @@ if MASTER then
 			end
 		elseif lever_moved_dir == -1 and stab_must_move then 
 			if --[[flap_lever_pos >= 15 and--]] flap_lever_pos <= 28 and flap_pos_L_last <= 34 and flap_pos_R_last <= 34 then 
-				--print("work 2")
 				if stab_set == 2 then stab_pos_cmd = 3
 				elseif stab_set == 1 then stab_pos_cmd = 1.5
 				else stab_pos_cmd = 0 end			
@@ -359,9 +343,6 @@ if MASTER then
 		end
 		
 		if flap_lever_pos < 5 and flap_pos_L_last < 25 and flap_pos_R_last < 25 then stab_pos_cmd = 0 end -- flight position
-		
-		
-		--stab_must_move = math.abs(stab_pos_cmd - stab_pos_now) > 0.01 and math.abs(flap_pos_L_last - flaps_pos_L_cmd) > 0.1 and math.abs(flap_pos_R_last - flaps_pos_R_cmd) > 0.1
 		
 		
 		if stab_pos_cmd > stab_pos_now + 0.01 then stab_dirr = 1
@@ -375,7 +356,6 @@ if MASTER then
 	end
 	
 	
-	
 	-- stab movements
 	stab_pos_now = stab_pos_now + stab_dirr * passed * (bool2int(stab_mechs > 0) * power115_1 + bool2int(stab_mechs > 1) * power115_3) * 0.11
 	
@@ -386,21 +366,17 @@ if MASTER then
 	end
 	
 	
-	
 	-- set limits
 	if stab_pos_now > 5.5 then stab_pos_now = 5.5
 	elseif stab_pos_now < 0 then stab_pos_now = 0 end
 	
 	
-	--stab_dirr = 0
-	--stab_pos_cmd = 0
 	set(stab_ratio, stab_pos_now / 5.5)
 	
 	set(ctr_115_1_cc, CC_115_1)
 	set(ctr_115_3_cc, CC_115_3)
 	
 end	
-
 
 
 end

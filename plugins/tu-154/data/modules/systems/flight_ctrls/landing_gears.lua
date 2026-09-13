@@ -11,9 +11,7 @@ defineProperty("emerg_gear_ext", globalPropertyi("tu-154/controll/emerg_gear_ext
 defineProperty("gear_lever", globalPropertyi("tu-154/controll/gear_lever")) -- landing gear lever. -1 = up, 0 = neutral, +1 = down
 
 -- landing gears
-defineProperty("gear1_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))  -- vertical deflection of front gear
 defineProperty("gear2_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))  -- vertical deflection of left gear
-defineProperty("gear3_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))  -- vertical deflection of right gear
 
 defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[0]"))  -- deploy of front gear
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
@@ -40,7 +38,6 @@ defineProperty("rel_collapse2", globalPropertyi("sim/operation/failures/rel_coll
 defineProperty("rel_collapse3", globalPropertyi("sim/operation/failures/rel_collapse3"))
 
 
-
 -- power
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
@@ -59,15 +56,10 @@ defineProperty("pub_lock_right", globalPropertyi("tu-154/gears/lock_right"))
 
 defineProperty("cam_in_cockpit", globalPropertyi("sim/graphics/view/view_is_external"))
 
--- defineProperty("override_gearbrake", globalPropertyi("sim/operation/override/override_gearbrake"))
-
 
 -- sim lever
 defineProperty("gear_handle_1", globalPropertyi("sim/cockpit/switches/gear_handle_status"))
 defineProperty("gear_handle_2", globalPropertyi("sim/cockpit2/controls/gear_handle_down"))
-
-
-
 
 
 -- Smart Copilot
@@ -75,11 +67,9 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 set(gear1_deploy, 1)
 set(gear2_deploy, 1)	
 set(gear3_deploy, 1)
-
 
 
 --[[
@@ -99,14 +89,13 @@ average time for the nose: 22 s
 --]]
 
 
-
 local lock_sound = loadSample('sounds/gear_lock.wav') --
 
 local handle_sound = loadSample('sounds/geal_lvr.wav') --
 
-gear_command_up = findCommand("sim/flight_controls/landing_gear_up")
-gear_command_down = findCommand("sim/flight_controls/landing_gear_down")
-gear_toggle = findCommand("sim/flight_controls/landing_gear_toggle")
+local gear_command_up = findCommand("sim/flight_controls/landing_gear_up")
+local gear_command_down = findCommand("sim/flight_controls/landing_gear_down")
+local gear_toggle = findCommand("sim/flight_controls/landing_gear_toggle")
 
 -- local variables
 local passed = 0
@@ -122,8 +111,6 @@ local power = 1
 function gear_up_handler(phase)
 	if 0 == phase then
 		if get(gear_lever) > -1 then set(gear_lever, get(gear_lever) - 1) end
-		--[[if get(gear_lever) ~= -1 then set(gear_lever, -1)
-		else set(gear_lever, 0) end--]]
 		set(gear_handle_1, 0)
 		set(gear_handle_2, 0)
 	end
@@ -133,8 +120,6 @@ end
 function gear_down_handler(phase)
 	if 0 == phase then
 		if get(gear_lever) < 1 then set(gear_lever, get(gear_lever) + 1) end
-		--[[if get(gear_lever) ~= 1 then set(gear_lever, 1)
-		else set(gear_lever, 0) end--]]
 		set(gear_handle_1, 1)
 		set(gear_handle_2, 1)
 	end
@@ -185,8 +170,6 @@ local pos2_last = get(gear2_deploy)
 local pos3_last = get(gear3_deploy)
 
 
-
-		
 local pos1 = get(gear1_deploy)  -- initial positions of gears
 local pos2 = get(gear2_deploy)
 local pos3 = get(gear3_deploy)
@@ -226,19 +209,7 @@ local start_timer = 0
 local lever_last = get(gear_lever)
 
 
---print(pos1, pos2, pos3)
-
-
 function update()
-	
-	--[[
-	if get(total_time) < 10 and get(agl) < 50 then
-		pos1 = 1
-		pos2 = 1
-		pos3 = 1
-	end
-	--]]
-	
 	
 	
 	if get(total_time) < 5 then
@@ -253,13 +224,7 @@ function update()
 		end
 	end
 	
-	--set(override_gearbrake, 0)
 local MASTER = get(ismaster) ~= 1
-
-	
-
-	
-	
 
 	
 	local view_ext = get(cam_in_cockpit)
@@ -302,7 +267,6 @@ local MASTER = get(ismaster) ~= 1
 		end
 		
 		
-		
 		-- calculate dirrection.
 		local gs_in_use = get(gears_ext_3GS)
 		local lever = get(gear_lever) * bool2int(get(actuator_fail) ~= 6)
@@ -342,8 +306,6 @@ local MASTER = get(ismaster) ~= 1
 		end
 		
 		
-
-		
 		-- calculations for gear 2
 		if not lock2 and retract then
 			-- calculate position		
@@ -358,7 +320,6 @@ local MASTER = get(ismaster) ~= 1
 		end
 
 	
-		
 		-- calculations for gear 3
 		if not lock3 and retract then
 			-- calculate position		
@@ -373,8 +334,6 @@ local MASTER = get(ismaster) ~= 1
 		end
 
 	
-		
-		
 		-- limit gear positions
 		if pos1 > 1 then pos1 = 1 end
 		if pos1 < 0 then pos1 = 0 end
@@ -384,7 +343,6 @@ local MASTER = get(ismaster) ~= 1
 		if pos3 < 0 then pos3 = 0 end
 	
 	
-	
 		-- calculate locks
 
 		
@@ -392,7 +350,6 @@ local MASTER = get(ismaster) ~= 1
 		lock2 = dirrection < 1 and pos2 == 0 or dirrection > -1 and pos2 == 1
 		lock3 = dirrection < 1 and pos3 == 0 or dirrection > -1 and pos3 == 1
 
-		
 		
 		-- emerg deploy
 		if get(emerg_gear_ext) == 1 then
@@ -406,8 +363,6 @@ local MASTER = get(ismaster) ~= 1
 		end
 		
 		
-
-	
 		set(pub_lock_front, bool2int(lock1))
 		set(pub_lock_left, bool2int(lock2))
 		set(pub_lock_right, bool2int(lock3))
@@ -422,9 +377,6 @@ local MASTER = get(ismaster) ~= 1
 		if get(rel_collapse1) == 6 then pos1 = 0.1 end
 		if get(rel_collapse2) == 6 then pos2 = 0.1 end
 		if get(rel_collapse3) == 6 then pos3 = 0.1 end
-		
-		
-		
 		
 		
 		-- wing separations
@@ -452,16 +404,9 @@ end
 		lock3_last = lock3		
 		
 		
-		
-		
-
-
 	end
 
-	--set(gear1_deploy, 0.5) -- test
 
-
-	
 end
 
 

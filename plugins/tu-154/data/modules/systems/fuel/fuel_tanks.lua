@@ -1,9 +1,3 @@
--- FIX (XP12):
---   1. Removed the forced shutdown of the tank 2, 3 and 4 pumps when the script loads
---      (set tank4_pump=0, tank2R_pump=0 etc.) - this blocked the fuel supply
---   2. onModuleDone replaced with explicit initialisation - it may not be called in XP12
---   3. frame_time is used directly; a 0 means the sim is paused and is honoured
-
 -- fuel quantity
 defineProperty("tank1_w",  globalProperty("sim/flightmodel/weight/m_fuel[0]")) -- fuel weight
 defineProperty("tank4_w",  globalProperty("sim/flightmodel/weight/m_fuel[1]")) -- fuel weight
@@ -64,28 +58,18 @@ defineProperty("fuel_porc_fail", globalPropertyi("tu-154/failures/fuel_porc_fail
 
 -- time
 defineProperty("frame_time",       globalPropertyf("tu-154/time/frame_time"))
-defineProperty("frame_rate_period", globalPropertyf("sim/operation/misc/frame_rate_period")) -- standard fallback
 
 
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
 
 defineProperty("fuel_temp_1", globalPropertyf("tu-154/gauges/eng/fuel_temp_1")) -- fuel temperature
 defineProperty("fuel_temp_2", globalPropertyf("tu-154/gauges/eng/fuel_temp_2")) -- fuel temperature
---defineProperty("tat", globalPropertyf("sim/weather/temperature_le_c")) --XP11
 defineProperty("tat", globalPropertyf("sim/weather/aircraft/temperature_leadingedge_deg_c"))  --XP12
 
 -- the APU fuel consumption is 160-240 kg/h depending on the load.
 
--- FIX: removed the forced shutdown of the pumps on load.
--- Originally this read:
---   set(tank1_pump, 1)
---   set(tank4_pump, 0)  <- switched tanks 2, 3 and 4 off for good in XP12
---   set(tank2R_pump, 0)
---   set(tank2L_pump, 0)
---   set(tank3R_pump, 0)
---   set(tank3L_pump, 0)
--- All the pumps are now on from the start - they are controlled by the fuel_pumps.lua logic
-
+-- X-Plane's own tank pumps stay on: fuel_pumps.lua decides what actually flows,
+-- and switching any of them off here starves the engines.
 set(tank1_pump,  1)
 set(tank4_pump,  1)
 set(tank2R_pump, 1)
@@ -93,8 +77,6 @@ set(tank2L_pump, 1)
 set(tank3R_pump, 1)
 set(tank3L_pump, 1)
 
--- FIX: onModuleDone kept for XP11 compatibility,
--- but the pumps are already switched on above now and do not depend on this call
 function onModuleDone()
 	set(tank1_pump,  1)
 	set(tank4_pump,  1)
@@ -105,21 +87,7 @@ function onModuleDone()
 end
 
 
--- frame_time is 0 while the sim is paused - that is how systems/cockpit/time_logic.lua
--- signals it - so a legitimate 0 must be passed through rather than replaced.
--- Substituting frame_rate_period, which keeps ticking on the pause screen, kept the
--- tanks transferring fuel and the APU burning it while the sim was stopped, and made
--- this module disagree with fuel_engines.lua, fuel_fails.lua and apu_logic.lua, which
--- all honour the 0. The fallback now covers only a genuinely absent read, which cannot
--- happen while core/dataref_creator_1.lua creates tu-154/time/frame_time.
-local function get_passed()
-	local ft = get(frame_time)
-	if ft == nil then ft = get(frame_rate_period) end
-	if ft == nil or ft < 0 then ft = 0 end
-	return ft
-end
-
-local passed = get_passed()
+local passed = get(frame_time)
 
 local porc_open = false
 local transfer  = false -- fuel goes aside porc
@@ -138,7 +106,7 @@ local start_timer = 0
 
 function update()
 
-	passed = get_passed()
+	passed = get(frame_time)
 
 	if start_timer < 60 then
 		start_timer = start_timer + passed

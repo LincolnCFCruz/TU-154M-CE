@@ -62,7 +62,7 @@ local function tapeRect(img, window, sx, sy)
     return sx * tw, th - (sy + szy) * th, szx * tw, szy * th
 end
 
--- tape.lua / tape_lit.lua
+-- tape_lit.lua
 function _G.drawScrollTape(img, window, sx, sy, w, h, color)
     if not img then
         return
@@ -71,7 +71,7 @@ function _G.drawScrollTape(img, window, sx, sy, w, h, color)
     sasl.gl.drawTexturePart(img, 0, 0, w, h, rx, ry, rw, rh, color or WHITE)
 end
 
--- rotated_tape.lua / rotated_tapeLit.lua / rotatedTape.lua
+-- rotated_tapeLit.lua
 function _G.drawRotatedScrollTape(img, angle, window, sx, sy, w, h, color)
     if not img then
         return
@@ -96,23 +96,17 @@ function _G.drawNeedleTex(img, angle, w, h, color)
     sasl.gl.drawRotatedTexture(img, angle or 0, (w - rw) / 2, (h - rh) / 2, rw, rh, color or WHITE)
 end
 
--- digitstape.lua / digitstapeLit.lua / digitstapeSmoothLit.lua
+-- digitstape.lua / digitstapeLit.lua
 --
 -- The digit texture has DIGIT_STRIP_ROWS rows: digits 0-9 in the first ten, the
--- decimal point at row ROW_DECIMAL and the minus sign at ROW_SIGN. SASL2 used a
--- hard-coded normalised row height of 0.0714285714286 (= 1/14); here the row
--- height is derived in pixels from the texture, which is the same thing after
--- the pixel conversion.
---
--- `smooth` selects digitstapeSmoothLit's carry rule (a partially rolled higher
--- digit) instead of the plain "round up past 9.5" rule. Both bodies are copied
--- verbatim from the SASL2 widgets.
+-- decimal point at row ROW_DECIMAL and the minus sign at ROW_SIGN; the row
+-- height is derived in pixels from the texture.
 local DIGIT_STRIP_ROWS = 14
 local ROW_DECIMAL = 12
 local ROW_SIGN = 13
 
 function _G.drawDigitStrip(img, overlayImg, value, digits, frac, allowNonRound,
-                           valueEnabler, showLeadingZeros, showSign, w, h, color, smooth)
+                           valueEnabler, showLeadingZeros, showSign, w, h, color)
     if not img then
         return
     end
@@ -147,14 +141,8 @@ function _G.drawDigitStrip(img, overlayImg, value, digits, frac, allowNonRound,
         end
         for i = 1, digitsNum do
             local digit = v % 10
-            if smooth then
-                if i > 1 then
-                    digit = math.floor(v % 10) + math.max(math.max((prevDigit - 9), 0), 0)
-                end
-            else
-                if 9.5 < prevDigit then
-                    digit = digit + 1
-                end
+            if 9.5 < prevDigit then
+                digit = digit + 1
             end
             prevDigit = digit
             v = math.floor(v / 10)

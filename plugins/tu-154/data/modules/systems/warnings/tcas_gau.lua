@@ -7,7 +7,6 @@ defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 
 defineProperty("bus115_volt", globalPropertyf("tu-154/elec/bus115_1_volt")) -- 115 V bus voltage
 
 defineProperty("var_on", globalPropertyi("tu-154/switchers/ovhd/var_left"))  -- overhead. left variometer
---defineProperty("var_right", globalPropertyi("tu-154/switchers/ovhd/var_right"))  -- overhead. right variometer
 defineProperty("tcas_on", globalPropertyi("tu-154/switchers/ovhd/tcas_on"))  -- TCAS switch
 
 defineProperty("vsi_brt", globalPropertyf("tu-154/gauges/vsi/vsi_brt_left"))  -- brightness
@@ -16,8 +15,6 @@ defineProperty("vsi_brt", globalPropertyf("tu-154/gauges/vsi/vsi_brt_left"))  --
 defineProperty("vvi", globalPropertyf("sim/cockpit2/gauges/indicators/vvi_fpm_pilot")) -- VVI
 
 defineProperty("vvi_int", globalPropertyf("tu-154/gauges/vvi_left")) -- VVI
-
-
 
 
 -- load images
@@ -66,12 +63,9 @@ defineProperty("ra_scale_set", globalPropertyi("tu-154/tcas/ra_scale_set"))  -- 
 defineProperty("vvi_fail", globalPropertyi("sim/operation/failures/rel_ss_vvi"))
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local vvi_ang_act = 0
@@ -109,7 +103,6 @@ function update()
 	local passed = get(frame_time)
 	
 	
-	
 	local power_27 = get(bus27_volt) > 13 and get(vvi_fail) ~= 6
 	
 	if get(var_on) == 1 then power_cntr = power_cntr + passed
@@ -130,7 +123,6 @@ function update()
 if get(ismaster) ~= 1 then set(vvi_int, get(vvi)) end
 	
 	
-	
 	local vvi_ms = get(vvi_int) * 0.00508 -- m/s
 	
 	if vvi_ms >= 30 then vvi_ang_act = 170
@@ -146,7 +138,6 @@ if get(ismaster) ~= 1 then set(vvi_int, get(vvi)) end
 	mode_show = get(mode_set)
 	
 end
-
 
 
 components = {
@@ -330,7 +321,6 @@ components = {
 	},
 
 
-	
 	-- ta only mark
 	textureLit {
 		position = {50, 60, 83, 46},
@@ -406,17 +396,5 @@ components = {
 		height = size[2],
 	},
 
---[[	
-	-- gauge total blackout if no power
-	rectangle {
-		position = { 0, 0, size[1], size[2] },
-		color = {0, 0, 0, 1,},
-		visible = function()
-			return not vvi_power
-		end
-	
-	},
---]]	
-	
 	
 }

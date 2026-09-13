@@ -1,23 +1,11 @@
--- Produces tu-154/time/frame_time -- the ONE delta-time source every system
--- module integrates against (131 modules under systems/ and core/ read it).
+-- Produces tu-154/time/frame_time, the one delta-time every system module
+-- integrates against (contract: CLAUDE.md "Time base"):
+--   * seconds of SIM time since the previous frame, clamped to CLAMP;
+--   * exactly 0 while the sim is paused -- consumers freeze, and never divide.
 --
--- The contract for consumers:
---   * frame_time is SECONDS OF SIM TIME since the previous frame.
---   * frame_time == 0 means "the simulation is not advancing" (paused).
---     Freeze: do not integrate, do not step a state machine, do not divide.
---   * frame_time is clamped to CLAMP, so a consumer may assume it is small.
---   * never advance anything per frame -- always multiply by frame_time.
---
--- History. This file used to derive the pause state from
--- sim/flightmodel/position/M staying bit-identical between two frames. That is
--- an exact float32 compare on a physics value, and it fails in both
--- directions: at high frame rates M rounds to the same float and a whole frame
--- of simulated time is silently dropped, and on a fully settled parked
--- aircraft M is genuinely constant, which stalls every timer in the plugin --
--- including the load-time gates in core/save_state.lua and the 25 modules that
--- reset their switches behind `sim_start_timer > 0.3`. X-Plane publishes the
--- real answer in sim/time/paused, so ask it. The sibling An-24RV-CE made the
--- same change. See CLAUDE.md "Time base".
+-- Pause comes from sim/time/paused. Inferring it from a physics value staying
+-- bit-identical between frames dropped whole frames at high frame rates and
+-- stalled every timer on a settled, parked aircraft.
 
 defineProperty("sim_paused",   globalPropertyi("sim/time/paused"))                  -- 1 while the sim is paused
 defineProperty("sim_flt_time", globalPropertyf("sim/time/total_flight_time_sec"))   -- SIM clock: stops on pause, scales with sim/time/sim_speed

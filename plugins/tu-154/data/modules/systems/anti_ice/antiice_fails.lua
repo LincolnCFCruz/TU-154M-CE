@@ -29,6 +29,15 @@ defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_ve
 
 -- 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ rio_fail, 0.00001, 0.3, 1 },
+
+	{ window_heat_fail_1, 0.00001, 0.3, 1 },
+	{ window_heat_fail_2, 0.00001, 0.3, 1 },
+	{ window_heat_fail_3, 0.00001, 0.3, 1 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -71,11 +80,7 @@ if get(ismaster) ~= 1 then
 			if get(rel_ice_surf_heat) ~= 1 then set(rel_ice_surf_heat, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
 			if get(rel_ice_surf_heat2) ~= 1 then set(rel_ice_surf_heat2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
 			
-			if get(rio_fail) ~= 1 then set(rio_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(window_heat_fail_1) ~= 1 then set(window_heat_fail_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(window_heat_fail_2) ~= 1 then set(window_heat_fail_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(window_heat_fail_3) ~= 1 then set(window_heat_fail_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS, FAIL)
 		
 			
 			-- dependent random

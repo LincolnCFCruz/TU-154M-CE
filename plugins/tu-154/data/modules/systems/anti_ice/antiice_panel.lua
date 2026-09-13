@@ -49,9 +49,6 @@ defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
 
-defineProperty("ice_inlet_heat_1", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[0]"))
-defineProperty("ice_inlet_heat_2", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[1]"))
-defineProperty("ice_inlet_heat_3", globalProperty("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[2]"))
 
 defineProperty("eng_heat_open_1", globalPropertyi("tu-154/antiice/eng_heat_open_1")) -- engine heating flap open
 defineProperty("eng_heat_open_2", globalPropertyi("tu-154/antiice/eng_heat_open_2")) -- engine heating flap open
@@ -67,7 +64,6 @@ defineProperty("ice_detect_ok", globalPropertyi("tu-154/antiice/ice_detect_ok"))
 defineProperty("ppd_3_heat_fail", globalPropertyi("tu-154/antiice/ppd_3_heat_fail"))
 
 defineProperty("rel_ice_window_heat", globalPropertyi("sim/operation/failures/rel_ice_window_heat"))
-defineProperty("rel_ice_inlet_heat1", globalPropertyi("sim/operation/failures/rel_ice_inlet_heat"))
 defineProperty("rel_ice_inlet_heat2", globalPropertyi("sim/operation/failures/rel_ice_inlet_heat2"))
 defineProperty("rel_ice_inlet_heat3", globalPropertyi("sim/operation/failures/rel_ice_inlet_heat3"))
 

@@ -1,5 +1,4 @@
 
---defineProperty("weel_switch", globalPropertyi("tu-154/xap/An24_gauges/noseweel"))
 defineProperty("nosewheel_turn_enable", globalPropertyi("tu-154/switchers/nosewheel_turn_enable")) -- nosewheel steering switch on the control wheel
 defineProperty("nosewheel_turn_sel", globalPropertyi("tu-154/switchers/nosewheel_turn_sel")) -- nosewheel steering angle selector. 0 = 10, 1 = 63
 
@@ -33,7 +32,6 @@ override_wheel_steer = globalPropertyi("sim/operation/override/override_wheel_st
 -- results
 defineProperty("weel_angle1", globalPropertyf("sim/aircraft/gear/acf_nw_steerdeg1"))
 defineProperty("weel_angle2", globalPropertyf("sim/aircraft/gear/acf_nw_steerdeg2"))
---defineProperty("weel_on", globalPropertyf("sim/cockpit2/controls/nosewheel_steer_on"))
 
 defineProperty("lock", globalPropertyi("sim/cockpit2/controls/nosewheel_steer_on"))
 
@@ -80,18 +78,16 @@ function update()
 end
 
 
---gear_togle_command = findCommand("sim/flight_controls/gyro_rotor_trim_up")
-
-gear_togle_command = findCommand("sim/flight_controls/nwheel_steer_toggle")
-function gear_toggle_handler(phase)
+local steer_toggle_command = findCommand("sim/flight_controls/nwheel_steer_toggle")
+local function steer_toggle_handler(phase)
 	if 0 == phase then
 		if get(nosewheel_turn_enable) ~= 1 then set(nosewheel_turn_enable, 1)
 		else set(nosewheel_turn_enable, 0) end
 	end
-return 0
+	return 0
 end
 
-registerCommandHandler(gear_togle_command, 0, gear_toggle_handler)
+registerCommandHandler(steer_toggle_command, 0, steer_toggle_handler)
 
 function onModuleDone()
 	set(override_wheel_steer, 0)

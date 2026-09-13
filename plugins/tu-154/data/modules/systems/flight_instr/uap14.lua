@@ -10,7 +10,6 @@ defineProperty("alpha_fail", globalPropertyi("sim/operation/failures/rel_AOA")) 
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
 defineProperty("slats", globalPropertyf("sim/flightmodel2/controls/slat1_deploy_ratio")) -- slats position. this one works too
 defineProperty("rel_pitot", globalPropertyi("sim/operation/failures/rel_pitot")) -- Pitot 1 - Blockage
-defineProperty("deflection_mtr_1", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
 
 
 -- controls
@@ -38,9 +37,6 @@ defineProperty("uap_fail", globalPropertyi("sim/operation/failures/rel_AOA"))
 defineProperty("warn_fail", globalPropertyi("sim/operation/failures/rel_stall_warn"))
 
 
-
-
-
 -- results
 defineProperty("aoa_ind", globalPropertyf("tu-154/gauges/misc/aoa_ind")) -- angle of attack indicator
 defineProperty("aoa_sector", globalPropertyf("tu-154/gauges/misc/aoa_sector")) -- angle of attack indicator sector
@@ -58,11 +54,9 @@ defineProperty("gforce_critical", globalPropertyi("tu-154/auasp/gforce_critical"
 defineProperty("speaker_auasp", globalPropertyi("tu-154/alarm/speaker_auasp")) -- limit angle of attack or g
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
 
 
 local m_tbl = {
@@ -115,7 +109,6 @@ function update()
 	elseif slat > 0.9 and flaps < 25 then sector_ang_need = 14
 	elseif flaps >= 25 then sector_ang_need = 12 
 	else
-		--sector_ang_need = interpolate(m_tbl, mach_act)
 		if mach_act <= 0.42 then sector_ang_need = 12
 		else sector_ang_need = (0.42 - mach_act) * 6 / 0.48 + 12 end
 	end
@@ -129,15 +122,11 @@ function update()
 	-- AOA indicator
 	if mode_sw == 1 and get(alpha_fail) < 6 then 
 		aoa_ang_need = 10
-		--sector_ang_need = 9.8
 	elseif mode_sw == -1 then 
-		--sector_ang_need = 12
 		aoa_ang_need = 0
 	else
 		if get(ias) > 50 and get(alpha_fail) < 6 then
 			aoa_ang_need = get(alpha) + 3
-		--elseif get(alpha_fail) < 6 then aoa_ang_need = 9
-		--else aoa_ang_need = 6 
 		end
 	end
 	
@@ -174,8 +163,6 @@ function update()
 	end
 
 
-	
-
 if MASTER then	
 
 	
@@ -199,7 +186,6 @@ end
 	end
 		
 	
-	
 	set(alpha_critical, aoa_crit)
 	set(gforce_critical, gf_crit)
 	
@@ -216,16 +202,7 @@ end
 	set(g_force_high, math.max(gf_crit * lamps_brt, test_btn))
 
 
-
-
-
 end
-
-
-
-
-
-
 
 
 --[[

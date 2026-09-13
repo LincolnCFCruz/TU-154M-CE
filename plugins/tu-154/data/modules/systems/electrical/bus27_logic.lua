@@ -86,8 +86,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
 local source_L = 0 -- lets calculate the source first and then divide the loads between sources
 local source_R = 0
 
@@ -165,7 +163,6 @@ function update()
 		local apu_amp = get(apu_start_cc)
 		local apu_volt = get(apu_start_bus)
 		
-		--if get(apu_system_on) == 1 then -- APU start mode
 		if get(apu_start_seq) == 1 then -- APU starter work
 			set(buses_connected, 1)
 			if vu1_conn == 1 or vu2_conn == 1 or vu3_work then -- generator source
@@ -317,7 +314,6 @@ function update()
 		apu_volt = 0
 		-- left bus calc. check sources, cals voltage
 			if vu1_work and vu1_sw == 1 then -- VU1 works. connect doesn't matter
-				--print(get(bus27_volt_left))
 				source_L = 1
 				bus_volt_L =  28.5
 				set(bat_source_1, 0)
@@ -368,7 +364,6 @@ function update()
 				set(bat_source_4, 0)
 				-- set currents
 				set(vu2_amp, bus_amp_R)
-				--set(vu3_amp, 0)
 				set(bat_amp_2, 0)
 				set(bat_amp_4, 0)
 			elseif vu3_work and vu2_sw == -1 then -- VU res works. connect doesn't matter
@@ -388,7 +383,6 @@ function update()
 				set(bat_source_4, bat_works_4)
 				-- set currents
 				set(vu2_amp, 0)
-				--set(vu3_amp, 0)
 				set(bat_amp_2, bus_amp_R * bat_works_2 / (bat_works_2 + bat_works_4))
 				set(bat_amp_4, bus_amp_R * bat_works_4 / (bat_works_2 + bat_works_4))
 			else
@@ -398,14 +392,12 @@ function update()
 				set(bat_source_4, 0)
 				-- set currents
 				set(vu2_amp, 0)
-				--set(vu3_amp, 0)
 				set(bat_amp_2, 0)
 				set(bat_amp_4, 0)
 			end
 			
 		end
 
-		--print(get(bat_amp_2))
 		
 		set(bus27_volt_left, bus_volt_L)
 		set(bus27_volt_right, bus_volt_R)

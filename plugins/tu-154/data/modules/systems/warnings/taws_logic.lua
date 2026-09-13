@@ -31,10 +31,7 @@ defineProperty("taws_fail", globalPropertyi("tu-154/failures/taws_fail")) -- SRP
 
 
 -- sources
-defineProperty("vvi_L", globalPropertyf("sim/cockpit2/gauges/indicators/vvi_fpm_pilot")) -- vertical speed in ft/min
-defineProperty("vvi_R", globalPropertyf("sim/cockpit2/gauges/indicators/vvi_fpm_copilot"))
 
-defineProperty("rv5_alt", globalPropertyf("tu-154/misc/rv5_alt_left"))  -- altitude on the left altimeter
 
 
 -- results
@@ -47,8 +44,6 @@ defineProperty("taws_cc", globalPropertyf("tu-154/taws/taws_cc")) -- current dra
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local but_view_last = 0
@@ -150,10 +145,6 @@ if MASTER then
 	
 end	
 	
-	--set(mode_set, 6) -- test game
 
 end
-
-
-
 

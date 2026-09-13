@@ -1,7 +1,5 @@
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
---defineProperty("pitch_sim", globalPropertyf("sim/cockpit2/gauges/indicators/pitch_electric_deg_pilot"))
---defineProperty("roll_sim", globalPropertyf("sim/cockpit2/gauges/indicators/roll_electric_deg_pilot"))
 
 defineProperty("pitch_sim", globalPropertyf("sim/flightmodel/position/theta"))
 defineProperty("roll_sim", globalPropertyf("sim/flightmodel/position/phi"))
@@ -44,8 +42,6 @@ defineProperty("ahz_flag", globalPropertyf("tu-154/gauges/ahz/ahz_flag_C")) -- A
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local initial_roll_err = 0 --math.random(-20, 20) * real_num -- initial error, ehich will be decreased to 0 after connecting power
@@ -132,36 +128,6 @@ function update()
 		else pitch_corr = 0 end
 		
 	end
-	
-	--[[
-	-- arresting mechanism
-	if arrest > 0 and power then
-		-- set new correction
-		
-		if math.abs(initial_roll_err) < 0.1 then
-			if roll_show > 0.1 then roll_corr = roll_corr + 6 * passed
-			elseif roll_show < -0.1 then roll_corr = roll_corr - 6 * passed end
-		end
-		if math.abs(initial_pitch_err) < 0.1 then
-			if pitch_show > 0.1 then pitch_corr = pitch_corr + 6 * passed
-			elseif pitch_show < -0.1 then pitch_corr = pitch_corr - 6 * passed end
-		end
-		
-		-- reset errors
-		if power_roll > 0.1 then power_roll = power_roll - passed
-		elseif power_roll < -0.1 then power_roll = power_roll + passed end
-		if power_pitch > 0.1 then power_pitch = power_pitch - passed
-		elseif power_pitch < -0.1 then power_pitch = power_pitch + passed end
-
-		if initial_roll_err > 0.1 then initial_roll_err = initial_roll_err - passed * 6
-		elseif initial_roll_err < -0.1 then initial_roll_err = initial_roll_err + passed * 6 end
-		if initial_pitch_err > 0.1 then initial_pitch_err = initial_pitch_err - passed * 6
-		elseif initial_pitch_err < -0.1 then initial_pitch_err = initial_pitch_err + passed * 6 end
-		
-	end	
-	
-	--]]
-	
 	
 	
 	-- main formula for curent position

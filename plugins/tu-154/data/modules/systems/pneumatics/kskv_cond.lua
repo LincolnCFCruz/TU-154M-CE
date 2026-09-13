@@ -51,7 +51,6 @@ defineProperty("termo", globalPropertyf("sim/weather/aircraft/temperature_ambien
 defineProperty("airspeed", globalPropertyf("sim/flightmodel/position/indicated_airspeed")) -- flight speed
 
 
-
 defineProperty("rpm_high_1", globalPropertyf("tu-154/gauges/engine/rpm_high_1")) -- engine 1 high-pressure spool rpm
 defineProperty("rpm_high_2", globalPropertyf("tu-154/gauges/engine/rpm_high_2")) -- engine 2 high-pressure spool rpm
 defineProperty("rpm_high_3", globalPropertyf("tu-154/gauges/engine/rpm_high_3")) -- engine 3 high-pressure spool rpm
@@ -70,12 +69,9 @@ defineProperty("tth_left_fail", globalPropertyi("tu-154/failures/tth_left_fail")
 defineProperty("tth_right_fail", globalPropertyi("tu-154/failures/tth_right_fail")) -- turbo-cooler failure
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
 
 
 local eng_temp_tbl = {{ -100000, 0.0 },    -- bugs walkaround
@@ -124,7 +120,6 @@ function update()
 	local airflow_R = get(air_usage_R)
 	
 	termo_out = get(termo)
-	--local IAS = get(airspeed) * 1.852
 	local IAS = math.max(get(airspeed) * 1.852, 0)
 	-- calculate hot air temperature
 	local eng_vlv_1 = get(eng_valve_1)
@@ -139,9 +134,6 @@ function update()
 	local engines_air_T = termo_out
 
 
-
-
-	
 	if eng_vlv_1 + eng_vlv_2 + eng_vlv_3 + eng_vlv_4 > 0 and (airflow_L + airflow_R) > 200 then
 		engines_air_T = termo_out * 0.3 + (eng_T_1 + eng_T_2 + eng_T_3 + get(apu_n1) * eng_vlv_4 * 1.5) / (eng_vlv_1 + eng_vlv_2 + eng_vlv_3 + eng_vlv_4)
 	end
@@ -251,7 +243,6 @@ function update()
 	local cockpit_tube_need = cold_air_T * (1 - cockpit_reg) + hot_air_T * cockpit_reg -- regulated temperature in tubes
 	cockpit_tube_temp = cockpit_tube_temp + (cockpit_tube_need - cockpit_tube_temp) * passed * math.min(airflow_L + airflow_R, 1000) * 0.01 -- cmooth changing
 
-	
 	
 	cockpit_T = cockpit_T + (termo_out - cockpit_T) * passed * 0.003 -- temperature in cabin will slowly turn to outside temp
 	cockpit_T = cockpit_T + (cockpit_tube_temp - cockpit_T) * passed * math.min(airflow_L + airflow_R, 1000) * 0.00002 -- cmooth changing

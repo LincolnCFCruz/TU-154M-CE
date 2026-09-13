@@ -43,7 +43,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 local LB_left = findCommand("sim/GPS/g430n1_coarse_down")
 
 function LB_left_hnd(phase)
@@ -88,8 +87,6 @@ function LS_right_hnd(phase)
 end
 
 registerCommandHandler(LS_right, 0, LS_right_hnd)
-
-
 
 
 local RB_left = findCommand("sim/GPS/g430n1_chapter_dn")
@@ -313,11 +310,6 @@ sim/GPS/g430n1_ent				ENT button
 --]]
 
 
-
-
-
-
-
 function update()
     -- Check the power: the switch is ON and the voltage is > 13 V on at least one bus
     local pwr_logic = get(kln_on) == 1 and (get(bus27_volt_left) > 13 or get(bus27_volt_right) > 13)
@@ -348,35 +340,6 @@ function update()
     
     set(kill_map_fms_line, 1)
 end
-
-
---function update()
-
---	set(gps_power, get(kln_on) * bool2int(get(bus27_volt_left) > 13 or get(bus27_volt_right) > 13))
---	set(gns_lit, get(gps_power) * 0.7)
-	
---	if get(show_gns) == 1 and not overrideSet then
---		set(overrideGPS, 0)
---		overrideSet = true
---	elseif get(show_gns) == 0 then
---		overrideSet = false
---	end
-	
-	
-	--print(get(gps_hdef_dot))
---	if get(ismaster) ~= 1 then
---		set(GNS430_dtk, get(gps_course_degtm))
---		set(GNS430_dev, get(gps_hdef_dot))
---		set(GNS430_flag, bool2int(get(gps_fromto) == 0 or get(gps_power) == 0))
---		if get(GNS430_flag) == 1 then set(GNS430_dev, 0) end
---	end
-	
-	
-	
-	-- remove red line on Radar
---	set(kill_map_fms_line, 1)
-
-
 
 
 function onModuleDone()

@@ -34,7 +34,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 local gpu_start_out = loadSample('sounds/gpu_start_out.wav')
 local gpu_run_out = loadSample('sounds/gpu_run_out.wav')
 local gpu_stop_out = loadSample('sounds/gpu_stop_out.wav')
@@ -134,8 +133,6 @@ function update()
 		end
 		
 		
-		
-		
 		-- set overload flag and reset it when GPU is disconnected
 		if get(gpu_amp) > 500 then set(gpu_overload, 1)
 		elseif get(gpu_on) == 0 then set(gpu_overload, 0) end
@@ -190,7 +187,6 @@ function update()
 		setSampleGain(gpu_start_inn, 2000 * (1 - external))
 		setSampleGain(gpu_run_inn, 2000 * (1 - external))
 		setSampleGain(gpu_stop_inn, 2000 * (1 - external))
-		--setSampleGain(prop_out_1, prop_loud_1 * (external + window_open * (1 - external)) * N1 * dist_coef) -- example
 	
 	else
 		work_timer = 0
@@ -206,7 +202,6 @@ function update()
 		stopSample(gpu_start_out)
 		stopSample(gpu_stop_out)
 		
-		--if gpuSoundsLoaded then unloadSounds() end
 	end
 	
 	

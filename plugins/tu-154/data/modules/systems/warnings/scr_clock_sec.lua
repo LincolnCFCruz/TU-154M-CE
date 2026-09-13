@@ -8,11 +8,9 @@ defineProperty("seconds", 0)
 local text_font = loadBitmapFont('taws_scr.fnt')
 
 
-
 function draw()
 	
 	local sec = get(seconds)
-	--drawRectangle(0, 0, size[1], size[2], 1, 0, 0, 1) -- test
 	drawRectangle(18, 0, 10, size[2], 1, 1, 1, 1) -- vertical line
 	
 	
@@ -43,9 +41,6 @@ function draw()
 	end
 	
 	--]]
-	
-	
-	
 	
 	
 end

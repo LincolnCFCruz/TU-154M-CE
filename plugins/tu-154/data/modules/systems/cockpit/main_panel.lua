@@ -5,9 +5,7 @@ size = { 2048, 2048 }
 
 
 components = {
-	
-	vers {},
-	
+
 	sc_controls {}, -- control through SmartCopilot
 	
 	achs1 {}, -- clock
@@ -33,16 +31,16 @@ components = {
 		pitch_int = globalPropertyf("tu-154/gyro/ahz_pitch_int_R"), -- AGR pitch, + up
 		res_roll = globalPropertyf("tu-154/gauges/ahz/roll_R"), -- AGR roll, + right
 		res_roll_bkk = globalPropertyf("tu-154/bkk/pkp_roll_right"), -- bank for the BKK + to the right
-		ahz_flag = globalPropertyf("tu-154/gauges/ahz/ahz_flag_R"), -- AGR pitch, + nose up
-		
-		course_plank = globalPropertyf("tu-154/gauges/ahz/course_plank_R"), -- captain's AGD course bar + to the right
-		gs_plank = globalPropertyf("tu-154/gauges/ahz/gs_plank_R"), -- captain's AGD glideslope bar + up
-		
-		dir_roll = globalPropertyf("tu-154/gauges/ahz/dir_roll_R"), -- captain's AGD roll director + to the right
-		dir_pitch = globalPropertyf("tu-154/gauges/ahz/dir_pitch_R"), -- captain's AGD pitch director + up
-		
-		dir_roll_flag = globalPropertyf("tu-154/gauges/ahz/dir_roll_flag_R"), -- captain's AGD roll director failure flag
-		dir_pitch_flag = globalPropertyf("tu-154/gauges/ahz/dir_pitch_flag_R"), -- captain's AGD pitch director failure flag
+		ahz_flag = globalPropertyf("tu-154/gauges/ahz/ahz_flag_R"), -- attitude failure flag
+
+		course_plank = globalPropertyf("tu-154/gauges/ahz/course_plank_R"), -- copilot's AGD course bar + to the right
+		gs_plank = globalPropertyf("tu-154/gauges/ahz/gs_plank_R"), -- copilot's AGD glideslope bar + up
+
+		dir_roll = globalPropertyf("tu-154/gauges/ahz/dir_roll_R"), -- copilot's AGD roll director + to the right
+		dir_pitch = globalPropertyf("tu-154/gauges/ahz/dir_pitch_R"), -- copilot's AGD pitch director + up
+
+		dir_roll_flag = globalPropertyf("tu-154/gauges/ahz/dir_roll_flag_R"), -- copilot's AGD roll director failure flag
+		dir_pitch_flag = globalPropertyf("tu-154/gauges/ahz/dir_pitch_flag_R"), -- copilot's AGD pitch director failure flag
 
 		
 		absu_pnp_mode = globalPropertyi("tu-154/absu/absu_pnp_mode_2"), -- PNP display mode. 0 = off, 1 = NVU, 2 = VOR1, 3 = VOR2, 4 = landing system
@@ -72,7 +70,6 @@ components = {
 		fl_knob = globalPropertyi("tu-154/gauges/alt/vbe_fl_knob_right"),  -- flight level knob
 		mode_button = globalPropertyi("tu-154/gauges/alt/vbe_mode_but_right"),  -- mode button
 		bus27_volt = globalPropertyf("tu-154/elec/bus27_volt_right"), -- 27 V bus voltage
-		bus115_volt = globalPropertyf("tu-154/elec/bus115_3_volt"), -- 115 V bus voltage
 		vbe_on = globalPropertyi("tu-154/switchers/ovhd/vbe_2_on"),  -- power switcher
 		vbe_mode = globalPropertyi("tu-154/gauges/alt/vbe_mode_right"),  -- meters/feet mode
 		vbe_std = globalPropertyi("tu-154/gauges/alt/vbe_std_right"),  -- standard pressure selection
@@ -204,7 +201,6 @@ components = {
 	
 	gns430 {},
 	
-	--ins_test {},
 	
 	misc_fails {},
 	

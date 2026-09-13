@@ -43,6 +43,33 @@ local vu_timer_1 = 0
 local vu_timer_2 = 0
 local vu_timer_3 = 0
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ bat_fail_1, 0.00001, 0.3, 1 },
+	{ bat_fail_2, 0.00001, 0.3, 1 },
+	{ bat_fail_3, 0.00001, 0.3, 1 },
+	{ bat_fail_4, 0.00001, 0.3, 1 },
+
+	{ bat_1_kz, 0.00001, 0.3, 1 },
+	{ bat_2_kz, 0.00001, 0.3, 1 },
+	{ bat_3_kz, 0.00001, 0.3, 1 },
+	{ bat_4_kz, 0.00001, 0.3, 1 },
+
+	{ vu1_fail, 0.00001, 0.3, 1 },
+	{ vu2_fail, 0.00001, 0.3, 1 },
+	{ vu3_fail, 0.00001, 0.3, 1 },
+
+	{ tr1_fail, 0.00001, 0.3, 1 },
+	{ tr2_fail, 0.00001, 0.3, 1 },
+	{ pts250_1_fail, 0.00001, 0.3, 1 },
+	{ pts250_2_fail, 0.00001, 0.3, 1 },
+	{ inv115_fail, 0.00001, 0.3, 1 },
+
+	{ sim_gen1_fail, 0.00001, 0.3, 6 },
+	{ sim_gen2_fail, 0.00001, 0.3, 6 },
+	{ sim_gen3_fail, 0.00001, 0.3, 6 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -67,29 +94,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(bat_fail_1) ~= 1 then set(bat_fail_1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bat_fail_2) ~= 1 then set(bat_fail_2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bat_fail_3) ~= 1 then set(bat_fail_3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bat_fail_4) ~= 1 then set(bat_fail_4, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(bat_1_kz) ~= 1 then set(bat_1_kz, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bat_2_kz) ~= 1 then set(bat_2_kz, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bat_3_kz) ~= 1 then set(bat_3_kz, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(bat_4_kz) ~= 1 then set(bat_4_kz, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(vu1_fail) ~= 1 then set(vu1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(vu2_fail) ~= 1 then set(vu2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(vu3_fail) ~= 1 then set(vu3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(tr1_fail) ~= 1 then set(tr1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(tr2_fail) ~= 1 then set(tr2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(pts250_1_fail) ~= 1 then set(pts250_1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(pts250_2_fail) ~= 1 then set(pts250_2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(inv115_fail) ~= 1 then set(inv115_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(sim_gen1_fail) ~= 6 then set(sim_gen1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(sim_gen2_fail) ~= 6 then set(sim_gen2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(sim_gen3_fail) ~= 6 then set(sim_gen3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
+			rollFailures(RANDOM_FAILS, FAIL)
 			
 			
 		
@@ -125,29 +130,7 @@ if MASTER then
 		-- no failures enabled
 		fail_counter = 0
 		
-		set(bat_fail_1, 0)
-		set(bat_fail_2, 0)
-		set(bat_fail_3, 0)
-		set(bat_fail_4, 0)
-		
-		set(bat_1_kz, 0)
-		set(bat_2_kz, 0)
-		set(bat_3_kz, 0)
-		set(bat_4_kz, 0)
-		
-		set(vu1_fail, 0)
-		set(vu2_fail, 0)
-		set(vu3_fail, 0)
-		
-		set(tr1_fail, 0)
-		set(tr2_fail, 0)
-		set(pts250_1_fail, 0)
-		set(pts250_2_fail, 0)
-		set(inv115_fail, 0)
-		
-		set(sim_gen1_fail, 0)
-		set(sim_gen2_fail, 0)
-		set(sim_gen3_fail, 0)
+		clearFailures(RANDOM_FAILS)
 	
 	end
 	

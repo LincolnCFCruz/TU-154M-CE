@@ -5,10 +5,8 @@ defineProperty("hide_rus_objects", globalPropertyi("tu-154/lang/hide_rus_objects
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 
 
-
 defineProperty("replay_mode", globalPropertyi("sim/operation/prefs/replay_mode"))
 defineProperty("enable_crew_vo", globalPropertyi("tu-154/sounds/enable_crew_vo")) -- crew callouts enabled
-
 
 
 include("voice_tables.lua")
@@ -23,15 +21,6 @@ include("chk_before_descend.lua")
 include("chk_after_press_set.lua")
 include("chk_before_base.lua")
 include("chk_before_land.lua")
-
-
-
-
---[[
-local n10000, n1000, n100, n10, n1 = dep_number(12345)
-
-print(n10000, n1000, n100, n10, n1)
---]]
 
 
 local talk_timeout = 3
@@ -70,12 +59,4 @@ function update()
 	
 	
 end
-
-
-
-
-
-
-
-
 

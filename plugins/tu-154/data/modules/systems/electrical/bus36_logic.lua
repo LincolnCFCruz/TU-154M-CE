@@ -63,8 +63,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
 function update()
 	
 	if get(frame_time) > 0 and get(ismaster) ~= 1 then
@@ -82,11 +80,9 @@ function update()
 		if tr1_sw == 0 and tr1_volt > 30 then -- auto mode
 			bus_L_volt = tr1_volt
 			bus_source_L = 0
-			--set(bus115_1_amp, get(bus115_1_amp) + get(bus36_amp_left) / 3.25)
 		else
 			bus_source_L = 1
 			bus_L_volt = tr2_volt
-			--set(bus115_3_amp, get(bus115_3_amp) + get(bus36_amp_left) / 3.25)
 		end
 
 		-- bus right
@@ -94,11 +90,9 @@ function update()
 		if tr2_sw == 0 and tr2_volt > 30 then
 			bus_source_R = 0
 			bus_R_volt = tr2_volt
-			--set(bus115_3_amp, get(bus115_3_amp) + get(bus36_amp_right) / 3.25)
 		else
 			bus_source_R = 1
 			bus_R_volt = tr1_volt
-			--set(bus115_1_amp, get(bus115_1_amp) + get(bus36_amp_right) / 3.25)
 		end
 		
 		set(bus36_volt_left, bus_L_volt)
@@ -172,8 +166,6 @@ function update()
 		set(bus115_3_amp, get(bus115_3_amp) + (get(bus36_amp_left) / 3.25) * (bus_source_L) + (get(bus36_amp_right) / 3.25) * (1 - bus_source_R))
 		
 		
-		--print(get(bus115_1_amp), get(bus115_3_amp))
-	
 	end
 
 end

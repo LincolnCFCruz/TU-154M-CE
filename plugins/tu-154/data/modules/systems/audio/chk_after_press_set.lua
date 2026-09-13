@@ -53,9 +53,6 @@ local speak_timer = 0
 
 function checklist_7()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 7 then 
@@ -88,7 +85,6 @@ function checklist_7()
 			phrases_tbl[num] = {nav_tbl["checklist_completed"][lang], 2}
 		end -- end checklist
 	end
-	--print(stage)
 	
 	---------------------------------
 	-- question 1. Altimeters --
@@ -103,13 +99,6 @@ function checklist_7()
 			stage_status = 1 -- question asked
 			speak_timer = 2 -- set up time before answer
 		end
-		--[[
-		-- false answer
-		if stage_status == 1 and get(mars_on) ~= 1 and get(bus27_volt_left) < 13 and get(bus27_volt_right) < 13 then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) then
 			local num = find_empty()
@@ -125,7 +114,6 @@ function checklist_7()
 	
 	-- move fishka 15
 	if stage == 1 and stage_status == 10 and speak_timer < 0.1 then set(fishka_15, 0) end
-
 
 
 	---------------------------------
@@ -168,7 +156,6 @@ function checklist_7()
 	if stage == 2 and stage_status == 10 and speak_timer < 0.1 then set(fishka_16, 0) end
 
 
-
 	---------------------------------
 	-- question 3. Course PNP --
 	---------------------------------
@@ -182,17 +169,8 @@ function checklist_7()
 			stage_status = 1 -- question asked
 			speak_timer = 2 -- set up time before answer
 		end
-	--[[
-		-- false answer
-		if stage_status == 1 then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) and get(nav_pow_cc) ~= 0 then
-			--local num = find_empty()
-			--phrases_tbl[num] = {cpt_tbl["turned_on2"][lang], 1}
 			local crs = math.floor(get(obs) + 0.5)
 			if crs == 0 then crs = 360 end
 			
@@ -207,9 +185,6 @@ function checklist_7()
 	
 	-- move fishka 17
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_17, 0) end
-
-
-
 
 
 	---------------------------------
@@ -251,7 +226,6 @@ function checklist_7()
 	if stage == 4 and stage_status == 10 and speak_timer < 0.1 then set(fishka_18, 0) end
 
 
-
 	---------------------------------
 	-- question 5. PN5 PN6 --
 	---------------------------------
@@ -291,15 +265,6 @@ function checklist_7()
 	if stage == 5 and stage_status == 10 and speak_timer < 0.1 then set(fishka_19, 0) end
 
 
-
-
-
-
-
-
-
-	
-	
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -308,7 +273,6 @@ function checklist_7()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -321,9 +285,5 @@ function checklist_7()
 	
 	end
 	
-	--print(checklist_started)
-
-
-
 
 end

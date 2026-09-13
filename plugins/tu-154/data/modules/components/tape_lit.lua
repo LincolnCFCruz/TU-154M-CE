@@ -1,5 +1,5 @@
--- scrollable tape, drawn independent of the cockpit lighting
--- Draw body is drawScrollTape (core/glbl_draw.lua) -- see tape.lua.
+-- Scrolling tape, drawn independent of the cockpit lighting. `window` and
+-- scrollX/Y are fractions of the texture (drawScrollTape, core/glbl_draw.lua).
 
 defineProperty("image")
 

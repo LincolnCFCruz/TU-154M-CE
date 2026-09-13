@@ -108,7 +108,6 @@ defineProperty("ENGN_FF_1", globalProperty("sim/cockpit2/engine/indicators/fuel_
 defineProperty("ENGN_FF_2", globalProperty("sim/cockpit2/engine/indicators/fuel_flow_kg_sec[1]"))
 defineProperty("ENGN_FF_3", globalProperty("sim/cockpit2/engine/indicators/fuel_flow_kg_sec[2]"))
 
-defineProperty("total_w",  globalPropertyf("sim/flightmodel/weight/m_fuel_total"))
 defineProperty("tank1_w",  globalProperty("sim/flightmodel/weight/m_fuel[0]"))
 defineProperty("tank4_w",  globalProperty("sim/flightmodel/weight/m_fuel[1]"))
 defineProperty("tank2R_w", globalProperty("sim/flightmodel/weight/m_fuel[2]"))
@@ -153,7 +152,6 @@ defineProperty("fire_vlv_open_2", globalPropertyf("tu-154/fuel/fire_vlv_open_2")
 defineProperty("fire_vlv_open_3", globalPropertyf("tu-154/fuel/fire_vlv_open_3"))
 
 defineProperty("frame_time",        globalPropertyf("tu-154/time/frame_time"))
-defineProperty("frame_rate_period", globalPropertyf("sim/operation/misc/frame_rate_period"))
 
 -- Smart Copilot
 defineProperty("ismaster",    globalPropertyf("scp/api/ismaster"))
@@ -181,17 +179,7 @@ local rotary_sound   = loadSample('sounds/plastic_switch.wav')
 local switcher_sound = loadSample('sounds/metal_switch.wav')
 local cap_sound      = loadSample('sounds/cap.wav')
 
--- frame_time is 0 while the sim is paused - that is how systems/cockpit/time_logic.lua
--- signals it - so a legitimate 0 must be passed through rather than replaced.
--- See the same note in fuel_tanks.lua.
-local function get_passed()
-	local ft = get(frame_time)
-	if ft == nil then ft = get(frame_rate_period) end
-	if ft == nil or ft < 0 then ft = 0 end
-	return ft
-end
-
-local passed = get_passed()
+local passed = get(frame_time)
 
 local function lamps()
 
@@ -309,9 +297,8 @@ local function reset_switchers()
 		set(pump_tank1_3,     0)
 		set(pump_tank1_4,     0)
 		set(fuel_level,       0)
-		-- FIX: fuel_flow_mode is NOT reset - the dataref is empty in XP12,
-		-- resetting to 0 blocked the pump automatics
-		-- set(fuel_flow_mode, 0)
+		-- fuel_flow_mode is deliberately not reset: XP12 leaves it empty, and a
+		-- 0 there blocks the pump automatics
 		set(fuel_flow_on,         0)
 		set(fuel_meter_on,        0)
 		set(fuel_meter_mech_on,   0)
@@ -612,8 +599,7 @@ local sim_start_timer = 0
 
 function update()
 
-	-- FIX: frame_time with a fallback
-	passed = get_passed()
+	passed = get(frame_time)
 
 	-- reset switchers
 	sim_start_timer = sim_start_timer + passed

@@ -68,7 +68,6 @@ defineProperty("absu_gz_lamp", globalPropertyf("tu-154/lights/button/absu_gz")) 
 defineProperty("absu_stab_m_lamp", globalPropertyf("tu-154/lights/button/absu_stab_m")) -- ABSU selected heading (ZK)
 defineProperty("absu_stab_v_lamp", globalPropertyf("tu-154/lights/button/absu_stab_v")) -- ABSU selected heading (ZK)
 defineProperty("absu_stab_h_lamp", globalPropertyf("tu-154/lights/button/absu_stab_h")) -- ABSU selected heading (ZK)
-defineProperty("absu_stab_lamp", globalPropertyf("tu-154/lights/button/absu_stab")) -- ABSU selected heading (ZK)
 defineProperty("absu_stab_spd_lamp", globalPropertyf("tu-154/lights/button/absu_stab_spd")) -- ABSU selected heading (ZK)
 defineProperty("absu_thro1_lamp", globalPropertyf("tu-154/lights/button/absu_thro1")) -- ABSU selected heading (ZK)
 defineProperty("absu_thro2_lamp", globalPropertyf("tu-154/lights/button/absu_thro2")) -- ABSU selected heading (ZK)
@@ -80,7 +79,6 @@ defineProperty("stu_toga_lamp", globalPropertyf("tu-154/lights/small/stu_toga"))
 
 defineProperty("at_1_lamp", globalPropertyf("tu-154/lights/small/at_1")) -- AT 1
 defineProperty("at_2_lamp", globalPropertyf("tu-154/lights/small/at_2")) -- AT 2
-
 
 
 -- load images ENG
@@ -126,7 +124,6 @@ defineProperty("black_cap_open", loadImage("absu_ess.png", 374, 361, 56, 37))
 defineProperty("small_lamp", loadImage("absu_ess.png", 167, 472, 31, 31))
 
 
-
 -- load images RUS
 defineProperty("bg_img_RUS", loadImage("absu_bk_RUS.png"))
 
@@ -148,58 +145,36 @@ defineProperty("off_3_lamp_img_RUS", loadImage("absu_ess_RUS.png", 361, 70, 54, 
 defineProperty("arrest_cap_closed_RUS", loadImage("absu_ess_RUS.png", 244, 409, 55, 92))
 
 
-
-
 local RUS = true
 
 -- test
-
---[[
-local lang_last = RUS
-
-local bg_image = loadImage("absu_bk_RUS.png")
-
-local function changeBG()
-  if RUS then
-   
-    bg_image = loadImage("absu_bk_RUS.png") -- load a new one
-	
-	print(bg_image)
-  else
-    
-    bg_image = loadImage("absu_bk.png") -- load a new one
-	
-	print(bg_image)
-  end
-  
-end
-
---]]
-
-
-
 
 
 function update()
 
 	RUS = get(hide_eng_objects) == 1
- --[[
-	-- test
-	if lang_last ~= RUS then
-		--changeBG() -- change background on changing the language
-		lang_last = RUS
-	end
- 
---]]	
  
 end
 
 
+-- a two-position switch toggling one 0/1 dataref
+local function toggle_switch(pos, prop, img_on, img_off)
+	return switch_lit {
+		position = pos,
+		btnOn = img_on,
+		btnOff = img_off,
+		state = function()
+			return get(prop) == 1
+		end,
+		onMouseDown = function()
+			set(prop, 1 - get(prop))
+			return true
+		end,
+	}
+end
 
 components = {
 
-	
-	
 	
 	-- background
 
@@ -217,8 +192,6 @@ components = {
 			return RUS
 		end,
 	},
-
-
 
 
 	----------------
@@ -411,7 +384,6 @@ components = {
 	},	
 
 	
-	
 	-- M
 	textureLit {
 		position = {347, 326, 54, 54},
@@ -552,98 +524,24 @@ components = {
 	},	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	---------------------------
 	-- handles and switchers --
 	---------------------------
 	
 	-- NAV on
-	switch_lit {
-		position = {54, 188, 32, 110},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(absu_nav_on) == 1
-		end,
-		onMouseDown = function()
-			set(absu_nav_on, 1 - get(absu_nav_on))
-			return true
-		end,
-	},
+	toggle_switch({54, 188, 32, 110}, absu_nav_on, get(sw_up_img), get(sw_dn_img)),
 	
 	-- LAND on
-	switch_lit {
-		position = {230, 188, 32, 110},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(absu_landing_on) == 1
-		end,
-		onMouseDown = function()
-			set(absu_landing_on, 1 - get(absu_landing_on))
-			return true
-		end,
-	},	
+	toggle_switch({230, 188, 32, 110}, absu_landing_on, get(sw_up_img), get(sw_dn_img)),	
 
 	-- needles on
-	switch_lit {
-		position = {142, 81, 32, 110},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(absu_needles_on) == 1
-		end,
-		onMouseDown = function()
-			set(absu_needles_on, 1 - get(absu_needles_on))
-			return true
-		end,
-	},	
+	toggle_switch({142, 81, 32, 110}, absu_needles_on, get(sw_up_img), get(sw_dn_img)),	
 
 	-- roll on
-	switch_lit {
-		position = {353, 11, 32, 110},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(absu_roll_ch_on) == 1
-		end,
-		onMouseDown = function()
-			set(absu_roll_ch_on, 1 - get(absu_roll_ch_on))
-			return true
-		end,
-	},	
+	toggle_switch({353, 11, 32, 110}, absu_roll_ch_on, get(sw_up_img), get(sw_dn_img)),	
 
 	-- pitch on
-	switch_lit {
-		position = {534, 11, 32, 110},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(absu_pitch_ch_on) == 1
-		end,
-		onMouseDown = function()
-			set(absu_pitch_ch_on, 1 - get(absu_pitch_ch_on))
-			return true
-		end,
-	},
+	toggle_switch({534, 11, 32, 110}, absu_pitch_ch_on, get(sw_up_img), get(sw_dn_img)),
 
 	
 	-- smooth on
@@ -682,18 +580,7 @@ components = {
 	},
 	
 	-- US
-	switch_lit {
-		position = {842, 148, 28, 100},
-		btnOn = get(sw_up_img),
-		btnOff = get(sw_dn_img),
-		state = function()
-			return get(absu_speed_us_right_left) == 1
-		end,
-		onMouseDown = function()
-			set(absu_speed_us_right_left, 1 - get(absu_speed_us_right_left))
-			return true
-		end,
-	},	
+	toggle_switch({842, 148, 28, 100}, absu_speed_us_right_left, get(sw_up_img), get(sw_dn_img)),	
 
 	-- off 1-2
 	textureLit {
@@ -1055,7 +942,6 @@ components = {
 	},	
 	
 	
-	
 	-- absu_speed_test_1
 	clickable {
 		position = {639, 120, 50, 50},
@@ -1158,8 +1044,6 @@ components = {
 	},	
 	
 	
-	
-	
 	-- ARREST
 	clickable {
 		position = {437, 467, 40, 80},
@@ -1176,9 +1060,6 @@ components = {
 			return get(absu_arrest_cap) == 1
 		end,
 	},	
-	
-	
-	
 	
 	
 	------------------------------
@@ -1304,21 +1185,8 @@ components = {
 	},		
 		
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	--------------------------------
 
 
 }
-
-
 

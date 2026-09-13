@@ -18,7 +18,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 -- create properties for main masks
 local mask = {}
 for i = 1, 2 do
@@ -57,9 +56,7 @@ for i = 1, 2 do
 end
 
 
-
 local appear_spd = {[1] = 0, [2] = 0} -- 1 for rain, 2 for snow
-
 
 
 local wiper_L_last = get(wiper_angle_left)
@@ -88,11 +85,9 @@ end
 	if temperature > 0 then appear_spd[2] = -math.min(0.01 + math.abs(IAS) * 0.0005, 0.5) * 0.5 end
 	
 	
-	
 	local wiper_L = get(wiper_angle_left)
 	local wiper_R = get(wiper_angle_right)
 
-	
 	
 	-- make drops appear or disappear on glass
 	-- mask 1 for rain, mask 2 - for snow
@@ -123,11 +118,8 @@ end
 				if wiper_L_last > 12 * y and wiper_L < 2 + (y*12 - 12) then wiper_mask_tbl_L[i][y] = 0 end 
 			end
 				
-			--if wiper_L < 12 * y and wiper_L > 2 + (y*12 - 12) then wiper_mask_tbl_L[i][y] = 0 end
-				
 				
 			set(wiper_mask_L[i][y], wiper_mask_tbl_L[i][y])	
-				
 				
 				
 			wiper_mask_tbl_R[i][y] = wiper_mask_tbl_R[i][y] + passed * appear_spd[i]
@@ -151,26 +143,19 @@ end
 		end		
 		
 
-		
 	end
 	
 	wiper_L_last = wiper_L
 	wiper_R_last = wiper_R
 
 
-
-
-
 end
-
-
 
 
 --[[
 
 tu-154/anim/rain_glass_1
 tu-154/anim/rain_glass_2
-
 
 
 tu-154/anim/rain_glass_1_w_1_L
@@ -186,7 +171,6 @@ tu-154/anim/rain_glass_2_w_4_L
 tu-154/anim/rain_glass_2_w_5_L
 
 
-
 tu-154/anim/rain_glass_1_w_1_R
 tu-154/anim/rain_glass_1_w_2_R
 tu-154/anim/rain_glass_1_w_3_R
@@ -198,8 +182,6 @@ tu-154/anim/rain_glass_2_w_2_R
 tu-154/anim/rain_glass_2_w_3_R
 tu-154/anim/rain_glass_2_w_4_R
 tu-154/anim/rain_glass_2_w_5_R
-
-
 
 
 --]]

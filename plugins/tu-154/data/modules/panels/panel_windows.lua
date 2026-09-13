@@ -1,51 +1,14 @@
 --[[
+  All floating panels: ten content panels (one contextWindow each, paired with
+  a tu-154/panels/show_* dataref; closing one writes the dataref back through
+  core/panel_logic.lua) and one undecorated menu-strip window.
 
-  File: panel_windows.lua
-  -----
-  All floating panels of the Tu-154M, ported from the subpanel{} declarations in
-  the former "Custom Avionics/panels_2d/panels_2d.lua".
-
-  SASL2 -> SASL3
-  --------------
-  subpanel{} still exists in SASL3 but is deprecated, and its `popups` layer is
-  only rendered for 2D-panel projects -- this aircraft is 3D-cockpit only
-  (panel2d = false), so the popups would never be drawn. Each subpanel is
-  therefore a contextWindow here. Sizes, positions, child components and the
-  driving tu-154/panels/* datarefs are unchanged.
-
-  Two consequences of that swap, both unavoidable:
-
-  * The content panels now carry X-Plane's own window decoration (title bar +
-    close button) instead of SASL2's in-texture close cross and drag/resize
-    corner. The decoration's close button is the only one: the in-panel close
-    cross and the invisible corner hotspot under it are gone. Closing through
-    the decoration writes the panel dataref back (see core/panel_logic.lua).
-
-  * SASL3/XP12 floating windows have a 100x100 minimum, and the six menu strips
-    are 31x30 .. 151x31. They are therefore merged into ONE 181x160 undecorated,
-    transparent window at the same screen origin, with every strip placed at its
-    original screen offset inside it. Each strip keeps its own visibility
-    expression, now on the child components.
-
-  Drawn, not textured
-  -------------------
-  The menu strip is drawn from primitives (components/menu_button.lua, body in
-  core/glbl_draw.lua) instead of cropped from the old menus.png. Two things
-  that bought, beyond crisp text:
-
-  * A cell that opens a panel lights green while that panel is showing, read
-    from the same tu-154/panels/* dataref updatePanels() syncs -- the art could
-    only light the four group cells.
-  * MISC carries a fifth cell, DBG, for the debug inspector. The inspector is
-    not a panel here: it owns no dataref, so the cell works through the
-    window handle debug_inspector.lua publishes as cw_panels.inspector, which is
-    resolved at click/draw time because that component loads after this one.
-
-  The menu window is fixed-size (noResize, proportional = false), so the cells
-  draw 1:1 and the captions stay on whole pixels.
-
-  Panel order below follows panels_2d.lua.
-
+  X-Plane floating windows have a 100x100 minimum and the menu strips are
+  31x30 .. 151x31, so all six strips share one fixed-size 181x160 window, each
+  at its original screen offset. The cells are drawn in code (menu_button): a
+  group cell lights while its strip is open, a panel cell while its panel shows.
+  MISC's DBG cell toggles the debug inspector through cw_panels.inspector,
+  resolved at click time because that component loads after this one.
 --]]
 
 -- ---------------------------------------------------------------------------
@@ -285,15 +248,11 @@ cw_panels.menu = contextWindow {
 -- ---------------------------------------------------------------------------
 -- X-Plane top bar menu
 --
--- One "Tu-154M" submenu under Plugins, mirroring the menu strip above rather
--- than duplicating it: each content-panel item flips the same
--- tu-154/panels/show_* dataref a menu-strip cell does (updatePanels() then
--- moves the actual contextWindow, exactly as it does for a 3D hotspot), and
--- the "Menu Strip" item flips menu_strip_visible, which core/panel_logic.lua
--- now drives cw_panels.menu from instead of forcing it permanently on. Every
--- item is a checkbox; updateTopBarMenu() (called from main.lua's update(),
--- right after updatePanels()) keeps the ticks in sync with whichever side
--- changed the state.
+-- One "Tu-154M" submenu under Plugins, mirroring the menu strip: each panel
+-- item flips the same tu-154/panels/show_* dataref a menu-strip cell does, and
+-- "MENU Panel" flips menu_strip.visible (core/panel_logic.lua). Every item is a
+-- checkbox; updateTopBarMenu(), called from main.lua's update(), keeps the
+-- ticks in step with whichever side changed the state.
 -- ---------------------------------------------------------------------------
 local topbar_labels = {
     palette   = "Tab Palette",

@@ -11,9 +11,7 @@ defineProperty("longitude", globalPropertyf("sim/flightmodel/position/longitude"
 defineProperty("speed", globalPropertyf("sim/flightmodel/position/groundspeed"))
 
 
-
 defineProperty("sim_time", globalPropertyf("sim/time/zulu_time_sec"))  -- zulu time
-
 
 
 -- time
@@ -56,7 +54,6 @@ function update()
 		brightness = get(brt_handle)
 		
 
-		
 		if time_counter > 0.2 then
 			-------------------------
 			-- course text --
@@ -70,7 +67,6 @@ function update()
 			course_text = math.floor(course)
 			if course_text < 10 then course_text = "  "..course_text
 			elseif course_text < 100 then course_text = " "..course_text end
-			
 			
 			
 			---------------------------
@@ -137,7 +133,6 @@ function update()
 			--------------------------
 			
 			
-			
 			speed_text = math.floor(math.abs(spd))
 			
 			speed_scale = spd
@@ -168,13 +163,10 @@ function update()
 	end
 	
 	
-	
 	time_counter = time_counter + passed
 	
 	
-
 end
-
 
 
 components = {
@@ -254,8 +246,6 @@ components = {
 	},
 
 
-	
-	
 	scr_clock_spd {
 		position = {46, 222, 180, 287},
 		speed = function()
@@ -265,7 +255,6 @@ components = {
 			return screen_work
 		end,
 	},	
-	
 	
 	
 	scr_clock_sec {
@@ -297,30 +286,6 @@ components = {
 			return screen_work
 		end,
 	},
-
-
-	
-	
---[[	
-	-- brightness controll
-	rectangle_ctr {
-		R = 0,
-		G = 0,
-		B = 0,
-		A = function()
-			return 1 - brightness
-		end, -- controll via alpha
-		position_x = 0,
-		position_y = 0,
-		width = size[1],
-		height = size[2],
-		visible = function()
-			return screen_work
-		end,
-	},
---]]
-
-
 
 
 }

@@ -1,7 +1,6 @@
 -- Code-drawn menu cell for the menu strip in panels/panel_windows.lua: a framed
 -- dark cell with a centred caption, replacing the crops of the old menus.png.
 -- Draw body is drawMenuCell (core/glbl_draw.lua).
--- SASL3: the component extent is size[1] x size[2] (SASL2's implicit 100x100).
 --
 -- Mouse handlers (onMouseDown) come in as constructor arguments, exactly as
 -- they do for clickable.

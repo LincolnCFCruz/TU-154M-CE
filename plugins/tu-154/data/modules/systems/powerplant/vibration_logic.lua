@@ -42,7 +42,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
 local vibr_RPM_tbl = {{ -100000, 0.0 },    -- bugs walkaround
                   {  0, 00 }, -- 
 				  {  30, 15 }, --
@@ -198,17 +197,14 @@ function update()
 	-- result vibration and engine faulre
 	vibro1 = vibro1 + (fire_counter1 + chip_counter1 + oil_counter1) * rpm1 / 100  + stall_vibr_1
 	if vibro1 > 100 then vibro1 = 100 end
-	--if vibro1 > 70 then set(chip_detect1, 1) end -- not working. may set a custom failue here
 	if vibro1 > 90 then set(eng1_fail, 6) end
 	
 	vibro2 = vibro2 + (fire_counter2 + chip_counter2 + oil_counter2) * rpm2 / 100 + stall_vibr_2
 	if vibro2 > 100 then vibro2 = 100 end	
-	--if vibro2 > 70 then set(chip_detect2, 1) end
 	if vibro2 > 90 then set(eng2_fail, 6) end
 
 	vibro3 = vibro3 + (fire_counter3 + chip_counter3 + oil_counter3) * rpm3 / 100 + stall_vibr_3
 	if vibro3 > 100 then vibro3 = 100 end	
-	--if vibro3 > 70 then set(chip_detect3, 1) end
 	if vibro3 > 90 then set(eng3_fail, 6) end	
 
 local MASTER = get(ismaster) ~= 1	

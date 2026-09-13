@@ -11,8 +11,6 @@ defineProperty("apu_egt_gau", globalPropertyf("tu-154/gauges/eng/apu_egt")) -- A
 defineProperty("apu_oil_temp", globalPropertyf("tu-154/gauges/eng/apu_oil_temp")) -- APU oil temperature -50 - 150 C
 
 
-
-
 -- lamps
 defineProperty("low_oil", globalPropertyf("tu-154/lights/apu/low_oil")) -- oil low
 defineProperty("low_oil_press", globalPropertyf("tu-154/lights/apu/low_oil_press")) -- Oil P
@@ -50,7 +48,6 @@ defineProperty("cockpit_window_right", globalPropertyf("tu-154/anim/cockpit_wind
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
 
-defineProperty("outside_air_temp", globalPropertyf("sim/cockpit2/temperature/outside_air_temp_degc"))
 
 -- lamp sources
 defineProperty("test_lamps", globalPropertyi("tu-154/buttons/lamp_test_apu")) -- APU panel lamp test button
@@ -58,7 +55,6 @@ defineProperty("day_night_set", globalPropertyf("tu-154/lights/day_night_set")) 
 defineProperty("gear_vent_set", globalPropertyi("tu-154/switchers/eng/gear_fan")) -- landing gear bay ventilation
 
 -- enviroment
-defineProperty("external_view", globalPropertyi("sim/graphics/view/view_is_external"))
 
 -- time
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
@@ -97,9 +93,6 @@ defineProperty("apu_fail_egt",globalPropertyi("tu-154/failures/apu_fail_egt")) -
 defineProperty("apu_fail_fuel_left",globalPropertyi("tu-154/failures/apu_fail_fuel_left")) -- failure on residual fuel in the chamber at start
 defineProperty("apu_fail",globalPropertyi("tu-154/failures/apu_fail")) -- wear-out failure
 defineProperty("apu_press_fail", globalPropertyi("tu-154/failures/apu_press_fail")) -- engine bleed air failure
-
-
-
 
 
 -- sounds
@@ -146,9 +139,6 @@ local function gauges()
 		oil_t_angle = -75
 	end
 	
-	--n1_angle = 99
-	--EGT_angle = 300
-	--oil_t_angle = 100
 
 	n1_actual = n1_actual + (n1_angle - n1_actual) * passed * 5
 	EGT_actual = EGT_actual + (EGT_angle - EGT_actual) * passed * 3
@@ -159,7 +149,6 @@ local function gauges()
 	set(apu_oil_temp, oil_t_actual)
 	
 end
-
 
 
 local apu_main_last = get(apu_main_switch)
@@ -294,6 +283,5 @@ function update()
 	check_controls()
 	lamps()
 	gauges()
-	--apu_sound()
 
 end

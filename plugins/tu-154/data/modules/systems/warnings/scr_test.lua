@@ -22,7 +22,6 @@ defineProperty("screen_img_img", loadImage("taws_clock.png", 0, 254, 1000, 770))
 local text_font = loadBitmapFont('taws_scr.fnt')
 
 
-
 local screen_work = get(mode_set) == 5
 local brightness = 0.8
 
@@ -104,8 +103,6 @@ function update()
 		end
 		
 		
-	
-		
 	end
 	
 	gs_msg_counter = gs_msg_counter - passed
@@ -114,9 +111,7 @@ function update()
 	time_counter = time_counter + passed
 	
 	
-
 end
-
 
 
 components = {
@@ -208,26 +203,6 @@ components = {
 			return screen_work
 		end,
 	},	
---[[	
-	-- brightness controll
-	rectangle_ctr {
-		R = 0,
-		G = 0,
-		B = 0,
-		A = function()
-			return 1 - brightness
-		end, -- controll via alpha
-		position_x = 0,
-		position_y = 0,
-		width = size[1],
-		height = size[2],
-		visible = function()
-			return screen_work
-		end,
-	},
-
---]]
-
 
 
 }

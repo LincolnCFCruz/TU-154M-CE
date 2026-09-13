@@ -87,9 +87,6 @@ local speak_timer = 0
 
 function checklist_1()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 1 then 
@@ -126,7 +123,6 @@ function checklist_1()
 			phrases_tbl[num] = {nav_tbl["checklist_completed"][lang], 2}
 		end -- end checklist
 	end
-	--print(stage)
 	
 	------------------------------
 	-- question 1. Recorder --
@@ -181,13 +177,6 @@ function checklist_1()
 			speak_timer = 2 -- set up time before answer
 		end
 		
-		--[[
-		-- false answer
-		if stage_status == 1 and get(mars_on) ~= 1 then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) then
 			local num = find_empty()
@@ -243,7 +232,6 @@ function checklist_1()
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_3, 0) end	
 	
 	
-
 	------------------------------
 	-- question 4. MSRP, SSOS, RV #1 --
 	---------------------------------
@@ -283,7 +271,6 @@ function checklist_1()
 	if stage == 4 and stage_status == 10 and speak_timer < 0.1 then set(fishka_4, 0) end		
 
 	
-
 	------------------------------
 	-- question 5. Fuel pumps --
 	---------------------------------
@@ -358,8 +345,6 @@ function checklist_1()
 		end
 
 
-
-		
 		-- false answer
 		if stage_status == 3 and (get(gear_brake_press_L) < 100 or get(gear_brake_press_R) < 100) then
 			-- say false answer once
@@ -377,7 +362,6 @@ function checklist_1()
 			speak_timer = 2
 			stage_status = 5 -- next
 		end
-
 
 
 		-- false answer
@@ -405,9 +389,6 @@ function checklist_1()
 	if stage == 6 and stage_status == 10 and speak_timer < 0.1 then set(fishka_6, 0) end		
 	
 	
-	
-
-
 	------------------------------
 	-- question 7. Trimmers --
 	------------------------------
@@ -445,9 +426,6 @@ function checklist_1()
 	
 	-- move fishka 7
 	if stage == 7 and stage_status == 10 and speak_timer < 0.1 then set(fishka_7, 0) end
-
-
-
 
 
 	------------------------------
@@ -502,8 +480,6 @@ function checklist_1()
 	if stage == 8 and stage_status == 10 and speak_timer < 0.1 then set(fishka_8, 0) end
 
 
-
-
 	------------------------------
 	-- question 9. Stab setting --
 	------------------------------
@@ -541,13 +517,6 @@ function checklist_1()
 	if stage == 9 and stage_status == 10 and speak_timer < 0.1 then set(fishka_9, 0) end
 
 
-
-
-	
-	
-	
-	
-	
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -556,7 +525,6 @@ function checklist_1()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -569,9 +537,5 @@ function checklist_1()
 	
 	end
 	
-	--print(checklist_started)
-
-
-
 
 end

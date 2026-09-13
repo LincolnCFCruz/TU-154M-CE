@@ -40,7 +40,6 @@ defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
 
 
-
 local button_sound = loadSample('sounds/plastic_btn.wav')
 local rotary_sound = loadSample('sounds/plastic_switch.wav')
 
@@ -97,15 +96,8 @@ local function gauges()
 	else azimuth_act = azimuth_act + az_delta * passed * 30
 	end
 	
---	azimuth_act = azimuth_act + az_delta * passed * 5
-	
-	
-	
 	
 	set(rsbn_azimuth_ind, azimuth_act)
-	
-	
-	
 	
 	
 	local dist = get(distance) * 10 -- km
@@ -126,12 +118,10 @@ local function gauges()
 	local dist_100 = math.floor((dist_act % 10000) * 0.001) + math.max(math.max((dist_10 - 9), 0), 0)
 	
 	
-	
 	set(rsbn_distance_km, dist_01 * 0.1)
 	set(rsbn_km_one, dist_one)
 	set(rsbn_km_ten, dist_10)
 	set(rsbn_km_hun, dist_100)
-
 
 
 end
@@ -150,8 +140,6 @@ local function lamps()
 	set(azimuth_autonom, azimuth_autonom_brt)
 	
 end
-
-
 
 
 function update()

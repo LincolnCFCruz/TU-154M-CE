@@ -21,8 +21,6 @@ defineProperty("day_night_set", globalPropertyf("tu-154/lights/day_night_set")) 
 
 
 -- power
-defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
-defineProperty("bus115_volt", globalPropertyf("tu-154/elec/bus115_1_volt")) -- 115 V bus voltage
 
 -- sources
 defineProperty("diss_wind_course", globalPropertyf("tu-154/nvu/diss_wind_course")) -- wind direction from the DISS
@@ -34,7 +32,6 @@ defineProperty("diss_mode_set", globalPropertyi("tu-154/nvu/diss_mode")) -- DISS
 -- other sources
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
-
 
 
 -- panel results
@@ -83,12 +80,6 @@ local function sw_reset()
 end
 
 
-
-
-
-
-
-
 local sw_summ_last = 0
 
 local function switchers()
@@ -105,7 +96,6 @@ local function switchers()
 	
 
 end
-
 
 
 local but_summ_last = 0
@@ -130,9 +120,6 @@ local function buttons()
 end
 
 
-
-
-
 local function lamps()
 
 	
@@ -143,11 +130,8 @@ local function lamps()
 	local diss_memory_brt = math.max(bool2int(get(diss_mode_set) == 2 or get(diss_mode_set) == 10) * lamps_brt, test_btn)
 	set(diss_memory, diss_memory_brt)
 	
-	--set(diss_memory, bool2int(get(diss_mode_set) == 2))
 
 end
-
-
 
 
 function update()
@@ -158,7 +142,6 @@ function update()
 	if notLoaded and start_timer > 0.3 then
 		sw_reset()
 	end
-	
 	
 	
 	-- correction angle
@@ -211,8 +194,6 @@ function update()
 	set(diss_wind_spd_100, wind_spd_100)
 	
 	
-	
-	
 	-- functions
 	
 	switchers()
@@ -222,10 +203,5 @@ function update()
 	lamps()
 	
 	
-
-
-
-
-
 end
 

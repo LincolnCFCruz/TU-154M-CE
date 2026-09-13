@@ -41,14 +41,6 @@ defineProperty("radioalt_dh_left", globalPropertyf("tu-154/gauges/alt/radioalt_d
 defineProperty("fuel_meter_summ", globalPropertyf("tu-154/gauges/fuel/fuel_meter_summ")) -- total fuel mass
 
 
-
-
-
-
-
-
-
-
 local angle2alt = {
 {-100000, 0},
 {0, 0},
@@ -69,9 +61,6 @@ local speak_timer = 0
 
 function checklist_6()
 
-	--local passed = get(frame_time)
-	
-	--print(checklist_started)
 	
 	-- start the checklist
 	if not checklist_started and get(checklist_selected) == 6 then 
@@ -104,7 +93,6 @@ function checklist_6()
 			phrases_tbl[num] = {nav_tbl["checklist_completed"][lang], 2}
 		end -- end checklist
 	end
-	--print(stage)
 	
 	---------------------------------
 	-- question 1. Charts --
@@ -119,13 +107,6 @@ function checklist_6()
 			stage_status = 1 -- question asked
 			speak_timer = 2 -- set up time before answer
 		end
-		--[[
-		-- false answer
-		if stage_status == 1 and get(mars_on) ~= 1 and get(bus27_volt_left) < 13 and get(bus27_volt_right) < 13 then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) then
 			local num = find_empty()
@@ -155,13 +136,6 @@ function checklist_6()
 			stage_status = 1 -- question asked
 			speak_timer = 2 -- set up time before answer
 		end
-		--[[
-		-- false answer
-		if stage_status == 1 and get(mars_on) ~= 1 and get(bus27_volt_left) < 13 and get(bus27_volt_right) < 13 then
-			-- say false answer once
-			stage_status = 2
-		end
-		--]]
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) then
 			local num = find_empty()
@@ -184,7 +158,6 @@ function checklist_6()
 	if stage == 2 and stage_status == 10 and speak_timer < 0.1 then set(fishka_9, 0) end
 
 	
-
 	---------------------------------
 	-- question 3. TKS --
 	---------------------------------
@@ -222,8 +195,6 @@ function checklist_6()
 	
 	-- move fishka 10
 	if stage == 3 and stage_status == 10 and speak_timer < 0.1 then set(fishka_10, 0) end
-
-
 
 
 	---------------------------------
@@ -269,7 +240,6 @@ function checklist_6()
 	if stage == 4 and stage_status == 10 and speak_timer < 0.1 then set(fishka_11, 0) end
 
 
-
 	---------------------------------
 	-- question 5. Fuel --
 	---------------------------------
@@ -285,13 +255,6 @@ function checklist_6()
 		end
 		
 		local DH = interpolate(angle2alt, get(radioalt_dh_left))
-		--[[
-		-- false answer
-		if stage_status == 1 and get(mars_on) ~= 1 and DH < 400 then
-			-- say false answer once
-			stage_status = 2
-		end
-		-=]]
 		-- true answer
 		if (stage_status == 1 or stage_status == 2) then
 			
@@ -311,8 +274,6 @@ function checklist_6()
 	if stage == 5 and stage_status == 10 and speak_timer < 0.1 then set(fishka_12, 0) end
 
 
-	
-	
 	speak_timer = speak_timer - passed_time
 	
 	-- hold timer, if voice que is not empty
@@ -321,7 +282,6 @@ function checklist_6()
 	end
 	
 
-	
 	-- end checklist if all stack moved left
 	if checklist_started then
 		if stage == 100 then
@@ -334,9 +294,5 @@ function checklist_6()
 	
 	end
 	
-	--print(checklist_started)
-
-
-
 
 end

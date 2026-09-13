@@ -30,12 +30,9 @@ defineProperty("fl_mode", globalPropertyi("tu-154/tcas/fl_mode"))  -- 0 = absolu
 defineProperty("flt_id", globalPropertyi("tu-154/tcas/flt_id"))  -- 0 = cover, 1 = show / change code
 
 
-
 defineProperty("xpdr_code", globalPropertyf("sim/cockpit/radios/transponder_code"))
-defineProperty("xpdr_mode", globalPropertyf("sim/cockpit/radios/transponder_mode")) 
 defineProperty("xpdr_led", globalPropertyf("sim/cockpit/radios/transponder_light"))
 ident_cmd = findCommand("sim/transponder/transponder_ident")  -- comand of transponder ident
-defineProperty("xpdr_fail", globalPropertyi("sim/operation/failures/rel_xpndr"))
 
 -- time
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
@@ -57,8 +54,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 
-
-
 local notLoaded = true
 local start_timer = 0
 
@@ -73,15 +68,6 @@ local function sw_reset()
 end
 
 
-
-
-
-
-
-
-
-
-
 local function getDigits(squawk)
     local d1 = math.floor(squawk / 1000)
     squawk = squawk - d1 * 1000
@@ -91,8 +77,6 @@ local function getDigits(squawk)
     local d4 = squawk - d3 * 10
     return d1, d2, d3, d4
 end
-
-
 
 
 -- sounds
@@ -108,8 +92,6 @@ local maintain_v_speed = loadSample('sounds/tcas/maintain_v_speed.wav')
 local monitor_v_speed = loadSample('sounds/tcas/monitor_v_speed.wav')
 local tcas_test_passed = loadSample('sounds/tcas/tcas_test_passed.wav')
 local traffic_snd = loadSample('sounds/tcas/traffic.wav')
-
-
 
 
 local rot_sound = loadSample('sounds/rot_click.wav')
@@ -157,8 +139,6 @@ function update()
 	end
 
 
-
-	
 	-- ident button
 	if get(tcas_ident_btn) == 1 and power then commandOnce(ident_cmd) end
 
@@ -200,17 +180,12 @@ function update()
 	end
 	
 	
-	
 	-- sounds	
 	if tcas_rot_big_now - tcas_rot_big_last + tcas_rot_small_now - tcas_rot_small_last + tcas_mode_now - tcas_mode_last ~= 0 then
 		playSample(rot_sound, false)
 	end
 	
 	
-	
-
-
-
 	local tcas_ident_btn_sw = get(tcas_ident_btn)
 	local tcas_fcn_btn_sw = get(tcas_fcn_btn)
 	local tcas_left_btn_sw = get(tcas_left_btn)
@@ -230,14 +205,6 @@ function update()
 	
 	if changes ~= 0 then playSample(button_sound, false) end
 	
-	
-	
-
-
-	
-
-
-
 	
 	local text = get(screen_mode)
 	cursor_timer = cursor_timer + passed
@@ -291,12 +258,9 @@ function update()
 	
 	-- save screen code to XPDR
 	if text >= 11 and text <= 14 and tcas_ent_btn_sw == 1 then
-		--print("save")
 		if get(ismaster) ~= 1 then set(xpdr_code, scr_code) end
 	end
 	
-	
-	--text = 2
 	
 	if text == 100 then -- no power
 		text_to_screen = ""
@@ -438,12 +402,6 @@ function update()
 	end	
 	
 	
-	
-	
-	
-	
-	
-	
 	text_last = text
 	scale_last = scale
 	traffic_last = traffic
@@ -464,14 +422,6 @@ function update()
 	tcas_rng_up_btn_last = tcas_rng_up_btn_sw	
 	
 end
-
-
-
-
-
-
-
-
 
 
 components = {
@@ -529,32 +479,5 @@ components = {
 	},
 
 
-
-
-
-
-
-
-
-
-
-	
-	
 }
 
-
-
-
-
-
-
---[[
-local font = loadBitmapFont('segmental.fnt')
-
-function draw()
-
-	drawBitmapText(font, 235, 1245, "@@@@@@@@", TEXT_ALIGN_LEFT, {1, 0.7, 0.5})
-
-end
-
---]]

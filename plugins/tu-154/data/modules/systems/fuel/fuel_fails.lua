@@ -32,6 +32,23 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS_A = {
+	{ fuel_porc_fail, 0.00001, 0.3, 1 },
+	{ fuel_auto_fail, 0.00001, 0.3, 1 },
+	{ fuel_level_fail, 0.00001, 0.3, 1 },
+}
+
+local RANDOM_FAILS_B = {
+	{ fuel_meter_2l_fail, 0.00001, 0.3, 1 },
+	{ fuel_meter_2r_fail, 0.00001, 0.3, 1 },
+	{ fuel_meter_3l_fail, 0.00001, 0.3, 1 },
+	{ fuel_meter_3r_fail, 0.00001, 0.3, 1 },
+	{ fuel_meter_1_fail, 0.00001, 0.3, 1 },
+	{ fuel_meter_4_fail, 0.00001, 0.3, 1 },
+	{ fuel_meter_summ_fail, 0.00001, 0.3, 1 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -60,9 +77,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(fuel_porc_fail) ~= 1 then set(fuel_porc_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_auto_fail) ~= 1 then set(fuel_auto_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_level_fail) ~= 1 then set(fuel_level_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_A, FAIL)
 			
 			local pump2L_1 = bool2int(get(fuel_pump_2l_fail) >= 1)
 			local pump2L_2 = bool2int(get(fuel_pump_2l_fail) >= 2)
@@ -125,13 +140,7 @@ if MASTER then
 			set(fuel_pump_4_fail, pump4_1 + pump4_2)
 			
 			
-			if get(fuel_meter_2l_fail) ~= 1 then set(fuel_meter_2l_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_meter_2r_fail) ~= 1 then set(fuel_meter_2r_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_meter_3l_fail) ~= 1 then set(fuel_meter_3l_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_meter_3r_fail) ~= 1 then set(fuel_meter_3r_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_meter_1_fail) ~= 1 then set(fuel_meter_1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_meter_4_fail) ~= 1 then set(fuel_meter_4_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fuel_meter_summ_fail) ~= 1 then set(fuel_meter_summ_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_B, FAIL)
 			
 		
 		end

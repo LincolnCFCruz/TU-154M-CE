@@ -56,16 +56,12 @@ defineProperty("eng_fuel_fluctuation_2", globalPropertyi("sim/operation/failures
 defineProperty("eng_fuel_fluctuation_3", globalPropertyi("sim/operation/failures/rel_fuelfl2"))
 
 
---defineProperty("igniter_on_1", globalProperty("sim/cockpit2/engine/actuators/igniter_on[0]"))
-
 defineProperty("fuel_in_1", globalPropertyi("tu-154/start/fuel_in_1")) -- fuel supply from the start system
 defineProperty("fuel_in_2", globalPropertyi("tu-154/start/fuel_in_2")) -- fuel supply from the start system
 defineProperty("fuel_in_3", globalPropertyi("tu-154/start/fuel_in_3")) -- fuel supply from the start system
 
 
 defineProperty("elevation", globalPropertyf("sim/flightmodel/position/elevation"))
-
-
 
 
 -- Smart Copilot
@@ -113,7 +109,6 @@ function update()
 	
 	if mix_3 ~= mix_3_last and mix_3 == 1 then playSample(rod_on, false)
 	elseif mix_3 ~= mix_3_last and mix_3_last == 1 then playSample(rod_off, false) end
-	
 	
 	
 	mix_1_last = mix_1

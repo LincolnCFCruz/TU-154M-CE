@@ -35,7 +35,6 @@ defineProperty("show_gns", globalPropertyi("tu-154/anim/show_gns"))             
 -- Interface to the kln90b plugin -----------------------------------------
 defineProperty("kln_power_available", globalPropertyi("tu-154/kln90/power_available"))
 defineProperty("kln_primary", globalPropertyi("tu-154/kln90/primary"))
-defineProperty("kln_initialized", globalPropertyi("tu-154/kln90/initialized"))
 
 function update()
     -- Same rule the GNS430 uses (systems/navigation/gns430.lua): the overhead

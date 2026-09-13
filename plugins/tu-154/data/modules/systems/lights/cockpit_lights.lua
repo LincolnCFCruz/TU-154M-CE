@@ -16,7 +16,6 @@ defineProperty("cockpit_light_cc_115", globalPropertyf("tu-154/elec/cockpit_ligh
 defineProperty("gen1_work_bus", globalPropertyi("tu-154/elec/gen1_work"))  -- generators connected to the busses and working
 defineProperty("gen2_work_bus", globalPropertyi("tu-154/elec/gen2_work"))
 defineProperty("gen3_work_bus", globalPropertyi("tu-154/elec/gen3_work"))
-defineProperty("gen4_work_bus", globalPropertyi("tu-154/elec/gen4_work"))
 defineProperty("gpu_work_bus", globalPropertyi("tu-154/elec/gpu_work"))
 
 -- light outside
@@ -182,10 +181,6 @@ defineProperty("l11_7", globalProperty("sim/weapons/Qrad[7]")) set(l11_7, 0)  --
 defineProperty("l11_8", globalProperty("sim/weapons/Qrad[8]")) set(l11_8, 1)  --width
 
 
-
-
-
-
 -- panel lights
 defineProperty("mid_left_panel_int", globalPropertyf("tu-154/lights/mid_left_panel_int"))  -- pedestal brightness
 defineProperty("left_panel_int", globalPropertyf("tu-154/lights/left_panel_int"))  -- integral lighting brightness, captain's panel
@@ -232,7 +227,6 @@ defineProperty("sign_exit", globalPropertyi("tu-154/switchers/ovhd/sign_exit")) 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 
 
-
 local bright_tbl = {{ -5000, 0},    -- bugs workaround
 				  { 0, 0 },   -- 
 				  { 0.1, 0.6 },   -- 
@@ -241,13 +235,8 @@ local bright_tbl = {{ -5000, 0},    -- bugs workaround
           		  { 10000, 1000 }}   -- bugs workaround
 
 
-				  
-				  
-				  
-				  
 local toilet_timer_before = 90
 local toilet_use_timer = 60
-
 
 
 function update()
@@ -329,7 +318,6 @@ set(default_pedestal_flood, interpolate(bright_tbl, pedestal_flood) * non_HDR)
 
 -- cabin lights
 if (get(gen1_work_bus) + get(gen2_work_bus) + get(gen3_work_bus) > 1 or get(gpu_work_bus) == 1) and get(percent_lights_on) > 0.15 then
-	--set(cockpit_light_cc_115, 25)
 	set(cabin_2d_light, non_HDR * light_coef_115)
 else
 	set(cockpit_light_cc_115, 0)
@@ -363,14 +351,12 @@ end
 set(seats_leters_lamp, light_coef_27)
 
 
-
 -- calculate currents
 local current_27 = left_flood + right_flood + front_flood + pedestal_flood * 0.7 
 current_27 = current_27 + ovhd_fr_flood * 0.7 + ovhd_bk_flood * 0.7 + eng_flood + azs_flood * 1.5 + cockpit_flood * 0.5
 
 set(cockpit_light_cc_left, current_27 * get(bus27_volt_left) / 58)
 set(cockpit_light_cc_right, current_27 * get(bus27_volt_right) / 58)
-
 
 
 end

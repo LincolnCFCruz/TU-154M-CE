@@ -29,6 +29,24 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS_A = {
+	{ absu_at1_fail, 0.00001, 0.3, 1 },
+	{ absu_at2_fail, 0.00001, 0.3, 1 },
+}
+
+local RANDOM_FAILS_B = {
+	{ absu_damp_roll_fail, 0.00001, 0.3, 1 },
+	{ absu_damp_pitch_fail, 0.00001, 0.3, 1 },
+	{ absu_damp_yaw_fail, 0.00001, 0.3, 1 },
+	{ absu_contr_roll_fail, 0.00001, 0.3, 1 },
+	{ absu_contr_pitch_fail, 0.00001, 0.3, 1 },
+	{ absu_calc_toga_fail, 0.00001, 0.3, 1 },
+
+	{ absu_calc_roll_fail, 0.00001, 0.3, 1 },
+	{ absu_calc_pitch_fail, 0.00001, 0.3, 1 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -56,8 +74,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(absu_at1_fail) ~= 1 then set(absu_at1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_at2_fail) ~= 1 then set(absu_at2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_A, FAIL)
 					
 
 			local roll_1 = bool2int(get(absu_ra56_roll_fail) >= 1)
@@ -98,15 +115,7 @@ if MASTER then
 			
 			set(absu_ra56_yaw_fail, yaw_1 + yaw_2 + yaw_3)
 			
-			if get(absu_damp_roll_fail) ~= 1 then set(absu_damp_roll_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_damp_pitch_fail) ~= 1 then set(absu_damp_pitch_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_damp_yaw_fail) ~= 1 then set(absu_damp_yaw_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_contr_roll_fail) ~= 1 then set(absu_contr_roll_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_contr_pitch_fail) ~= 1 then set(absu_contr_pitch_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_calc_toga_fail) ~= 1 then set(absu_calc_toga_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(absu_calc_roll_fail) ~= 1 then set(absu_calc_roll_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(absu_calc_pitch_fail) ~= 1 then set(absu_calc_pitch_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_B, FAIL)
 		
 		end
 		

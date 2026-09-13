@@ -1,11 +1,4 @@
--- createGlobalPropertyf("tu-154/controlls/absu_debug1", 0.2)
 
--- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
-
--- sources
---defineProperty("joy_pitch", globalPropertyf("sim/cockpit2/controls/yoke_pitch_ratio")) -- pitch position of joytick
---defineProperty("joy_roll", globalPropertyf("sim/cockpit2/controls/yoke_roll_ratio")) -- roll position of joystick
---defineProperty("joy_yaw", globalPropertyf("sim/cockpit2/controls/yoke_heading_ratio")) -- yaw position of joystick
 
 defineProperty("joy_pitch", globalPropertyf("tu-154/SC/yoke_pitch_ratio")) 
 defineProperty("joy_roll", globalPropertyf("tu-154/SC/yoke_roll_ratio")) 
@@ -55,7 +48,6 @@ defineProperty("absu_speed_test_2", globalPropertyi("tu-154/buttons/console/absu
 defineProperty("absu_use_second_nav", globalPropertyi("tu-154/absu_use_second_nav")) -- the ABSU uses the second Kurs-MP
 
 
-
 -- PNP
 defineProperty("pkp_course_L", globalPropertyf("tu-154/gauges/compas/pkp_helper_course_L")) -- heading set by the yellow needle on the PKP
 defineProperty("pkp_course_R", globalPropertyf("tu-154/gauges/compas/pkp_helper_course_R")) -- heading set by the yellow needle on the PKP
@@ -75,15 +67,12 @@ defineProperty("roll_acc", globalPropertyf("sim/flightmodel/position/P_dot")) --
 defineProperty("pitch_acc", globalPropertyf("sim/flightmodel/position/Q_dot")) -- deg/sec2 The pitch angular acceleration (relative to the flight)
 defineProperty("yaw_acc", globalPropertyf("sim/flightmodel/position/R_dot")) -- deg/sec2 The yaw angular acceleration rates (relative to the flight)
 
---defineProperty("slip", globalPropertyf("sim/flightmodel/misc/slip"))
---defineProperty("slip", globalPropertyf("sim/cockpit2/gauges/indicators/slip_deg"))
 defineProperty("slip", globalPropertyf("sim/cockpit2/gauges/indicators/sideslip_degrees"))
 
 
 -- SVS
 defineProperty("mach_svs", globalPropertyf("tu-154/svs/machno")) -- Mach number
 defineProperty("alt_svs", globalPropertyf("tu-154/svs/altitude")) -- Altitude by 1013 hpa
-defineProperty("tas_svs", globalPropertyf("tu-154/svs/true_airspeed")) -- TAS
 
 defineProperty("ias", globalPropertyf("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")) -- indicated airspeed in KTS
 
@@ -115,8 +104,6 @@ defineProperty("diss_groundspeed", globalPropertyf("tu-154/nvu/diss_groundspeed"
 defineProperty("diss_slip_angle", globalPropertyf("tu-154/nvu/diss_slip_angle")) -- drift angle from the DISS
 
 -- Course MP
-defineProperty("obs_1", globalPropertyf("sim/cockpit2/radios/actuators/nav1_obs_deg_mag_pilot")) -- OBS course
-defineProperty("obs_2", globalPropertyf("sim/cockpit2/radios/actuators/nav2_obs_deg_mag_pilot")) -- OBS course
 defineProperty("nav_cs_1", globalPropertyf("tu-154/radio/nav1_cs")) -- course plank
 defineProperty("nav_cs_2", globalPropertyf("tu-154/radio/nav2_cs")) -- course plank
 defineProperty("nav_gs_1", globalPropertyf("tu-154/radio/nav1_gs")) -- glideslope
@@ -131,8 +118,6 @@ defineProperty("nav_gs_flag_1", globalPropertyi("tu-154/radio/nav1_gs_flag"))
 defineProperty("nav_cs_flag_2", globalPropertyi("tu-154/radio/nav2_cs_flag"))
 defineProperty("nav_gs_flag_2", globalPropertyi("tu-154/radio/nav2_gs_flag"))
 
-defineProperty("cr_flag_1", globalPropertyf("sim/cockpit2/radios/indicators/nav1_flag_from_to_pilot")) -- Nav-To-From indication, nav1, pilot, 0 is flag, 1 is to, 2 is from.
-defineProperty("cr_flag_2", globalPropertyf("sim/cockpit2/radios/indicators/nav2_flag_from_to_pilot")) -- Nav-To-From indication, nav1, pilot, 0 is flag, 1 is to, 2 is from.
 
 
 -- KLN
@@ -153,7 +138,6 @@ defineProperty("GNS430_dtk", globalPropertyf("tu-154/SC/GNS430_dtk")) -- heading
 defineProperty("GNS430_dev", globalPropertyf("tu-154/SC/GNS430_dev")) -- cross-track deviation from the GNS
 
 
-
 -- RV
 defineProperty("rv5_alt", globalPropertyf("tu-154/misc/rv5_alt_left"))  -- altitude on the left altimeter
 
@@ -171,7 +155,6 @@ defineProperty("flap_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_fl
 
 -- ailerons 20, rudder 25, elevator 25-20
 
-defineProperty("gear1_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))  -- vertical deflection of front gear
 
 -- results
 defineProperty("absu_roll_ind", globalPropertyf("tu-154/absu/absu_roll_ind")) -- roll director indication
@@ -189,7 +172,6 @@ defineProperty("absu_pitch_trimm", globalPropertyi("tu-154/absu/absu_pitch_trimm
 
 defineProperty("absu_course_out", globalPropertyi("tu-154/absu_course_out")) -- flying outside the course limits
 defineProperty("absu_gs_out", globalPropertyi("tu-154/absu_gs_out")) -- flying outside the course limits
-
 
 
 -- failures
@@ -215,7 +197,6 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 defineProperty("yoke_pitch", globalPropertyf("tu-154/controlls/yoke_pitch")) -- control wheel pitch travel
 defineProperty("int_pitch_trim", globalPropertyf("tu-154/trimmers/int_pitch_trim")) -- elevator trim position
 defineProperty("hydro_long_control", globalPropertyi("tu-154/switchers/eng/hydro_long_control")) -- longitudinal controllability
---defineProperty("elev_coeff", globalPropertyf("tu-154/controlls/elev_coeff"))
 defineProperty("tks_course_set", globalPropertyi("tu-154/switchers/ovhd/tks_course_set")) -- heading selector
 
 defineProperty("absu_ra1_roll_fail", globalPropertyi("tu-154/failures/absu_ra1_roll_fail"))
@@ -227,8 +208,6 @@ defineProperty("absu_ra3_pitch_fail", globalPropertyi("tu-154/failures/absu_ra3_
 defineProperty("absu_ra1_yaw_fail", globalPropertyi("tu-154/failures/absu_ra1_yaw_fail"))
 defineProperty("absu_ra2_yaw_fail", globalPropertyi("tu-154/failures/absu_ra2_yaw_fail"))
 defineProperty("absu_ra3_yaw_fail", globalPropertyi("tu-154/failures/absu_ra3_yaw_fail"))
-
---defineProperty("absu_power_27", globalPropertyi("tu-154/absu_power_27"))
 
 
 local pitch_act = 0
@@ -321,10 +300,6 @@ local ILS_dev_smth = 0
 local ILS_spd_last = 0
 
 
--- YAW
--- local yaw_I = 0
--- local yaw_P_last = 0
-
 local roll_ail_tbl = {
 {0, 1},
 {0.2, 1},
@@ -389,16 +364,7 @@ local absu_roll_damp_K=0
 local absu_yaw_damp=0
 local yaw_W_prev=0
 
--- local d_contr_roll=0
--- local d_contr_pitch=0
--- local d_contr_yaw=0
 
-
---[[
-local pitch_res = 0
-local roll_res = 0
-local yaw_res = 0
---]]
 local pitch_res_need = 0
 local roll_res_need = 0
 local yaw_res_need = 0
@@ -414,7 +380,6 @@ end
 
 local function yaw_holder(mode)
 end
-
 
 
 function update()
@@ -434,7 +399,6 @@ function update()
 	pitch_now = get(bkk_pitch)
 	roll_now = get(bkk_roll)
 	
-	--print(pitch_now)
 	
 	local roll_W = get(roll_rate)
 	local pitch_W = get(pitch_rate)
@@ -444,7 +408,6 @@ function update()
 	local pitch_W2 = get(pitch_acc)
 	local yaw_W2 = get(yaw_acc)
 	
-	--local power=get(absu_power_27)
 	if get(absu_damp_roll_fail) == 1 then
 		roll_W = 0
 		roll_W2 = 0
@@ -497,7 +460,6 @@ function update()
 	-- put it into pitch holding logic, wich will use PID regulators, flaps and roll parts with trimmer and damper
 	
 	
-	
 	local absu_smooth = get(absu_smooth_on)
 	
 	if pitch_mode >= 1 then -- SAU pitch part
@@ -509,13 +471,11 @@ function update()
 			local pitch_diff = pitch_whl - pitch_whl_last
 			
 			
-			
 			while pitch_diff > 1 do pitch_diff = pitch_diff - 20 end
 			while pitch_diff < -1 do pitch_diff = pitch_diff + 20 end
 			
 			pitch_whl_last = pitch_whl
 			
-			--if pitch_diff ~= 0 then print(pitch_need, "  ", pitch_diff) end
 			
 			PU_pitch = PU_pitch + pitch_diff * 0.2
 			
@@ -532,8 +492,6 @@ function update()
 			M_smth = M_stab
 			toga_alt = alt
 			H_stab = alt					
-			
-			
 			
 			
 		elseif pitch_submode == 2 then -- stab V mode
@@ -576,7 +534,6 @@ function update()
 			
 			
 			PU_pitch = PU_pitch + (pitch_now - PU_pitch) * passed * 0.3
-			--V_stab = airspeed
 			M_stab = mach
 			M_smth = M_stab
 			toga_alt = alt
@@ -626,7 +583,6 @@ function update()
 			V_stab = airspeed
 			V_smth = V_stab
 			
-			--M_stab = mach
 			toga_alt = alt
 			H_stab = alt			
 			
@@ -642,7 +598,6 @@ function update()
 			-- I
 			I_H = I_H + P_H * passed * 0.00001
 			
-			--I_H = I_H - sign(I_H) * passed * 0.0001
 			
 			if I_H > 0.1 then I_H = 0.1
 			elseif I_H < -0.1 then I_H = -0.1 end
@@ -659,19 +614,15 @@ function update()
 			local K_DH = line(mach, 0.3, 0.3, 0.8, 0.15) * (1 - absu_smooth * 0.5)--0.3 * (1 - absu_smooth * 0.5)
 			
 			
-			
-			
 			local PID_part = P_H * K_PH + D_H * K_DH + I_H
 			
 		
 			pitch_need = -PID_part + PU_pitch
 			
 			
-			
 			if pitch_need > 17 * 0.5 then pitch_need = 17 * 0.5
 			elseif pitch_need < -17 * 0.5 then pitch_need = -17 * 0.5 end
 			
-			--print(pitch_need, "  ", P_H * K_PH, "  ", D_H * K_DH)
 			
 			PU_pitch = PU_pitch + (pitch_now - PU_pitch) * passed * 0.3
 
@@ -682,7 +633,6 @@ function update()
 			M_stab = mach
 			M_smth = M_stab
 			toga_alt = alt
-			--H_stab = alt			
 		
 		elseif pitch_submode == 5 then -- GS mode
 		
@@ -716,11 +666,6 @@ function update()
 			elseif math.abs(GS_smth) > 6 then GS_est = 0
 			end
 			
-			--pitch_now = pitch_now + 2.5 * GS_est -- test
-			
-			
-			
-			
 			
 			PU_pitch = PU_pitch + (pitch_now - PU_pitch) * passed * 0.1
 			
@@ -740,12 +685,9 @@ function update()
 			end
 			
 		
-		
 		elseif pitch_submode == 6 and get(absu_calc_toga_fail) == 0 then -- TOGA mode
 			
 
-			
-			
 			-- calculate V stab
 			if flaps >= 40 then V_stab = 290
 			elseif flaps < 40 and flaps >= 25 then V_stab = 345
@@ -798,10 +740,7 @@ function update()
 			elseif pitch_need < 0 then pitch_need = 0 end
 			
 
-	
-			
 			PU_pitch = PU_pitch + (pitch_now - PU_pitch) * passed * 0.2
-			--V_stab = airspeed
 			M_stab = mach
 			M_smth = M_stab
 			
@@ -829,21 +768,13 @@ function update()
 		GS_last = GS_smth
 		
 		
-		
-	--	print(pitch_need)
 		-- controll the elevator and trimmer
 		if pitch_mode == 1 then -- manual mode
-			-- if mach < 1 then
-				-- pitch_coef = interpolate(pitch_elev_tbl, mach)
-			-- else pitch_coef = -0.2 
-			-- end
 			local absu_k=math.max(2.125*get(int_pitch_trim)+0.1667,-0.4) -- ABSU Pitch constant as function of trimmed position
-			--set(absu_debug1,absu_k)
 			local elev_need = (get(yoke_pitch)-get(int_pitch_trim)) * absu_k * get(hydro_long_control) - pitch_W * 1/30 -- yoke plus damper, K_damp=1 as per literature
 			if elev_need > elev_lim then elev_need = elev_lim
 			elseif elev_need < -elev_lim then elev_need = -elev_lim end
 			
-			--set(absu_contr_pitch, elev_need)
 			if MASTER then set(absu_pitch_trimm, 0) end
 			
 			V_stab = airspeed
@@ -862,30 +793,19 @@ function update()
 		elseif pitch_mode == 2 then -- stab mode
 			
 			if get(absu_calc_pitch_fail) == 0 then pitch_res_need = pitch_holder(pitch_need) end
-			--if get(absu_calc_pitch_fail) == 1 then pitch_res_need = 0 end
 
 		end
 		
 		pitch_show = pitch_need
 		
 	else
-		-- if power==0 then
-			-- if MASTER then set(absu_pitch_trimm, 0) end
-			--set(absu_contr_pitch, 0)
 			pitch_need_smth = 0
 			
 			pitch_res_need = 0
-		--end
 		
 	end
 	
 	-- results pitch position --
-	-- local d_contr_pitch=(pitch_res_need - get(absu_contr_pitch)) * ((1-get(absu_ra1_pitch_fail)) * HS1+(1-get(absu_ra2_pitch_fail)) * HS2+(1-get(absu_ra3_pitch_fail)) * HS3) * 3.33
-	-- if d_contr_pitch>0.8 then
-		-- d_contr_pitch=0.8
-	-- elseif d_contr_pitch<-0.8 then
-		-- d_contr_pitch=-0.8
-	-- end
 	if MASTER then
 		set(absu_contr_pitch,pitch_res_need)
 	end
@@ -914,9 +834,6 @@ function update()
 		if roll_submode == 1 or roll_submode == 10 then -- stab mode
 		
 			
-			
-			
-		
 			if course_stab_timer > 0 and course_stab_timer < 8 then
 				local diff = course_now - course_stab_act
 				if diff > 180 then diff = diff - 360
@@ -953,7 +870,6 @@ function update()
 			
 			ILS_dev_smth = 0
 
-			
 			
 		elseif roll_submode == 2 then -- ZK mode
 			
@@ -1016,14 +932,11 @@ function update()
 				
 			end
 			
-			--print(-get(GNS430_dev) * 1.852 * 0.8 .. "  " .. -get(RXP_dev) * 1.852)
-			--print(get(GNS430_dtk).."  "..get(RXP_course))
 			
 			local side_lim = 2400 -- m
 			local side_spd_lim = 160 -- m/s
 			
 			
-				
 			local side = nvu_z * 1000 -- meters
 			
 			if side > side_lim then side = side_lim
@@ -1050,7 +963,6 @@ function update()
 			end
 			
 			
-			
 			nvu_z_last = nvu_z
 			
 	
@@ -1067,13 +979,9 @@ function update()
 			if course_change_timer < 3 then -- course changing. hold previous parameters to prevent wrong roll command
 				side = 0 --nvu_side_last
 				side_spd = 0 -- nvu_spd_last
-			--else -- course stabilised. fly bu new parameters
-				--nvu_side_last = side
-				--nvu_spd_last = side_spd
 			end
 						
 			course_change_timer = course_change_timer + passed
-			
 			
 			
 			course_now = get(pkp_gyro_course_L)
@@ -1095,7 +1003,6 @@ function update()
 			end
 			
 			
-			
 			if roll_need > 25 then roll_need = 25
 			elseif roll_need < -25 then roll_need = -25 end
 			
@@ -1107,7 +1014,6 @@ function update()
 			if math.abs(course_delta) > 90 then
 				roll_need = sign(course_delta) * 25
 			end
-			
 			
 			
 			roll_show = roll_need
@@ -1122,7 +1028,6 @@ function update()
 			local slip_angle = get(diss_slip_angle)
 			local course_now = get(course_gpk)
 			
-			--local vor_course = get(obs_1)
 			local course_dev = get(nav_cs_1) * 10 -- deg from given radial
 			
 			if roll_submode == 5 then
@@ -1133,14 +1038,12 @@ function update()
 			if get(absu_zpu_sel) == 1 then pnp_course = get(pkp_obs_2) end -- change course source
 			
 			
-			
 			vor_slip_act = vor_slip_act + (slip_angle - vor_slip_act) * passed * 0.5 -- DISS angle
 			
 			--limit the VOR signal			
 			if course_dev > vor_dev_lim then course_dev = vor_dev_lim
 			elseif course_dev < -vor_dev_lim then course_dev = -vor_dev_lim end
 			
-			--course_dev = course_dev * 10
 			
 			vor_dev_act = vor_dev_act + (course_dev - vor_dev_act) * passed * 0.5 -- VOR deviation
 			
@@ -1148,7 +1051,6 @@ function update()
 			if course_diff > 180 then course_diff = course_diff - 360
 			elseif course_diff < -180 then course_diff = course_diff + 360 end
 			
-			-- roll_need = (course_diff - vor_slip_act) * 1.3 + vor_dev_act * 5
 			roll_need = (course_diff - vor_slip_act) * 1.5 + vor_dev_act * 10
 			
 			
@@ -1160,7 +1062,6 @@ function update()
 			if not nav_on then roll_need = 0 end
 			
 
-			
 			course_stab_act = course_now
 			course_stab_timer = 0
 			
@@ -1188,13 +1089,7 @@ function update()
 			if passed ~= 0 then dev_spd = (ILS_dev_smth - dev_last) end
 			
 			
-			
-			
-			
-			
-			
 			dev_last = ILS_dev_smth
-			--ILS_spd_smth = ILS_spd_smth + (dev_spd - ILS_spd_smth) * passed
 			
 			if math.abs(course_dev) > 9 then -- calculate course to get to the runway
 				
@@ -1252,10 +1147,8 @@ function update()
 				if roll_need > 10 * (1 + above250) then roll_need = 10 * (1 + above250)
 				elseif roll_need < -10 * (1 + above250) then roll_need = -10 * (1 + above250) end
 				
-				--print(ILS_dev_limited, "  ", ILS_spd_limited)
 				roll_show = roll_need
 				
-				--print(course_dev, "  ", ILS_dev_limited, "  ", ILS_spd_limited, "  ", roll_need)
 				
 			end
 			
@@ -1273,7 +1166,6 @@ function update()
 			end
 			
 			
-		
 		elseif roll_submode == 7 and get(absu_calc_toga_fail) == 0 then -- TOGA mode
 			
 			local course_diff = course_stab_act - course_now
@@ -1292,7 +1184,6 @@ function update()
 			ILS_dev_smth = 0
 			
 
-			
 		else 
 			course_stab_timer = 0
 			course_stab_act = course_now
@@ -1304,32 +1195,18 @@ function update()
 		end	
 		
 		
-		
-		
 		-- set the ailerons	
 		
 		if roll_mode == 1 then -- manual control
-			-- if mach < 1 then
-				-- roll_coef = interpolate(roll_ail_tbl, mach)
-			-- else
-				-- roll_coef = -0.8
-			-- end
 			
-			--absu_roll_damp=- roll_W * 0.08 * (0.3 + 0.01 * math.abs(roll_W2) / (0.01 * math.abs(roll_W2) + 1))
 			absu_roll_damp=1.6/(1.6+passed)*absu_roll_damp+1.6/(1.6+passed)*(roll_W-roll_W_prev)
 			absu_roll_damp_K=math.abs(absu_roll_damp/roll_W);
 			roll_W_prev=roll_W
 			absu_roll_gain=absu_roll_gain-(absu_roll_gain-roll_cmd)/0.4*passed
-			--set(absu_debug1,absu_roll_damp)
-			--set(absu_debug2,absu_roll_gain)
-			--local ail_need = roll_cmd * roll_coef - roll_W * 0.08 * (0.3 + 0.01 * math.abs(roll_W2) / (0.01 * math.abs(roll_W2) + 1))
 			local ail_need = -1.5/20*absu_roll_damp+absu_roll_gain
 			if ail_need > ail_lim then ail_need = ail_lim
 			elseif ail_need < -ail_lim then ail_need = -ail_lim end
 			
-			
-			
-			--set(absu_contr_roll, ail_need)
 			
 			roll_res_need = ail_need
 			
@@ -1343,39 +1220,22 @@ function update()
 			end
 			
 			
-			
 			if get(absu_calc_roll_fail) == 0 then roll_res_need = roll_holder(roll_need_smth) end
-			
-			--if get(absu_calc_roll_fail) == 1 then roll_res_need = 0 end
-			
-			--set(absu_contr_roll, ail_need)
-			
 			
 			
 		end
 	
 	else
-		--set(absu_contr_roll, 0)
-		--if power==0 then
 			roll_res_need = 0
 			
 			roll_need_smth = roll_now
-		--end
 	end
-	-- local d_contr_roll=(roll_res_need - get(absu_contr_roll)) * ((1-get(absu_ra1_roll_fail)) * HS1+(1-get(absu_ra2_roll_fail)) * HS2+(1-get(absu_ra3_roll_fail)) * HS3) * 3.33
-	-- if d_contr_roll>0.8 then
-		-- d_contr_roll=0.8
-	-- elseif d_contr_roll<-0.8 then
-		-- d_contr_roll=-0.8
-	-- end
-	--set(absu_debug1,d_contr_pitch)
 	-- set roll results --
 	if MASTER then
 		set(absu_contr_roll, roll_res_need)
 	end
 	
 	
-
 	-------------------------
 	-- yaw controls --
 	-------------------------
@@ -1386,21 +1246,11 @@ function update()
 		
 	else
 		
-		--set(absu_contr_yaw, 0)
-		--if power==0 then
 			yaw_res_need = 0
-		--end
 	
 	end
 	
-	--if get(gear1_deflect) > 0.01 then yaw_res_need = 0 end
 	-- set yaw results --
-	-- local d_contr_yaw=(yaw_res_need - get(absu_contr_yaw)) * ((1-get(absu_ra1_yaw_fail)) * HS1+(1-get(absu_ra2_yaw_fail)) * HS2+(1-get(absu_ra3_yaw_fail)) * HS3) * 3.33
-	-- if d_contr_yaw>0.8 then
-		-- d_contr_yaw=0.8
-	-- elseif d_contr_yaw<-0.8 then
-		-- d_contr_yaw=-0.8
-	-- end
 	if MASTER then
 	set(absu_contr_yaw, yaw_res_need)
 	end
@@ -1540,7 +1390,6 @@ function update()
 		end		
 	
 		
-	
 	elseif roll_submode == 7 and pitch_submode == 6 then -- TOGA mode
 		
 		if not needles_on then
@@ -1562,8 +1411,6 @@ function update()
 		end	
 	
 		
-	
-	
 	else
 		
 		roll_show = 25
@@ -1593,8 +1440,6 @@ function update()
 	end
 	
 	
-	
-	
 if MASTER then	
 	set(absu_roll_ind, roll_show)
 	set(absu_pitch_ind, pitch_show)
@@ -1603,12 +1448,10 @@ if MASTER then
 	set(absu_pitch_flag, flag_pitch)
 	
 	
-	
 end	
 	
 
 end
-
 
 
 ------------------
@@ -1617,8 +1460,6 @@ end
 
 function pitch_holder(pitch_hold) -- manipulates the elevator and trimmer by given pitch angle
 	
-	-- PID part. no Int here
-	--pitch_now = get(bkk_pitch)
 	
 	local P = (pitch_hold - pitch_now)
 	local D = get(pitch_rate) * (1 - get(absu_damp_pitch_fail))
@@ -1629,15 +1470,10 @@ function pitch_holder(pitch_hold) -- manipulates the elevator and trimmer by giv
 	-- flaps and gear part
 	if gear_down then
 		pitch_stab_roll_coef = 0.00425 * 2
-		--flap_coef = 0.025
 	else
-		--flap_coef = 0.005
 	end
 	
-	--local flaps_part = interpolate(flaps_tbl, flaps) * flap_coef
 
-	
-	
 	-- roll part
 	local roll_part = math.abs(roll_now) * pitch_stab_roll_coef * line(mach, 0.4, 1.3, 0.8, 0.8)*0.15
 	
@@ -1649,11 +1485,6 @@ function pitch_holder(pitch_hold) -- manipulates the elevator and trimmer by giv
 	elseif elev_pos < -elev_lim then elev_pos = -elev_lim end
 	
 
-	
-	
-	
-	
-	
 	pitch_act = pitch_act + (elev_pos - pitch_act) * passed * 5
 	
 	
@@ -1663,8 +1494,6 @@ if MASTER then
 	elseif pitch_act < -0.01 then set(absu_pitch_trimm, -1)
 	else set(absu_pitch_trimm, 0) end
 end
-	-- set elevator pos
-	--set(absu_contr_pitch, pitch_act)
 	
 	
 	return pitch_act
@@ -1699,7 +1528,6 @@ function roll_holder(roll_hold) -- manipulates the elerons by given roll angle
 	if roll_act > ail_lim then roll_act = ail_lim
 	elseif roll_act < -ail_lim then roll_act = -ail_lim end	
 	
-	--set(absu_contr_roll, roll_act)
 	
 	return roll_act
 	
@@ -1709,42 +1537,17 @@ end
 
 function yaw_holder()
 	
-	-- -- PID components
-	-- local P = get(slip) * (1 - get(absu_damp_yaw_fail))
-	-- local KP = 0.01
 	
-	-- local K_I = 0--0.001
-	-- yaw_I = yaw_I + P * passed * K_I
-	
-	-- yaw_I = yaw_I - sign(yaw_I) * passed * 0.1 -- 0.01
-	
-	-- if yaw_I > 0.1 then yaw_I = 0.1
-	-- elseif yaw_I < -0.1 then yaw_I = -0.1 end
-	
-	-- local D = 0
-	
-	-- if passed ~= 0 then
-		-- D = (P - yaw_P_last) / passed
-	-- end
-	-- yaw_P_last = P
-	
-	-- local K_D = 0.01
 	local yaw_W = get(yaw_rate)
 	absu_yaw_damp=2.5/(2.5+passed)*absu_yaw_damp+2.5/(2.5+passed)*(yaw_W-yaw_W_prev)
 	yaw_W_prev=yaw_W
-	--local ail_need = roll_cmd * roll_coef - roll_W * 0.08 * (0.3 + 0.01 * math.abs(roll_W2) / (0.01 * math.abs(roll_W2) + 1))
 	yaw_act = -2.5/25*absu_yaw_damp - 4.5/25*yaw_W*bool2int(get(pitch_sub_mode)==5 and get(pitch_main_mode)==2)
 	
-	-- local PID = P * KP + yaw_I + D * K_D
-	
-	-- yaw_act = yaw_act + (PID - yaw_act) * passed * 5
 	
 	if yaw_act > 0.4 then yaw_act = 0.4
 	elseif yaw_act < -0.4 then yaw_act = -0.4 end	
 	
-	-- --set(absu_contr_yaw, yaw_act)
 	
-
 	return yaw_act
 
 end

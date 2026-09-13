@@ -23,6 +23,18 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ rel_adf1, 0.00001, 0.3, 6 },
+	{ rel_adf2, 0.00001, 0.3, 6 },
+	{ nav1_fail, 0.00001, 0.3, 1 },
+	{ nav2_fail, 0.00001, 0.3, 1 },
+	{ dme1_fail, 0.00001, 0.3, 1 },
+	{ dme2_fail, 0.00001, 0.3, 1 },
+
+	{ mrp_fail, 0.00001, 0.3, 1 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -50,14 +62,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(rel_adf1) ~= 6 then set(rel_adf1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_adf2) ~= 6 then set(rel_adf2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(nav1_fail) ~= 1 then set(nav1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(nav2_fail) ~= 1 then set(nav2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(dme1_fail) ~= 1 then set(dme1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(dme2_fail) ~= 1 then set(dme2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(mrp_fail) ~= 1 then set(mrp_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS, FAIL)
 
 
 		
@@ -74,13 +79,7 @@ if MASTER then
 		-- no failures enabled
 		fail_counter = 0
 		
-		set(rel_adf1, 0)
-		set(rel_adf2, 0)
-		set(nav1_fail, 0)
-		set(nav2_fail, 0)
-		set(dme1_fail, 0)
-		set(dme2_fail, 0)
-		set(mrp_fail, 0)
+		clearFailures(RANDOM_FAILS)
 
 
 	

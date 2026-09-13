@@ -55,11 +55,6 @@ sim/operation/failures/rel_tire5	int	y	failure_enum	Landing gear 5 tire blowout
 --]]
 
 
--- source
---defineProperty("gear1_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))  -- vertical deflection of front gear
---defineProperty("gear2_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[1]"))  -- vertical deflection of left gear
---defineProperty("gear3_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[2]"))  -- vertical deflection of right gear
-
 defineProperty("ias", globalPropertyf("sim/flightmodel/position/indicated_airspeed"))  -- IAS
 
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
@@ -71,6 +66,38 @@ defineProperty("stab_ratio", globalPropertyf("sim/cockpit2/controls/elevator_tri
 defineProperty("gear1_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[0]"))  -- deploy of front gear
 defineProperty("gear2_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[1]"))  -- deploy of right gear
 defineProperty("gear3_deploy", globalProperty("sim/aircraft/parts/acf_gear_deploy[2]"))  -- deploy of left gear
+
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS_A = {
+	{ flap_fail_left, 0.00001, 0.3, 1 },
+	{ flap_fail_right, 0.00001, 0.3, 1 },
+}
+
+local RANDOM_FAILS_B = {
+	{ ail_fail_left, 0.00001, 0.3, 1 },
+	{ ail_fail_right, 0.00001, 0.3, 1 },
+
+	{ fail_spoil_inn_left, 0.00001, 0.3, 1 },
+	{ fail_spoil_inn_right, 0.00001, 0.3, 1 },
+	{ fail_spoil_mid_left, 0.00001, 0.3, 1 },
+	{ fail_spoil_mid_right, 0.00001, 0.3, 1 },
+	{ fail_spoil_out_left, 0.00001, 0.3, 1 },
+	{ fail_spoil_out_right, 0.00001, 0.3, 1 },
+
+	{ rudder_fail, 0.00001, 0.3, 1 },
+	{ elev_fail_left, 0.00001, 0.3, 1 },
+	{ elev_fail_right, 0.00001, 0.3, 1 },
+
+	{ retract1_fail, 0.00001, 0.3, 6 },
+	{ retract2_fail, 0.00001, 0.3, 6 },
+	{ retract3_fail, 0.00001, 0.3, 6 },
+	{ actuator_fail, 0.00001, 0.3, 6 },
+
+	{ rel_trim_rud, 0.00001, 0.3, 6 },
+	{ rel_trim_ail, 0.00001, 0.3, 6 },
+	{ rel_trim_elv, 0.00001, 0.3, 6 },
+	{ trim_emerg_elv_fail, 0.00001, 0.3, 1 },
+}
 
 local fail_counter = 0
 local check_time = math.random(15, 30)
@@ -104,14 +131,12 @@ local gear_last_2 = get(gear2_deploy)
 local gear_last_3 = get(gear3_deploy)
 
 
-
 function update()
 	
 	local passed = get(frame_time)
 	
 	
 if get(ismaster) ~= 1 then		
-	
 	
 	
 	local FAIL = get(failures_enabled)
@@ -127,8 +152,7 @@ if get(ismaster) ~= 1 then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(flap_fail_left) ~= 1 then set(flap_fail_left, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(flap_fail_right) ~= 1 then set(flap_fail_right, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_A, FAIL)
 			
 			-- stab engines
 			stabEng1 = bool2int(get(stab_eng_fail) >= 1)
@@ -138,7 +162,6 @@ if get(ismaster) ~= 1 then
 			elseif stabEng2 ~= 1 then stabEng2 = bool2int(math.random() < 0.00001 * FAIL * 0.3 * stab_counter) end
 			
 			set(stab_eng_fail, stabEng1 + stabEng2)
-			--if get(stab_eng_fail) ~= 1 then set(stab_eng_fail, bool2int(math.random() < 0.00001) * 1) end
 			
 			if get(stab_automatic_fail) ~= 1 then set(stab_automatic_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
 			
@@ -150,38 +173,10 @@ if get(ismaster) ~= 1 then
 			elseif slat2 ~= 1 then slat2 = bool2int(math.random() < 0.00001 * FAIL * 0.3 * slat_counter) end
 			
 			set(slats_fail, slat1 + slat2)
-			--if get(slats_fail) ~= 1 then set(slats_fail, bool2int(math.random() < 0.00001) * 1) end
 			
-			if get(ail_fail_left) ~= 1 then set(ail_fail_left, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(ail_fail_right) ~= 1 then set(ail_fail_right, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(fail_spoil_inn_left) ~= 1 then set(fail_spoil_inn_left, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fail_spoil_inn_right) ~= 1 then set(fail_spoil_inn_right, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fail_spoil_mid_left) ~= 1 then set(fail_spoil_mid_left, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fail_spoil_mid_right) ~= 1 then set(fail_spoil_mid_right, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fail_spoil_out_left) ~= 1 then set(fail_spoil_out_left, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(fail_spoil_out_right) ~= 1 then set(fail_spoil_out_right, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(rudder_fail) ~= 1 then set(rudder_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(elev_fail_left) ~= 1 then set(elev_fail_left, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(elev_fail_right) ~= 1 then set(elev_fail_right, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(retract1_fail) ~= 6 then set(retract1_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(retract2_fail) ~= 6 then set(retract2_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(retract3_fail) ~= 6 then set(retract3_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(actuator_fail) ~= 6 then set(actuator_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			--if get(rel_collapse1) ~= 1 then set(rel_collapse1, bool2int(math.random() < 0.00001) * 1) end
-			--if get(rel_collapse2) ~= 1 then set(rel_collapse2, bool2int(math.random() < 0.00001) * 1) end
-			--if get(rel_collapse3) ~= 1 then set(rel_collapse3, bool2int(math.random() < 0.00001) * 1) end
-			
-			if get(rel_trim_rud) ~= 6 then set(rel_trim_rud, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_trim_ail) ~= 6 then set(rel_trim_ail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_trim_elv) ~= 6 then set(rel_trim_elv, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(trim_emerg_elv_fail) ~= 1 then set(trim_emerg_elv_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
+			rollFailures(RANDOM_FAILS_B, FAIL)
 			
 			
-		
 		end
 		
 		-- dependent failures
@@ -217,12 +212,6 @@ if get(ismaster) ~= 1 then
 		gear_last_3 = get(gear3_deploy)
 		
 		
-		--if get(gear1_deflect) > 0.7 then set(rel_collapse1, 6) end
-		--if get(gear2_deflect) > 0.6 then set(rel_collapse2, 6) end
-		--if get(gear3_deflect) > 0.6 then set(rel_collapse3, 6) end
-		
-	
-	
 	else
 		-- no failures enabled
 		fail_counter = 0

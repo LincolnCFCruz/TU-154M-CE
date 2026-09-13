@@ -8,15 +8,12 @@ defineProperty("course", 0)
 local text_font = loadBitmapFont('taws_scr.fnt')
 
 
-
 function draw()
 	
 	local crs = get(course)
-	--drawRectangle(0, 0, size[1], size[2], 1, 0, 0, 1) -- test
 	
 	drawRectangle(0, 65, size[1], 10, 1, 1, 1, 1) -- horizontal line
 	
-	--drawRectangle(245, 45, 5, 20, 1, 1, 1, 1) -- zero line text
 	
 	for i = math.floor((crs - 40) / 10) * 10, math.floor((crs + 40) / 10) * 10, 10 do
 		
@@ -47,9 +44,6 @@ function draw()
 	end
 	
 	--]]
-	
-	
-	
 	
 	
 end

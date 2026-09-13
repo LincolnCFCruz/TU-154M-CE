@@ -15,7 +15,6 @@ defineProperty("clock_24_hours", globalPropertyf("tu-154/gauges/clock_24_hours")
 defineProperty("clock_24_mins", globalPropertyf("tu-154/gauges/clock_24_mins"))
 defineProperty("clock_24_red", globalPropertyf("tu-154/gauges/clock_24_red"))
 
---math.randomseed( os.time() ) -- randomise random :)
 set(clock_24_red, math.random(360))
 
 function update()

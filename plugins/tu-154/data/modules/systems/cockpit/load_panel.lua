@@ -43,16 +43,12 @@ defineProperty("tank_2R_pr", globalPropertyi("tu-154/payload/tank_2R"))
 defineProperty("tank_3L_pr", globalPropertyi("tu-154/payload/tank_3L"))
 defineProperty("tank_3R_pr", globalPropertyi("tu-154/payload/tank_3R"))
 
-defineProperty("eng_rpm1", globalProperty("sim/flightmodel/engine/ENGN_N2_[0]"))
-defineProperty("eng_rpm2", globalProperty("sim/flightmodel/engine/ENGN_N2_[1]"))
-defineProperty("eng_rpm3", globalProperty("sim/flightmodel/engine/ENGN_N2_[2]"))
 
 defineProperty("gear1_deflect", globalProperty("sim/flightmodel2/gear/tire_vertical_deflection_mtr[0]"))
 
 -- results / sim load
 defineProperty("payload",  globalPropertyf("sim/flightmodel/weight/m_fixed"))
 defineProperty("CG_load",  globalPropertyf("sim/flightmodel/misc/cgz_ref_to_default")) -- xp11
---defineProperty("CG_load", globalPropertyf("sim/flightmodel2/misc/cg_offset_z"))      -- xp12
 
 defineProperty("fuel_q_1",  globalProperty("sim/flightmodel/weight/m_fuel[0]"))
 defineProperty("fuel_q_4",  globalProperty("sim/flightmodel/weight/m_fuel[1]"))
@@ -525,8 +521,6 @@ function update()
 	end
 
 end
-
-
 
 
 components = {

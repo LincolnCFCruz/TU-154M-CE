@@ -1,19 +1,4 @@
--- createGlobalPropertyf("tu-154/buttons/console/d_inz_p", 0)
--- createGlobalPropertyf("tu-154/buttons/console/d_inz_r", 0)
--- createGlobalPropertyf("tu-154/buttons/console/d_inz_y", 0)
--- createGlobalPropertyf("tu-154/buttons/console/pt_inz", 0)
 
--- defineProperty("d_inz_p", globalPropertyf("tu-154/buttons/console/d_inz_p"))
--- defineProperty("d_inz_r", globalPropertyf("tu-154/buttons/console/d_inz_r"))
--- defineProperty("d_inz_y", globalPropertyf("tu-154/buttons/console/d_inz_y"))
--- defineProperty("pt_inz", globalPropertyf("tu-154/buttons/console/pt_inz"))
-
--- createGlobalPropertyf("tu-154/controlls/absu_debug1", 0)
--- createGlobalPropertyf("tu-154/controlls/absu_debug2", 0)
--- createGlobalPropertyf("tu-154/controlls/absu_debug3", 0)
---defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
--- defineProperty("absu_debug2", globalPropertyf("tu-154/controlls/absu_debug2")) 
--- defineProperty("absu_debug3", globalPropertyf("tu-154/controlls/absu_debug3")) 
 
 defineProperty("hod1", globalPropertyf("tu-154/absu/d_ra1_r"))
 defineProperty("hod2", globalPropertyf("tu-154/absu/d_ra2_r"))
@@ -27,50 +12,30 @@ defineProperty("hod3", globalPropertyf("tu-154/absu/d_ra3_r"))
 defineProperty("pos1_out", globalPropertyf("tu-154/absu/pos_ra1_r"))
 defineProperty("pos2_out", globalPropertyf("tu-154/absu/pos_ra2_r"))
 defineProperty("pos3_out", globalPropertyf("tu-154/absu/pos_ra3_r"))
--- createGlobalPropertyf("tu-154/controlls/absu_debug1", 1)
 
--- defineProperty("absu_debug1", globalPropertyf("tu-154/controlls/absu_debug1")) 
-
--- defineProperty("hydro_ra56_rud_1", globalPropertyi("tu-154/switchers/eng/hydro_ra56_rud_1")) -- RA56 hydraulic supply, yaw
--- defineProperty("hydro_ra56_rud_2", globalPropertyi("tu-154/switchers/eng/hydro_ra56_rud_2")) -- RA56 hydraulic supply, yaw
--- defineProperty("hydro_ra56_rud_3", globalPropertyi("tu-154/switchers/eng/hydro_ra56_rud_3")) -- RA56 hydraulic supply, yaw
 
 defineProperty("hydro_ra56_ail_1", globalPropertyi("tu-154/switchers/eng/hydro_ra56_ail_1")) -- RA-56 roll hydraulic supply
 defineProperty("hydro_ra56_ail_2", globalPropertyi("tu-154/switchers/eng/hydro_ra56_ail_2")) -- RA-56 roll hydraulic supply
 defineProperty("hydro_ra56_ail_3", globalPropertyi("tu-154/switchers/eng/hydro_ra56_ail_3")) -- RA-56 roll hydraulic supply
 
--- defineProperty("hydro_ra56_elev_1", globalPropertyi("tu-154/switchers/eng/hydro_ra56_elev_1")) -- RA56 hydraulic supply, pitch
--- defineProperty("hydro_ra56_elev_2", globalPropertyi("tu-154/switchers/eng/hydro_ra56_elev_2")) -- RA56 hydraulic supply, pitch
--- defineProperty("hydro_ra56_elev_3", globalPropertyi("tu-154/switchers/eng/hydro_ra56_elev_3")) -- RA56 hydraulic supply, pitch
-
 
 -- failures
 defineProperty("absu_ra56_roll_fail", globalPropertyi("tu-154/failures/absu_ra56_roll_fail")) -- RA-56 failure
---defineProperty("absu_ra56_pitch_fail", globalPropertyi("tu-154/failures/absu_ra56_pitch_fail")) -- ra56 failure
---defineProperty("absu_ra56_yaw_fail", globalPropertyi("tu-154/failures/absu_ra56_yaw_fail")) -- ra56 failure
 defineProperty("roll_main_mode", globalPropertyi("tu-154/absu/roll_main_mode")) 
---defineProperty("pitch_main_mode", globalPropertyi("tu-154/absu/pitch_main_mode")) -- main ABSU pitch mode. 0 - off, 1 - control wheel - 2 - stab
 
 defineProperty("absu_ra1_roll_fail", globalPropertyi("tu-154/failures/absu_ra1_roll_fail"))
 defineProperty("absu_ra2_roll_fail", globalPropertyi("tu-154/failures/absu_ra2_roll_fail"))
 defineProperty("absu_ra3_roll_fail", globalPropertyi("tu-154/failures/absu_ra3_roll_fail"))
 
 defineProperty("hydro_circuit_auto_man", globalPropertyi("tu-154/switchers/eng/hydro_circuit_auto_man"))
---defineProperty("absu_contr_pitch", globalPropertyf("tu-154/absu/contr_pitch")) -- RA56 rod deflection in pitch
 defineProperty("absu_contr_roll", globalPropertyf("tu-154/absu/contr_roll")) -- RA-56 roll actuator rod travel
--- defineProperty("absu_contr_yaw", globalPropertyf("tu-154/absu/contr_yaw")) -- RA56 rod deflection in yaw
 
 defineProperty("gs_press_1", globalPropertyf("tu-154/hydro/gs_press_1")) -- hydraulic system 1 pressure
 defineProperty("gs_press_2", globalPropertyf("tu-154/hydro/gs_press_2")) -- hydraulic system 2 pressure
 defineProperty("gs_press_3", globalPropertyf("tu-154/hydro/gs_press_3")) -- hydraulic system 3 pressure
---defineProperty("buster_on_1", globalPropertyi("tu-154/switchers/console/buster_on_1")) -- booster switch
---defineProperty("buster_on_2", globalPropertyi("tu-154/switchers/console/buster_on_2")) -- booster switch
---defineProperty("buster_on_3", globalPropertyi("tu-154/switchers/console/buster_on_3")) -- booster switch
 
 
---defineProperty("absu_cmd_pitch", globalPropertyf("tu-154/absu/cmd_pitch"))
 defineProperty("absu_cmd_roll", globalPropertyf("tu-154/absu/cmd_roll"))
---defineProperty("absu_cmd_yaw", globalPropertyf("tu-154/absu/cmd_yaw"))
 
 defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time")) -- time of frame
 defineProperty("ppn_ra", globalPropertyf("tu-154/t154/ppn13_lamp2"))
@@ -115,9 +80,7 @@ local fail1=1
 local fail2=1
 local fail3=1
 
---local elev_lim = 0.345
 local ail_lim = 0.4
---local yaw_lim = 0.4
 
 
 local c_ra56=2
@@ -157,7 +120,6 @@ function update()
 	local gs3=get(gs_press_3)
 	local ra56_cmd_p=get(absu_cmd_roll)
 	local avt=get(hydro_circuit_auto_man)
-	--local absu_work_p=bool2int(get(roll_main_mode)>0)
 	local otk1=bool2int(get(absu_ra56_roll_fail)==1)
 	local otk2=0
 	local otk3=bool2int(get(absu_ra56_roll_fail)==2)
@@ -298,11 +260,7 @@ function update()
         p_kolc2=1
         p_kolc3=1
     end
-    -- if p_kolc1+p_kolc2+p_kolc3<3  then 
-        -- centr=0
-    -- else
         centr=ra56_act_p*c_cent       
-    --end
     if fail1+fail2+fail3==0 then
         ra56_act_p=ra56_act_p+((ra1_act_p+ra2_act_p+ra3_act_p)/3-ra56_act_p)*c_act-centr
     elseif fail1==1 and fail2==0 and fail3==0 then
@@ -339,7 +297,4 @@ function update()
 	set(pos1_out,ra1_act_p)
 	set(pos2_out,ra2_act_p)
 	set(pos3_out,ra3_act_p)
-	-- set(absu_debug1,ra1_act_p)
-	-- set(absu_debug2,ra2_act_p)
-	-- set(absu_debug3,ra3_act_p)
 end

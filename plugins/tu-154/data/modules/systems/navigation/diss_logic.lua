@@ -23,20 +23,17 @@ defineProperty("wind_spd_right", globalPropertyi("tu-154/button/console/wind_spd
 -- sources
 defineProperty("deg1", globalPropertyf("sim/flightmodel/position/psi")) -- acf mag heading
 defineProperty("deg2", globalPropertyf("sim/flightmodel/position/hpath")) -- real mag heading 
--- slip_angle = get(deg2) - get(deg1)
 defineProperty("groundspeed", globalPropertyf("sim/flightmodel/position/groundspeed")) -- groundspeed
 
 defineProperty("tas_svs", globalPropertyf("tu-154/svs/true_airspeed")) -- TAS
 defineProperty("course_gpk", globalPropertyf("tu-154/tks/course_gpk")) -- resulting TKS heading - GPK
 
 defineProperty("acf_roll", globalPropertyf("sim/flightmodel/position/true_phi")) -- roll
-defineProperty("acf_pitch", globalPropertyf("sim/flightmodel/position/true_theta")) -- roll
 
 defineProperty("pos_x", globalPropertyf("sim/flightmodel/position/local_x")) -- longtitude. positive from W to E
 defineProperty("pos_y", globalPropertyf("sim/flightmodel/position/local_y")) -- altitude. positive UP
 defineProperty("pos_z", globalPropertyf("sim/flightmodel/position/local_z")) -- latitude. positive from N to S
 
---defineProperty("wave_amplitude", globalPropertyf("sim/weather/wave_amplitude")) -- meters	Amplitude of waves in the water (height of waves)  --xp11
 
 defineProperty("wave_amplitude", globalPropertyf("sim/weather/region/wave_amplitude")) -- meters	Amplitude of waves in the water (height of waves)  --xp12
 
@@ -63,8 +60,6 @@ defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have 
 
 -- failures
 defineProperty("diss_fail", globalPropertyi("tu-154/failures/diss_fail"))
-
-
 
 
 local diss_wind_dir = get(diss_wind_course)
@@ -131,7 +126,6 @@ function update()
 		elseif diss_wind_dir < 0 then diss_wind_dir = diss_wind_dir + 360 end
 		
 		
-	
 	elseif mode == 2 then -- memory mode or fail
 	
 		diss_wind_speed = get(diss_wind_spd) / 3.6
@@ -142,7 +136,6 @@ function update()
 	
 		slip_angle = math.deg(math.atan2(diss_wind_speed * math.sin(math.rad(diss_wind_dir)), diss_wind_speed * math.cos(math.rad(diss_wind_dir)) + TAS))
 	
-		
 		
 		-- wind manual setting
 		local but_C_L = get(wind_course_left)
@@ -169,18 +162,10 @@ function update()
 		
 		slip_angle = 0
 		
-		--if slip_angle > 180 then slip_angle = slip_angle - 360
-		--elseif slip_angle < -180 then slip_angle = slip_angle + 360 end
 		
-		--diss_wind_speed = math.sqrt((g_spd * math.sin(math.rad(slip_angle)))^2 + (g_spd * math.cos(math.rad(slip_angle)) - TAS)^2 )
-		
-		--diss_wind_dir = math.deg(math.atan2(g_spd * math.sin(math.rad(slip_angle)), g_spd * math.cos(math.rad(slip_angle)) - TAS))
-	
 	elseif mode == 10 then -- fail
 		g_spd = 0
 		slip_angle = 0
-		--diss_wind_speed = 0
-		--diss_wind_dir = 0
 	
 	
 	end
@@ -205,8 +190,6 @@ function update()
 	
 	if wind_dir_act > 360 then wind_dir_act = wind_dir_act - 360
 	elseif wind_dir_act < 0 then wind_dir_act = wind_dir_act + 360 end	
-	
-	
 	
 	
 	local wind_spd_act = get(diss_wind_spd) / 3.6

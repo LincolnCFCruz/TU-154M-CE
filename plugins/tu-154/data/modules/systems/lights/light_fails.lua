@@ -41,6 +41,17 @@ local time_table = {{ -5000, -2},    -- bugs workaround
             	  { 1.5,  1 },   -- 
           		  { 1000, 1 }}   -- bugs workaround
 
+-- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
+local RANDOM_FAILS = {
+	{ lan_lamp_fail_FL, 0.00001, 0.3, 1 },
+	{ lan_lamp_fail_FR, 0.00001, 0.3, 1 },
+	{ lan_lamp_fail_WL, 0.00001, 0.3, 1 },
+	{ lan_lamp_fail_WR, 0.00001, 0.3, 1 },
+
+	{ rel_lites_nav, 0.00001, 0.3, 6 },
+	{ rel_lites_beac, 0.00001, 0.3, 6 },
+}
+
 local fail_counter = 0
 local check_time = math.random(15, 30)
 
@@ -86,13 +97,7 @@ if MASTER then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(lan_lamp_fail_FL) ~= 1 then set(lan_lamp_fail_FL, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(lan_lamp_fail_FR) ~= 1 then set(lan_lamp_fail_FR, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(lan_lamp_fail_WL) ~= 1 then set(lan_lamp_fail_WL, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			if get(lan_lamp_fail_WR) ~= 1 then set(lan_lamp_fail_WR, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(rel_lites_nav) ~= 6 then set(rel_lites_nav, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_lites_beac) ~= 6 then set(rel_lites_beac, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
+			rollFailures(RANDOM_FAILS, FAIL)
 			
 			
 			
@@ -110,13 +115,7 @@ if MASTER then
 		-- no failures enabled
 		fail_counter = 0
 		
-		set(lan_lamp_fail_FL, 0)
-		set(lan_lamp_fail_FR, 0)
-		set(lan_lamp_fail_WL, 0)
-		set(lan_lamp_fail_WR, 0)
-		
-		set(rel_lites_nav, 0)
-		set(rel_lites_beac, 0)
+		clearFailures(RANDOM_FAILS)
 	
 	end
 	

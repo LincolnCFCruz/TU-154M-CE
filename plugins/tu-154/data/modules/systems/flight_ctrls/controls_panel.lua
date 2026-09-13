@@ -85,7 +85,6 @@ defineProperty("gears_green_right_eng", globalPropertyf("tu-154/lights/gears_gre
 
 -- sources
 defineProperty("elevator_L", globalPropertyf("tu-154/controlls/elev_L_phys")) -- Degrees, positive is trailing-edge down.
---defineProperty("elevator_R", globalPropertyf("sim/flightmodel/controls/hstab2_elv1def")) -- Degrees, positive is trailing-edge down.
 defineProperty("stab_pos", globalPropertyf("sim/flightmodel2/controls/elevator_trim")) -- sim pitch trimmer
 defineProperty("flap_inn_L", globalPropertyf("sim/flightmodel/controls/wing1l_fla1def")) -- inner flaps left
 defineProperty("flap_inn_R", globalPropertyf("sim/flightmodel/controls/wing1r_fla1def")) -- inner flaps right
@@ -142,7 +141,6 @@ defineProperty("frame_time", globalPropertyf("tu-154/time/frame_time"))
 
 -- control surfaces
 
---defineProperty("slats", globalPropertyf("sim/flightmodel/controls/slatrat")) -- slats position. this one works
 defineProperty("slats", globalPropertyf("sim/flightmodel2/controls/slat1_deploy_ratio")) -- slats position. this one works too
 
 defineProperty("rv5_alt_L", globalPropertyf("tu-154/misc/rv5_alt_left"))  -- altitude on the left altimeter
@@ -157,7 +155,6 @@ defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = p
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
 
 defineProperty("elev_coeff", globalPropertyf("tu-154/controlls/elev_coeff"))
-
 
 
 -- sounds
@@ -227,7 +224,6 @@ local function lamps()
 	local stab_work_brt = 0
 	local stab_pos_now = get(stab_pos)
 	
-	--print(stab_pos_now, stab_pos_now - stab_pos_last)
 	if math.abs(stab_pos_now - stab_pos_last) > 0.01 * passed then 
 		stab_work_timer = stab_work_timer + passed
 		if stab_work_timer > 0.5 then
@@ -278,7 +274,6 @@ local function lamps()
 	set(spoilers_inn_right, spoilers_inn_right_brt)		
 	
 	
-	
 	local flaps_unsync_brt = 0
 	if math.abs(flap_pos_now_L - flap_pos_now_R) >= 3 then flaps_unsync_brt = 1 end
 	flaps_unsync_brt = math.max(flaps_unsync_brt * lamps_brt, test_btn)
@@ -310,7 +305,6 @@ local function lamps()
 	if get(ismaster) ~= 1 then set(slats_extended, slats_extended_brt) end	
 	
 
-	
 	local to_rudder_brt = 0
 	local to_elevator_brt = 0
 	
@@ -329,7 +323,6 @@ local function lamps()
 	end
 	
 	if forcer_lit then 
-		--to_rudder_brt = 1 
 		to_elevator_brt = 1
 	end	
 	
@@ -349,7 +342,6 @@ local function lamps()
 	
 	if forcer_rud_lit then 
 		to_rudder_brt = 1 
-		--to_elevator_brt = 1
 	end		
 	
 	
@@ -395,7 +387,6 @@ local function lamps()
 	local gears_not_ext_brt = math.max(bool2int(gear_timer > 0.3) * lamps_brt, test_btn) 
 	
 	
-	
 	set(gears_not_ext, gears_not_ext_brt)	
 	
 	local gears_red_left_brt = bool2int(gear_L_pos < 0.99 and gear_L_pos > 0.01)
@@ -423,7 +414,6 @@ local function lamps()
 	set(gears_green_right, gears_green_right_brt)
 	
 	
-	
 	local gears_red_left_eng_brt = bool2int(gear_L_pos < 0.99 and gear_L_pos > 0.01)
 	gears_red_left_eng_brt = math.max(gears_red_left_eng_brt * lamps_brt, test_btn_eng)
 	set(gears_red_left_eng, gears_red_left_eng_brt)
@@ -449,42 +439,19 @@ local function lamps()
 	set(gears_green_right_eng, gears_green_right_eng_brt)	
 	
 	
-	
-	
-	
-	
-	
-	
 	-- alarm
 	local sound_alarm = gear_not_ext or ((flap_pos_now_L < 14 or flap_pos_now_R < 14 or slats_now < 0.5) and (get(anim_rud1)+get(anim_rud2)+get(anim_rud3))/3 > 0.7 and math.max(get(deflection_mtr_2), get(deflection_mtr_3)) > 0.05)
 	
 	set(main_gear_flaps, bool2int(sound_alarm))
 	
 	
-
 end
-
 
 
 local stab_ind_act = 0
 local elev_ind_act = 0
 local flap_ind_L_act = 0
 local flap_ind_R_act = 0
-
--- local mach_tbl = {
--- {-10, 1},
--- {0, 1},
--- {0.1, 1},
--- {0.25, 0.5},
--- {0.34, 0.28},
--- {0.38, 0.22},
--- {0.5, 0.21},
--- {0.6, 0.21}, -- fail
--- {0.7, 0.2},
--- {0.8, 0.19}, 
--- {0.9, 0.13},
--- {1, 0.1},
--- {10, 0.1}}
 
 
 local function gauges()
@@ -494,7 +461,6 @@ local function gauges()
 	local flap_ind_L = 0
 	local flap_ind_R = 0
 	
-	--print(get(stab_pos))
 	
 	if get(bus36_volt_left) > 30 then
 		stabil_ind = get(stab_pos) * 5.5
@@ -506,12 +472,6 @@ local function gauges()
 	-- calculate correction for elevator
 	local ias = get(indicated_airspeed) * 1.852
 	local mach = get(machno)
-	
-	-- if mach < 1 then elev_coef = 1 / interpolate(mach_tbl, mach)
-	-- else elev_coef = 1/0.1 end
-	
-	
-	
 	
 	
 	stab_ind_act = stab_ind_act + (stabil_ind - stab_ind_act) * passed * 10
@@ -581,7 +541,6 @@ local function caps_check()
 end
 
 
-
 local stab_manual_last = get(stab_manual)
 local stab_setting_last = get(stab_setting)
 local ail_trimm_sw_last = get(ail_trimm_sw)
@@ -617,7 +576,6 @@ local function swichers_check()
 	local emerg_elev_trimm_sw = get(emerg_elev_trimm)
 	
 	
-	
 	local changes = stab_manual_sw + stab_setting_sw + ail_trimm_sw_sw + rudd_trimm_sw_sw + contr_force_set_sw + nosewheel_turn_enable_sw + emerg_elev_trimm_sw
 	changes = changes + nosewheel_turn_sel_sw + slat_man_sw + flaps_sel_sw + gears_retr_lock_sw + gears_ext_3GS_sw + buster_on_1_sw + buster_on_2_sw + buster_on_3_sw
 	
@@ -646,8 +604,6 @@ local function swichers_check()
 end
 
 
-
-
 local sim_start_timer = 0
 
 function update()
@@ -665,9 +621,4 @@ function update()
 	lamps()
 
 end
-
-
-
-
-
 

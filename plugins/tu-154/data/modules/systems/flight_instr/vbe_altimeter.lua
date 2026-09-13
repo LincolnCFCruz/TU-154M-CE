@@ -22,7 +22,6 @@ defineProperty("vbe_flightlevel", globalPropertyf("tu-154/gauges/alt/vbe_flightl
 defineProperty("mode_button", globalPropertyi("tu-154/gauges/alt/vbe_mode_but_left"))  -- mode button
 
 defineProperty("bus27_volt", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
-defineProperty("bus115_volt", globalPropertyf("tu-154/elec/bus115_1_volt")) -- 115 V bus voltage
 
 defineProperty("vbe_on", globalPropertyi("tu-154/switchers/ovhd/vbe_1_on"))  -- power switcher
 
@@ -39,13 +38,9 @@ defineProperty("warning_volume_ratio", globalPropertyf("sim/operation/sound/warn
 defineProperty("fail", globalPropertyi("sim/operation/failures/rel_ss_alt"))
 
 
-
 -- Smart Copilot
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster")) -- Master. 0 = plugin not found, 1 = slave 2 = master
 defineProperty("hascontrol_1", globalPropertyf("scp/api/hascontrol_1")) -- Have control. 0 = plugin not found, 1 = no control 2 = has control
-
-
-
 
 
 -- load images
@@ -235,8 +230,6 @@ end
 	set(alt_mtr, altitude_mtr)
 	
 	
-
-	
 	-- show altitude thousands
 	if mode == 0 then 
 		if altitude_mtr > 0 then altitude_1000 = math.floor((altitude_mtr) * 0.001)
@@ -266,8 +259,6 @@ end
 		negative = true
 	else negative = false
 	end	
-	
---	print(altitude_ft, "  ", altitude_1000, "  ", altitude_100)
 	
 	
 	-- check E flag
@@ -354,9 +345,7 @@ end
 	end
 	
 
-
 end
-
 
 
 components = {
@@ -428,7 +417,6 @@ components = {
 		end,
 	},
 
-	
 	
 	-- altitude digits 10000
 	digitstape {
@@ -558,7 +546,6 @@ components = {
 	},
 
 
-
 	-- pressure digits
 	digitstape {
         position = { 160, 100, 90, 35},
@@ -618,13 +605,5 @@ components = {
 		image = get(scale_img),
 	},
 	
-
-
-
-
-
-
-
-
 
 }

@@ -162,11 +162,6 @@ v_var["reverse_off_said"] = false
 v_var["remove_flaps_said"] = false
 v_var["on_brakes_said"] = false
 
---v_var["setting_tks_said"] = false
-
-
-
-
 
 cpt_tbl["ap_enable"] = {loadSample('sounds/crew/rus/cpt/ap_enable.wav'), loadSample('sounds/crew/eng/cpt/ap_enable.wav')}
 cpt_tbl["approcah"] = {loadSample('sounds/crew/rus/cpt/approcah.wav'), loadSample('sounds/crew/eng/cpt/approcah.wav')}
@@ -190,20 +185,13 @@ cpt_tbl["takeoff_mode"] = {loadSample('sounds/crew/rus/cpt/takeoff_mode.wav'), l
 cpt_tbl["turn_on_users"] = {loadSample('sounds/crew/rus/cpt/turn_on_users.wav'), loadSample('sounds/crew/eng/cpt/turn_on_users.wav')}
 
 
-
 cop_tbl["brakes_check"] = {loadSample('sounds/crew/rus/copilot/brakes_check.wav'), loadSample('sounds/crew/eng/copilot/brakes_check.wav')}
 cop_tbl["down_gear"] = {loadSample('sounds/crew/rus/copilot/down_gear.wav'), loadSample('sounds/crew/eng/copilot/down_gear.wav')}
---cop_tbl["flaps_15"] = {loadSample('sounds/crew/rus/copilot/flaps_15.wav'), loadSample('sounds/crew/eng/copilot/flaps_15.wav')}
---cop_tbl["flaps_28"] = {loadSample('sounds/crew/rus/copilot/flaps_28.wav'), loadSample('sounds/crew/eng/copilot/flaps_28.wav')}
---cop_tbl["flaps_36"] = {loadSample('sounds/crew/rus/copilot/flaps_36.wav'), loadSample('sounds/crew/eng/copilot/flaps_36.wav')}
---cop_tbl["flaps_45"] = {loadSample('sounds/crew/rus/copilot/flaps_45.wav'), loadSample('sounds/crew/eng/copilot/flaps_45.wav')}
---cop_tbl["flaps_up"] = {loadSample('sounds/crew/rus/copilot/flaps_up.wav'), loadSample('sounds/crew/eng/copilot/flaps_up.wav')}
 cop_tbl["gear_down"] = {loadSample('sounds/crew/rus/copilot/gear_down.wav'), loadSample('sounds/crew/eng/copilot/gear_down.wav')}
 cop_tbl["gear_lever_neutr"] = {loadSample('sounds/crew/rus/copilot/gear_lever_neutr.wav'), loadSample('sounds/crew/eng/copilot/gear_lever_neutr.wav')}
 cop_tbl["gear_up"] = {loadSample('sounds/crew/rus/copilot/gear_up.wav'), loadSample('sounds/crew/eng/copilot/gear_up.wav')}
 cop_tbl["pressure_1013"] = {loadSample('sounds/crew/rus/copilot/pressure_1013.wav'), loadSample('sounds/crew/eng/copilot/pressure_1013.wav')}
 cop_tbl["ready_to_taxi"] = {loadSample('sounds/crew/rus/copilot/ready_to_taxi.wav'), loadSample('sounds/crew/eng/copilot/ready_to_taxi.wav')}
-
 
 
 nav_tbl["1m"] = {loadSample('sounds/crew/rus/navigator/1.wav'), loadSample('sounds/crew/eng/navigator/1.wav')}
@@ -212,7 +200,6 @@ nav_tbl["2m"] = {loadSample('sounds/crew/rus/navigator/2.wav'), loadSample('soun
 nav_tbl["3m"] = {loadSample('sounds/crew/rus/navigator/3.wav'), loadSample('sounds/crew/eng/navigator/3.wav')}
 nav_tbl["5m"] = {loadSample('sounds/crew/rus/navigator/5.wav'), loadSample('sounds/crew/eng/navigator/5.wav')}
 nav_tbl["alt_50"] = {loadSample('sounds/crew/rus/navigator/alt_50.wav'), loadSample('sounds/crew/eng/navigator/alt_50.wav')}
---nav_tbl["tablo"] = {loadSample('sounds/crew/rus/navigator/tablo.wav'), loadSample('sounds/crew/eng/navigator/tablo.wav')}
 nav_tbl["lights_on"] = {loadSample('sounds/crew/rus/navigator/lights_on.wav'), loadSample('sounds/crew/eng/navigator/lights_on.wav')}
 nav_tbl["lights_off"] = {loadSample('sounds/crew/rus/navigator/lights_off.wav'), loadSample('sounds/crew/eng/navigator/lights_off.wav')}
 nav_tbl["minimums"] = {loadSample('sounds/crew/rus/navigator/minimums.wav'), loadSample('sounds/crew/eng/navigator/minimums.wav')}
@@ -247,7 +234,6 @@ nav_tbl["stab_30"] = {loadSample('sounds/crew/rus/navigator/stab_3.wav'), loadSa
 nav_tbl["stab_55"] = {loadSample('sounds/crew/rus/navigator/stab_5_5.wav'), loadSample('sounds/crew/eng/navigator/stab_5_5.wav')}
 
 
-
 eng_tbl["at_on"] = {loadSample('sounds/crew/rus/engineer/at_on.wav'), loadSample('sounds/crew/eng/engineer/at_on.wav')}
 eng_tbl["check_before_start"] = {loadSample('sounds/crew/rus/engineer/check_before_start.wav'), loadSample('sounds/crew/eng/engineer/check_before_start.wav')}
 eng_tbl["clear_engines"] = {loadSample('sounds/crew/rus/engineer/clear_engines.wav'), loadSample('sounds/crew/eng/engineer/clear_engines.wav')}
@@ -264,7 +250,6 @@ eng_tbl["takeoff_mode"] = {loadSample('sounds/crew/rus/engineer/takeoff_mode.wav
 eng_tbl["turn_63_on"] = {loadSample('sounds/crew/rus/engineer/turn_63_on.wav'), loadSample('sounds/crew/eng/engineer/turn_63_on.wav')}
 eng_tbl["valves_closed"] = {loadSample('sounds/crew/rus/engineer/valves_closed.wav'), loadSample('sounds/crew/eng/engineer/valves_closed.wav')}
 eng_tbl["engines_run"] = {loadSample('sounds/crew/rus/engineer/engines_run.wav'), loadSample('sounds/crew/eng/engineer/engines_run.wav')}
-
 
 
 gnd_tbl["apu_start_ready"] = {loadSample('sounds/crew/rus/ground/apu_start_ready.wav'), loadSample('sounds/crew/eng/ground/apu_start_ready.wav')}
@@ -320,7 +305,6 @@ cpt_tbl["fail_4"] = {loadSample('sounds/chklist/rus/cpt/fail_4.wav'), loadSample
 cpt_tbl["fail_5"] = {loadSample('sounds/chklist/rus/cpt/fail_5.wav'), loadSample('sounds/chklist/eng/cpt/fail_5.wav')}
 
 
-
 cop_tbl["0"] = {loadSample('sounds/chklist/rus/cop/0.wav'), loadSample('sounds/chklist/eng/cop/0.wav')}
 cop_tbl["1"] = {loadSample('sounds/chklist/rus/cop/1.wav'), loadSample('sounds/chklist/eng/cop/1.wav')}
 cop_tbl["2"] = {loadSample('sounds/chklist/rus/cop/2.wav'), loadSample('sounds/chklist/eng/cop/2.wav')}
@@ -361,8 +345,6 @@ cop_tbl["fail_2"] = {loadSample('sounds/chklist/rus/cop/fail_2.wav'), loadSample
 cop_tbl["fail_3"] = {loadSample('sounds/chklist/rus/cop/fail_3.wav'), loadSample('sounds/chklist/eng/cop/fail_3.wav')}
 cop_tbl["fail_4"] = {loadSample('sounds/chklist/rus/cop/fail_4.wav'), loadSample('sounds/chklist/eng/cop/fail_4.wav')}
 cop_tbl["fail_5"] = {loadSample('sounds/chklist/rus/cop/fail_5.wav'), loadSample('sounds/chklist/eng/cop/fail_5.wav')}
-
-
 
 
 nav_tbl["0"] = {loadSample('sounds/chklist/rus/nav/0.wav'), loadSample('sounds/chklist/eng/nav/0.wav')}
@@ -447,9 +429,6 @@ nav_tbl["fail_4"] = {loadSample('sounds/chklist/rus/nav/fail_4.wav'), loadSample
 nav_tbl["fail_5"] = {loadSample('sounds/chklist/rus/nav/fail_5.wav'), loadSample('sounds/chklist/eng/nav/fail_5.wav')}
 
 
-
-
-
 eng_tbl["0"] = {loadSample('sounds/chklist/rus/eng/0.wav'), loadSample('sounds/chklist/eng/eng/0.wav')}
 eng_tbl["1"] = {loadSample('sounds/chklist/rus/eng/1.wav'), loadSample('sounds/chklist/eng/eng/1.wav')}
 eng_tbl["2"] = {loadSample('sounds/chklist/rus/eng/2.wav'), loadSample('sounds/chklist/eng/eng/2.wav')}
@@ -484,17 +463,4 @@ eng_tbl["fail_2"] = {loadSample('sounds/chklist/rus/eng/fail_2.wav'), loadSample
 eng_tbl["fail_3"] = {loadSample('sounds/chklist/rus/eng/fail_3.wav'), loadSample('sounds/chklist/eng/eng/fail_3.wav')}
 eng_tbl["fail_4"] = {loadSample('sounds/chklist/rus/eng/fail_4.wav'), loadSample('sounds/chklist/eng/eng/fail_4.wav')}
 eng_tbl["fail_5"] = {loadSample('sounds/chklist/rus/eng/fail_5.wav'), loadSample('sounds/chklist/eng/eng/fail_5.wav')}
-
-
-
-
-
-
-
-
-
-
-
-
-
 

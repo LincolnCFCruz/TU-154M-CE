@@ -28,7 +28,6 @@ defineProperty("tcas_rot_big", globalPropertyi("tu-154/switchers/tcas/tcas_rot_b
 
 defineProperty("alt_svs", globalPropertyf("tu-154/svs/altitude")) -- Altitude by 1013 hpa
 
-defineProperty("rv_angle", globalPropertyf("tu-154/gauges/alt/radioalt_needle_left"))  -- RV needle
 defineProperty("rv_flag", globalPropertyf("tu-154/gauges/alt/radioalt_flag_left"))  -- RV flag
 defineProperty("rv5_alt", globalPropertyf("tu-154/misc/rv5_alt_left"))  -- altitude on the left altimeter
 defineProperty("screen_mode", globalPropertyi("tu-154/tcas/screen_mode"))  -- display on the screen. 0 = transponder code, -1 = error, 1 = test
@@ -40,10 +39,7 @@ defineProperty("bus115_3_volt", globalPropertyf("tu-154/elec/bus115_3_volt"))
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left")) -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right")) -- 27 V bus voltage
 
-defineProperty("xpdr_code", globalPropertyf("sim/cockpit/radios/transponder_code"))
 defineProperty("xpdr_mode", globalPropertyf("sim/cockpit/radios/transponder_mode")) 
-defineProperty("xpdr_led", globalPropertyf("sim/cockpit/radios/transponder_light"))
-defineProperty("xpdr_fail", globalPropertyi("sim/operation/failures/rel_xpndr"))
 
 defineProperty("ovhd_mode", globalPropertyi("tu-154/switchers/ovhd/transponder_mode"))
 
@@ -139,7 +135,6 @@ defineProperty("pos_y", globalPropertyf("sim/flightmodel/position/local_y")) -- 
 defineProperty("pos_z", globalPropertyf("sim/flightmodel/position/local_z")) -- latitude. positive from N to S
 
 defineProperty("course", globalPropertyf("sim/flightmodel/position/psi")) -- angle between -Z axis and airplane's nose
-defineProperty("course_fly", globalPropertyf("sim/flightmodel/position/hpath")) -- course, where aircraft actually flies
 
 
 defineProperty("ra_scale_set", globalPropertyi("tu-154/tcas/ra_scale_set"))  -- RA mode scale set. 0 = none.
@@ -196,7 +191,6 @@ intruders_tbl = {
 {["Tau"] = 0, ["alt"] = 0, ["cl_alt"] = 0, ["rate"] = 0}, -- 1 = Tau, 2 = current distance, 3 = close distance, 4 = current alt, 5 = close alt, 6 = current rate
 
 }
-
 
 
 function limits()
@@ -333,8 +327,6 @@ local function refresh_data()
 end
 
 
-
-
 local function coor_calc() -- recalculate coordinates
 	local level = get(level_mode)
 	for i = 1, 20, 1 do
@@ -349,7 +341,6 @@ local function coor_calc() -- recalculate coordinates
 		
 		if (alt > 0 and level < 0) or (alt < 0 and level > 0) then show = 0 end
 		
-		--print("coor calc", x, y, z, show)
 		
 		tcas_show_tbl[i][1] = x
 		tcas_show_tbl[i][2] = y
@@ -358,7 +349,6 @@ local function coor_calc() -- recalculate coordinates
 		tcas_show_tbl[i][5] = 0
 		tcas_show_tbl[i][6] = ""
 		if show == 0 then tcas_show_tbl[i][7] = false end
-		
 		
 		
 	end
@@ -375,7 +365,6 @@ local function mark_calc()
 	
 	-- flush the indruders table and fill it from scratch
 	intruders_tbl = {}
-	
 	
 	
 	for i = 1, 20, 1 do
@@ -434,7 +423,6 @@ local function mark_calc()
 			local search_dist = math.sqrt(x^2 + (y - 3*1852)^2) / 1852
 			
 			
-			
 			if search_dist > 16 or math.abs(alt) > 2651.76 then 
 				mark = 0 -- too far away. ignoring
 				tcas_show_tbl[i][7] = false
@@ -453,9 +441,6 @@ local function mark_calc()
 				local delta_y = y - tcas_prev_tbl[i][2]
 				local delta_z = alt - alt_prev
 				local z_last = alt
-				
-				--print(delta_x, delta_y, delta_z)
-				
 				
 				
 				if acf_local_tbl[i][1]-acf_local_last_tbl[i][1] ~= 0 or acf_local_tbl[i][3]-acf_local_last_tbl[i][3] ~= 0 then -- bugs walkaround
@@ -510,7 +495,6 @@ local function mark_calc()
 			
 			end
 			
-			--if mark > 0 then print(mark, dist, alt) end
 			
 			tcas_show_tbl[i][4] = mark
 			
@@ -551,15 +535,10 @@ local function mark_calc()
 		acf_local_last_tbl[i][2] = acf_local_tbl[i][2]
 		acf_local_last_tbl[i][3] = acf_local_tbl[i][3]
 		
-		--print(i, "  ", tcas_show_tbl[i][4])
 		
 	end
 
 	set(traffic_det, traffic)
-	
-
-	
-	
 	
 
 end
@@ -634,8 +613,6 @@ if MASTER then
 	end
 	
 	
-	
-	
 	-- set default xpdr mode
 	-- (off=0,stdby=1,on=2,test=3)
 	
@@ -663,7 +640,6 @@ end
 
 end
 
---local range_last = range
 
 local ident_timer = 10
 local sq_set_timer = 10
@@ -673,7 +649,6 @@ local left_btn_last = get(tcas_left_btn)
 local right_btn_last = get(tcas_right_btn)
 local enter_btn_last = get(tcas_ent_btn)
 
--- local text = 0
 
 local reset timer = 0
 
@@ -690,7 +665,6 @@ local function text_mode()
 	
 	ident_timer = ident_timer + passed
 	
-	--if range_last ~= range then range_timer = 0 end
 	if get(tcas_ident_btn) == 1 then ident_timer = 0 end
 
 if MASTER then
@@ -718,13 +692,10 @@ if MASTER then
 	end
 	
 	
-	
 	if text == 0 and enter_btn_sw == 1 and enter_btn_sw ~= enter_btn_last then --or text == 11 or text == 12 or text == 13 or text == 14 then
 		text = 11
-		--set(screen_mode, text)
 	elseif text >= 11 and text <= 14 and enter_btn_sw == 1 and enter_btn_sw ~= enter_btn_last then
 		text = 0
-		--set(screen_mode, text)
 	end
 	
 	-- change cursor position
@@ -742,7 +713,6 @@ if MASTER then
 		elseif text < 11 then text = 11 end
 		
 		
-		
 		if fnc_but_sw ~= fnc_but_last and fnc_but_sw == 1 then text = 0 end
 		
 		tcas_rot_big_last = tcas_rot_big_now
@@ -751,7 +721,6 @@ if MASTER then
 	
 end	
 
-	
 	
 	if text == 1 then
 		local lvl = get(level_mode)
@@ -771,9 +740,6 @@ end
 	end
 	
 	
-	
-	
-	
 	if fnc_but_sw == 1 then
 		range_timer = 10
 		ident_timer = 10
@@ -784,7 +750,6 @@ end
 	right_btn_last = right_btn_sw
 	enter_btn_last = enter_btn_sw
 	
-	--range_last = range
 	-- result
 	if MASTER then set(screen_mode, text) end
 end
@@ -796,13 +761,10 @@ local col_alt = 0
 local col_alt_last = 0
 
 local function tcas_ra_calc()
-	--print ("    ")
 	local Tau_TA, Tau_RA, Dist_TA, Dist_RA, Alt_Ta, Alt_RA = limits() -- set limits for TA and RA modes
 	local our_vvi = get(vvi)
 	local our_alt = get(alt_svs)
 	local radioalt = get(rv5_alt)
-	--local our_course = get(true_psi)
-	--local westbound = our_course > 180 and our_course <= 360
 	
 	-- sort table by Tau
 	if intruders_tbl[1] and intruders_tbl[2] and intruders_tbl[1]["Tau"] ~= nil and intruders_tbl[2]["Tau"] ~= nil then
@@ -815,11 +777,9 @@ local function tcas_ra_calc()
 		-- take two targets and check where they will pass
 		local target_1_alt_now = nil --intruders_tbl[1]["alt"]
 		local target_2_alt_now = nil --intruders_tbl[2]["alt"]
-		--local target_3_alt_now = nil
 		
 		local target_1_alt_col = nil --intruders_tbl[1]["cl_alt"]
 		local target_2_alt_col = nil --intruders_tbl[2]["cl_alt"]
-		--local target_3_alt_col = nil
 		
 		if intruders_tbl[1] then 
 			target_1_alt_now = intruders_tbl[1]["alt"]
@@ -830,22 +790,9 @@ local function tcas_ra_calc()
 			target_2_alt_now = intruders_tbl[2]["alt"]
 			target_2_alt_col = intruders_tbl[2]["cl_alt"]
 		end
-		--[[
-		if intruders_tbl[3] then
-			target_3_alt_now = intruders_tbl[3]["alt"]
-			target_3_alt_col = intruders_tbl[3]["cl_alt"]
-		end
-		--]]
 		
 		local targets = 0
 		
-		--[[if target_1_alt_now and target_2_alt_now then -- two targets
-			targets = 2
-			
-			
-			
-			
-			ra_counter = 0		--]]
 		if target_1_alt_now and ra_counter > 3 then -- only one target
 			targets = 1
 			
@@ -872,7 +819,6 @@ local function tcas_ra_calc()
 					initial_RA = 1
 					set(ra_scale_set, 6)
 				end
-				--print(">10  ", initial_RA, up, down, our_vvi, altCol)
 			elseif our_vvi > 4 then 
 				up = (12 - our_vvi) * timeToCol
 				down = -our_vvi * timeToCol
@@ -884,7 +830,6 @@ local function tcas_ra_calc()
 					initial_RA = 0
 					set(ra_scale_set, 7)
 				end
-				--print(">3  ", initial_RA, up, down, our_vvi, altCol)
 			elseif our_vvi < -10 then 
 				up = (-5 - our_vvi) * timeToCol
 				down = (-12 - our_vvi) * timeToCol
@@ -896,7 +841,6 @@ local function tcas_ra_calc()
 					initial_RA = -2 
 					set(ra_scale_set, 4)
 				end
-				--print("<10  ", initial_RA, up, down, our_vvi, altCol)
 			elseif our_vvi < -3 then 
 				up = our_vvi * timeToCol
 				down = (-12 - our_vvi) * timeToCol
@@ -908,7 +852,6 @@ local function tcas_ra_calc()
 					initial_RA = -2 
 					set(ra_scale_set, 4)
 				end
-				--print("<3  ", initial_RA, up, down, our_vvi, altCol)
 			else
 				up = (5 - our_vvi) * timeToCol
 				down = (-5 - our_vvi) * timeToCol
@@ -921,7 +864,6 @@ local function tcas_ra_calc()
 					set(ra_scale_set, 3)
 				end
 				
-				--print("0  ", initial_RA, up, down, our_vvi, altCol)
 			end
 			
 			ra_counter = 0
@@ -933,7 +875,6 @@ local function tcas_ra_calc()
 				if tcas_show_tbl[i][7] then no_threat = false end
 			end
 			
-			--print(math.abs(our_alt - col_alt) > Alt_RA, no_threat)
 			
 			if (math.abs(our_alt - col_alt) > Alt_Ta or no_threat) and ra_counter > 5 then 
 				initial_RA = 10 
@@ -946,7 +887,6 @@ local function tcas_ra_calc()
 	
 		col_alt_last = col_alt
 		
-		--set(ra_scale_set, 0)
 	else
 		set(ra_scale_set, 0)
 		col_alt = 0
@@ -955,9 +895,6 @@ local function tcas_ra_calc()
 	
 	
 end
-
-
-
 
 
 function update()
@@ -970,7 +907,6 @@ function update()
 	power = (get(bus115_1_volt) > 110 or get(bus115_3_volt) > 110) and get(tcas_on) == 1
 	
 	tcas_mode_set()
-	
 	
 	
 	-- refresh table once per second
@@ -991,7 +927,6 @@ function update()
 end
 
 
-
 components = {
 	
 	tcas_draw {
@@ -1006,7 +941,4 @@ components = {
 
 
 }
-
-
-
 
