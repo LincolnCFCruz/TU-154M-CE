@@ -31,6 +31,17 @@ defineProperty("deflection_mtr_3", globalProperty("sim/flightmodel2/gear/tire_ve
 
 -- random failures: { flag, k1, k2, failed value } (rollFailures, core/glbl_func.lua)
 local RANDOM_FAILS = {
+	{ rel_ice_inlet_heat1, 0.00001, 0.3, 6 },
+	{ rel_ice_inlet_heat2, 0.00001, 0.3, 6 },
+	{ rel_ice_inlet_heat3, 0.00001, 0.3, 6 },
+
+	{ rel_ice_pitot_heat1, 0.00001, 0.3, 6 },
+	{ rel_ice_pitot_heat2, 0.00001, 0.3, 6 },
+	{ ppd_3_heat_fail, 0.00001, 0.3, 1 },
+
+	{ rel_ice_surf_heat, 0.00001, 0.3, 6 },
+	{ rel_ice_surf_heat2, 0.00001, 0.3, 6 },
+
 	{ rio_fail, 0.00001, 0.3, 1 },
 
 	{ window_heat_fail_1, 0.00001, 0.3, 1 },
@@ -69,17 +80,6 @@ if get(ismaster) ~= 1 then
 			check_time = math.random(15, 30)
 			
 			-- random failures
-			if get(rel_ice_inlet_heat1) ~= 1 then set(rel_ice_inlet_heat1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ice_inlet_heat2) ~= 1 then set(rel_ice_inlet_heat2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ice_inlet_heat3) ~= 1 then set(rel_ice_inlet_heat3, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
-			if get(rel_ice_pitot_heat1) ~= 1 then set(rel_ice_pitot_heat1, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ice_pitot_heat2) ~= 1 then set(rel_ice_pitot_heat2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(ppd_3_heat_fail) ~= 1 then set(ppd_3_heat_fail, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 1) end
-			
-			if get(rel_ice_surf_heat) ~= 1 then set(rel_ice_surf_heat, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			if get(rel_ice_surf_heat2) ~= 1 then set(rel_ice_surf_heat2, bool2int(math.random() < 0.00001 * FAIL * 0.3) * 6) end
-			
 			rollFailures(RANDOM_FAILS, FAIL)
 		
 			
