@@ -18021,29 +18021,41 @@ image = get(glass),
 	--APT3Comp_Serializer = {}
 
 
+-- Tu-154M: the display itself, in the unit's native 210 x 110 space, factored
+-- out of draw() so it can be drawn three ways: onto the panel (draw3d), into the
+-- `display` render target (the 2D windows, and the 3D screen by day), and
+-- straight onto the panel by KLN90_screen in the lit pass -- which is what glows
+-- at night, where a blitted render target does not. Published through the
+-- tu154_kln table main.lua creates. It runs in this component's environment
+-- wherever it is called from, so size, the fonts and the lines are this file's.
+local function drawDisplay()
+	sasl.gl.drawRectangle(0, 0, size[1], size[2], {0 ,0 ,0 ,1})
+	sasl.gl.drawBitmapText(font, 1, 69, gline[1], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(font, 1, 58, gline[2], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(font, 1, 47, gline[3], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(font, 1, 36, gline[4], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(font, 1, 25, gline[5], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(font, 1, 14, gline[6], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(font, 1, 0, gline[7], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 69, bline[1], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 58, bline[2], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 47, bline[3], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 36, bline[4], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 25, bline[5], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 14, bline[6], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontb, 1, 0, bline[7], TEXT_ALIGN_LEFT, brt, brt, brt)
+	sasl.gl.drawBitmapText(fontl, 5.5, 58, values["scaleline"], TEXT_ALIGN_LEFT, brt, brt, brt)
+
+	drawAll(Nav5Comp)
+	drawAll(APT3Comp)
+
+	drawAll(components2)
+end
+tu154_kln.drawDisplay = drawDisplay
+
 function draw()
 		if draw3d == true then
-			sasl.gl.drawRectangle(0, 0, size[1], size[2], {0 ,0 ,0 ,1})
-			sasl.gl.drawBitmapText(font, 1, 69, gline[1], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(font, 1, 58, gline[2], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(font, 1, 47, gline[3], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(font, 1, 36, gline[4], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(font, 1, 25, gline[5], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(font, 1, 14, gline[6], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(font, 1, 0, gline[7], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 69, bline[1], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 58, bline[2], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 47, bline[3], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 36, bline[4], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 25, bline[5], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 14, bline[6], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontb, 1, 0, bline[7], TEXT_ALIGN_LEFT, brt, brt, brt)
-			sasl.gl.drawBitmapText(fontl, 5.5, 58, values["scaleline"], TEXT_ALIGN_LEFT, brt, brt, brt)
-
-			drawAll(Nav5Comp)
-			drawAll(APT3Comp)
-
-			drawAll(components2)
+			drawDisplay()
 
 		---------------------------draws 2D panel display---------------------------
 
@@ -18052,38 +18064,15 @@ function draw()
 		------------------------------------------------------------------------------------
 			sasl.gl.getTargetTextureData(display , currentPosition[1], currentPosition[2], currentPosition[3], currentPosition[4])
 			end
-		else
+		elseif sasl.gl.isNonLitStage() then
+			-- Tu-154M: main.lua runs SASL in multipass mode, so draw() is called once
+			-- per panel stage. Refresh the target once, in the non-lit stage (the
+			-- lit stage draws the display directly, see KLN90_screen), and every
+			-- frame: the 3D panel shows it permanently, not only while one of the
+			-- 2D windows happens to be open.
 			sasl.gl.setRenderTarget(display , true)
-
-			-- Tu-154M: the 3D panel shows this display permanently (KLN90_screen.lua
-			-- blits the render target), so it has to be refreshed every frame, not
-			-- only while one of the 2D windows happens to be open.
-			if true then
-				sasl.gl.drawRectangle(0, 0, size[1], size[2], {0 ,0 ,0 ,1})
-				sasl.gl.drawBitmapText(font, 1, 69, gline[1], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(font, 1, 58, gline[2], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(font, 1, 47, gline[3], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(font, 1, 36, gline[4], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(font, 1, 25, gline[5], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(font, 1, 14, gline[6], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(font, 1, 0, gline[7], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 69, bline[1], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 58, bline[2], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 47, bline[3], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 36, bline[4], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 25, bline[5], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 14, bline[6], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontb, 1, 0, bline[7], TEXT_ALIGN_LEFT, brt, brt, brt)
-				sasl.gl.drawBitmapText(fontl, 5.5, 58, values["scaleline"], TEXT_ALIGN_LEFT, brt, brt, brt)
-
-				drawAll(Nav5Comp)
-				drawAll(APT3Comp)
-
-				drawAll(components2)
-			end
-
+			drawDisplay()
 			sasl.gl.restoreRenderTarget ()
-
 		end
 
 end

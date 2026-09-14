@@ -5,40 +5,34 @@
 --              + lever * (gs3/200) * power_R *      gs_3GS  * 1.3
 --              + emerg_gear_ext * (gs2/200)                 * 1.3
 --
--- Three paths to the same three actuators, SUMMED rather than selected, which
--- is why they are drawn as three columns dropping onto one bar. Each is
--- *proportional* to its system's pressure (`min(press / 200, 1)`) and not gated
--- by it, so a half-pressurised system still extends the gear, at half speed.
+-- Three paths to the same actuators, SUMMED rather than selected (three
+-- columns onto one bar). Each is proportional to its system's pressure
+-- (`min(press / 200, 1)`), not gated by it: half pressure is half speed.
 --
--- Below the bar the diagram stops being that line, because the sum is not what
--- moves the gear. Every leg integrates
+-- Every leg then integrates
 --
 --   pos = pos + SPEED * (drive * (not failed) + gravity - air load) * dt * gear_move
 --
--- inside `if not lockN and retract then`, and those three extra terms are the
--- reason this tab is worth drawing:
+-- inside `if not lockN and retract then`:
+--   * `gear_move` is a hard gate (27 V left, or right with 3GS selected). It
+--     multiplies the emergency term too, so with both 27 V buses dead nothing
+--     moves, not even under gravity -- the contactors on the three drops.
+--   * `retract` gates BOTH directions: weight on the left main holds the gear
+--     unless the lock switch overrides it.
+--   * gravity and air load sit outside the failure term, so a failed leg still
+--     free-falls; all three legs take both from `pos1_last`, the NOSE position.
 --
---   * `gear_move` is a HARD gate -- 27 V left when 3GS is not selected, 27 V
---     right when it is. The emergency term needs no power to appear in the sum,
---     but the sum it lands in is multiplied by `gear_move` anyway, so with both
---     27 V buses dead the gear does not move at all: not on the emergency
---     system, and not under its own weight. That is what the contactors on the
---     three drops say.
---   * `retract` is named for retraction and gates BOTH directions: with weight
---     on the left main strut nothing moves unless the lock switch overrides it.
---   * gravity and air load are outside the failure term, so a leg whose
---     retraction has failed still free-falls -- and all three legs take both
---     terms from `pos1_last`, the NOSE gear's position, not their own.
---
--- The brake band is brake_system.lua, which saturates on `press / 120` where
--- the gear uses `press / 200`, and whose anti-skid releases a wheel that has
--- dropped below 80 % of ground speed.
+-- The brake band is brake_system.lua: it saturates at `press / 120`, and its
+-- anti-skid releases a wheel below 80 % of ground speed.
 -- ---------------------------------------------------------------------------
 
 local LG = {
     C3   = 340,  -- three-column node
     TOP  = 8,    -- the three extension paths                (LN_H6 -> 107)
+    PUSH = 121,  -- the direction heads on the three paths
     BAR  = 135,  -- the summed drive
+    CONT = 161,  -- the gate contactors
+    CAPT = 176,  -- the drive and gate captions
     LEGS = 187,  -- nose, left main, right main              (LN_H6 -> 286)
     BRK  = 326,  -- brakes                                   (LN_H6 -> 425)
     GATE = 465,  -- gates, struts, what the sim is told      (LN_H6 -> 564)
@@ -51,6 +45,12 @@ local LG_LEG = {
       grav = "tu-154/gears/grav_main", load = "tu-154/gears/load_main" },
     { t = "RIGHT MAIN", pos = "tu-154/anim/lg/main_pos_right", n = 3, suffix = "right",
       grav = "tu-154/gears/grav_main", load = "tu-154/gears/load_main" },
+}
+
+-- `sfx` / `side` name the brake datarefs; `wheel` indexes tire_speed_now
+local LG_BRAKE = {
+    { col = 1, t = "LEFT BRAKE",  sfx = "L", side = "left",  wheel = 1 },
+    { col = 3, t = "RIGHT BRAKE", sfx = "R", side = "right", wheel = 2 },
 }
 
 -- a leg in transit is doing what it was told, so it is not amber
@@ -129,15 +129,14 @@ local function drawGearDiagram()
         -- which way this path is pushing: the emergency term is always positive,
         -- the other two carry the sign of the lever
         if terms[i] ~= 0 then
-            arrow(cx, Y(121), 0, (terms[i] < 0) and 1 or -1, tSt)
+            arrow(cx, Y(LG.PUSH), 0, (terms[i] < 0) and 1 or -1, tSt)
         end
         junction(cx, Y(LG.BAR), dSt)
     end
     wire(dSt, colC(1, 3, LG.C3), Y(LG.BAR), colC(3, 3, LG.C3), Y(LG.BAR))
 
-    -- Nothing below the bar moves without gear_move AND retract, and that
-    -- includes the emergency path and the free-fall terms -- so the gate is a
-    -- contactor in series with every leg rather than a row in a box.
+    -- gear_move AND retract gate every leg, emergency path and free fall
+    -- included: a contactor in series with each leg, not a row in a box
     local powerGate = readv("tu-154/gears/power_gate") > 0.5
     local retrGate = readv("tu-154/gears/retract_gate") > 0.5
     local gateOk = powerGate and retrGate
@@ -145,13 +144,13 @@ local function drawGearDiagram()
     for i = 1, 3 do
         local cx = colC(i, 3, LG.C3)
         wire(gateOk and dSt or S_DEAD, cx, Y(LG.BAR), cx, Y(LG.LEGS))
-        contactor(cx, Y(161), gateOk, gSt)
+        contactor(cx, Y(LG.CONT), gateOk, gSt)
     end
-    sasl.gl.drawText(font, colX(1, 3, LG.C3) + 2, Y(176),
+    sasl.gl.drawText(font, colX(1, 3, LG.C3) + 2, Y(LG.CAPT),
         "DRIVE " .. fmt(drive, 2) .. "  "
         .. ((drive > 0) and "EXTENDING" or ((drive < 0) and "RETRACTING" or "IDLE")),
         11, false, false, TEXT_ALIGN_LEFT, COL_DIM)
-    sasl.gl.drawText(font, colC(3, 3, LG.C3) - 40, Y(176),
+    sasl.gl.drawText(font, colC(3, 3, LG.C3) - 40, Y(LG.CAPT),
         gateOk and "GATE OPEN" or "GATE SHUT", 11, false, false,
         TEXT_ALIGN_RIGHT, COL_DIM)
 
@@ -171,8 +170,6 @@ local function drawGearDiagram()
             st = S_FAULT
         elseif green then
             st = S_LIVE
-        elseif pos > 0.99 then
-            st = S_STBY
         elseif pos > 0.01 then
             st = S_STBY
         else
@@ -196,9 +193,8 @@ local function drawGearDiagram()
 
     band(LG.BRK - 5, "BRAKES")
     -- ---- brakes -------------------------------------------------------------
-    for _, b in ipairs({ { 1, "LEFT BRAKE", "L", "left", 1 },
-                         { 3, "RIGHT BRAKE", "R", "right", 2 } }) do
-        local col, ttl, sfx, side, wheel = b[1], b[2], b[3], b[4], b[5]
+    for _, b in ipairs(LG_BRAKE) do
+        local sfx, side = b.sfx, b.side
         local applied = readv("tu-154/brakes/int_brakes_" .. sfx)
         local temp = readv("tu-154/failures/brake_heat_" .. side)
         local skid = readv("tu-154/brakes/antiskid_" .. sfx) < 0.5
@@ -218,7 +214,7 @@ local function drawGearDiagram()
         else
             st = S_STBY
         end
-        listNode(colX(col, 3, LG.C3), LG.BRK, LG.C3, LN_H6, ttl, st, {
+        listNode(colX(b.col, 3, LG.C3), LG.BRK, LG.C3, LN_H6, b.t, st, {
             { "applied", fmt(applied * 100, 0) .. " %",
               applied > 0.02 and S_LIVE or nil, hd = true },
             { "line pressure",
@@ -226,7 +222,7 @@ local function drawGearDiagram()
               .. " kg/cm2" },
             { "anti-skid", skid and "RELEASED" or "holding", releasing and S_LOW or nil },
             { "wheel speed", fmt(readv("sim/flightmodel/parts/tire_speed_now["
-              .. wheel .. "]"), 1) .. " m/s" },
+              .. b.wheel .. "]"), 1) .. " m/s" },
             { "temperature (300 C)", fmt(temp, 0) .. " C",
               temp > 300 and S_FAULT or nil },
             { "life left / failed", fmt(life, 2) .. " / "

@@ -1,36 +1,18 @@
 -- ---------------------------------------------------------------------------
 -- Anti-ice one-line diagram (the Ice tab)
 --
--- The thing worth drawing here is that this is not one system. There are two
--- entirely separate heat media, and the diagram is banded to match:
+-- Two separate heat media, one band each:
+--   HOT AIR  -- wing, stabiliser and the three engine inlets. `wing_heat` is
+--               gated on ANY HP spool over 50 %, `inlet_heat_N` on engine N's
+--               own: losing two engines leaves the wing heated and two inlets
+--               cold. The collector bar is there to show that.
+--   ELECTRIC -- slats, the three heated windows, the pitot/AOA probes. Each
+--               names its own pair of buses in its rows.
+-- The bottom band is an unwired result read-out.
 --
---   HOT AIR  -- the wing, the stabiliser and the three engine inlets. Bled
---               straight off the HP spools, with one asymmetry that the bar at
---               the top of the band exists to show: `wing_heat` is gated on
---               *any* of the three spools being over 50 %, while `inlet_heat_N`
---               is gated on engine N's own spool. Losing two engines leaves the
---               wing heated and two inlets cold.
---   ELECTRIC -- the slats, the three heated windows and the pitot/AOA probes.
---               Each hangs off its own pair of buses, named in its own rows,
---               which is why the supply bar can only say "there is 115 V and
---               27 V somewhere" and the colour that matters is on the drop.
---
--- Three things the code does that a schematic drawn from the manual would get
--- wrong, so they are all on the face of the diagram:
---
---   * the wing switch drives the STABILISER duct too -- `stab_heat_t`
---     integrates towards `wing_heat * 300`, the wing switch's own term. There
---     is no separate stabiliser selection anywhere in the module.
---   * a pitot switch at -1 is CHECK, not a second heat setting. It lights the
---     HEAT OK lamp (antiice_panel tests `== -1`) while antiice_logic's
---     `math.max(sw, 0)` leaves the element cold.
---   * the bus tests are written out here rather than taken from NOM_27 /
---     NOM_115. They agree now, but this module is the authority for its own
---     wording: it is what actually decides whether the heaters run.
---
--- The bottom band is a result read-out and is deliberately unwired, the way
--- the hydraulic diagram's auxiliary row is: ice accreted, and the handful of
--- sim/cockpit2/ice/* values this module is ultimately here to write.
+-- What a schematic drawn from the manual would get wrong: the wing switch
+-- also drives the stabiliser duct (`stab_heat_t` integrates towards
+-- `wing_heat * 300`), and a pitot switch at -1 is CHECK (see ENUM_PPD).
 -- ---------------------------------------------------------------------------
 
 local AI = {
@@ -43,10 +25,8 @@ local AI = {
     ELEC = 358,  -- slats, three heated windows              (LN_H6 -> 457)
     OUT  = 493,  -- probes, ice accreted, what the sim gets  (LN_H6 -> 592)
 }
--- The two supply gaps are 80 px because they carry a bar, its junctions and a
--- symbol on every drop; the gap above the result band is 40 because it carries
--- nothing. Spreading the slack evenly instead pools it all in the empty gap,
--- which reads as a hole rather than as rhythm.
+-- the supply gaps are 80 px (a bar, junctions and a symbol per drop); the gap
+-- above the result band carries nothing, so it stays at 40
 
 -- engine 1 hangs off 27 V LEFT, engines 2 and 3 off 27 V RIGHT; note that
 -- engine 1's inlet failure is the only one of the three without a digit
@@ -79,7 +59,8 @@ local AI_LEGEND = {
 }
 
 local function drawAntiIceDiagram()
-    -- antiice_logic.lua's own thresholds, not the shared NOM_* ones
+    -- antiice_logic.lua's own bus tests, written out rather than NOM_*: that
+    -- module is what decides whether the heaters run
     local v27l = readv("tu-154/elec/bus27_volt_left")
     local v27r = readv("tu-154/elec/bus27_volt_right")
     local dcL, dcR = v27l > 13, v27r > 13
@@ -156,10 +137,10 @@ local function drawAntiIceDiagram()
         })
 
     -- ---- hot air: the wing runs on any spool, an inlet only on its own ------
-    local rpm1 = readv("tu-154/gauges/engine/rpm_high_1")
-    local rpm2 = readv("tu-154/gauges/engine/rpm_high_2")
-    local rpm3 = readv("tu-154/gauges/engine/rpm_high_3")
-    local anySpool = rpm1 > 50 or rpm2 > 50 or rpm3 > 50
+    local rpm = { readv("tu-154/gauges/engine/rpm_high_1"),
+                  readv("tu-154/gauges/engine/rpm_high_2"),
+                  readv("tu-154/gauges/engine/rpm_high_3") }
+    local anySpool = rpm[1] > 50 or rpm[2] > 50 or rpm[3] > 50
     local hotSt = anySpool and S_LIVE or S_DEAD
     local wingCx = colC(1, 4, AI.C4)
 
@@ -185,8 +166,7 @@ local function drawAntiIceDiagram()
     end
     arrow(wingCx, (Y(AI.AIRB) + Y(AI.AIR)) / 2, 0, -1, wingSt)
     band(AI.AIRB - 11, "HOT AIR")
-    -- 11 above the bar, not 9: this caption runs over the flow chevrons on
-    -- the bar, and at 9 their tips reached its descenders
+    -- 11 above the bar, not 9: at 9 the chevron tips reach the descenders
     sasl.gl.drawText(font, W - PAD, Y(AI.AIRB - 11),
         "ANY SPOOL FEEDS THE WING, EACH INLET ONLY ITS OWN", 11, false, false,
         TEXT_ALIGN_RIGHT, COL_DIM)
@@ -203,16 +183,17 @@ local function drawAntiIceDiagram()
           .. fmt(readv("tu-154/gauges/eng/stab_temp"), 0) .. " C" },
     }, clamp(0, wingT / 300, 1))
 
+    local inletHeat = {}
     for i = 1, 3 do
         local e = AI_ENG[i]
         local cx = colC(i + 1, 4, AI.C4)
-        local rpm = (i == 1 and rpm1) or (i == 2 and rpm2) or rpm3
-        local spool = rpm > 50
+        local spool = rpm[i] > 50
         local sw = readv("tu-154/switchers/eng/antiice_eng_" .. i) > 0.5
         local dc = readv(e.vd) > 13
         local fail = readv(e.fail) >= 6
         local flap = readv("tu-154/antiice/eng_heat_open_" .. i) > 0.5
         local heat = readv("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[" .. (i - 1) .. "]") > 0.5
+        inletHeat[i] = heat
         local st
         if fail then
             st = S_FAULT
@@ -227,7 +208,7 @@ local function drawAntiIceDiagram()
         listNode(colX(i + 1, 4, AI.C4), AI.AIR, AI.C4, LN_H6, "ENGINE " .. i .. " INLET", st, {
             { "switch", sw and "ON" or "OFF", sw and S_LIVE or S_DEAD },
             { "27 V " .. e.bus, fmt(readv(e.vd), 1) .. " V", dc and S_LIVE or S_DEAD },
-            { "own HP spool, needs 50", fmt(rpm, 0) .. " %", spool and S_LIVE or S_DEAD },
+            { "own HP spool, needs 50", fmt(rpm[i], 0) .. " %", spool and S_LIVE or S_DEAD },
             { "heat flap", flap and "OPEN" or "shut", flap and S_LIVE or nil },
             { "inlet heat to sim", heat and "ON" or "off", heat and S_LIVE or nil, hd = true },
             { "heater failure", fail and "FAILED" or "ok", fail and S_FAULT or nil },
@@ -267,6 +248,7 @@ local function drawAntiIceDiagram()
         { "heating", slatOn and "ON" or "off", slatOn and S_LIVE or nil, hd = true },
     })
 
+    local glassIce = {}
     for i = 1, 3 do
         local w = AI_WIN[i]
         local cx = colC(i + 1, 4, AI.C4)
@@ -276,6 +258,7 @@ local function drawAntiIceDiagram()
         local fail = readv("tu-154/failures/window_heat_fail_" .. i) > 0.5
         local heat = readv("tu-154/antiice/window_heat_rate_" .. i)
         local ice = readv("tu-154/anim/window_ice_" .. i)
+        glassIce[i] = ice
         local st
         if fail then
             st = S_FAULT
@@ -312,6 +295,7 @@ local function drawAntiIceDiagram()
         end
     end
     local anyPitot = p1 > 0.5 or p2 > 0.5 or p3 > 0.5
+    local aoaOn = readv("sim/cockpit2/ice/ice_AOA_heat_on") > 0.5
     listNode(colX(1, 3, AI.C3), AI.OUT, AI.C3, LN_H6, "PITOT AND AOA HEAT (PPD)",
         (pf1 or pf2 or pf3) and S_FAULT or (anyPitot and S_LIVE or S_DEAD), {
             { "PPD-1 left, 27 V left", enumTxt(ENUM_PPD, p1),
@@ -320,9 +304,7 @@ local function drawAntiIceDiagram()
               pf2 and S_FAULT or (p2 > 0.5 and S_LIVE or nil) },
             { "PPD-3 ABSU, 27 V right", enumTxt(ENUM_PPD, p3),
               pf3 and S_FAULT or (p3 > 0.5 and S_LIVE or nil) },
-            { "AOA vanes follow PPD-1",
-              readv("sim/cockpit2/ice/ice_AOA_heat_on") > 0.5 and "ON" or "off",
-              readv("sim/cockpit2/ice/ice_AOA_heat_on") > 0.5 and S_LIVE or nil },
+            { "AOA vanes follow PPD-1", onoff(aoaOn), aoaOn and S_LIVE or nil },
             { "HEAT OK lamps lit", lamps == "" and "none" or lamps,
               lamps ~= "" and S_LIVE or nil },
             { "load 27 V left / right", fmt(l27l, 1) .. " / " .. fmt(l27r, 1) .. " A" },
@@ -345,20 +327,16 @@ local function drawAntiIceDiagram()
               math.max(isL, isR) > 0.05 and S_LOW or nil },
             { "to flight model L / R", fmt(frmL, 3) .. " / " .. fmt(frmR, 3),
               frm > 0.05 and S_LOW or nil },
-            { "glass 1 / 2 / 3", fmt(readv("tu-154/anim/window_ice_1"), 2) .. " / "
-              .. fmt(readv("tu-154/anim/window_ice_2"), 2) .. " / "
-              .. fmt(readv("tu-154/anim/window_ice_3"), 2) },
+            { "glass 1 / 2 / 3", fmt(glassIce[1], 2) .. " / " .. fmt(glassIce[2], 2) .. " / "
+              .. fmt(glassIce[3], 2) },
             { "glass 4, no heater at all", fmt(w4, 2), w4 > 0.1 and S_LOW or nil },
             { "warm air can melt it", oat > 0 and "yes" or "no, below zero",
               oat > 0 and S_LIVE or nil },
         }, clamp(0, frm, 1))
 
     -- ---- and what the sim was told -----------------------------------------
-    local si1 = readv("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[0]") > 0.5
-    local si2 = readv("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[1]") > 0.5
-    local si3 = readv("sim/cockpit2/ice/ice_inlet_heat_on_per_engine[2]") > 0.5
+    local si1, si2, si3 = inletHeat[1], inletHeat[2], inletHeat[3]
     local surf = readv("sim/cockpit2/ice/ice_surfce_heat_on") > 0.5
-    local onoff = function(b) return b and "ON" or "off" end
     readout(colX(3, 3, AI.C3), AI.OUT, AI.C3, LN_H6, "WHAT THE SIM IS TOLD",
         (surf or si1 or si2 or si3) and S_LIVE or S_DEAD, {
             { "ice_surfce_heat_on (wing)", onoff(surf), surf and S_LIVE or nil },
@@ -369,7 +347,7 @@ local function drawAntiIceDiagram()
               onoff(readv("sim/cockpit2/ice/ice_pitot_heat_on_pilot") > 0.5) .. " / "
               .. onoff(readv("sim/cockpit2/ice/ice_pitot_heat_on_copilot") > 0.5) },
             { "AOA heat pilot / copilot",
-              onoff(readv("sim/cockpit2/ice/ice_AOA_heat_on") > 0.5) .. " / "
+              onoff(aoaOn) .. " / "
               .. onoff(readv("sim/cockpit2/ice/ice_AOA_heat_on_copilot") > 0.5) },
             { "ice_window_heat_on", "held at 0", note = true },
             { "the glass is modelled here", "anim/window_ice_1..4", note = true },

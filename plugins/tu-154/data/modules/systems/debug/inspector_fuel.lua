@@ -3,23 +3,14 @@
 --
 -- Follows the fuel: the five supply tanks with their pumps, the transfer
 -- manifold, the metering unit and the standby transfer, tank 1 (the service
--- tank everything is pumped into and everything is drawn from), its four
--- pumps, the ring main, and the three fire shutoff valves into the engines.
+-- tank everything is pumped into and drawn from), its four pumps, the ring
+-- main, and the three fire shutoff valves into the engines.
 --
--- Same rule as the other two diagrams -- what the code publishes is coloured
--- from the dataref, what it keeps to itself is shown as the command with the
--- published result beside it:
---
---   * Each supply tank shows the real contents
---     (sim/flightmodel/weight/m_fuel[n]) next to the gauge indication, because
---     fuel_panel.lua lags every gauge and each one has its own failure flag. A
---     disagreement between those two rows is exactly what you came to see.
---   * `porc_open`, `transfer` and the per-pump pressure ramps in
---     fuel_pumps.lua / fuel_tanks.lua are module locals, so the metering unit
---     is coloured by whether any supply pump is pushing at it rather than by a
---     valve position nobody publishes.
---   * The balancer stops the pumps on the heavier side, and
---     auto_tank_level_2/3 say which side, so that tank gets a HELD chip.
+-- Each supply tank shows the real contents (m_fuel[n]) beside the gauge:
+-- fuel_panel.lua lags every gauge and each has its own failure flag, so a
+-- disagreement between the two rows is the thing to look for. The balancer
+-- stops the pumps on the heavier side (auto_tank_level_2/3), and that tank
+-- gets a HELD chip.
 -- ---------------------------------------------------------------------------
 
 local FG = {
@@ -27,18 +18,15 @@ local FG = {
     COLL   = 130,  -- transfer manifold
     XFER   = 148,  -- automatics, metering, standby transfer, balancing
     T1     = 253,  -- totals, tank 1, APU tap
+    APUL   = 34,   -- tank 1 -> APU FEED line, below T1
     PUMP   = 346,  -- warnings, tank 1 pumps, loads and meters
     RING   = 439,  -- ring main
     ENG    = 475,  -- the three engines
     TW     = 212,  -- supply tank column width
     XW     = 271,  -- transfer row column width
 }
--- The three 36 px gaps are the ones that carry a symbol -- a boost pump under
--- each tank, the metering and standby valves, a fire valve into each engine.
--- The rest stay tight, so the extra height goes where there is something to
--- put in it rather than being spread as even air.
+-- only the gaps that carry a symbol (pumps, valves) are 36 px; the rest stay tight
 
--- The x side, derived as the electrical diagram's is.
 FG.XC = {}
 for i = 1, 4 do
     FG.XC[i] = colC(i, 4, FG.XW)
@@ -173,8 +161,6 @@ local function drawFuelDiagram()
             { "failure", autoFail and "FAILED" or "OK", autoFail and S_FAULT or nil },
         })
 
-    -- fuel_tanks publishes porc_open now, so this is the valve itself and not
-    -- an inference from whether the pumps happen to be pushing at it
     local porcFail = readv("tu-154/failures/fuel_porc_fail") > 0.5
     local porcOpen = readv("tu-154/fuel/porc_open") > 0.5
     listNode(colX(2, 4, FG.XW), FG.XFER, FG.XW, LN_H4, "PORC (metering)",
@@ -189,9 +175,8 @@ local function drawFuelDiagram()
     local transSw = readv("tu-154/switchers/fuel/fuel_trans") > 0.5
     local transOpen = readv("tu-154/fuel/reserv_trans") > 0.5
     local transPos = readv("tu-154/fuel/trans_pos")
-    -- fuel_tanks gates this valve on bus27_volt_right > 13, so the supply row
-    -- is coloured by that threshold rather than left as a bare number: a shut
-    -- valve with a dead bus is a different fault from a shut valve with a live one
+    -- fuel_tanks gates this valve on 27 V right > 13: a shut valve with a dead
+    -- bus is a different fault from one with a live bus
     local v27R = readv("tu-154/elec/bus27_volt_right")
     listNode(colX(3, 4, FG.XW), FG.XFER, FG.XW, LN_H4, "STANDBY TRANSFER",
         transOpen and S_LIVE or (transSw and S_STBY or S_DEAD), {
@@ -259,7 +244,7 @@ local function drawFuelDiagram()
         { "source", "TANK 1", note = true },
         { "27 V load", fmt(readv("tu-154/elec/fuel_pumps_27_cc"), 1) .. " A" },
     })
-    wire(apuBurn and S_LIVE or S_DEAD, FG.T1X + FG.T1W, Y(FG.T1 + 34), FG.APUX, Y(FG.T1 + 34))
+    wire(apuBurn and S_LIVE or S_DEAD, FG.T1X + FG.T1W, Y(FG.T1 + FG.APUL), FG.APUX, Y(FG.T1 + FG.APUL))
 
     -- ---- warnings, tank 1 pumps, loads -----------------------------------
     local dropX = FG.T1X + FG.DROP

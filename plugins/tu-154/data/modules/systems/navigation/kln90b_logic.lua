@@ -30,7 +30,7 @@
 defineProperty("kln_on", globalPropertyi("tu-154/switchers/ovhd/kln_on"))          -- KLN switch
 defineProperty("bus27_volt_left", globalPropertyf("tu-154/elec/bus27_volt_left"))  -- 27 V bus voltage
 defineProperty("bus27_volt_right", globalPropertyf("tu-154/elec/bus27_volt_right"))
-defineProperty("show_gns", globalPropertyi("tu-154/anim/show_gns"))                -- 0 = KLN, 1 = GNS, 2 = RealityXP
+defineProperty("show_gns", globalPropertyi("tu-154/anim/show_gns"))                -- 0 = KLN, 1 = GNS (RealityXP when tu-154/anim/RXP is 1)
 
 -- Interface to the kln90b plugin -----------------------------------------
 defineProperty("kln_power_available", globalPropertyi("tu-154/kln90/power_available"))

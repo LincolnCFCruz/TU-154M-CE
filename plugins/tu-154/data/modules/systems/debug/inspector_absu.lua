@@ -1,33 +1,26 @@
 -- ---------------------------------------------------------------------------
 -- RA-56 servo one-line diagram (the RA-56 tab)
 --
--- The ABSU list tab keeps the 81 scalars and lamps a grid shows well; this tab
--- takes the servo layer, the part with structure worth drawing.
+-- The ABSU list tab keeps the scalars and lamps; this tab takes the servo
+-- layer as the 3 x 3 matrix it is: columns are axes, rows the three RA-56
+-- channels. Channel N runs on hydraulic system N (`ra_gsN` from `gs_press_N`
+-- feeds `d_raN` in ra56_*_logic.lua), so a hydraulic failure crosses a row
+-- and an ABSU channel failure runs down a column. Each column is a parallel
+-- circuit: the command bus down the left into all three channels, their
+-- outputs collected down the right into the voted rod.
 --
--- The structure is a 3 x 3 matrix and the diagram is laid out as one: columns
--- are axes (pitch, roll, yaw), rows are the three RA-56 channels. Channel N is
--- driven by hydraulic system N -- `ra_gsN` is computed from `gs_press_N` and
--- feeds `d_raN` in ra56_*_logic.lua -- so a hydraulic failure walks across one
--- row of the matrix, and an ABSU channel failure walks down one column.
---
--- Each column reads as a parallel circuit, which is what it is: the command bus
--- runs down the left of the column into all three channels, and their outputs
--- collect on the bus down the right into the voted combined rod at the bottom.
---
--- Two things the row labels are careful about, because the names mislead:
---   * `tu-154/absu/d_raN_*` is the servo's commanded RATE, not a position --
---     ra56_*_logic integrates it (`raN_act = raN_act + d_raN * dt`).
---   * the POSITION was a module local until this diagram needed it. It matters
---     because the module's own bypass detector compares positions between
---     channels (a difference over 0.075 disconnects one), so without it you can
---     see that a channel dropped out but not that it drifted out of step first.
---     `tu-154/absu/pos_raN_*` is that value, published rather than inferred.
+-- `absu/d_raN_*` is the commanded RATE; `absu/pos_raN_*` is the position the
+-- module's bypass detector compares between channels (over 0.075 apart
+-- disconnects one).
 -- ---------------------------------------------------------------------------
 
 local AB = {
     CW   = 340,  -- column and full-width node
     SW   = 236,  -- servo node, inset to leave a bus channel each side
     SX   = 52,   -- servo node inset from the column edge
+    BUSX = 15,   -- command bus, in from the column's left edge
+    SUMX = 325,  -- output bus, in from the column's left edge
+    MID  = 41,   -- the in / out wires, below a servo node's top
     PWR  = 8,    -- power, health, autothrottle
     CMD  = 100,  -- per-axis mode and command
     S1   = 190,  -- RA-56 channel 1
@@ -35,22 +28,19 @@ local AB = {
     S3   = 394,  -- channel 3
     OUT  = 512,  -- voted output and director
 }
--- The servo node's inset leaves 37 px of bare wire between it and each bus --
--- enough for a head, so the command going IN and the rod position coming OUT
--- are told apart by more than which side of the box they are on.
+AB.SD = { AB.S1, AB.S2, AB.S3 }
+-- the inset leaves 37 px of wire each side of a servo, enough for a flow head
 
 local ABSU_AX = {
     { col = 1, t = "PITCH", ax = "p", sfx = "pitch", hyd = "elev", drives = "elevator",
       main = "tu-154/absu/pitch_main_mode", sub = "tu-154/absu/pitch_sub_mode",
-      submap = { [0] = "OFF", [1] = "STAB", [2] = "V", [3] = "M", [4] = "H",
-                 [5] = "GLIDESLOPE", [6] = "GO-AROUND" },
+      submap = ENUM_PITCH_SUB,
       cmd = "tu-154/absu/cmd_pitch", contr = "tu-154/absu/contr_pitch",
       dir = "tu-154/absu/absu_pitch_ind", flag = "tu-154/absu/absu_pitch_flag",
       inj = "tu-154/failures/absu_ra56_pitch_fail" },
     { col = 2, t = "ROLL", ax = "r", sfx = "roll", hyd = "ail", drives = "ailerons",
       main = "tu-154/absu/roll_main_mode", sub = "tu-154/absu/roll_sub_mode",
-      submap = { [0] = "OFF", [1] = "STAB", [2] = "ZK", [3] = "NVU", [4] = "AZ 1",
-                 [5] = "AZ 2", [6] = "APPROACH" },
+      submap = ENUM_ROLL_SUB,
       cmd = "tu-154/absu/cmd_roll", contr = "tu-154/absu/contr_roll",
       dir = "tu-154/absu/absu_roll_ind", flag = "tu-154/absu/absu_roll_flag",
       inj = "tu-154/failures/absu_ra56_roll_fail" },
@@ -89,20 +79,16 @@ local function drawAbsuDiagram()
             { "healthy", healthy and "YES" or "NO", healthy and S_LIVE or S_DEAD },
             { "stabilisation", readv("tu-154/lights/stab_work") > 0.5 and "ON" or "OFF" },
             { "fail signal", failsig and "ON" or "OFF", failsig and S_FAULT or nil },
-            -- cabin_sounds.lua sounds the siren on absu_fail_signal (with power,
-            -- the buzzer switch and a working speaker); alarm/speaker_absu, which
-            -- this row used to read, is bound there and never written
+            -- cabin_sounds.lua sounds the siren on absu_fail_signal;
+            -- alarm/speaker_absu is bound there and never written
             { "siren", "sounds on the fail signal", note = true },
         })
 
     local toga = readv("tu-154/absu/toga_comm") > 0.5
     listNode(colX(3, 3, AB.CW), AB.PWR, AB.CW, LN_H4, "AUTOTHROTTLE (STU)",
         toga and S_LIVE or (readv("tu-154/absu/stu_mode") > 0.5 and S_STBY or S_DEAD), {
-            { "mode", enumTxt({ [0] = "OFF", [1] = "ON", [2] = "ARMED", [3] = "STAB",
-                                [4] = "GO-AROUND" }, readv("tu-154/absu/stu_mode")) },
-            { "selector", enumTxt({ [0] = "OFF", [1] = "NVU", [2] = "AZ 1", [3] = "AZ 2",
-                                    [4] = "LANDING" },
-                readv("tu-154/switchers/console/absu_speed_mode")) },
+            { "mode", enumTxt(ENUM_STU_MODE, readv("tu-154/absu/stu_mode")) },
+            { "selector", enumTxt(ENUM_STU_SEL, readv("tu-154/switchers/console/absu_speed_mode")) },
             { "speed diff L / R", fmt(readv("tu-154/absu_at_dif_left"), 1) .. " / "
                 .. fmt(readv("tu-154/absu_at_dif_right"), 1) },
             { "go-around", toga and "COMMANDED" or "-", toga and S_LIVE or nil },
@@ -112,7 +98,7 @@ local function drawAbsuDiagram()
     for i = 1, #ABSU_AX do
         local a = ABSU_AX[i]
         local x = colX(a.col, 3, AB.CW)
-        local bus, sum = x + 15, x + 325
+        local bus, sum = x + AB.BUSX, x + AB.SUMX
         local cmd = readv(a.cmd)
         local contr = readv(a.contr)
         local inj = readv(a.inj)
@@ -129,11 +115,11 @@ local function drawAbsuDiagram()
                   inj > 0.5 and S_FAULT or nil },
             }
         else
+            local damp = readv(a.damp) > 0.5
             rows = {
                 { "mode", "damper only", note = true },
                 { "command", fmt(cmd, 3), cmdSt, hd = true },
-                { "damper lamp", readv(a.damp) > 0.5 and "ON" or "OFF",
-                  readv(a.damp) > 0.5 and S_FAULT or nil },
+                { "damper lamp", damp and "ON" or "OFF", damp and S_FAULT or nil },
                 { "RA-56 failure injected", inj > 0.5 and ("CHANNEL " .. fmt(inj, 0)) or "none",
                   inj > 0.5 and S_FAULT or nil },
             }
@@ -141,11 +127,10 @@ local function drawAbsuDiagram()
         listNode(x, AB.CMD, AB.CW, LN_H4, a.t .. " CHANNEL", cmdSt, rows)
 
         -- the three RA-56 channels, in parallel off the command bus
-        local depths = { AB.S1, AB.S2, AB.S3 }
         local anyDriving = false
         for n = 1, 3 do
-            local dy = depths[n]
-            local mid = dy + 41
+            local dy = AB.SD[n]
+            local mid = dy + AB.MID
             local supply = readv("tu-154/switchers/eng/hydro_ra56_" .. a.hyd .. "_" .. n) > 0.5
             local press = readv("tu-154/hydro/gs_press_" .. n)
             local bypass = readv("tu-154/failures/absu_ra" .. n .. "_" .. a.sfx .. "_fail") > 0.5
@@ -178,22 +163,22 @@ local function drawAbsuDiagram()
             arrow((bus + x + AB.SX) / 2, Y(mid), 1, 0, cmdSt)
             arrow((x + AB.SX + AB.SW + sum) / 2, Y(mid), 1, 0, st)
         end
-        wire(cmdSt, bus, Y(AB.CMD + LN_H4), bus, Y(AB.S3 + 41))
-        wire(anyDriving and S_LIVE or S_DEAD, sum, Y(AB.S1 + 41), sum, Y(AB.OUT))
-        arrow(bus, (Y(AB.CMD + LN_H4) + Y(AB.S1 + 41)) / 2, 0, -1, cmdSt)
-        arrow(sum, (Y(AB.S3 + 41) + Y(AB.OUT)) / 2, 0, -1,
+        wire(cmdSt, bus, Y(AB.CMD + LN_H4), bus, Y(AB.S3 + AB.MID))
+        wire(anyDriving and S_LIVE or S_DEAD, sum, Y(AB.S1 + AB.MID), sum, Y(AB.OUT))
+        arrow(bus, (Y(AB.CMD + LN_H4) + Y(AB.S1 + AB.MID)) / 2, 0, -1, cmdSt)
+        arrow(sum, (Y(AB.S3 + AB.MID) + Y(AB.OUT)) / 2, 0, -1,
             anyDriving and S_LIVE or S_DEAD)
 
         -- ---- voted output --------------------------------------------------
+        local flag = a.flag and readv(a.flag) > 0.5
         listNode(x, AB.OUT, AB.CW, LN_H4, a.t .. " OUTPUT",
             anyDriving and S_LIVE or (pwr27 and S_STBY or S_DEAD), {
-                -- no headline here: the voted-output bus lands on this node's
-                -- top edge right where a headline would sit
+                -- no headline: the output bus lands where it would sit
                 { "combined rod", fmt(contr, 3), anyDriving and S_LIVE or nil },
                 { "drives", a.drives, note = true },
                 { "director", a.dir and fmt(readv(a.dir), 2) or "-" },
-                { "director flag", a.flag and (readv(a.flag) > 0.5 and "SHOWN" or "clear") or "-",
-                  (a.flag and readv(a.flag) > 0.5) and S_FAULT or nil },
+                { "director flag", a.flag and (flag and "SHOWN" or "clear") or "-",
+                  flag and S_FAULT or nil },
             })
     end
 

@@ -1,32 +1,19 @@
 -- ---------------------------------------------------------------------------
 -- Fire protection one-line diagram (the Fire tab)
 --
--- The structure worth drawing is that the three extinguisher bottles are a
--- SHARED BANK, not one per engine. Any bottle can be discharged into any
--- compartment, the compartment is chosen by its own valve, and the bottles are
--- consumed in order -- so the question the crew actually has ("how many shots
--- are left, and where will the next one go") is a property of the bank and the
--- valve row together, which is exactly what a bar with a valve on each drop
--- says and a grid of lamps does not.
+-- The three bottles are a SHARED BANK, not one per engine: any bottle can go
+-- to any compartment, the compartment is chosen by its own valve, and the
+-- bottles are used in order -- hence one bar with a valve on each drop.
 --
--- Three things in fire_logic.lua that the diagram is careful about:
+-- From fire_logic.lua:
+--   * a discharge clears the fire with probability 0.98 / valves_open;
+--   * the APU compartment is wired but not implemented (the APU branch is
+--     empty, the engine_fire_state_4 writes are commented out);
+--   * fire is X-Plane's own code, `rel_engfirN == 6`.
 --
---   * `valves_open` divides the odds. The discharge succeeds with probability
---     0.98 / valves_open, so opening a second compartment halves the chance of
---     putting out the fire you actually have. That number is on the bank.
---   * the APU compartment is wired but not implemented: the "same way for APU"
---     branch is empty and the writes to engine_fire_state_4 are commented out.
---     Its valve is real; everything downstream of it is not, and the column
---     says so rather than showing four lamps that can only read 0.
---   * fire is detected from X-Plane's own failure code -- `rel_engfirN == 6`,
---     not 1. That is the convention this module gets right and the one
---     `flagcheck.py` exists to police.
---
--- The bottom band is the hot-start protection, which lives in this module
--- because it is what produces engine_fire_state_N = 1 (overheat): 550 C for
--- more than 4 s during a start, per RLE Book 2 8.1.2 and the D-30KU-154 RE.
--- fire_logic trips after 15 s instead (HOT_ALLOW, a sim-side calibration:
--- X-Plane's light-off runs hotter and longer than the real engine's).
+-- The hot-start band produces engine_fire_state_N = 1 (overheat). RLE Book 2
+-- 8.1.2 allows 550 C for 4 s during a start; fire_logic trips after 15 s
+-- (HOT_ALLOW), because X-Plane's light-off runs hotter and longer.
 -- ---------------------------------------------------------------------------
 
 local FR = {
@@ -58,6 +45,15 @@ local FIRE_LEGEND = {
     { S_FAULT, "fire" },
 }
 
+-- a tu-154/lights/fire/ lamp is lit
+local function lit(n)
+    return readv("tu-154/lights/fire/" .. n) > 0.05
+end
+
+local function litTxt(n)
+    return lit(n) and "LIT" or "dark"
+end
+
 local function drawFireDiagram()
     local v27l = readv("tu-154/elec/bus27_volt_left")
     local v27r = readv("tu-154/elec/bus27_volt_right")
@@ -80,17 +76,14 @@ local function drawFireDiagram()
 
     local det = readv("tu-154/fire/fire_detected") > 0.5
     local siren = readv("tu-154/fire/fire_siren") > 0.5
+    local fireLamp = readv("tu-154/lights/fire") > 0.05
     listNode(colX(2, 3, FR.C3), FR.TOP, FR.C3, LN_H6, "DETECTION",
         det and S_FAULT or (live and S_STBY or S_DEAD), {
             { "fire detected", det and "YES" or "no", det and S_FAULT or nil },
-            { "FIRE lamp", readv("tu-154/lights/fire") > 0.05 and "LIT" or "dark",
-              readv("tu-154/lights/fire") > 0.05 and S_FAULT or nil },
-            { "TURN ON SPZ lamp",
-              readv("tu-154/lights/fire/turn_on_spz") > 0.05 and "LIT" or "dark",
-              readv("tu-154/lights/fire/turn_on_spz") > 0.05 and S_LOW or nil },
-            { "check overheat lamp",
-              readv("tu-154/lights/fire/check_overheat") > 0.05 and "LIT" or "dark",
-              readv("tu-154/lights/fire/check_overheat") > 0.05 and S_LOW or nil },
+            { "FIRE lamp", fireLamp and "LIT" or "dark", fireLamp and S_FAULT or nil },
+            { "TURN ON SPZ lamp", litTxt("turn_on_spz"), lit("turn_on_spz") and S_LOW or nil },
+            { "check overheat lamp", litTxt("check_overheat"),
+              lit("check_overheat") and S_LOW or nil },
             { "siren / buzzer switch", (siren and "SOUNDING" or "quiet") .. " / "
               .. (readv("tu-154/switchers/eng/fire_buzzer") > 0.5 and "ON" or "OFF"),
               siren and S_FAULT or nil },
@@ -141,10 +134,9 @@ local function drawFireDiagram()
     for i = 1, 2 do
         arrow((colC(i, 4, FR.C4) + colC(i + 1, 4, FR.C4)) / 2, Y(FR.BAR), -1, 0, barSt)
     end
-    -- right-aligned to the LEFT of the bank's own drop, not to the margin: the
-    -- drop lands at bankCx and a caption run to the edge is speared by it
     band(FR.BAR - 11, "EXTINGUISHING")
-    -- 11 above the bar, clear of the flow chevrons on it (see the Ice caption)
+    -- ends left of the bank's drop, which would spear a caption run to the
+    -- margin; 11 above the bar to clear its chevrons
     sasl.gl.drawText(font, bankCx - 14, Y(FR.BAR - 11),
         "ONE BANK, ANY COMPARTMENT: THE VALVE CHOOSES, THE BOTTLES ARE SHARED",
         11, false, false, TEXT_ALIGN_RIGHT, COL_DIM)
@@ -163,11 +155,8 @@ local function drawFireDiagram()
             rows = {
                 { "state", enumTxt(ENUM_FIRE_STATE, st), fire and S_FAULT
                   or (hot and S_LOW or nil), hd = true },
-                { "fire lamp", readv("tu-154/lights/fire/fire_eng_" .. c.n) > 0.05
-                  and "LIT" or "dark", fire and S_FAULT or nil },
-                { "overheat lamp",
-                  readv("tu-154/lights/fire/overheat_eng_" .. c.n) > 0.05
-                  and "LIT" or "dark", hot and S_LOW or nil },
+                { "fire lamp", litTxt("fire_eng_" .. c.n), fire and S_FAULT or nil },
+                { "overheat lamp", litTxt("overheat_eng_" .. c.n), hot and S_LOW or nil },
                 { "extinguishing valve", vlv[c.n] and "OPEN" or "shut",
                   vlv[c.n] and S_LIVE or nil },
                 { "halon to the sim",
@@ -180,8 +169,7 @@ local function drawFireDiagram()
         else
             rows = {
                 { "state", "not modelled", note = true },
-                { "fire lamp", readv("tu-154/lights/fire/fire_apu") > 0.05
-                  and "LIT" or "dark" },
+                { "fire lamp", litTxt("fire_apu") },
                 { "overheat lamp", "-", note = true },
                 { "extinguishing valve", vlv[4] and "OPEN" or "shut",
                   vlv[4] and S_LIVE or nil },
@@ -204,8 +192,8 @@ local function drawFireDiagram()
         local sev = readv("tu-154/engine/hotstart_" .. i)
         local n2 = readv("tu-154/gauges/engine/rpm_high_" .. i)
         local apd = readv("tu-154/start/apd_working_" .. i) > 0.5
-        local tripped = readv("tu-154/fire/engine_fire_state_" .. i) > 0.5
-            and readv("tu-154/fire/engine_fire_state_" .. i) < 1.5
+        local fstate = readv("tu-154/fire/engine_fire_state_" .. i)
+        local tripped = fstate > 0.5 and fstate < 1.5
         local st
         if tripped then
             st = S_LOW
@@ -230,11 +218,8 @@ local function drawFireDiagram()
 
     band(FR.ZONE - 5, "SMOKE AND OUTPUTS")
     -- ---- smoke zones and outputs -------------------------------------------
-    local function lit(n)
-        return readv("tu-154/lights/fire/" .. n) > 0.05
-    end
     local function pair(a, b)
-        return (lit(a) and "LIT" or "dark") .. " / " .. (lit(b) and "LIT" or "dark")
+        return litTxt(a) .. " / " .. litTxt(b)
     end
     local anySmoke = lit("smoke_1") or lit("smoke_2") or lit("smoke_zone2_left")
         or lit("smoke_zone2_right") or lit("smoke_zone3") or lit("smoke_zone4")
@@ -243,15 +228,12 @@ local function drawFireDiagram()
         anySmoke and S_FAULT or (live and S_STBY or S_DEAD), {
             { "detector 1 / 2", pair("smoke_1", "smoke_2") },
             { "zone 2 left / right", pair("smoke_zone2_left", "smoke_zone2_right") },
-            { "zone 3", lit("smoke_zone3") and "LIT" or "dark" },
-            { "zone 4", lit("smoke_zone4") and "LIT" or "dark" },
+            { "zone 3", litTxt("smoke_zone3") },
+            { "zone 4", litTxt("smoke_zone4") },
             { "zone 5 left / right", pair("smoke_zone5_left", "smoke_zone5_right") },
-            { "zone 6", lit("smoke_zone6") and "LIT" or "dark" },
+            { "zone 6", litTxt("smoke_zone6") },
         })
 
-    local function onoff(b)
-        return b and "ON" or "off"
-    end
     readout(colX(2, 2, FR.C2), FR.ZONE, FR.C2, LN_H6, "WHAT THE SIM IS TOLD",
         S_DEAD, {
             { "engine fire 1 / 2 / 3 (6 = fire now)",

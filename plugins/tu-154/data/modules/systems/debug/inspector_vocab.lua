@@ -1,13 +1,12 @@
 -- ---------------------------------------------------------------------------
 -- The shared vocabulary: palette and font, readv() and the DATAREFS capture,
--- the Watch tab's value history, the canvas geometry, the S_* states, the
--- node / wire / symbol helpers, the tab badges' state and DIAGRAMS.
+-- the Watch history, canvas geometry, the S_* states, the node / wire /
+-- symbol helpers, the tab badges' state and DIAGRAMS.
 --
--- Every top-level name here is shared, and none may be nil: a name the
--- namespace does not hold falls through to the component, and SASL hands an
--- unresolved name to its component loader on every read (CLAUDE.md 14). That
--- is why note_hook and watch_hover start as false. A temporary that can be
--- nil stays `local` (hinter).
+-- Every top-level name here is shared and must never be nil: a nil name falls
+-- through to the component, and SASL tries to load it as a component
+-- (CLAUDE.md 14). Hence note_hook and watch_hover start as false, and a
+-- temporary that can be nil stays `local`.
 -- ---------------------------------------------------------------------------
 
 -- ---------------------------------------------------------------------------
@@ -27,48 +26,63 @@ COL_RED    = { 0.94, 0.30, 0.30, 1 }
 COL_ACCENT = { 0.32, 0.66, 0.96, 1 }
 -- S_STBY, "available / armed": the ECAM cyan, and used for nothing else
 COL_CYAN   = { 0.30, 0.82, 0.86, 1 }
--- selected chrome -- the active tab, an active chip, a toggled button. Neutral,
--- so that no piece of UI can be read as a system state.
+-- selected chrome (active tab, chip, button): neutral, so it never reads as a state
 COL_SEL    = { 0.30, 0.32, 0.38, 1 }
--- COL_OFF is for fills and wires (a de-energised line, an empty track). Text
--- never uses it: on COL_CARD it is about 1.9:1 and could not be read, which
--- made the most important reading on a cold aircraft -- "0.0 V" -- the least
--- legible thing on the screen. COL_TER is the dimmest text there is.
+-- fills and wires only, never text: about 1.9:1 on COL_CARD
 COL_OFF    = { 0.30, 0.32, 0.37, 1 }
+-- the dimmest text colour
 COL_TER    = { 0.46, 0.48, 0.54, 1 }
 
--- Roboto-Regular.ttf ships with the vendored framework in data/components,
--- which main.lua puts on the resource search path.
--- sasl.gl.loadFont() hardcodes FONT_HINTER_AUTO, the FreeType autohinter.
--- Roboto carries its own hinting instructions and they are noticeably crisper
--- at the 11 and 12 px this panel is mostly made of.
---
--- rawget, not a bare FONT_HINTER_NATIVE: an unresolved global inside a
--- component body is handed to SASL's component loader, which then reports
--- "can't load component FONT_HINTER_NATIVE" (CLAUDE.md 14). rawget asks
--- whether the C layer published the constant without tripping that.
+-- Roboto-Regular.ttf ships in data/components, on the resource path.
+-- loadFont() forces the FreeType autohinter; Roboto's own hinting is crisper
+-- at 11-12 px. rawget, because a bare unresolved global is handed to the
+-- component loader (CLAUDE.md 14).
 local hinter = rawget(_G, "FONT_HINTER_NATIVE")
 font = hinter and sasl.gl.loadFontHinted("Roboto-Regular.ttf", hinter)
     or sasl.gl.loadFont("Roboto-Regular.ttf")
 
 -- ---------------------------------------------------------------------------
--- Decoupled dataref read cache (memoised handles, like texSize in glbl_draw)
+-- Dataref read cache (memoised handles)
+--
+-- globalProperty() on a missing name (scp/api/*, RXP/*, bp/* without their
+-- plugins) logs WARN + STACK and returns nil, which is not memoised. So probe
+-- quietly first, as glbl_func's quietBind does, and re-probe a miss every
+-- MISS_RETRY s for plugins that load late. readv()'s pcall turns nil into 0.
 -- ---------------------------------------------------------------------------
-handles = {}
+local handles = {}
+local TYPE_ANY = rawget(_G, "TYPE_UNKNOWN")
+local MISS_RETRY = 2.0
+local missClock = sasl.createTimer()
+sasl.startTimer(missClock)
+local missUntil = {} -- name -> elapsed seconds before which it is not re-probed
+
+local function drefExists(name)
+    if sasl.findDataRef(name, TYPE_ANY, true) then return true end
+    -- "name[3]": globalProperty() binds the array and indexes it
+    local base = name:match("^(.+)%[%d+%]$")
+    return base ~= nil and sasl.findDataRef(base, TYPE_ANY, true) and true or false
+end
+
 function H(name)
     local h = handles[name]
-    if not h then
-        h = globalProperty(name)
+    if h then return h end
+    local now = sasl.getElapsedSeconds(missClock)
+    local retry = missUntil[name]
+    if retry and now < retry then return nil end
+    if drefExists(name) then h = globalProperty(name) end
+    if h then
         handles[name] = h
+        missUntil[name] = nil
+    else
+        missUntil[name] = now + MISS_RETRY
     end
     return h
 end
 
--- Dataref probe: readv() logs what it touches while the tab's content draws,
--- and the DATAREFS overlay lists exactly that, so the list cannot drift from
--- the code. Capture is off unless the overlay is up.
-ref_capture = false -- log reads right now (content draw only)
-ref_seen = {}       -- name -> true, for de-duplication
+-- The DATAREFS overlay lists what readv() touched while the tab's content drew,
+-- so the list cannot drift from the code. Capture is off unless it is up.
+ref_capture = false
+ref_seen = {}       -- name -> true
 ref_list = {}       -- names in first-read order
 
 function readv(name)
@@ -84,12 +98,8 @@ function readv(name)
 end
 
 -- ---------------------------------------------------------------------------
--- Value history for the Watch tab: the transients -- a pump dropping out for
--- a frame, a bus flickering -- that a snapshot cannot show.
---
--- Sampled on a fixed *sim*-time cadence, never per frame (CLAUDE.md 7a): the
--- accumulator is fed tu-154/time/frame_time, so a paused sim adds no samples
--- and time acceleration is followed for free.
+-- Watch tab value history. Sampled on a fixed sim-time cadence fed from
+-- frame_time (update(), CLAUDE.md 7a), so a paused sim adds no samples.
 -- ---------------------------------------------------------------------------
 WATCH_MAX = 6  -- traces; more than this and the rows stop being readable
 WATCH_N = 190  -- samples per trace, about 4 px each across the plot
@@ -97,8 +107,7 @@ WATCH_DT = 0.1 -- sim seconds between samples, so 19 s of history
 watch = {}     -- { name = , v = ring, n = filled, w = next write slot }
 watch_hover = false -- the mouse over the content area, in window coordinates
 
--- Pins survive a reload: the names (not the history) are written here whenever
--- the set changes and read back when the inspector loads.
+-- the pinned names (not the history), rewritten whenever the set changes
 WATCH_FILE = pluginDataDir .. "/output/debug_watch.ini"
 
 function watchSave()
@@ -166,6 +175,11 @@ function clamp(lo, v, hi)
     return v
 end
 
+-- h = { x1, y1, x2, y2 }, half-open on the far edges
+function inRect(h, x, y)
+    return x >= h[1] and x < h[3] and y >= h[2] and y < h[4]
+end
+
 -- ---------------------------------------------------------------------------
 -- Geometry: a fixed 1180 x 740 canvas, drawn 1:1 (debug_inspector.lua)
 -- ---------------------------------------------------------------------------
@@ -187,40 +201,20 @@ CONTENT_B = PAD
 CONTENT_W = W - 2 * PAD
 CONTENT_H = CONTENT_T - CONTENT_B
 
-function colorFor(v, warn_lo, warn_hi)
-    if warn_lo and v < warn_lo then
-        return COL_AMBER
-    end
-    if warn_hi and v > warn_hi then
-        return COL_RED
-    end
-    return COL_GREEN
-end
-
 function fmt(v, dp)
     return string.format("%." .. (dp or 0) .. "f", v)
 end
 
--- wire / node states, in increasing order of "look at me"
---
--- Each means ONE thing on every tab. A legend may word it for its system, but
--- may not change what it is:
---
+-- Wire / node states, in increasing order of "look at me". Each means one
+-- thing on every tab; a legend may reword it, not redefine it.
 --   S_LIVE  green  energised / pressurised AND doing its job
---   S_STBY  cyan   available or armed, not active right now
---   S_LOW   amber  CAUTION: abnormal but not failed -- off setpoint, degraded,
---                  held, overheat, a value short of what the code tests for
---                  while the thing is meant to be working
---   S_DEAD  grey   off, unpowered, empty. Normal on a cold aircraft.
---   S_FAULT red    a failure flag, a fire, an overload, a leak, a redline
---
--- The rule that follows is the one this palette exists for: being UNPOWERED
--- or UNPRESSURISED is S_DEAD, never S_FAULT. It used to be red in a dozen
--- places, so a cold-and-dark aircraft looked like an emergency on half the
--- tabs and red stopped meaning anything. Likewise a normal action -- a
--- deflected surface, a leg in transit, a dry crank -- is not a caution.
--- Nominal is quiet: a row that says "ok" or "ENGAGED" is not coloured at all,
--- only the word that is wrong.
+--   S_STBY  cyan   available or armed, not active
+--   S_LOW   amber  caution: off setpoint, degraded, held, overheat
+--   S_DEAD  grey   off, unpowered, empty -- normal on a cold aircraft
+--   S_FAULT red    failure flag, fire, overload, leak, redline
+-- Unpowered or unpressurised is S_DEAD, never S_FAULT. A normal action (a
+-- deflected surface, a leg in transit) is not a caution, and a nominal row is
+-- left uncoloured.
 S_DEAD  = 0
 S_STBY  = 1
 S_LOW   = 2
@@ -252,18 +246,16 @@ function stateTxt(s)
     return stateCol(s)
 end
 
--- The tab-bar dots: which tabs have something red or amber on them. A diagram
--- is judged by drawing it with the sasl.gl calls swapped for no-ops
--- (BADGE.pass, in the frame) while listNode and slimNode report every state
--- they are handed to BADGE.note, so the dot is whatever the diagram itself
--- would colour. Declared above every node helper: a function that reads it
--- must come after it (CLAUDE.md 14).
-BADGE = { tab = {}, nxt = 1, per = 1, live = true, on = false, worst = nil,
-                dry = false } -- dry: a badge pass is drawing a tab that is not on screen
+-- Tab-bar dots. A diagram is judged by drawing it with sasl.gl swapped for
+-- no-ops (BADGE.pass, in the frame) while listNode / slimNode report their
+-- states to BADGE.note. `per` (tabs re-judged per frame) and `live` (the tab
+-- on screen judges itself) are switched off by diagcheck; `dry` marks a pass
+-- over a tab that is not on screen. Declared above the node helpers
+-- (CLAUDE.md 14).
+BADGE = { tab = {}, nxt = 1, per = 1, live = true, on = false, worst = nil, dry = false }
 
--- Where the last draw of the tab on screen put its clickable rows -- a row
--- that links to another tab (listNode `link`). Rebuilt every draw, and never
--- by a badge pass, which draws other tabs with the drawing switched off.
+-- the link rows (listNode `link`) of the last on-screen draw; a badge pass
+-- never writes it
 HITS = {}
 function BADGE.note(s)
     if s == S_FAULT then
@@ -273,13 +265,10 @@ function BADGE.note(s)
     end
 end
 
--- The thresholds systems/ itself tests: 27 V is `> 13` at 94 sites and
--- nothing else, 115 V `> 110` at 37 (four `>= 115` sites ask "fully up to
--- voltage", a different question), 36 V `> 30` at 29.
+-- the thresholds systems/ itself tests, all written `> n`
 NOM_115, NOM_36, NOM_27 = 110, 30, 13
 
 function voltState(v, nominal)
-    -- strictly greater, because every threshold in systems/ is written `> n`
     if v > nominal then
         return S_LIVE
     end
@@ -298,9 +287,8 @@ function feedState(available, selected)
 end
 
 -- Diagrams are laid out in depths below CONTENT_T (Y() converts) and in
--- columns from colX / colC (below). CONTENT_H is 642; a third tab row would
--- take 30 px off it. Every diagram's footer sits at LEG_D: the swatch row is
--- 11 px and the note 16 px under it, the lowest depth that fits both.
+-- columns from colX / colC. LEG_D is the shared footer depth: an 11 px swatch
+-- row with a note 16 px under it.
 LEG_D = CONTENT_H - 24
 
 function Y(dy)
@@ -310,8 +298,7 @@ end
 -- orthogonal polyline: wire(state, x1, y1, x2, y2, ...)
 function wire(s, ...)
     local p = { ... }
-    -- snap to whole pixels: a midpoint of two depths is often x.5, and a 2 px
-    -- line drawn on a half pixel is smeared across three columns of pixels
+    -- whole pixels: a 2 px line on a half pixel smears over three columns
     for i = 1, #p do
         p[i] = math.floor(p[i])
     end
@@ -339,11 +326,9 @@ function slimNode(x, dy, w, h, title, s, v1)
     sasl.gl.drawText(font, x + w - 7, yb + 7, v1, 11, false, false, TEXT_ALIGN_RIGHT, stateTxt(s))
 end
 
--- a selection chip: which zone is the TUE source, which side the balancer
--- holds, which Lamps view is showing. Selection, not state -- so neutral.
--- `h` defaults to 15. A chip that sits in a node's title row passes 12, is
--- placed at the node top - 13, and starts at afterTitle(): the right end of the
--- title row belongs to the node's headline value.
+-- A selection chip (TUE source, balancer side, Lamps view): selection, not
+-- state, so neutral. In a node's title row pass h = 12, place it at the node
+-- top - 13 and start it at afterTitle(): the right end belongs to the headline.
 function chip(x, y, w, txt, on, h)
     h = h or 15
     sasl.gl.drawRectangle(x, y, w, h, on and COL_SEL or COL_TAB)
@@ -367,10 +352,7 @@ function contactor(cx, y, closed, s)
     sasl.gl.drawCircle(cx - 13, y, 3, true, col)
     sasl.gl.drawCircle(cx + 13, y, 3, true, col)
     if closed then
-        -- A closed switch is a straight line in a schematic, and a straight
-        -- line lying along a wire is not a symbol at all -- it was drawn and
-        -- read as plain wire. Lift the link into a bridge so the device is
-        -- visible as a device whether it is closed or open.
+        -- a flat closed link would read as plain wire, so it is lifted
         sasl.gl.drawWideLine(cx - 13, y, cx - 9, y + 9, 2, col)
         sasl.gl.drawWideLine(cx - 9, y + 9, cx + 9, y + 9, 3, col)
         sasl.gl.drawWideLine(cx + 9, y + 9, cx + 13, y, 2, col)
@@ -380,37 +362,23 @@ function contactor(cx, y, closed, s)
 end
 
 -- ---------------------------------------------------------------------------
--- Schematic symbols
---
--- A one-line diagram made only of boxes and lines says what is connected but
--- not what the connection IS: a fuel line and a busbar look identical, and a
--- run of wire gives no hint which way anything moves. These are the glyphs a
--- real schematic uses for that, and every one is centred on (cx, cy) so a
--- diagram drops it at the midpoint of a run it already draws -- the symbol
--- never has its own coordinates to keep in step with the wire's.
---
--- All of them take a state and are drawn in `stateCol`, so a shut valve and a
--- failed one differ in colour, not only in shape. Where the shape also carries
--- the state (a valve's crossbar, a pump's impeller) it says the same thing
--- twice on purpose: the colours are close together for a red-green eye, and
--- the shape is not.
+-- Schematic symbols. Each is centred on (cx, cy), so a diagram drops it on a
+-- run it already draws and it has no coordinates of its own. All take a state
+-- and draw in stateCol; where the shape also carries the state (a valve's
+-- bar, a pump's impeller) that is deliberate -- the state colours are close
+-- for a red-green eye, the shapes are not.
 -- ---------------------------------------------------------------------------
 
-SYM_R = 9 -- the radius the round symbols share, so a row of them lines up
+SYM_R = 9 -- shared radius of the round symbols
 
--- Flow direction along (dx, dy). Every run in these diagrams is orthogonal, so
--- only the sign of one axis matters.
---
--- A solid head means something is MOVING, so it is drawn only on a live run;
--- every other run gets a thin open chevron in its own colour, which keeps the
--- direction without claiming flow.
+-- Flow direction along (dx, dy); every run is orthogonal. A solid head only on
+-- a live run (something is moving), an open chevron on any other.
 function arrow(cx, cy, dx, dy, s)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
     if s ~= S_LIVE then
         if dx ~= 0 then
-            -- 4 px either side, the height of the solid head: the bars these sit
-            -- on carry a caption 9 px above them, and at 5 the chevron reached it
+            -- +-4 px: at 5 it reached the caption 9 px above a bar
             local d = dx > 0 and 3 or -3
             sasl.gl.drawWideLine(cx - d, cy - 4, cx + d, cy, 2, col)
             sasl.gl.drawWideLine(cx + d, cy, cx - d, cy + 4, 2, col)
@@ -430,14 +398,11 @@ function arrow(cx, cy, dx, dy, s)
     end
 end
 
--- A valve, as the schematic bowtie. Shut adds the bar across the throat, which
--- is what makes a shut valve readable without reading its colour.
+-- The schematic bowtie; shut adds a bar across the throat.
 function valveSym(cx, cy, open, s, vert)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
-    -- The two triangles meet AT the centre. Stopping them one pixel short left
-    -- a gap at the throat that the wire underneath showed through, which read
-    -- as two separate arrowheads rather than as one valve.
+    -- the triangles meet AT the centre, or the wire shows through the throat
     if vert then
         sasl.gl.drawTriangle(cx - 7, cy - 8, cx + 7, cy - 8, cx, cy, col)
         sasl.gl.drawTriangle(cx - 7, cy + 8, cx + 7, cy + 8, cx, cy, col)
@@ -453,8 +418,7 @@ function valveSym(cx, cy, open, s, vert)
     end
 end
 
--- A pump: the circle, with the impeller chevron when it is turning and a bar
--- across when it is not.
+-- impeller chevron when turning, a bar when not
 function pumpSym(cx, cy, running, s)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
@@ -467,9 +431,7 @@ function pumpSym(cx, cy, running, s)
     end
 end
 
--- Any round machine that is named rather than shaped -- a generator, a
--- transformer-rectifier, an inverter, an engine. The letter is the label the
--- Russian panels use, so G / VU / TR / PTS read straight across.
+-- a named round machine (generator, TR, VU, inverter)
 function roundSym(cx, cy, txt, s)
     cx, cy = math.floor(cx), math.floor(cy)
     sasl.gl.drawCircle(cx, cy, SYM_R, true, COL_CARD)
@@ -477,14 +439,12 @@ function roundSym(cx, cy, txt, s)
     sasl.gl.drawText(font, cx, cy - 4, txt, 10, false, false, TEXT_ALIGN_CENTER, stateTxt(s))
 end
 
--- A battery: two cells of long plate / short plate, drawn ACROSS the run the
--- symbol sits on (along it, it reads as a fence beside the wire).
+-- Two cells, plates ACROSS the run. From the plus terminal: long plate, then
+-- short 4 px on, cells 7 px apart (even spacing reads as a ladder). y grows
+-- upward, so a vertical cell's short plate goes below its long one.
 function battSym(cx, cy, s, horiz)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
-    -- Read along the run from the plus terminal. A cell's plates sit 4 px
-    -- apart and the cells 7 px: evenly spaced plates read as a ladder. SASL's
-    -- y grows upward, so a vertical cell's short plate goes BELOW its long one.
     for i = 0, 1 do
         if horiz then
             local x = cx - 8 + i * 11
@@ -498,9 +458,7 @@ function battSym(cx, cy, s, horiz)
     end
 end
 
--- An electric heating element: the resistor zigzag. Used where the heat is
--- made by current rather than carried by air, which on this aeroplane is the
--- whole distinction the anti-ice diagram is banded around.
+-- resistor zigzag: heat made by current rather than carried by air
 function heaterSym(cx, cy, s)
     local col = stateCol(s)
     cx, cy = math.floor(cx), math.floor(cy)
@@ -514,44 +472,24 @@ function heaterSym(cx, cy, s)
     sasl.gl.drawWideLine(px, py, cx + 14, cy, 2, col)
 end
 
--- Set only by _tools/diagcheck.py, to learn what every `note` row drew: a note
--- whose text changes with the data is a live reading mislabelled as a note.
+-- Set only by _tools/diagcheck.py, to catch a `note` row whose text changes.
 note_hook = false
 
--- A node whose body is a list of label / value rows, for the parts of a system
--- that are described by several small readings rather than one headline. Rows
--- are { label, value, [state] }; a row state overrides the node colour for that
--- value only. Two optional flags on a row:
---
---   hd = true    this is the node's headline. Its value is ALSO drawn in the
---                title row, 13 px in the row's state colour (the node's when
---                the row has none), so the one number a node exists to show
---                reads without reading the rows. The row stays, with its label:
---                taking it out would shrink the node and move every depth
---                table on the tab.
---   note = true  fixed explanation, not a reading -- "returns to reservoir 1",
---                "nominal 210 kg/cm2". Drawn in tertiary grey, behind the
---                live rows.
---                diagcheck fails a note whose text changes over its sweep.
---
--- `role` says what KIND of thing the node is:
---   "readout"  reports ABOUT a system rather than being part of it (totals,
---              loads, what the sim is told) and has no wire. No card fill, so
---              the schematic stands forward and these recede. Use readout().
---   nil        everything else: the plain box.
---
--- The chrome follows the state too: a 4 px state bar down the left edge beside
--- the title, a dead node's title dimmed, a failed node framed in red.
---
--- Height for n rows is 21 + n * 13 (LN_H2..LN_H6 below): the title band plus
--- room for the bottom row's descenders, because drawText's y is a BASELINE.
+-- A node whose body is label / value rows, { label, value, [state] }; a row
+-- state colours that value only. Row flags:
+--   hd = true     headline: the value is also drawn 13 px in the title row.
+--                 The row stays -- removing it would move every depth table.
+--   note = true   fixed explanation, not a reading; tertiary grey.
+--   link = "Tab"  a click opens that tab; the label is drawn blue.
+-- `fill` (0..1) washes the node bottom in its state colour (how full / how
+-- loaded). role "readout": reports about a system rather than being part of
+-- it, so no card fill (use readout()). Height for n rows is 21 + n * 13
+-- (LN_H*): drawText's y is a baseline and the bottom row needs its descenders.
 function listNode(x, dy, w, h, title, s, rows, fill, role)
     local yb = Y(dy + h)
     if role ~= "readout" then
         sasl.gl.drawRectangle(x, yb, w, h, COL_CARD)
     end
-    -- `fill` (0..1) washes the bottom of the node in its state colour, so a tank
-    -- or a bus reads as "how full / how loaded" without doing the arithmetic.
     if fill and fill > 0 then
         local c = stateCol(s)
         sasl.gl.drawRectangle(x + 1, yb + 1, w - 2, (h - 2) * clamp(0, fill, 1),
@@ -570,8 +508,6 @@ function listNode(x, dy, w, h, title, s, rows, fill, role)
             BADGE.note(r[3])
         end
         local ry = yb + h - 13 - i * 13   -- bottom row lands at yb + 8
-        -- a `link` row goes to another tab when clicked: its LABEL is drawn in
-        -- the interactive blue, so the value keeps its own state colour
         local lcol = r.link and COL_ACCENT
         if r.note then
             sasl.gl.drawText(font, x + 8, ry, r[1], 11, false, false, TEXT_ALIGN_LEFT, lcol or COL_TER)
@@ -595,17 +531,15 @@ function listNode(x, dy, w, h, title, s, rows, fill, role)
     return yb
 end
 
--- a listNode with role "readout" (see there); it takes no fill
 function readout(x, dy, w, h, title, s, rows)
     return listNode(x, dy, w, h, title, s, rows, nil, "readout")
 end
 
--- listNode heights for 2 / 3 / 4 / 5 / 6 rows
-LN_H2, LN_H3, LN_H4, LN_H5, LN_H6 = 47, 60, 73, 86, 99
+-- listNode heights for 3 / 4 / 5 / 6 rows
+LN_H3, LN_H4, LN_H5, LN_H6 = 60, 73, 86, 99
 
 -- x of the i-th of n equal columns of width w, spread edge to edge across the
--- content area. Every diagram column comes from here, so the canvas size is a
--- parameter rather than a rewrite.
+-- content area
 function colX(i, n, w)
     if n < 2 then
         return CONTENT_L + math.floor((CONTENT_W - w) / 2)
@@ -619,7 +553,6 @@ function colW(n, gap)
     return math.floor((CONTENT_W - (n - 1) * gap) / n)
 end
 
--- centre of the i-th of n columns
 function colC(i, n, w)
     return colX(i, n, w) + math.floor(w / 2)
 end
@@ -643,9 +576,8 @@ function barWithJumps(dy, x1, x2, s, jumps)
     wire(s, from, Y(dy), x2, Y(dy))
 end
 
--- The footer every diagram shares: state swatches on the left, a dim note on
--- the right of the same line, and a full-width note 16 px under it. `dy` is
--- the swatch line's depth; every diagram passes LEG_D.
+-- The shared footer: state swatches, a dim note right-aligned on the same line,
+-- and a full-width note 16 px under it. Every diagram passes dy = LEG_D.
 function drawLegend(dy, items, rightNote, note)
     local lx = CONTENT_L
     for i = 1, #items do
@@ -664,22 +596,20 @@ function drawLegend(dy, items, rightNote, note)
     end
 end
 
--- The label of a band of a banded diagram (Ice, Fire, Ctrl, Eng, Gear): small
--- grey caps at the left margin, on the gap above the band, so a band reads as
--- a stage of the system -- hot air, then electric heat, then what resulted --
--- rather than as the next row of a grid. `dy` is the baseline depth. Every
--- band but the first carries one; the tab title names the first. No rule
--- across the width: it would cut through every drop between the bands.
+-- A band label (banded diagrams, every band but the first): small grey caps at
+-- the left margin, `dy` its baseline. No rule across the width: it would cut
+-- every drop between the bands.
 function band(dy, label)
     sasl.gl.drawText(font, CONTENT_L + 2, Y(dy), label, 10, false, false, TEXT_ALIGN_LEFT, COL_TER)
 end
 
--- shared by six diagrams, so it lives with the vocabulary rather than in the
--- file of the one that happened to define it first
 function enumTxt(map, v)
     return map[math.floor(v + 0.5)] or fmt(v, 0)
 end
 
--- every diagram file registers its draw function here, keyed by
--- the schema's `diagram`
+function onoff(b)
+    return b and "ON" or "off"
+end
+
+-- draw functions, keyed by the schema's `diagram`
 DIAGRAMS = {}

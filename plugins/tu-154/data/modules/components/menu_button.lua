@@ -2,9 +2,6 @@
 -- dark cell with a centred caption, replacing the crops of the old menus.png.
 -- Draw body is drawMenuCell (core/glbl_draw.lua).
 --
--- Mouse handlers (onMouseDown) come in as constructor arguments, exactly as
--- they do for clickable.
---
 -- `state` picks the caption colour and may be a function:
 --   "off"   white -- idle
 --   "on"    green -- the group is expanded, or the panel it opens is showing

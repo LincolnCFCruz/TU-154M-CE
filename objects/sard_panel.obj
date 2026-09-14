@@ -5,7 +5,7 @@ OBJ
 TEXTURE		srd_panel.png
 TEXTURE_LIT	srd_panel_LIT.png
 TEXTURE_NORMAL	srd_panel_NML.png
-POINT_COUNTS	278 0 0 522
+POINT_COUNTS	279 0 0 525
 
 VT	   0.5921   -2.1980  -19.1914	-0.000  1.000 -0.000	0.3956 0.7859
 VT	   0.5942   -2.1980  -19.1900	-0.000  1.000 -0.000	0.4052 0.8002
@@ -285,6 +285,7 @@ VT	   0.5896   -2.1998  -19.2160	 0.707  0.000  0.707	0.1498 0.1659
 VT	   0.5854   -2.1998  -19.2118	 0.707  0.000  0.707	0.1782 0.1376
 VT	   0.5854   -2.1980  -19.2118	 0.707  0.000  0.707	0.2011 0.1634
 VT	   0.5896   -2.1980  -19.2160	 0.707  0.000  0.707	0.1828 0.1747
+VT	   0.0000    0.0000    0.0000	0.000 1.000 0.000	0.0000 0.0000
 
 IDX10	0 1 2 0 2 3 4 5 1 4
 IDX10	1 0 6 7 5 6 5 4 8 9
@@ -340,9 +341,19 @@ IDX10	264 262 264 265 266 267 268 266 268 269
 IDX10	270 271 272 270 272 273 274 275 276 274
 IDX	276
 IDX	277
+IDX	278
+IDX	278
+IDX	278
 
 # srd_panel
 ATTR_light_level  0.000  1.000 tu-154/lights/sard_panel_lit
 TRIS	0 522
 
 # Built with Blender 2.49. Exported with XPlane2Blender 3.10.
+
+# --- Degenerate triangle: zero area, never drawn.
+# --- Its only job is to stretch the object's bounding volume to the
+# --- origin. X-Plane culls SMALL attached objects by distance, and a
+# --- 9 cm object vanishes unless the camera is close. Confirmed in
+# --- flight on sard_panel_RUS 2026-09-14.
+TRIS	522 3

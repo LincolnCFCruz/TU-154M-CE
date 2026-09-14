@@ -9,31 +9,22 @@
 --   inspector_lists.lua    the list tabs (every tab with `fields`)
 --   inspector_<key>.lua    one per `diagram` tab, registered in DIAGRAMS
 --
--- Decoupling contract: aircraft state is read ONLY by dataref name, through
--- readv(). Nothing here include()s a systems module, set()s a system dataref
--- or creates a dataref, so Hard Rule 4 does not apply.
+-- Aircraft state is read only by dataref name, through readv(). Nothing here
+-- include()s a systems module, set()s a system dataref or creates a dataref.
 -- ---------------------------------------------------------------------------
 size = { 1180, 740 }
 
 -- ---------------------------------------------------------------------------
--- The inspector's files, and how they share names
+-- The parts are not include()d: include() would make every shared name a
+-- component field, visible to the child clickables, and a nil one would reach
+-- SASL's component loader (CLAUDE.md 14). Each runs as include() runs a file
+-- (openFile, search-path push, setfenv) but in V; a part's top-level globals
+-- are the shared names, and a name V lacks falls through to the component
+-- (sasl, get, pluginDataDir) and is cached.
 --
--- The other files are not include()d. include() runs a file with the
--- COMPONENT as its globals, so everything they share would become a component
--- field -- visible to the child clickables, which resolve names up the same
--- parent chain -- and a shared name that is ever nil would be handed to SASL's
--- component loader on every read ("can't load component X", CLAUDE.md 14).
--- Instead each is run exactly as include() runs a file (openFile, the
--- search-path push, setfenv) but in V: one table of the inspector's own. A
--- split file's top-level globals ARE the shared names, its `local`s stay
--- private, and a name V does not hold falls through to the component -- so
--- sasl, get and pluginDataDir still resolve -- and is cached, since those
--- never change.
---
--- This file keeps its own names local and imports the ones it reads from V
--- (below). The few shared names it ASSIGNS -- ref_list / ref_seen /
--- ref_capture (the DATAREFS capture), HITS, watch_hover, note_hook -- it
--- reads and writes as V.x, so the other files see the new value.
+-- This file imports what it reads from V into locals once. The shared names it
+-- assigns (ref_list / ref_seen / ref_capture, HITS, watch_hover, note_hook) it
+-- uses as V.x, so the parts see the new value.
 -- ---------------------------------------------------------------------------
 local ENV = getfenv(1)
 local V = setmetatable({}, { __index = function(t, k)
@@ -78,25 +69,24 @@ local N_TABS, PAD, S_DEAD, S_FAULT, S_LOW, TAB_H = V.N_TABS, V.PAD, V.S_DEAD, V.
 local TAB_PER_ROW, TAB_W, W, WATCH_DT, chip, clamp = V.TAB_PER_ROW, V.TAB_W, V.W, V.WATCH_DT, V.chip, V.clamp
 local drawList, fmt, font, listLayout, readv, schema = V.drawList, V.fmt, V.font, V.listLayout, V.readv, V.schema
 local stateCol, voltState, watch, watchFind, watchSample, watchToggle = V.stateCol, V.voltState, V.watch, V.watchFind, V.watchSample, V.watchToggle
+local inRect = V.inRect
 
--- shared UI state (upvalues; read/written by clickables, update(), draw())
 local current_tab = 1
 local scroll_row = 0
 local max_scroll = 0
 
--- the DATAREFS overlay is showing
-local refs_on = false
--- where drawRefs last put each name and filter chip, for the click handler;
--- and which filter is showing (REF_FILTERS, by index)
+local refs_on = false -- the DATAREFS overlay is showing
+-- hits: the rects drawRefs last used, for the click handler; filter: REF_FILTERS index
 local REF = { hits = {}, filter = 1 }
--- the Watch sampler's sim-time accumulator (update())
-local watch_acc = 0
+-- the DATAREFS toggle in the header
+local REFS_BTN = { x = W - 412, y = CONTENT_T + 4, w = 100, h = 20 }
+local watch_acc = 0   -- the Watch sampler's sim-time accumulator
 
--- The order the tab bar shows the tabs in, by system group, with a divider
--- between groups. It is a list of `short` names rather than a reordering of
--- `schema`, so nothing keyed on the schema -- current_tab, diagcheck's tab
--- list, the snapshot -- moves. A tab no group names still appears, at the end.
-local TABS = { order = {}, gstart = {} }
+-- Tab-bar order, by system group with a divider between groups. A list of
+-- `short` names rather than a reordering of `schema`, so nothing keyed on the
+-- schema (current_tab, diagcheck's tab list, the snapshot) moves. A tab no
+-- group names is appended at the end. idx maps `short` to schema index.
+local TABS = { order = {}, gstart = {}, idx = {} }
 do
     local groups = {
         { "Elec", "Bat/VU" },                                      -- power
@@ -107,7 +97,7 @@ do
         { "Warn", "Lamps" },                                       -- alerting
         { "Load", "Fail", "Watch" },                               -- the rest
     }
-    local idx, used = {}, {}
+    local idx, used = TABS.idx, {}
     for i = 1, N_TABS do
         idx[schema[i].short] = i
     end
@@ -138,15 +128,18 @@ do
 end
 
 -- ---------------------------------------------------------------------------
--- Tab-bar badges (BADGE is in inspector_vocab.lua). The drawing calls a badge pass swaps
--- for no-ops -- measureText is left alone, because layouts measure strings.
+-- Tab-bar badges (BADGE is in inspector_vocab.lua). The drawing calls a badge
+-- pass swaps for no-ops; measureText is kept, because layouts measure strings.
 -- ---------------------------------------------------------------------------
 BADGE.gl = { "drawText", "drawRectangle", "drawFrame", "drawLine", "drawWideLine",
              "drawCircle", "drawArc", "drawTriangle" }
 
--- a card tab: any failure flag or fault lamp set is red; a gauge over its
--- warn_hi is amber. warn_lo is not counted: every one of them is a voltage or
--- a pressure that sits at 0 on a cold aircraft, which is not a caution.
+-- diagrams that carry no badge
+local NO_BADGE = { watch = true, lamps = true }
+
+-- A list tab: any failure flag or fault lamp set is red; a gauge over its
+-- warn_hi is amber. warn_lo is not counted: those are voltages and pressures
+-- that sit at 0 on a cold aircraft.
 function BADGE.card(fields)
     local w
     for k = 1, #fields do
@@ -175,7 +168,7 @@ function BADGE.pass(i)
         return
     end
     local fn = DIAGRAMS[tab.diagram]
-    if not fn or tab.diagram == "watch" or tab.diagram == "lamps" then
+    if not fn or NO_BADGE[tab.diagram] then
         return
     end
     local gl, saved = sasl.gl, {}
@@ -205,10 +198,8 @@ end
 -- Frame
 -- ---------------------------------------------------------------------------
 function update()
-    -- Value history, on a fixed sim-time cadence. frame_time is read here at
-    -- the top of update() (section 7a rule 4) and is 0 while the sim is paused,
-    -- so a paused sim accumulates nothing and takes no samples. This is the
-    -- only integration this tool does, and the only reason it reads the clock.
+    -- Watch sampling on a fixed sim-time cadence (CLAUDE.md 7a): frame_time is
+    -- 0 while paused, so a paused sim takes no samples
     if #watch > 0 then
         watch_acc = watch_acc + readv("tu-154/time/frame_time")
         local guard = 0
@@ -229,7 +220,7 @@ function update()
         max_scroll = 0
         return
     end
-    -- a card tab scrolls by whole columns, and only if it outgrows LS.NCOL
+    -- a list tab scrolls by whole columns, and only if it outgrows LS.NCOL
     max_scroll = math.max(0, listLayout(current_tab).cols - LS.NCOL)
     scroll_row = clamp(0, scroll_row, max_scroll)
 end
@@ -270,17 +261,15 @@ end
 local function drawHeader()
     local y = CONTENT_T
     sasl.gl.drawText(font, PAD, y + 7, schema[current_tab].name, 17, false, false, TEXT_ALIGN_LEFT, COL_TEXT)
-    -- where a scrolling card tab is: which cards are on screen, of how many.
-    -- The scrollbar's thumb says roughly where; this says which.
+    -- which columns of a scrolling list tab are on screen
     local tab = schema[current_tab]
     if not tab.diagram and max_scroll > 0 then
-        sasl.gl.drawText(font, W - 422, y + 10, "columns " .. (scroll_row + 1) .. "-"
+        sasl.gl.drawText(font, REFS_BTN.x - 10, y + 10, "columns " .. (scroll_row + 1) .. "-"
             .. (scroll_row + LS.NCOL) .. " of " .. (max_scroll + LS.NCOL), 12, false, false,
             TEXT_ALIGN_RIGHT, COL_DIM)
     end
-    -- Always-on power readout, coloured by the diagrams' NOM_27 / NOM_115. A
-    -- dead bus stays red rather than grey: here it is the alarm. 115 V is the
-    -- best of the three buses -- the lamp answers "is there AC at all".
+    -- Power lamps, by NOM_27 / NOM_115. A dead bus is red, not grey: here it is
+    -- the alarm. 115 V is the best of the three buses ("is there AC at all").
     local dcl = readv("tu-154/elec/bus27_volt_left")
     local dcr = readv("tu-154/elec/bus27_volt_right")
     local ac = math.max(readv("tu-154/elec/bus115_1_volt"),
@@ -294,26 +283,19 @@ local function drawHeader()
         sasl.gl.drawCircle(l[1], y + 14, 6, true, l[3] == S_DEAD and COL_RED or stateCol(l[3]))
         sasl.gl.drawText(font, l[1] + 12, y + 7, l[2], 14, false, false, TEXT_ALIGN_LEFT, COL_DIM)
     end
-    -- the dataref probe toggle, between the title and the power readout
-    sasl.gl.drawRectangle(W - 412, y + 4, 100, 20, refs_on and COL_SEL or COL_TAB)
-    sasl.gl.drawFrame(W - 412, y + 4, 100, 20, COL_FRAME)
-    sasl.gl.drawText(font, W - 362, y + 10, "DATAREFS", 12, false, false, TEXT_ALIGN_CENTER,
+    local b = REFS_BTN
+    sasl.gl.drawRectangle(b.x, b.y, b.w, b.h, refs_on and COL_SEL or COL_TAB)
+    sasl.gl.drawFrame(b.x, b.y, b.w, b.h, COL_FRAME)
+    sasl.gl.drawText(font, b.x + b.w / 2, b.y + 6, "DATAREFS", 12, false, false, TEXT_ALIGN_CENTER,
         refs_on and COL_TEXT or COL_DIM)
     sasl.gl.drawLine(PAD, y + 2, W - PAD, y + 2, COL_FRAME)
 end
 
--- The probe overlay: every name the current tab read this frame, sorted, with
--- its live value. A name sitting at exactly 0 is drawn dim -- on the diagram
--- tabs that is the quickest way to spot a dataref nothing writes.
---
--- The names are grouped by namespace -- the part up to the second slash,
--- "tu-154/elec/" -- which heads its group once, and each row shows only the
--- rest: the same prefix used to be repeated on every one of up to 140 rows,
--- and it was most of what the eye had to read past. The chips filter the list
--- (NONZERO and ZERO are the two halves the dim/bright rendering already
--- suggested; PINNED is what is on Watch), each with its count. Clicks are
--- hit-tested against REF.hits, the rects this draw put things at, rather than
--- recomputed from the layout arithmetic, which the group headers broke.
+-- The DATAREFS overlay: every name the current tab read this frame, sorted and
+-- grouped by namespace (up to the second slash, shown once per group), with
+-- its live value. A value at exactly 0 is dim -- on a diagram tab that is
+-- usually a dataref nothing writes. Clicks are hit-tested against REF.hits,
+-- the rects this draw used.
 local REF_COLS = 3
 local REF_FILTERS = { "ALL", "NONZERO", "ZERO", "PINNED" }
 
@@ -328,14 +310,8 @@ local function refShown(name, v, f)
     return true
 end
 
-local function drawRefs()
-    -- opaque: at 97 % the diagram's brightest text showed through and ran
-    -- into the names laid over it
-    sasl.gl.drawRectangle(CONTENT_L, CONTENT_B, CONTENT_W, CONTENT_H, { 0.08, 0.09, 0.11, 1 })
-    sasl.gl.drawFrame(CONTENT_L, CONTENT_B, CONTENT_W, CONTENT_H, COL_DIM)
-    table.sort(V.ref_list)
-    REF.hits = {}
-
+-- each name's value, and the count behind each filter chip
+local function refValues()
     local vals, counts = {}, { #V.ref_list, 0, 0, 0 }
     for i, name in ipairs(V.ref_list) do
         local v = readv(name)
@@ -349,20 +325,11 @@ local function drawRefs()
             counts[4] = counts[4] + 1
         end
     end
+    return vals, counts
+end
 
-    sasl.gl.drawText(font, CONTENT_L + 8, CONTENT_T - 17,
-        schema[current_tab].short .. " reads " .. #V.ref_list ..
-        " datarefs this frame -- click one to plot it on Watch", 12, false, false,
-        TEXT_ALIGN_LEFT, COL_TEXT)
-    local cw = 96
-    for k = 1, #REF_FILTERS do
-        local x = CONTENT_L + CONTENT_W - 8 - (#REF_FILTERS - k + 1) * (cw + 6) + 6
-        local y = CONTENT_T - 22
-        chip(x, y, cw, REF_FILTERS[k] .. "  " .. counts[k], k == REF.filter)
-        REF.hits[#REF.hits + 1] = { x, y, x + cw, y + 15, filter = k }
-    end
-
-    -- the rows the filter lets through, each namespace headed once
+-- the rows the filter lets through, each namespace headed once
+local function refItems(vals)
     local items, group = {}, nil
     for i, name in ipairs(V.ref_list) do
         if refShown(name, vals[i], REF.filter) then
@@ -377,11 +344,34 @@ local function drawRefs()
             items[#items + 1] = { name = name, rest = rest, v = vals[i] }
         end
     end
+    return items
+end
 
-    -- Three columns filled top to bottom and balanced, 13 px pitch; a group
-    -- header is never left as the last line of a column, and a group carried
-    -- over a column break is headed again, "(cont.)", as the list tabs do --
-    -- one row of slack per column pays for those.
+local function drawRefs()
+    -- opaque: any translucency lets the diagram's text run into the names
+    sasl.gl.drawRectangle(CONTENT_L, CONTENT_B, CONTENT_W, CONTENT_H, { 0.08, 0.09, 0.11, 1 })
+    sasl.gl.drawFrame(CONTENT_L, CONTENT_B, CONTENT_W, CONTENT_H, COL_DIM)
+    table.sort(V.ref_list)
+    REF.hits = {}
+
+    local vals, counts = refValues()
+
+    sasl.gl.drawText(font, CONTENT_L + 8, CONTENT_T - 17,
+        schema[current_tab].short .. " reads " .. #V.ref_list ..
+        " datarefs this frame -- click one to plot it on Watch", 12, false, false,
+        TEXT_ALIGN_LEFT, COL_TEXT)
+    local cw = 96
+    for k = 1, #REF_FILTERS do
+        local x = CONTENT_L + CONTENT_W - 8 - (#REF_FILTERS - k + 1) * (cw + 6) + 6
+        local y = CONTENT_T - 22
+        chip(x, y, cw, REF_FILTERS[k] .. "  " .. counts[k], k == REF.filter)
+        REF.hits[#REF.hits + 1] = { x, y, x + cw, y + 15, filter = k }
+    end
+
+    local items = refItems(vals)
+
+    -- Balanced columns, 13 px pitch. A group header is never a column's last
+    -- line, and a group carried over a break is headed again "(cont.)".
     local top = CONTENT_T - 40
     local maxRows = math.floor((top - CONTENT_B - 6) / 13) + 1
     local rows = math.max(1, math.min(maxRows, math.ceil((#items + REF_COLS - 1) / REF_COLS)))
@@ -440,7 +430,6 @@ local function drawScrollbar()
     local thumbH = CONTENT_H * (LS.NCOL / total_rows)
     local thumbY = CONTENT_T - thumbH - (CONTENT_H - thumbH) * (scroll_row / max_scroll)
     sasl.gl.drawRectangle(trackX, thumbY, trackW, thumbH, COL_DIM)
-    -- arrow glyphs (clickable areas are separate components)
     local ax = W - 11
     sasl.gl.drawTriangle(ax, CONTENT_T - 4, ax + 8, CONTENT_T - 4, ax + 4, CONTENT_T - 14, COL_DIM)  -- up
     sasl.gl.drawTriangle(ax, CONTENT_B + 14, ax + 8, CONTENT_B + 14, ax + 4, CONTENT_B + 4, COL_DIM) -- down
@@ -477,7 +466,7 @@ function draw()
         BADGE.on, BADGE.worst = true, nil
         DIAGRAMS[tab.diagram]()
         BADGE.on = false
-        if BADGE.live and tab.diagram ~= "watch" and tab.diagram ~= "lamps" then
+        if BADGE.live and not NO_BADGE[tab.diagram] then
             BADGE.tab[current_tab] = BADGE.worst
         end
     else
@@ -485,7 +474,7 @@ function draw()
     end
     sasl.gl.resetClipArea()
     V.ref_capture = false
-    -- after capture is off: a card tab is judged on every field, not only the
+    -- after capture is off: a list tab is judged on every field, not only the
     -- rows in view, and those reads must not land in the DATAREFS list
     if BADGE.live and not tab.diagram then
         BADGE.tab[current_tab] = BADGE.card(tab.fields)
@@ -511,57 +500,42 @@ end
 
 local comps = {}
 
--- tab buttons across the top (multi-row grid; matches drawTabBar)
-do
-    for p = 1, N_TABS do
-        local i = TABS.order[p]
-        local x0, y0, tw = tabRect(p)
-        comps[#comps + 1] = clickable {
-            position = { x0, y0, tw, TAB_H },
-            onMouseDown = function()
-                current_tab = i
-                scroll_row = 0
-                return true
-            end
-        }
-    end
+for p = 1, N_TABS do
+    local i = TABS.order[p]
+    local x0, y0, tw = tabRect(p)
+    comps[#comps + 1] = clickable {
+        position = { x0, y0, tw, TAB_H },
+        onMouseDown = function()
+            current_tab = i
+            scroll_row = 0
+            return true
+        end
+    }
 end
 
--- the dataref probe toggle in the header (matches the button in drawHeader)
 comps[#comps + 1] = clickable {
-    position = { W - 412, CONTENT_T + 4, 100, 20 },
+    position = { REFS_BTN.x, REFS_BTN.y, REFS_BTN.w, REFS_BTN.h },
     onMouseDown = function()
         refs_on = not refs_on
         return true
     end
 }
 
--- mouse-wheel scrolling over the content area; a click here dismisses the
--- probe overlay, which covers this same rect while it is up
+-- The content area. x/y arrive in this clickable's own space and are turned
+-- back into window coordinates, which is what every hit rect is recorded in.
 comps[#comps + 1] = clickable {
     position = { CONTENT_L, CONTENT_B, CONTENT_W, CONTENT_H },
-    -- While the probe overlay is up, a click on one of its rows pins or unpins
-    -- that dataref; a click anywhere else closes the overlay. x/y arrive in
-    -- this clickable's own space, and the rect is the content area, so depth
-    -- below CONTENT_T is CONTENT_H - y -- the coordinate drawRefs lays out in.
     onMouseDown = function(_, x, y)
         local cx, cy = CONTENT_L + x, CONTENT_B + y
-        local function hit(h)
-            return cx >= h[1] and cx < h[3] and cy >= h[2] and cy < h[4]
-        end
         if not refs_on then
             -- a row that links to another tab (listNode `link`)
             for _, h in ipairs(V.HITS) do
-                if hit(h) then
-                    for i = 1, N_TABS do
-                        if schema[i].short == h.tab then
-                            current_tab, scroll_row = i, 0
-                            return true
-                        end
-                    end
+                local i = inRect(h, cx, cy) and TABS.idx[h.tab]
+                if i then
+                    current_tab, scroll_row = i, 0
+                    return true
                 end
             end
-            -- the Lamps tab takes clicks on its mode chips and on its lamps
             if schema[current_tab].diagram == "lamps" then
                 return LP.click(cx, cy)
             end
@@ -569,7 +543,7 @@ comps[#comps + 1] = clickable {
         end
         -- the overlay: a filter chip, a name to pin or unpin, or the gap to close
         for _, h in ipairs(REF.hits) do
-            if hit(h) then
+            if inRect(h, cx, cy) then
                 if h.filter then
                     REF.filter = h.filter
                 else
@@ -597,7 +571,7 @@ comps[#comps + 1] = clickable {
     end
 }
 
--- scroll arrows (right gutter)
+-- scroll arrows
 comps[#comps + 1] = clickable {
     position = { W - 20, CONTENT_T - 16, 16, 16 },
     onMouseDown = function()

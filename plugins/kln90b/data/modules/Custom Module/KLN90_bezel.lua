@@ -21,6 +21,10 @@ size = {457, 146.5}
 
 local bg = sasl.gl.loadImage("KLN90.dds", 0, 219, 914, 293)
 
+-- Non-lit stage only: the face is lit by the cockpit, it does not glow. Drawn in
+-- the lit stage too, the whole grey bezel would be emissive at night.
 function draw()
-    sasl.gl.drawTexture(bg, 0, 0, size[1], size[2])
+    if sasl.gl.isNonLitStage() then
+        sasl.gl.drawTexture(bg, 0, 0, size[1], size[2])
+    end
 end

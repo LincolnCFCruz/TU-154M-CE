@@ -1,15 +1,9 @@
 -- ---------------------------------------------------------------------------
--- The list tabs (every tab with `fields`): label | value rows under their
--- `section` headers in LS.NCOL balanced columns, so every list tab fits one
--- screen (ABSU, the largest, is ~1700 px against 3 x 642).
--- A section too long for its column carries on at the top of the next as
--- "TITLE (cont.)", and a header is never left alone at the foot of a column.
--- A tab that ever outgrows LS.NCOL full columns scrolls the rest in, a column
--- at a time.
---
--- Nominal is quiet here as on the diagrams: a fault lamp that is out and a
--- failure flag that is clear are a hollow dot and a grey "ok", an enum at 0 is
--- plain text, and only an active mode gets a chip.
+-- The list tabs (every tab with `fields`): label | value rows under `section`
+-- headers in LS.NCOL balanced columns. A long section carries on in the next
+-- column as "TITLE (cont.)"; a tab that outgrows LS.NCOL full columns scrolls
+-- a column at a time. Nominal is quiet: a clear fault or failure is a hollow
+-- dot and a grey "ok", and only a non-zero enum gets a chip.
 -- ---------------------------------------------------------------------------
 LS = {
     ROW   = 19,  -- row pitch
@@ -56,8 +50,7 @@ function listLayout(i)
     end
     for _, b in ipairs(blocks) do
         if b.title then
-            -- a header starts a column rather than sit at the foot of one
-            -- over fewer than two of its rows (Nav's RSBN once did, over one)
+            -- never leave a header at a column foot over fewer than two rows
             local need = LS.HEAD + math.min(2, #b.rows) * LS.ROW
             if y > 0 and y + need > limit() then
                 col, y = col + 1, 0
@@ -66,10 +59,8 @@ function listLayout(i)
             y = y + LS.HEAD
         end
         for k, f in ipairs(b.rows) do
-            -- A section's LAST row is not carried over just to even out the
-            -- columns: "TITLE (cont.)" over one row is a widow, and the first
-            -- layout put ABSU's M integral alone at the top of column 2. It
-            -- still moves if it would not fit the column at all.
+            -- a section's last row is not carried over just to level the
+            -- columns (a one-row "(cont.)" is a widow), only if it cannot fit
             local last = (k == #b.rows) and (y + LS.ROW <= CONTENT_H)
             if y + LS.ROW > limit() and not last then
                 col, y = col + 1, 0
@@ -88,14 +79,24 @@ function listLayout(i)
     return lay
 end
 
+local function colorFor(v, warn_lo, warn_hi)
+    if warn_lo and v < warn_lo then
+        return COL_AMBER
+    end
+    if warn_hi and v > warn_hi then
+        return COL_RED
+    end
+    return COL_GREEN
+end
+
 -- `top` is the depth below CONTENT_T
-function drawHead(x, top, title)
+local function drawHead(x, top, title)
     local yb = CONTENT_T - top - LS.HEAD
     sasl.gl.drawText(font, x + 2, yb + 8, title, 11, false, false, TEXT_ALIGN_LEFT, COL_DIM)
     sasl.gl.drawRectangle(x, yb + 3, LS.CW, 1, COL_FRAME)
 end
 
-function drawRow(x, top, f, zebra)
+local function drawRow(x, top, f, zebra)
     local w = LS.CW
     local yb = CONTENT_T - top - LS.ROW
     local ty, xr = yb + 5, x + w - 6

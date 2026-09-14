@@ -1,25 +1,16 @@
--- ---- Annunciators and lights (the Lamps tab) -------------------------------
--- Every tu-154/lights/ dataref the registry creates, as a grid of lamps, with
--- a LIT view that shows only what is lit right now -- the quickest way to find
--- the one lamp that should not be on. The other chips show one group each, so
--- no view ever holds more than a screen and the tab never scrolls.
+-- ---------------------------------------------------------------------------
+-- Annunciators and lights (the Lamps tab): every tu-154/lights/ lamp, with a
+-- LIT view of what is lit now and one chip per group, so no view needs to
+-- scroll.
 --
--- The list is not typed out here. LP.load reads it from
--- core/dataref_creator_*.lua the first time the tab is drawn, so a lamp added
--- to the registry appears without anyone touching this file -- the same reason
--- the DATAREFS probe derives its list from the reads. Reading a file as text is
--- not include(): nothing here runs systems code.
+-- LP.load reads the list from core/dataref_creator_*.lua as text (not
+-- include()), so a lamp added to the registry appears on its own. Controls in
+-- the namespace are left out: `_set` names, switch covers (`_cap`) and
+-- landing_light_off.
 --
--- Left out: the controls that share the namespace -- anything with `_set` in
--- its name (dimmers, integral lighting, the landing-light extension and mode
--- switches), switch covers (`_cap`) and landing_light_off. They are switch
--- positions, not lamps.
---
--- DEAD is the one list that is typed out: the lamps nothing in the aircraft
--- drives, per _tools/writers.py. They are drawn hollow and never read, because
--- a lamp nothing drives reads 0, which looks exactly like a working lamp that
--- is off. diagcheck keeps it honest both ways: its dead rule fails this tab if
--- it reads a lamp nothing writes, and fails a DEAD entry that something writes.
+-- DEAD is the lamps nothing drives (_tools/writers.py): drawn hollow and never
+-- read, since an undriven lamp reads 0 like a working one that is off.
+-- diagcheck holds the list to the writer model in both directions.
 -- ---------------------------------------------------------------------------
 
 -- shared: the frame code's click handler and diagcheck reach it
@@ -76,8 +67,12 @@ LP = {
     },
     mode   = 1,
     list   = nil, -- { name, g, label, full, o }, by group then label
+    nDead  = 0,   -- entries of DEAD
     hits   = {},  -- where the last draw put each chip and lamp, for LP.click
 }
+for _ in pairs(LP.DEAD) do
+    LP.nDead = LP.nDead + 1
+end
 
 function LP.load()
     local list, seen, order = {}, {}, {}
@@ -120,8 +115,7 @@ local function drawLampsDiagram()
     local hits = {}
     LP.hits = hits
 
-    -- Every live lamp is read on every frame, whatever the mode: the chips
-    -- count what is lit in each group, and LIT needs all of them anyway.
+    -- every live lamp is read whatever the mode: the chips count all groups
     local lit, nLit, total = {}, {}, {}
     for i = 1, #LP.list do
         local e = LP.list[i]
@@ -201,15 +195,11 @@ local function drawLampsDiagram()
             11, false, false, TEXT_ALIGN_LEFT, COL_AMBER)
     end
 
-    local nDead = 0
-    for _ in pairs(LP.DEAD) do
-        nDead = nDead + 1
-    end
     drawLegend(LEG_D, { { S_LOW, "lit" }, { S_DEAD, "dark" } },
         "click a lamp to pin it to Watch",
         "Every tu-154/lights/ dataref in the registry except the controls (anything with _set"
         .. " in its name, switch covers). Hollow: nothing in the aircraft drives it -- "
-        .. nDead .. " of " .. #LP.list .. ", per _tools/writers.py.")
+        .. LP.nDead .. " of " .. #LP.list .. ", per _tools/writers.py.")
 end
 DIAGRAMS.lamps = drawLampsDiagram
 
@@ -217,7 +207,7 @@ DIAGRAMS.lamps = drawLampsDiagram
 function LP.click(x, y)
     for i = 1, #LP.hits do
         local h = LP.hits[i]
-        if x >= h[1] and x < h[3] and y >= h[2] and y < h[4] then
+        if inRect(h, x, y) then
             if h.mode then
                 LP.mode = h.mode
             else

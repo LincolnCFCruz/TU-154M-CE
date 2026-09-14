@@ -1,11 +1,20 @@
 -- ---------------------------------------------------------------------------
--- Watch tab: the pinned traces. Each row autoscales to its own window, because
--- the interesting thing about a bus volt and a fuel flow on the same screen is
--- the *shape* of each, not their ratio.
+-- Watch tab: the pinned traces. Each row autoscales to its own window: what
+-- matters is the shape of each trace, not their ratio.
 -- ---------------------------------------------------------------------------
-local WG = {
-    LBL = 340, -- width of the label column, left of the plot
-}
+local LBL_W = 340 -- label column, left of the plot
+
+-- the k-th oldest sample; the n most recent writes end at slot w - 1
+local function sampleAt(t, k)
+    return t.v[(t.w - t.n + k - 2) % WATCH_N + 1]
+end
+
+-- row i's box (yb, h) and plot area (py0, ph), rows `pitch` apart
+local function rowRect(i, pitch)
+    local h = pitch - 8
+    local yb = Y(6 + (i - 1) * pitch + h)
+    return yb, h, yb + 12, h - 26
+end
 
 local function drawWatch()
     if #watch == 0 then
@@ -26,47 +35,36 @@ local function drawWatch()
         return
     end
 
-    -- The rows share the whole height between however many are pinned: each
-    -- plot autoscales, so a tall row is extra resolution on the transient.
+    -- the pinned rows share the whole height: a tall row is more resolution
     local pitch = math.floor((CONTENT_H - 26) / #watch)
-    -- every row has the same x axis
-    local px0 = CONTENT_L + WG.LBL
-    local pw = CONTENT_W - WG.LBL - 12
+    local px0 = CONTENT_L + LBL_W
+    local pw = CONTENT_W - LBL_W - 12
     local step = pw / math.max(1, WATCH_N - 1)
 
-    -- The time cursor. The row under the mouse turns the pointer's x into an
-    -- AGE -- how many samples before that row's newest -- and every row then
-    -- shows its own sample of that age. A trace is drawn oldest-first from the
-    -- left edge, so until its ring is full a trace pinned later has its samples
-    -- at different x than one pinned earlier; reading "the sample under x" in
-    -- each row would put different instants side by side. By age, they are the
-    -- same instant. A row with no sample that old shows no cursor.
+    -- Time cursor. The row under the mouse turns x into an AGE (samples before
+    -- its newest) and every row shows its own sample of that age: until a ring
+    -- fills, traces pinned at different times put different instants at one x.
     local age
-    local hx, hy
     if watch_hover then
-        hx, hy = watch_hover[1], watch_hover[2]
-    end
-    if hx and hx >= px0 and hx <= px0 + pw then
-        for i = 1, #watch do
-            local t = watch[i]
-            local h = pitch - 8
-            local py0 = Y(6 + (i - 1) * pitch + h) + 12
-            if t.n > 0 and hy >= py0 and hy <= py0 + h - 26 then
-                age = t.n - clamp(1, math.floor((hx - px0) / step + 0.5) + 1, t.n)
-                break
+        local hx, hy = watch_hover[1], watch_hover[2]
+        if hx >= px0 and hx <= px0 + pw then
+            for i = 1, #watch do
+                local t = watch[i]
+                local _, _, py0, ph = rowRect(i, pitch)
+                if t.n > 0 and hy >= py0 and hy <= py0 + ph then
+                    age = t.n - clamp(1, math.floor((hx - px0) / step + 0.5) + 1, t.n)
+                    break
+                end
             end
         end
     end
 
     for i = 1, #watch do
         local t = watch[i]
-        local dy = 6 + (i - 1) * pitch
-        local h = pitch - 8
-        local yb = Y(dy + h)
+        local yb, h, py0, ph = rowRect(i, pitch)
         sasl.gl.drawRectangle(CONTENT_L, yb, CONTENT_W, h, COL_CARD)
         sasl.gl.drawFrame(CONTENT_L, yb, CONTENT_W, h, COL_FRAME)
 
-        -- window extremes, and the newest sample
         local lo, hi = math.huge, -math.huge
         for k = 1, t.n do
             local v = t.v[k]
@@ -80,16 +78,15 @@ local function drawWatch()
         if t.n == 0 then
             lo, hi = 0, 1
         end
-        local cur = t.n > 0 and t.v[(t.w - 2) % WATCH_N + 1] or 0
+        local cur = t.n > 0 and sampleAt(t, t.n) or 0
         local span = hi - lo
         if span < 1e-6 then
-            -- a dead flat trace still needs a band to sit in the middle of
+            -- a flat trace still needs a band to sit in the middle of
             lo, hi = lo - 0.5, hi + 0.5
             span = hi - lo
         end
 
-        -- the label block hangs from the top of the row, so it stays a block
-        -- whether the row is 94 px tall or 600
+        -- the label block hangs from the top of the row, at any row height
         local ly = yb + h
         sasl.gl.drawText(font, CONTENT_L + 10, ly - 16, t.name, 11, false, false,
             TEXT_ALIGN_LEFT, COL_TEXT)
@@ -98,20 +95,15 @@ local function drawWatch()
         sasl.gl.drawText(font, CONTENT_L + 10, ly - 64,
             "min " .. fmt(lo, 2) .. "    max " .. fmt(hi, 2), 11, false, false,
             TEXT_ALIGN_LEFT, COL_DIM)
-        sasl.gl.drawText(font, CONTENT_L + WG.LBL - 12, ly - 64,
+        sasl.gl.drawText(font, CONTENT_L + LBL_W - 12, ly - 64,
             t.n .. " / " .. WATCH_N, 11, false, false, TEXT_ALIGN_RIGHT, COL_TER)
 
-        -- plot area
-        local py0, ph = yb + 12, h - 26
         sasl.gl.drawFrame(px0, py0, pw, ph, COL_OFF)
-        -- zero line, when the window straddles it
         if lo < 0 and hi > 0 then
             local zy = py0 + (0 - lo) / span * ph
             sasl.gl.drawLine(px0, zy, px0 + pw, zy, COL_FRAME)
         end
-        -- a faint line every 5 s of sim time, counted back from the newest
-        -- sample, so a transient's age and length read off the plot itself
-        -- and not only off the cursor; they ride with the trace as it fills
+        -- a faint line every 5 s, counted back from the newest sample
         if t.n > 1 then
             local every = math.floor(5 / WATCH_DT + 0.5)
             local xN = px0 + (t.n - 1) * step
@@ -123,11 +115,10 @@ local function drawWatch()
             end
         end
 
-        -- Oldest sample first. The n most recent writes occupy the slots
-        -- ending at w-1, so the k-th oldest is at (w - n + k - 2) mod N + 1.
+        -- oldest sample first, from the left edge
         local lx, ly2
         for k = 1, t.n do
-            local v = t.v[(t.w - t.n + k - 2) % WATCH_N + 1]
+            local v = sampleAt(t, k)
             local x = px0 + (k - 1) * step
             local y = py0 + (v - lo) / span * ph
             if lx then
@@ -136,12 +127,11 @@ local function drawWatch()
             lx, ly2 = x, y
         end
 
-        -- this row's sample at the cursor's age: a hairline, a tick on the
-        -- trace, and the value -- on the far side of the line near the right
-        -- edge, so it never runs out of the plot
+        -- this row's sample at the cursor's age; the value flips to the left
+        -- of the line near the right edge
         if age and age < t.n then
             local k = t.n - age
-            local v = t.v[(t.w - t.n + k - 2) % WATCH_N + 1]
+            local v = sampleAt(t, k)
             local x = math.floor(px0 + (k - 1) * step)
             local y = math.floor(py0 + (v - lo) / span * ph)
             sasl.gl.drawLine(x, py0, x, py0 + ph, COL_DIM)

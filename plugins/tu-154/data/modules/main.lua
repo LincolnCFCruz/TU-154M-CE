@@ -148,6 +148,5 @@ debug_inspector {}
 -- ============================================================
 function update()
     updateAll(components)
-    updatePanels()     -- popup windows <-> tu-154/panels/show_* datarefs
-    updateTopBarMenu() -- the Plugins-menu checkboxes follow
+    updatePanels() -- popup windows <-> tu-154/panels/show_* datarefs, then the Plugins-menu ticks
 end

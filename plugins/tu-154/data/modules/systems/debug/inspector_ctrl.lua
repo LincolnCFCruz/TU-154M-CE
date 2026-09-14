@@ -1,29 +1,19 @@
 -- ---------------------------------------------------------------------------
 -- Flight controls one-line diagram (the Ctrl tab)
 --
--- This one is the mechanical counterpart of the hydraulic diagram, and the
--- structure worth drawing is the same shape as the RA-56 matrix: the three
--- boosters are NOT one per axis. hydro_logic.lua multiplies the whole control
--- demand by each booster in turn --
+-- The three boosters are NOT one per axis. hydro_logic.lua multiplies the
+-- whole control demand by each booster in turn:
 --
 --   system 1: (ailerons + elevator + rudder + elevons) * buster_1 + spoilers + flaps
 --   system 2: (ailerons + elevator + rudder + elevons) * buster_2 + flaps
 --   system 3: (ailerons + elevator + rudder + elevons) * buster_3
 --
--- so booster N draws from hydraulic system N, all three drive all three axes in
--- parallel, and only system 1 also carries the spoilers while 1 and 2 carry the
--- flaps. That is why the bar runs across all three axes rather than each
--- booster dropping into one of them.
+-- so booster N draws from hydraulic system N and all three drive all three
+-- axes -- hence one bar across the axes.
 --
--- Two things the rows are careful about:
---   * a booster is LATCHED. hydro_logic only copies the switch into its
---     internal state while the relevant bus is powered -- 27 V LEFT for
---     boosters 1 and 2, 27 V RIGHT for booster 3 -- so losing that bus freezes
---     the booster wherever it was rather than dropping it out. The asymmetry is
---     real and is why the rows name the bus.
---   * being engaged is not the same as working. `booster_N` is the latched
---     switch and nothing else; the hydraulic pressure beside it is a separate
---     reading, and the module never gates one on the other.
+-- A booster is LATCHED: the switch is copied in only while its bus is live
+-- (27 V left for 1 and 2, right for 3). And engaged is not working:
+-- `booster_N` is the latched switch alone, never gated on the pressure.
 -- ---------------------------------------------------------------------------
 
 local FC = {
@@ -48,7 +38,7 @@ local FC_BOOST = {
 local FC_AX = {
     { t = "PITCH", inp = "tu-154/controlls/yoke_pitch",
       sw = "tu-154/controll/elev_trimm_switcher", trim = "tu-154/trimmers/int_pitch_trim",
-      swmap = { [-1] = "NOSE DN", [0] = "NEUTRAL", [1] = "NOSE UP" },
+      swmap = ENUM_NOSE_TRIM,
       feel = "tu-154/controls/control_force_pos",
       gauge = "tu-154/gauges/misc/elevator_pos_ind",
       pl = "tu-154/controlls/elev_L_phys", pr = "tu-154/controlls/elev_R_phys",
@@ -84,7 +74,23 @@ local FC_LEGEND = {
     { S_FAULT, "failed" },
 }
 
+-- the surface failure flags under tu-154/failures/, with their short labels
+local FC_FAILS = {
+    { "elev L", "elev_fail_left" }, { "elev R", "elev_fail_right" },
+    { "ail L", "ail_fail_left" },   { "ail R", "ail_fail_right" },
+    { "rudder", "rudder_fail" },    { "flap L", "flap_fail_left" },
+    { "flap R", "flap_fail_right" }, { "slats", "slats_fail" },
+}
+
 local function drawCtrlDiagram()
+    local failed = {}
+    for _, f in ipairs(FC_FAILS) do
+        failed[f[2]] = readv("tu-154/failures/" .. f[2]) > 0.5
+    end
+    local function failTxt(n)
+        return failed[n] and "FAILED" or "ok"
+    end
+
     -- ---- the three boosters ------------------------------------------------
     local anyBoost = false
     for i = 1, 3 do
@@ -167,35 +173,28 @@ local function drawCtrlDiagram()
     -- ---- high lift and the airbrakes ---------------------------------------
     local flapL = readv("tu-154/gauges/misc/flap_left_ind")
     local flapR = readv("tu-154/gauges/misc/flap_right_ind")
-    local flapBad = readv("tu-154/lights/flaps_unsync") > 0.5
-        or readv("tu-154/failures/flap_fail_left") > 0.5
-        or readv("tu-154/failures/flap_fail_right") > 0.5
+    local flapUnsync = readv("tu-154/lights/flaps_unsync") > 0.5
+    local flapBad = flapUnsync or failed.flap_fail_left or failed.flap_fail_right
     listNode(colX(1, 3, FC.C3), FC.HL, FC.C3, LN_H6, "FLAPS",
         flapBad and S_FAULT or (flapL > 1 and S_LIVE or S_STBY), {
             { "lever", fmt(readv("tu-154/controll/flaps_lever"), 0) .. " deg" },
             { "left / right", fmt(flapL, 1) .. " / " .. fmt(flapR, 1) .. " deg", hd = true },
-            { "asymmetry lamp", readv("tu-154/lights/flaps_unsync") > 0.5 and "LIT" or "dark",
-              readv("tu-154/lights/flaps_unsync") > 0.5 and S_FAULT or nil },
+            { "asymmetry lamp", flapUnsync and "LIT" or "dark", flapUnsync and S_FAULT or nil },
             { "PK valve 1 / 2",
               (readv("tu-154/lights/flaps_1_valve") > 0.5 and "OPEN" or "shut") .. " / "
               .. (readv("tu-154/lights/flaps_2_valve") > 0.5 and "OPEN" or "shut") },
             { "driven by", "hydraulic systems 1 and 2", note = true },
-            { "failure L / R",
-              (readv("tu-154/failures/flap_fail_left") > 0.5 and "FAILED" or "ok") .. " / "
-              .. (readv("tu-154/failures/flap_fail_right") > 0.5 and "FAILED" or "ok"),
+            { "failure L / R", failTxt("flap_fail_left") .. " / " .. failTxt("flap_fail_right"),
               flapBad and S_FAULT or nil },
         }, clamp(0, flapL / 36, 1))
 
-    local slatBad = readv("tu-154/failures/slats_fail") > 0.5
-        or readv("tu-154/lights/slats_unsync") > 0.5
+    local slatUnsync = readv("tu-154/lights/slats_unsync") > 0.5
+    local slatExt = readv("tu-154/lights/slats_extended") > 0.5
+    local slatBad = failed.slats_fail or slatUnsync
     listNode(colX(2, 3, FC.C3), FC.HL, FC.C3, LN_H6, "SLATS",
-        slatBad and S_FAULT or (readv("tu-154/lights/slats_extended") > 0.5
-        and S_LIVE or S_STBY), {
-            { "extended lamp",
-              readv("tu-154/lights/slats_extended") > 0.5 and "LIT" or "dark" },
-            { "asymmetry lamp",
-              readv("tu-154/lights/slats_unsync") > 0.5 and "LIT" or "dark",
-              readv("tu-154/lights/slats_unsync") > 0.5 and S_FAULT or nil },
+        slatBad and S_FAULT or (slatExt and S_LIVE or S_STBY), {
+            { "extended lamp", slatExt and "LIT" or "dark" },
+            { "asymmetry lamp", slatUnsync and "LIT" or "dark", slatUnsync and S_FAULT or nil },
             { "manual switch", enumTxt({ [-1] = "RETRACT", [0] = "OFF", [1] = "EXTEND" },
               readv("tu-154/switchers/slat_man")) },
             { "electric heat", "115 V bus 2 -- see the Ice tab", note = true, link = "Ice" },
@@ -227,11 +226,10 @@ local function drawCtrlDiagram()
     local stab = readv("tu-154/gauges/misc/stab_ind")
     listNode(colX(1, 3, FC.C3), FC.TRIM, FC.C3, LN_H6, "STABILISER", S_STBY, {
         { "position", fmt(stab, 2) .. " deg", hd = true },
-        { "gauge", fmt(readv("tu-154/gauges/misc/stab_ind"), 2) },
+        { "gauge", fmt(stab, 2) },
         { "CG setting", enumTxt({ [0] = "AFT", [1] = "MID", [2] = "FWD" },
           readv("tu-154/controll/stab_setting")) },
-        { "manual switch", enumTxt({ [-1] = "NOSE DN", [0] = "NEUTRAL", [1] = "NOSE UP" },
-          readv("tu-154/controll/stab_manual")) },
+        { "manual switch", enumTxt(ENUM_NOSE_TRIM, readv("tu-154/controll/stab_manual")) },
         { "elevator indication", fmt(readv("tu-154/gauges/misc/elevator_ind"), 2) },
         { "anti-ice duct", "follows the wing switch -- see the Ice tab", note = true, link = "Ice" },
     })
@@ -254,27 +252,18 @@ local function drawCtrlDiagram()
         })
 
     local fails = {}
-    for _, f in ipairs({ { "elev L", "elev_fail_left" }, { "elev R", "elev_fail_right" },
-                         { "ail L", "ail_fail_left" }, { "ail R", "ail_fail_right" },
-                         { "rudder", "rudder_fail" }, { "flap L", "flap_fail_left" },
-                         { "flap R", "flap_fail_right" }, { "slats", "slats_fail" } }) do
-        if readv("tu-154/failures/" .. f[2]) > 0.5 then
+    for _, f in ipairs(FC_FAILS) do
+        if failed[f[2]] then
             fails[#fails + 1] = f[1]
         end
     end
     readout(colX(3, 3, FC.C3), FC.TRIM, FC.C3, LN_H6, "SURFACE FAILURES",
         (#fails > 0) and S_FAULT or S_DEAD, {
-            { "elevator L / R",
-              (readv("tu-154/failures/elev_fail_left") > 0.5 and "FAILED" or "ok") .. " / "
-              .. (readv("tu-154/failures/elev_fail_right") > 0.5 and "FAILED" or "ok") },
-            { "aileron L / R",
-              (readv("tu-154/failures/ail_fail_left") > 0.5 and "FAILED" or "ok") .. " / "
-              .. (readv("tu-154/failures/ail_fail_right") > 0.5 and "FAILED" or "ok") },
-            { "rudder", readv("tu-154/failures/rudder_fail") > 0.5 and "FAILED" or "ok" },
-            { "flap L / R",
-              (readv("tu-154/failures/flap_fail_left") > 0.5 and "FAILED" or "ok") .. " / "
-              .. (readv("tu-154/failures/flap_fail_right") > 0.5 and "FAILED" or "ok") },
-            { "slats", readv("tu-154/failures/slats_fail") > 0.5 and "FAILED" or "ok" },
+            { "elevator L / R", failTxt("elev_fail_left") .. " / " .. failTxt("elev_fail_right") },
+            { "aileron L / R", failTxt("ail_fail_left") .. " / " .. failTxt("ail_fail_right") },
+            { "rudder", failTxt("rudder_fail") },
+            { "flap L / R", failTxt("flap_fail_left") .. " / " .. failTxt("flap_fail_right") },
+            { "slats", failTxt("slats_fail") },
             { "failed now", (#fails > 0) and table.concat(fails, ", ") or "none",
               (#fails > 0) and S_FAULT or nil },
         })

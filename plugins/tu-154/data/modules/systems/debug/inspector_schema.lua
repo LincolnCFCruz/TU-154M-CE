@@ -2,50 +2,35 @@
 -- The tabs, as pure data. Loaded first: inspector_vocab.lua sizes the tab bar
 -- from the number of entries.
 --
--- One entry per tab. `short` is the tab-bar label, `name` the header.
--- Field kinds: gauge | bar | value | lamp | fail | enum
+-- One entry per tab: `short` is the tab-bar label, `name` the header, and
+-- either `diagram` (a DIAGRAMS key) or `fields`. Field kinds:
 --   gauge/bar : min, max, unit, [warn_lo], [warn_hi], [dp]
---   value     : unit, [dp]
---   lamp      : on at value > 0.5; [fault]=true => on is bad (red), off is OK
---   fail      : a tu-154/failures/... flag -- 0 OK, non-zero FAIL
+--   value     : unit, [dp] -- wherever the real scale of a dataref is uncertain
+--   lamp      : on at > 0.5; [fault] = true means on is bad
+--   fail      : a tu-154/failures/ flag, 0 OK, non-zero FAIL
 --   enum      : map = { [n] = "LABEL", ... }
--- A `{ section = "TITLE" }` entry between fields starts a titled group; the
--- list layout draws it as a header and may carry a long group on into the next
--- column as "TITLE (cont.)". It has no dref and is skipped by everything that
--- reads fields.
--- Any field may also carry
---   dead      : true when nothing in the aircraft writes `dref`, so the card
---               says "not modelled" rather than drawing the creator default as
---               a reading -- a fail card at 0 would otherwise be a green OK for
---               a flag nobody can set. Not a judgement call: diagcheck's `dead`
---               rule fails a field nothing writes that lacks it, and a field
---               something now writes that still carries it.
---
--- `value` is used wherever the real-world scale of a dataref is not certain,
--- so no card ever implies a limit the systems code does not actually use.
+-- `{ section = "TITLE" }` starts a titled group. `dead = true` marks a dref
+-- nothing writes, drawn "not modelled"; diagcheck enforces it both ways.
 -- ---------------------------------------------------------------------------
 ENUM_BUS27_SRC  = { [0] = "NONE", [1] = "VU", [2] = "VU RES", [3] = "BAT 1+3", [4] = "BAT 1", [5] = "BAT 2" }
 ENUM_AXIS_MAIN  = { [0] = "OFF", [1] = "CWS", [2] = "STAB" }
+ENUM_ROLL_SUB   = { [0] = "OFF", [1] = "STAB", [2] = "ZK", [3] = "NVU", [4] = "AZ 1", [5] = "AZ 2", [6] = "APPROACH" }
+ENUM_PITCH_SUB  = { [0] = "OFF", [1] = "STAB", [2] = "V", [3] = "M", [4] = "H", [5] = "GLIDESLOPE", [6] = "GO-AROUND" }
+ENUM_STU_MODE   = { [0] = "OFF", [1] = "ON", [2] = "ARMED", [3] = "STAB", [4] = "GO-AROUND" }
+ENUM_STU_SEL    = { [0] = "OFF", [1] = "NVU", [2] = "AZ 1", [3] = "AZ 2", [4] = "LANDING" }
 ENUM_PNP        = { [0] = "OFF", [1] = "NVU", [2] = "VOR 1", [3] = "VOR 2", [4] = "LANDING" }
 ENUM_RMI_SRC    = { [0] = "BLANK", [1] = "ARK 1", [2] = "ARK 2", [3] = "VOR 1", [4] = "VOR 2", [5] = "RSBN" }
 ENUM_TRIM_SW    = { [-1] = "LEFT", [0] = "OFF", [1] = "RIGHT" }
+ENUM_NOSE_TRIM  = { [-1] = "NOSE DN", [0] = "NEUTRAL", [1] = "NOSE UP" }
 ENUM_FIRE_STATE = { [0] = "NORMAL", [1] = "OVERHEAT", [2] = "FIRE" }
 ENUM_WIN_HEAT   = { [-1] = "LOW", [0] = "OFF", [1] = "HIGH" }
--- A pitot switch at -1 is CHECK, not a second heat setting: antiice_panel
--- lights the HEAT OK lamp on == -1 while antiice_logic's math.max(sw, 0)
--- leaves the element cold.
+-- -1 is CHECK, not a heat setting: antiice_panel lights HEAT OK on == -1 while
+-- antiice_logic's math.max(sw, 0) leaves the element cold
 ENUM_PPD        = { [-1] = "CHECK", [0] = "OFF", [1] = "HEAT" }
 
 schema = {
 
     -- =======================================================================
-    -- The electrical tab is a schematic, not a card grid: `diagram` names an
-    -- entry in DIAGRAMS (inspector_elec.lua) and draw() calls it in place of the
-    -- cards. Every dataref the card grid used to show is on the diagram except
-    -- the six no module in the tree ever writes -- elec/avto_L_volt,
-    -- avto_R_volt, avto_L_amp, avto_R_amp, elec/bus115_freq and
-    -- failures/gen_dist_fail -- which the diagram names in its footer instead
-    -- of drawing gauges that can only ever read 0.
     { name = "Electrical -- one-line diagram", short = "Elec", diagram = "elec" },
 
     -- =======================================================================
@@ -102,23 +87,13 @@ schema = {
     } },
 
     -- =======================================================================
-    -- The third schematic tab: supply tanks -> transfer -> tank 1 -> ring main
-    -- -> fire valves -> engines. Everything the card grid showed is on it, plus
-    -- the real tank contents beside each gauge, the per-gauge failure flags and
-    -- the tank 1 pump switches. Nothing on this tab is unwritten -- unlike Elec
-    -- and Air, every fuel dataref here has a writer.
     { name = "Fuel -- one-line diagram", short = "Fuel", diagram = "fuel" },
 
     -- =======================================================================
-    -- The fourth schematic. Three closed loops side by side; the eleven
-    -- datarefs it needed -- pump deliveries, pump-station run flags, the
-    -- latched booster states and the two cross-feed flags -- were added to
-    -- hydro_logic.lua rather than inferred, the same way the other three went.
     { name = "Hydraulics -- one-line diagram", short = "Hydr", diagram = "hydro" },
 
     -- =======================================================================
-    -- Tab label was "NK-8-2U", which is the Tu-154B's engine. The M flies the
-    -- D-30KU-154 2nd series; the limits quoted below come from its own RLE 8.1.1.
+    -- the M's D-30KU-154 (NK-8-2U is the Tu-154B's); limits from its RLE 8.1.1
     { name = "Engines -- D-30KU-154", short = "Eng", diagram = "eng" },
 
     -- =======================================================================
@@ -184,20 +159,9 @@ schema = {
     { name = "Anti-ice", short = "Ice", diagram = "antiice" },
 
     -- =======================================================================
-    -- Like Elec, the air tab is a schematic: bleed sources -> manifolds ->
-    -- conditioning -> zones -> cabin -> outflow, which is what this system is
-    -- about. The readings the card grid used to show are on it, except the six
-    -- no module writes (gauges/airbleed/cabin_alt_new + cabin_diff_new,
-    -- kskv/ard_temp, thermo/cockpit_temp + cabin1_temp + cabin2_temp), which
-    -- the footer names, and the potable-water pair, which was never part of
-    -- this system and now sits on the Load tab.
     { name = "Bleed air, conditioning and pressurisation (KSKV)", short = "Air", diagram = "air" },
 
     -- =======================================================================
-    -- The gear is three parallel drive paths that ADD, and then a hard
-    -- electrical gate that all three of them -- including the emergency
-    -- system -- have to pass through. A card grid showed the 33 readings
-    -- and none of that structure.
     { name = "Landing gear and brakes", short = "Gear", diagram = "gear" },
     -- =======================================================================
     { name = "Flight controls", short = "Ctrl", diagram = "ctrl" },
@@ -294,13 +258,13 @@ schema = {
         { section = "MODES" },
         { label = "Roll main mode",      dref = "tu-154/absu/roll_main_mode",               kind = "enum", map = ENUM_AXIS_MAIN },
         { label = "Pitch main mode",     dref = "tu-154/absu/pitch_main_mode",              kind = "enum", map = ENUM_AXIS_MAIN },
-        { label = "Roll sub mode",       dref = "tu-154/absu/roll_sub_mode",                kind = "enum", map = { [0] = "OFF", [1] = "STAB", [2] = "ZK", [3] = "NVU", [4] = "AZ 1", [5] = "AZ 2", [6] = "APPROACH" } },
-        { label = "Pitch sub mode",      dref = "tu-154/absu/pitch_sub_mode",               kind = "enum", map = { [0] = "OFF", [1] = "STAB", [2] = "V", [3] = "M", [4] = "H", [5] = "GLIDESLOPE", [6] = "GO-AROUND" } },
+        { label = "Roll sub mode",       dref = "tu-154/absu/roll_sub_mode",                kind = "enum", map = ENUM_ROLL_SUB },
+        { label = "Pitch sub mode",      dref = "tu-154/absu/pitch_sub_mode",               kind = "enum", map = ENUM_PITCH_SUB },
         { label = "Roll mode console",   dref = "tu-154/gauges/console/absu_roll_mode",     kind = "enum", map = ENUM_AXIS_MAIN },
         { label = "Pitch mode console",  dref = "tu-154/gauges/console/absu_pitch_mode",    kind = "enum", map = ENUM_AXIS_MAIN },
-        { label = "Autothrottle mode",   dref = "tu-154/absu/stu_mode",                     kind = "enum", map = { [0] = "OFF", [1] = "ON", [2] = "ARMED", [3] = "STAB", [4] = "GO-AROUND" } },
+        { label = "Autothrottle mode",   dref = "tu-154/absu/stu_mode",                     kind = "enum", map = ENUM_STU_MODE },
         { label = "Go-around command",   dref = "tu-154/absu/toga_comm",                    kind = "lamp" },
-        { label = "STU mode selector",   dref = "tu-154/switchers/console/absu_speed_mode", kind = "enum", map = { [0] = "OFF", [1] = "NVU", [2] = "AZ 1", [3] = "AZ 2", [4] = "LANDING" } },
+        { label = "STU mode selector",   dref = "tu-154/switchers/console/absu_speed_mode", kind = "enum", map = ENUM_STU_SEL },
         { label = "PNP mode 1",          dref = "tu-154/absu/absu_pnp_mode_1",              kind = "enum", map = ENUM_PNP },
         { label = "PNP mode 2",          dref = "tu-154/absu/absu_pnp_mode_2",              kind = "enum", map = ENUM_PNP },
 
@@ -467,11 +431,7 @@ schema = {
     } },
 
     -- =======================================================================
-    -- The RA-56 servo layer, as a diagram. Unlike the other four this ADDS a
-    -- tab instead of converting one: the ABSU grid above carries 81 scalars and
-    -- lamps that a grid shows well, and the servo matrix adds about thirty more
-    -- readings. Both in one diagram would just be a grid again, so the grid
-    -- keeps the scalars and this takes the part with structure.
+    -- the ABSU list keeps its scalars; this diagram takes the servo matrix
     { name = "RA-56 servo channels (ABSU)", short = "RA-56", diagram = "absu" },
 
     -- =======================================================================
@@ -655,8 +615,6 @@ schema = {
         { label = "Planned tank 3R",     dref = "tu-154/payload/tank_3R",          kind = "value", unit = "kg" },
         { label = "Planned tank 4",      dref = "tu-154/payload/tank_4",           kind = "value", unit = "kg" },
 
-        -- potable water (systems/cockpit/water_panel.lua) -- not an air system,
-        -- it sat on the Air tab only because that tab was the nearest bucket
         { section = "POTABLE WATER" },
         { label = "Water level",         dref = "tu-154/misc/water_level",          kind = "value", dp = 2 },
         { label = "Water pressure",      dref = "tu-154/gauges/eng/water_pressure", kind = "value", dp = 2 },
@@ -668,11 +626,7 @@ schema = {
         { label = "Failures enabled",    dref = "tu-154/failures/failures_enabled", kind = "lamp" },
         { label = "Save state enabled",  dref = "tu-154/save_state_enabled", dead = true,        kind = "lamp" },
         { label = "Hardware cockpit",    dref = "tu-154/hardware_cockpit", dead = true,          kind = "lamp" },
-        -- Time base. Frame time is the plugin's own delta; the three sim
-        -- values beside it are what it is derived from, so a disagreement is
-        -- visible at a glance. Under time acceleration, Frame time should
-        -- track (sim speed actual / FPS), not 1/FPS -- see CLAUDE.md
-        -- "Time base".
+        -- frame_time beside the sim values it is derived from (CLAUDE.md 7a)
         { label = "Frame time",          dref = "tu-154/time/frame_time",           kind = "value", unit = "s", dp = 4 },
         { label = "Sim paused",          dref = "sim/time/paused",                  kind = "lamp" },
         { label = "Sim speed",           dref = "sim/time/sim_speed",               kind = "value", unit = "x", dp = 0 },
@@ -735,13 +689,9 @@ schema = {
     } },
 
     -- =======================================================================
-    -- Every lamp in tu-154/lights/, read from the registry rather than listed
-    -- here, with a LIT view of what is lit right now.
     { name = "Annunciators and lights", short = "Lamps", diagram = "lamps" },
 
     -- =======================================================================
-    -- Not a system: this is where a dataref lands when you click it in the
-    -- DATAREFS overlay on any other tab. It plots the values pinned there, so
-    -- a transient that a snapshot cannot show has somewhere to appear.
+    -- not a system: plots what is pinned from the DATAREFS overlay
     { name = "Watch -- pinned value history", short = "Watch", diagram = "watch" },
 }

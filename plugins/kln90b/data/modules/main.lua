@@ -6,6 +6,14 @@ sasl.options.setAircraftPanelRendering(true)
 sasl.options.set3DRendering(false)
 sasl.options.setInteractivity(false)
 
+-- Tu-154M: draw the panel in separate lit and non-lit passes, as the aircraft's
+-- own plugin does. The default mode is a single pass into the day layer of the
+-- panel texture only, so nothing reached the emissive layer and the 3D screen
+-- never lit up at night (the 2D windows are unaffected -- they ignore cockpit
+-- lighting). KLN90_panel, KLN90_bezel and KLN90_screen pick their pass with
+-- isLitStage / isNonLitStage.
+sasl.options.setRenderingMode2D(SASL_RENDER_2D_MULTIPASS)
+
 -- Tu-154M: render the display into an offscreen target instead of drawing it
 -- straight onto the panel texture.
 --
@@ -60,6 +68,11 @@ local TU154_SCREEN = {
     213 * SX,
     100 * SY,
 }
+
+-- Shared between KLN90_panel (which fills it with drawDisplay, the function that
+-- draws the display in its native 210 x 110 space) and KLN90_screen (which calls
+-- it in the lit pass). A component cannot see another component's locals.
+tu154_kln = {}
 
 components = {
    -- Renders the display into the `display` target (draws nothing on the panel

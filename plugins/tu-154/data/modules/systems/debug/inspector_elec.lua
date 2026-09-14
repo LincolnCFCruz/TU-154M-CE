@@ -1,33 +1,20 @@
 -- ---------------------------------------------------------------------------
--- Electrical one-line diagram (the Elec tab draws this instead of cards)
+-- Electrical one-line diagram (the Elec tab)
 --
--- Laid out top-down over the whole content area: the five AC sources on the
--- 115 V distribution rail, the three main and two emergency 115 V buses, the
--- converters (TR 1/2 -> 36 V, VU 1/2/reserve -> 27 V), the 27 V and 36 V buses
--- with their tie, the PTS-250 inverters with their output buses, and the four
--- batteries.
+-- Top-down: the five AC sources on the 115 V rail, the three main and two
+-- emergency 115 V buses, the converters (TR 1/2 -> 36 V, VU 1/2/reserve ->
+-- 27 V), the 27 V and 36 V buses with their tie, the PTS-250 inverters with
+-- their output buses, and the four batteries.
 --
--- Two rules keep it honest, and they are why this is not a copy of the wiring
--- diagram in the manual:
---
---   * Wiring the systems code FIXES is drawn as fixed geometry and only
---     coloured -- VU 1 hangs on bus 115/1, TR 2 on bus 115/3, PTS-250 1 on the
---     right 27 V bus, batteries 1 and 3 on the left one, and so on
---     (bus115_logic.lua, bus36_logic.lua, bus27_logic.lua).
---   * Wiring the systems code SWITCHES is never guessed. bus115_logic picks
---     the feeding generator through a seventeen-branch ladder that publishes
---     no per-bus source, so that is drawn as one rail: the generator actually
---     carrying is the one showing amps. The DC side does publish its
---     selection (bus27_source_left/right, bus36_src_L/R, vu_res_to_L/R,
---     bat_is_source_*), so those feeders are coloured from the datarefs and
---     each DC bus carries a chip naming its source. The 36 V TR cross-tie has
---     no line of its own for the same reason -- the chip states it.
+-- Wiring the systems code fixes (bus115_logic, bus36_logic, bus27_logic) is
+-- fixed geometry, only coloured. Wiring it switches is drawn from the
+-- datarefs that publish the selection (bus115_src_*, bus27_source_*,
+-- bus36_src_*, vu_res_to_*, bat_is_source_*), never inferred.
 -- ---------------------------------------------------------------------------
 
--- Five equal columns carry the whole diagram: the sources, the converters, the
--- DC buses (columns 1, 2, 4, 5) and the inverters all line up on them, so a
--- feeder is a straight drop. The 115 V bus row uses its own widths because the
--- two emergency buses are narrower than the three main ones.
+-- Five equal columns carry sources, converters, DC buses (columns 1, 2, 4, 5)
+-- and inverters, so every feeder is a straight drop. The 115 V bus row has its
+-- own widths: the emergency buses are narrower.
 local EG = {
     W      = 208,  -- the five-column width
     BW     = 250,  -- main and emergency 115 V bus widths
@@ -50,12 +37,11 @@ local EG = {
     OUTH   = 24,   -- height of those output bars
     ALT    = 577,  -- alternate feed, lower leg
 }
--- MID and PTS are the vertical middles of the DC and inverter rows and ALTH /
--- ALT the two legs of the alternate feed, so they move with DC / LOW / OUT.
+-- MID / PTS are the middles of the DC and inverter rows and ALTH / ALT the
+-- alternate feed's legs: move them with DC / LOW / OUT.
 
--- The x side: the five columns come from colX / colC, the 115 V row from its
--- own widths (ELEC_AC, below), and every offset a wire takes from a node is
--- named here, so moving a column moves every wire that meets it.
+-- x: the five columns from colX / colC, and every offset a wire takes from a
+-- node, so moving a column moves every wire that meets it
 EG.X, EG.C = {}, {}
 for i = 1, 5 do
     EG.X[i], EG.C[i] = colX(i, 5, EG.W), colC(i, 5, EG.W)
@@ -75,24 +61,23 @@ EG.BATW = 100     -- battery node width
 local ENUM_115_SRC = { [0] = "NONE", [1] = "GEN 1", [2] = "GEN 2", [3] = "GEN 3",
                        [4] = "APU GEN", [5] = "RAP" }
 
+-- `id` is both the column and the bus115_src_N value that selects the source
 local ELEC_SRC = {
-    { col = 1, id = 1, t = "GEN 1 (ENG 1)", volt = "tu-154/elec/gen1_volt", amp = "tu-154/elec/gen1_amp",
+    { id = 1, t = "GEN 1 (ENG 1)", volt = "tu-154/elec/gen1_volt", amp = "tu-154/elec/gen1_amp",
       work = "tu-154/elec/gen1_work", ovl = "tu-154/elec/gen1_overload" },
-    { col = 2, id = 2, t = "GEN 2 (ENG 2)", volt = "tu-154/elec/gen2_volt", amp = "tu-154/elec/gen2_amp",
+    { id = 2, t = "GEN 2 (ENG 2)", volt = "tu-154/elec/gen2_volt", amp = "tu-154/elec/gen2_amp",
       work = "tu-154/elec/gen2_work", ovl = "tu-154/elec/gen2_overload" },
-    { col = 3, id = 3, t = "GEN 3 (ENG 3)", volt = "tu-154/elec/gen3_volt", amp = "tu-154/elec/gen3_amp",
+    { id = 3, t = "GEN 3 (ENG 3)", volt = "tu-154/elec/gen3_volt", amp = "tu-154/elec/gen3_amp",
       work = "tu-154/elec/gen3_work", ovl = "tu-154/elec/gen3_overload" },
-    { col = 4, id = 4, t = "APU GEN",       volt = "tu-154/elec/gen4_volt", amp = "tu-154/elec/gen4_amp",
+    { id = 4, t = "APU GEN",       volt = "tu-154/elec/gen4_volt", amp = "tu-154/elec/gen4_amp",
       work = "tu-154/elec/gen4_work", ovl = "tu-154/elec/gen4_overload",
       fail = "tu-154/failures/apu_gen_fail" },
-    { col = 5, id = 5, t = "RAP (ground)",  volt = "tu-154/elec/gpu_volt",  amp = "tu-154/elec/gpu_amp",
+    { id = 5, t = "RAP (ground)",  volt = "tu-154/elec/gpu_volt",  amp = "tu-154/elec/gpu_amp",
       work = "tu-154/elec/gpu_work",  ovl = "tu-154/elec/gpu_overload" },
 }
 
--- `src` names the dataref bus115_logic publishes for that bus; the emergency
--- buses are strapped to buses 1 and 3 and have none of their own. Nor do they
--- have an `amp`: bus115_logic READS bus115_em_1/2_amp and nothing writes them,
--- so a load row there could only ever say 0 A.
+-- The emergency buses are strapped to buses 1 and 3: no `src` of their own,
+-- and no `amp` -- bus115_logic reads bus115_em_1/2_amp and nothing writes them.
 local ELEC_AC = {
     { w = EG.BEM, t = "115 V EMERG 1", strap = "BUS 1",
       volt = "tu-154/elec/bus115_em_1_volt" },
@@ -148,26 +133,16 @@ local function src27Txt(v, isLeft)
     return ENUM_BUS27_SRC[v] or fmt(v, 0)
 end
 
--- What a cross-diagram feed passes on its way over. The reserve VU's own
--- elbow sits between the two lanes, so its legs are above one and below the
--- other: the reserve VU's legs either side of the centre only exist down to
--- EG.ELB, and its drops into the 27 V buses only below it.
+-- The lines a cross-diagram 36 V feed jumps. The reserve VU's elbow (EG.ELB)
+-- sits between the two lanes: its legs exist only above it, its drops into the
+-- 27 V buses only below it.
 local EG_XJ_HI = { EG.C[2] - EG.VUO, EG.MIDX - EG.VRE, EG.MIDX + EG.VRE, EG.C[4] + EG.VUO }
 local EG_XJ_LO = { EG.C[2] - EG.VUO, EG.C[2] + EG.VRO, EG.C[4] - EG.VRO, EG.C[4] + EG.VUO }
 
--- One 36 V bus's incoming feed, drawn from the TR that is actually supplying
--- it. Each bus takes either TR independently -- bus36_logic.lua picks TR 1 for
--- the left unless its switch is thrown or it is dead, and TR 2 for the right on
--- the same terms, so one TR can end up carrying both -- and drawing each TR
--- straight down into the box beneath it was the one place in these diagrams
--- where the geometry asserted a connection the code had not made. Crossed,
--- TR 1's own row read "feeding 36 V RIGHT" while the line under it went to
--- 36 V LEFT, and the feed that was carrying had no line at all.
---
--- Only the live path is drawn, not both possibilities. A 950 px line for a
--- feed that is not selected would dominate the diagram; the rule this breaks
--- is "fixed geometry, only coloured", and it buys never asserting a connection
--- that is not there.
+-- One 36 V bus's feed, drawn from the TR actually supplying it: bus36_logic
+-- picks each bus's TR independently, so one TR can carry both. Only the live
+-- path is drawn -- a 950 px line for an unselected feed would dominate the
+-- diagram -- which is the one exception to "fixed geometry, only coloured".
 local function busFeed(fromX, toX, ch, jumps, s)
     if fromX == toX then
         wire(s, fromX, Y(EG.CNV + LN_H3), fromX, Y(EG.DC))
@@ -191,8 +166,7 @@ local function drawElecDiagram()
     -- ---- AC sources ------------------------------------------------------
     for i = 1, #ELEC_SRC do
         local s = ELEC_SRC[i]
-        local x = colX(s.col, 5, EG.W)
-        local cx = x + EG.W / 2
+        local x, cx = EG.X[s.id], EG.C[s.id]
         srcX[s.id] = cx
         local v, a = readv(s.volt), readv(s.amp)
         local st
@@ -210,15 +184,12 @@ local function drawElecDiagram()
                 or (st == S_LIVE and "ON LINE") or (st == S_STBY and "ON LINE, IDLE") or "OFF" },
         }, a / 145) -- 145 A is where generators_logic starts the overload timer
         wire(st, cx, Y(EG.SRC + LN_H3), cx, Y(EG.RAIL))
-        -- G for the three engine generators, A for the APU's, R for the RAP
         roundSym(cx, (Y(EG.SRC + LN_H3) + Y(EG.RAIL)) / 2,
             (s.id <= 3) and "G" or (s.id == 4 and "A" or "R"), st)
     end
 
     -- ---- the 115 V busbar and the feeds it is actually carrying ----------
-    -- bus115_logic publishes its selection now (tu-154/elec/bus115_src_1..3),
-    -- so the busbar is drawn dead and each bus's real path -- source drop, the
-    -- length of bar between them, bus drop -- is drawn live on top of it.
+    -- the bar is drawn dead; each bus's selected path (bus115_src_N) goes on top
     wire(S_DEAD, srcX[1], Y(EG.RAIL), srcX[5], Y(EG.RAIL))
     for i = 1, #ELEC_AC do
         local b = ELEC_AC[i]
@@ -297,15 +268,13 @@ local function drawElecDiagram()
     local rSt = ((src36R == 0) and tr2W or tr1W) and S_LIVE or S_DEAD
     local tr1Out = feedState(tr1W, src36L == 0 or src36R == 1)
     local tr2Out = feedState(tr2W, src36R == 0 or src36L == 1)
-    listNode(colX(1, 5, EG.W), EG.CNV, EG.W, LN_H3, "TR 1",
-        tr1F and S_FAULT or feedState(tr1W, src36L == 0 or src36R == 1), {
+    listNode(EG.X[1], EG.CNV, EG.W, LN_H3, "TR 1", tr1F and S_FAULT or tr1Out, {
             { "state", tr1F and "FAILED" or (tr1W and "RUN" or "OFF"), tr1F and S_FAULT or nil, hd = true },
             { "converts", "115 -> 36 V", note = true },
             { "feeding", (src36L == 0 and tr1W) and "36 V LEFT"
                 or ((src36R == 1 and tr1W) and "36 V RIGHT" or "-") },
         })
-    listNode(colX(5, 5, EG.W), EG.CNV, EG.W, LN_H3, "TR 2",
-        tr2F and S_FAULT or feedState(tr2W, src36R == 0 or src36L == 1), {
+    listNode(EG.X[5], EG.CNV, EG.W, LN_H3, "TR 2", tr2F and S_FAULT or tr2Out, {
             { "state", tr2F and "FAILED" or (tr2W and "RUN" or "OFF"), tr2F and S_FAULT or nil, hd = true },
             { "converts", "115 -> 36 V", note = true },
             { "feeding", (src36R == 0 and tr2W) and "36 V RIGHT"
@@ -323,19 +292,19 @@ local function drawElecDiagram()
     local vu1Out = feedState(vu1V > NOM_27, src27L == 1)
     local vu2Out = feedState(vu2V > NOM_27, src27R == 1)
 
-    listNode(colX(2, 5, EG.W), EG.CNV, EG.W, LN_H3, "VU 1", vu1F and S_FAULT or vu1Out, {
+    listNode(EG.X[2], EG.CNV, EG.W, LN_H3, "VU 1", vu1F and S_FAULT or vu1Out, {
         { "voltage", vu1F and "FAILED" or (fmt(vu1V, 1) .. " V"), vu1F and S_FAULT or nil, hd = true },
         { "load", fmt(vu1A, 0) .. " A" },
         { "feeding", src27L == 1 and "27 V LEFT" or "-" },
     }, vu1A / 450) -- bus27_logic trips a VU on overload above 450 A
-    listNode(colX(3, 5, EG.W), EG.CNV, EG.W, LN_H3, "VU RESERVE",
+    listNode(EG.X[3], EG.CNV, EG.W, LN_H3, "VU RESERVE",
         vu3F and S_FAULT or feedState(vu3V > NOM_27, toL or toR), {
             { "voltage", vu3F and "FAILED" or (fmt(vu3V, 1) .. " V"), vu3F and S_FAULT or nil, hd = true },
             { "load", fmt(vu3A, 0) .. " A" },
             { "feeding", (toL and toR) and "BOTH 27 V"
                 or (toL and "27 V LEFT" or (toR and "27 V RIGHT" or "-")) },
         }, vu3A / 450)
-    listNode(colX(4, 5, EG.W), EG.CNV, EG.W, LN_H3, "VU 2", vu2F and S_FAULT or vu2Out, {
+    listNode(EG.X[4], EG.CNV, EG.W, LN_H3, "VU 2", vu2F and S_FAULT or vu2Out, {
         { "voltage", vu2F and "FAILED" or (fmt(vu2V, 1) .. " V"), vu2F and S_FAULT or nil, hd = true },
         { "load", fmt(vu2A, 0) .. " A" },
         { "feeding", src27R == 1 and "27 V RIGHT" or "-" },
@@ -367,22 +336,22 @@ local function drawElecDiagram()
     local a27L = readv("tu-154/elec/bus27_amp_left")
     local a27R = readv("tu-154/elec/bus27_amp_right")
 
-    listNode(colX(1, 5, EG.W), EG.DC, EG.W, LN_H3, "36 V LEFT", st36L, {
+    listNode(EG.X[1], EG.DC, EG.W, LN_H3, "36 V LEFT", st36L, {
         { "voltage", fmt(v36L, 1) .. " V", st36L, hd = true },
         { "load", fmt(a36L, 0) .. " A" },
         { "fed from", src36L == 0 and "TR 1" or "TR 2", st36L == S_LIVE and S_LIVE or nil },
     }, a36L / 100)
-    listNode(colX(2, 5, EG.W), EG.DC, EG.W, LN_H3, "27 V LEFT", st27L, {
+    listNode(EG.X[2], EG.DC, EG.W, LN_H3, "27 V LEFT", st27L, {
         { "voltage", fmt(v27L, 1) .. " V", st27L, hd = true },
         { "load", fmt(a27L, 0) .. " A" },
         { "fed from", src27Txt(src27L, true), st27L == S_LIVE and S_LIVE or nil },
     }, a27L / 600)
-    listNode(colX(4, 5, EG.W), EG.DC, EG.W, LN_H3, "27 V RIGHT", st27R, {
+    listNode(EG.X[4], EG.DC, EG.W, LN_H3, "27 V RIGHT", st27R, {
         { "voltage", fmt(v27R, 1) .. " V", st27R, hd = true },
         { "load", fmt(a27R, 0) .. " A" },
         { "fed from", src27Txt(src27R, false), st27R == S_LIVE and S_LIVE or nil },
     }, a27R / 600)
-    listNode(colX(5, 5, EG.W), EG.DC, EG.W, LN_H3, "36 V RIGHT", st36R, {
+    listNode(EG.X[5], EG.DC, EG.W, LN_H3, "36 V RIGHT", st36R, {
         { "voltage", fmt(v36R, 1) .. " V", st36R, hd = true },
         { "load", fmt(a36R, 0) .. " A" },
         { "fed from", src36R == 0 and "TR 2" or "TR 1", st36R == S_LIVE and S_LIVE or nil },
@@ -402,14 +371,14 @@ local function drawElecDiagram()
     local pts1W = readv("tu-154/elec/bus36_pts1_work") > 0.5
     local pts2W = readv("tu-154/elec/bus36_pts2_work") > 0.5
 
-    listNode(colX(1, 5, EG.W), EG.LOW, EG.W, LN_H4, "PTS-250 2",
+    listNode(EG.X[1], EG.LOW, EG.W, LN_H4, "PTS-250 2",
         pts2F and S_FAULT or (pts2W and S_LIVE or S_DEAD), {
             { "state", pts2F and "FAILED" or (pts2W and "RUN" or "OFF"), pts2F and S_FAULT or nil, hd = true },
             { "converts", "27 -> 36 V", note = true },
             { "fed from", "27 V LEFT", note = true },
             { "standby for", "36 V LEFT", note = true },
         })
-    listNode(colX(5, 5, EG.W), EG.LOW, EG.W, LN_H4, "PTS-250 1",
+    listNode(EG.X[5], EG.LOW, EG.W, LN_H4, "PTS-250 1",
         pts1F and S_FAULT or (pts1W and S_LIVE or S_DEAD), {
             { "state", pts1F and "FAILED" or (pts1W and "RUN" or "OFF"), pts1F and S_FAULT or nil, hd = true },
             { "converts", "27 -> 36 V", note = true },
@@ -452,9 +421,9 @@ local function drawElecDiagram()
     -- ---- PTS-250 output buses --------------------------------------------
     local vp1, vp2 = readv("tu-154/elec/bus36_volt_pts250_1"), readv("tu-154/elec/bus36_volt_pts250_2")
     local ap1, ap2 = readv("tu-154/elec/bus36_amp_pts250_1"), readv("tu-154/elec/bus36_amp_pts250_2")
-    slimNode(colX(1, 5, EG.W), EG.OUT, EG.W, EG.OUTH, "36 V PTS-2", voltState(vp2, NOM_36),
+    slimNode(EG.X[1], EG.OUT, EG.W, EG.OUTH, "36 V PTS-2", voltState(vp2, NOM_36),
         fmt(vp2, 1) .. " V  " .. fmt(ap2, 0) .. " A")
-    slimNode(colX(5, 5, EG.W), EG.OUT, EG.W, EG.OUTH, "36 V PTS-1", voltState(vp1, NOM_36),
+    slimNode(EG.X[5], EG.OUT, EG.W, EG.OUTH, "36 V PTS-1", voltState(vp1, NOM_36),
         fmt(vp1, 1) .. " V  " .. fmt(ap1, 0) .. " A")
 
     -- bus36_logic feeds the PTS-2 bus off the 36 V left bus whenever that is

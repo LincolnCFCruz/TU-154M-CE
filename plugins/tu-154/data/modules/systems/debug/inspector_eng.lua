@@ -1,32 +1,17 @@
 -- ---------------------------------------------------------------------------
 -- Engines one-line diagram (the Eng tab)
 --
--- Three engine columns through four stages, the way the hydraulic diagram runs
--- three systems through four. The columns are the engines; the bands are start,
--- running, and health.
+-- Three engine columns through the start, running and health bands.
 --
--- The structure worth drawing is the START system, because it is the only part
--- of this tab that branches. start_logic.lua ACCUMULATES starting air:
+-- start_logic.lua ACCUMULATES starting air:
 --
 --   starter_press = starter_press + (apu_contribution + eng_1 + eng_2 + eng_3) * dt
 --
--- where each engine's term is `burning * bleed_valve * f(rpm)`. So an engine
--- that is already running feeds the air for the next one, which is why the
--- source node counts all four contributors and why the bar is fed from it
--- rather than from the APU alone. The APU's own term needs `apu_n1 > 50` and
--- is scaled by the air-door travel.
---
--- Three more gates the rows name because they are easy to be caught by:
---   * the start system needs BOTH 27 V buses (`starter_switch == 1 and
---     power27L and power27R`), not either one;
---   * a start needs the fuel system ready -- `auto_tanks_turn > 0` and all
---     FOUR tank 1 pumps running -- which is a Fuel-tab condition appearing as
---     an engine-start precondition;
---   * moving the engine selector counts as pressing STOP (`stop_button` is
---     `starter_stop == 1 or eng_select ~= select_last`).
---
--- Engine 2 has no thrust reverser; its column says so rather than showing a
--- bar that can only read 0.
+-- each engine's term being `burning * bleed_valve * f(rpm)`, so a running
+-- engine feeds the air for the next one; the APU's needs `apu_n1 > 50` and
+-- scales with the air-door travel. A start also needs BOTH 27 V buses and the
+-- fuel system ready (`auto_tanks_turn > 0` and all four tank 1 pumps), and
+-- moving the engine selector counts as STOP (`eng_select ~= select_last`).
 -- ---------------------------------------------------------------------------
 
 local EN = {
@@ -66,6 +51,10 @@ local function drawEngDiagram()
     local sel = math.floor(readv("tu-154/switchers/eng/starter_eng_select") + 0.5)
     local mode = math.floor(readv("tu-154/switchers/eng/starter_mode") + 0.5)
     local press = readv("tu-154/start/starter_pressure")
+    local burning = {}
+    for i = 1, 3 do
+        burning[i] = readv("sim/flightmodel2/engines/engine_is_burning_fuel[" .. (i - 1) .. "]") > 0.5
+    end
 
     listNode(colX(1, 3, EN.C3), EN.TOP, EN.C3, LN_H6, "START SYSTEM (APD)",
         sysLive and S_LIVE or S_DEAD, {
@@ -89,7 +78,7 @@ local function drawEngDiagram()
     local apuTerm = (apuN1 > 50) and (apuDoor * apuN1 * 0.01) or 0
     local engFeed = 0
     for i = 1, 3 do
-        if readv("sim/flightmodel2/engines/engine_is_burning_fuel[" .. (i - 1) .. "]") > 0.5 then
+        if burning[i] then
             engFeed = engFeed + readv("tu-154/bleed/eng_airvalve_" .. i)
         end
     end
@@ -148,8 +137,7 @@ local function drawEngDiagram()
             .. (i - 1) .. "]") > 0.5
         local fuelIn = readv("tu-154/start/fuel_in_" .. i)
         local ign = readv("sim/cockpit2/engine/actuators/igniter_on[" .. (i - 1) .. "]") > 0.5
-        local burn = readv("sim/flightmodel2/engines/engine_is_burning_fuel["
-            .. (i - 1) .. "]") > 0.5
+        local burn = burning[i]
         local n2 = readv("tu-154/gauges/engine/rpm_high_" .. i)
         local st
         if burn then
@@ -179,15 +167,14 @@ local function drawEngDiagram()
     end
 
     band(EN.RUN - 5, "RUNNING")
+    -- ---- running --------------------------------------------------------
     local egtMax = interpolate(EGT_TAKEOFF_MAX,
         clamp(-60, readv("sim/cockpit2/temperature/outside_air_temp_degc"), 50))
-    -- ---- running --------------------------------------------------------
     for i = 1, 3 do
         local n1 = readv("tu-154/gauges/engine/rpm_low_" .. i)
         local n2 = readv("tu-154/gauges/engine/rpm_high_" .. i)
         local egt = readv("tu-154/gauges/eng/egt_" .. i)
-        local burn = readv("sim/flightmodel2/engines/engine_is_burning_fuel["
-            .. (i - 1) .. "]") > 0.5
+        local burn = burning[i]
         -- the RLE 8.1.1 redlines: N1 95 %, N2 98.5 %, and EGT by OAT from
         -- Table 8.1.3 (egtMax above)
         local over = n1 > 95 or n2 > 98.5 or egt > egtMax
@@ -223,9 +210,7 @@ local function drawEngDiagram()
                         .. (i - 1) .. "]")
         end
         listNode(colX(i, 3, EN.C3), EN.OIL, EN.C3, LN_H6, "ENGINE " .. i .. " -- HEALTH",
-            (leak or pmp or oilT > 110) and S_FAULT
-            or (readv("sim/flightmodel2/engines/engine_is_burning_fuel[" .. (i - 1) .. "]") > 0.5
-                and S_LIVE or S_DEAD), {
+            (leak or pmp or oilT > 110) and S_FAULT or (burning[i] and S_LIVE or S_DEAD), {
                 { "oil pressure", fmt(readv("tu-154/gauges/eng/oil_press_" .. i), 2) },
                 { "oil temp (110 C max)", fmt(oilT, 0) .. " C",
                   oilT > 110 and S_FAULT or nil },

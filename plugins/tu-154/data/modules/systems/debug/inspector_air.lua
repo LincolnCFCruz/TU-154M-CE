@@ -6,19 +6,9 @@
 -- header and the two turbo-coolers, the hot and cold distribution manifolds,
 -- the four conditioned zones, the cabin and the outflow valve.
 --
--- It follows the same rule as the electrical diagram: fixed wiring is fixed
--- geometry, switched wiring is never inferred.
---
---   * The 50/50 centre section is not decoration -- it is the `* 0.5` on ENG 2
---     and the APU in kskv_bleed.lua, which is what lets ENG 1 own the left
---     manifold and ENG 3 the right one without any line crossing another.
---   * kskv_bleed keeps main_valve_L/R, the PSVP travel and the ground smoothing
---     valve as module locals -- none of them is a dataref. So the manifolds
---     show the *commanded* state (the switch, the PSVP switch and its failure
---     flag) next to the flow that actually resulted, and the footer says so.
---   * The turbo-cooler mixing ratios (cold_tube_reg_L/R, cockpit_reg, the two
---     cabin_regs) are locals too, so the zones show duct temperature, cabin
---     temperature and the setting rather than a regulator position.
+-- The 50/50 centre section is the `* 0.5` on ENG 2 and the APU in
+-- kskv_bleed.lua: it lets ENG 1 own the left manifold and ENG 3 the right one
+-- without any line crossing another.
 -- ---------------------------------------------------------------------------
 
 local AG = {
@@ -34,15 +24,13 @@ local AG = {
     ZONE   = 398,  -- door heat / cockpit / cabin 1 / cabin 2
     CBAR   = 492,  -- cabin collector
     PRS    = 517,  -- outflow valve, cabin, panel, duct gauge
+    OUTL   = 34,   -- the outflow valve -> cabin line, below PRS
     ZW     = 275,  -- zone / pressurisation column width
     SW     = 267,  -- source column width
 }
--- Every source drop and both trunk drops are long enough to carry the valve
--- that is in them: this system is mostly valves.
+-- every source and trunk drop is long enough to carry its valve
 
--- The x side, derived as the electrical diagram's is: columns from colX /
--- colC, node positions from their widths, and every offset a wire takes from
--- a node named here.
+-- x: columns from colX / colC, and every offset a wire takes from a node
 AG.C = {}
 for i = 1, 4 do
     AG.C[i] = colC(i, 4, AG.SW)
@@ -227,8 +215,6 @@ local function drawAirDiagram()
     junction(mRc, Y(AG.CTR + 12), stR)
 
     -- ---- manifolds -------------------------------------------------------
-    -- kskv_bleed publishes the valve travel now, so these show the commanded
-    -- position and where the valve has actually got to, not just the switch
     local psvpLF = readv("tu-154/failures/psvp_fail_left") > 0.5
     local psvpRF = readv("tu-154/failures/psvp_fail_right") > 0.5
     local mvL = readv("tu-154/bleed/main_valve_L")
@@ -298,8 +284,6 @@ local function drawAirDiagram()
         chip(afterTitle(AG.TR, "TTH R / COLD DUCT 2"), yb + LN_H4 - 13, 34, "TUE", true, 12)
     end
 
-    -- kskv_cond publishes the cold header now, so both ends of every zone
-    -- mixer below are readable instead of only the hot one
     listNode(AG.HX, AG.HDR, AG.HDRW, LN_H3, "HOT AND COLD HEADERS", stT, {
         { "hot air", fmt(readv("tu-154/bleed/hot_tube_t"), 1) .. " C", stT, hd = true },
         { "cold air", fmt(readv("tu-154/bleed/cold_air_t"), 1) .. " C", stT },
@@ -392,7 +376,7 @@ local function drawAirDiagram()
         { "alarm", alarm and "PRESSURE" or "OK", alarm and S_FAULT or nil },
         { "fed by", "3 zones above", note = true },
     })
-    wire(stOut, colX(2, 4, AG.ZW), Y(AG.PRS + 34), colX(1, 4, AG.ZW) + AG.ZW, Y(AG.PRS + 34))
+    wire(stOut, colX(2, 4, AG.ZW), Y(AG.PRS + AG.OUTL), colX(1, 4, AG.ZW) + AG.ZW, Y(AG.PRS + AG.OUTL))
 
     local gcond = readv("tu-154/switchers/airbleed/ground_cond_on") > 0.5
     local hclose = readv("tu-154/switchers/airbleed/heat_close") > 0.5
